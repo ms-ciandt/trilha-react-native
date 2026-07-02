@@ -1,23 +1,37 @@
-# Trilhas de Estudo — React Native
+# Trilhas de Aprendizado em React Native
 
-Materiais divididos por background do dev. Cada tópico é independente mas segue a progressão da trilha.
-
----
-
-## Trilha 1 — Devs Nativos (Android/iOS)
-
-| # | Tópico | Arquivo |
-|---|--------|---------|
-| 4 | Navegação (Stack, Tab, Drawer, Deep Linking) | [trilha-1-nativo/04-navegacao.md](trilha-1-nativo/04-navegacao.md) |
-| 5 | Estado & APIs (Zustand, Redux, TanStack Query, MMKV) | [trilha-1-nativo/05-estado-e-apis.md](trilha-1-nativo/05-estado-e-apis.md) |
-| 6 | Recursos Nativos (Permissões, Câmera, Localização, Push) | [trilha-1-nativo/06-recursos-nativos.md](trilha-1-nativo/06-recursos-nativos.md) |
+## Trilhas específicas por background
 
 ---
 
-## Trilha 2 — Devs Web (React)
+### 1. Para Devs Nativos (Android/iOS)
 
-| # | Tópico | Arquivo |
-|---|--------|---------|
-| 4 | Navegação (React Navigation vs React Router, Deep Linking) | [trilha-2-web/04-navegacao.md](trilha-2-web/04-navegacao.md) |
-| 5 | Estado Global & APIs (Zustand, TanStack Query, MMKV, Offline-first) | [trilha-2-web/05-estado-e-apis.md](trilha-2-web/05-estado-e-apis.md) |
-| 6 | Recursos Nativos (Modelo de permissões, Câmera, Localização, Push) | [trilha-2-web/06-recursos-nativos.md](trilha-2-web/06-recursos-nativos.md) |
+**Ordem de foco:**
+
+- **A:** JS/TS – dominar a linguagem
+- **A:** Fundamentos React
+- **A:** Fundamentos RN – core components, layout, flexbox
+- **B:** Navegação
+- **B:** Estado e API
+- **B:** Acesso a recursos nativos
+- **C:** Integração nativa avançada
+- **C:** Performance RN
+- **C:** Testes, CI/CD e arquitetura
+
+---
+
+### 2. Para Devs Web (React)
+
+**Ordem de foco:**
+
+- **A:** Ajuste de JS/TS para mobile
+- **A:** Diferenças web vs RN
+- **A:** Fundamentos RN – componentes nativos, estilos, listas
+- **B:** Navegação – Stack/Tab/Drawer
+- **B:** Estado global + APIs
+- **B:** Recursos nativos – pelo menos permissões, câmera, storage
+- **C:** Noções de integração nativa
+- **C:** Performance mobile
+- **C:** Testes, CI/CD, arquitetura
+
+---
