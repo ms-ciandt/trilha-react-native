@@ -1,0 +1,188 @@
+---
+id: typescript-for-web-devs
+title: TypeScript for Web Developers in React Native
+sidebar_label: TypeScript for Web Devs
+sidebar_position: 2
+---
+
+# TypeScript for Web Developers
+
+> If you've used TypeScript on the web, you're mostly ready. This module covers the RN-specific types and patterns you'll encounter.
+
+## React Native–Specific Types
+
+### Style Types
+
+```typescript
+import { ViewStyle, TextStyle, ImageStyle, StyleProp } from 'react-native';
+
+// Specific style types for each component category
+const containerStyle: ViewStyle = {
+    flex: 1,
+    backgroundColor: '#fff',
+};
+
+const labelStyle: TextStyle = {
+    fontSize: 16,
+    fontWeight: 'bold',
+};
+
+const avatarStyle: ImageStyle = {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+};
+
+// StyleProp<T> allows both a single style and an array of styles
+interface ButtonProps {
+    style?: StyleProp<ViewStyle>;       // accepts style or [style1, style2]
+    labelStyle?: StyleProp<TextStyle>;
+}
+```
+
+### Component Ref Types
+
+```typescript
+import { useRef } from 'react';
+import { TextInput, ScrollView, FlatList } from 'react-native';
+
+const inputRef = useRef<TextInput>(null);
+const scrollRef = useRef<ScrollView>(null);
+const listRef = useRef<FlatList<unknown>>(null); // replace unknown with your item type, e.g. FlatList<Product>
+
+// Use the ref
+inputRef.current?.focus();
+scrollRef.current?.scrollTo({ y: 0, animated: true });
+listRef.current?.scrollToIndex({ index: 0 });
+```
+
+### Event Types
+
+```typescript
+import {
+    NativeSyntheticEvent,
+    NativeScrollEvent,
+    TextInputChangeEventData,
+    GestureResponderEvent,
+} from 'react-native';
+
+// Scroll events
+function handleScroll(event: NativeSyntheticEvent<NativeScrollEvent>) {
+    const { contentOffset, contentSize } = event.nativeEvent;
+    console.log('scrollY:', contentOffset.y);
+}
+
+// TextInput change
+function handleChange(event: NativeSyntheticEvent<TextInputChangeEventData>) {
+    console.log(event.nativeEvent.text);
+}
+
+// Press event
+function handlePress(event: GestureResponderEvent) {
+    console.log('pressed at:', event.nativeEvent.locationX, event.nativeEvent.locationY);
+}
+```
+
+---
+
+## Typing Navigation (Expo Router)
+
+With Expo Router (file-based routing), TypeScript support is built-in:
+
+```typescript
+// app/(tabs)/profile.tsx
+import { View, Text, Button } from 'react-native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+
+// For dynamic routes: app/user/[id].tsx
+export default function UserScreen() {
+    const { id } = useLocalSearchParams<{ id: string }>();
+    const router = useRouter();
+
+    return (
+        <View>
+            <Text>User ID: {id}</Text>
+            <Button title="Go Back" onPress={() => router.back()} />
+            <Button title="Go Home" onPress={() => router.push('/')} />
+        </View>
+    );
+}
+```
+
+---
+
+## Typing AsyncStorage & Async Operations
+
+```typescript
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+interface UserSession {
+    userId: string;
+    token: string;
+    expiresAt: number;
+}
+
+async function saveSession(session: UserSession): Promise<void> {
+    await AsyncStorage.setItem('session', JSON.stringify(session));
+}
+
+async function loadSession(): Promise<UserSession | null> {
+    const raw = await AsyncStorage.getItem('session');
+    if (!raw) return null;
+    // ⚠️ `as` is not runtime validation — a stale or schema-changed value passes
+    // TypeScript but can silently corrupt app state. In production, validate with
+    // Zod: `const result = UserSessionSchema.safeParse(JSON.parse(raw))`
+    return JSON.parse(raw) as UserSession;
+}
+```
+
+---
+
+## Useful Patterns in RN TypeScript
+
+### Typing Component Variants
+
+```typescript
+type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'ghost';
+type ButtonSize = 'sm' | 'md' | 'lg';
+
+interface ButtonProps {
+    title: string;
+    onPress: () => void;
+    variant?: ButtonVariant;
+    size?: ButtonSize;
+    disabled?: boolean;
+    loading?: boolean;
+    leftIcon?: React.ReactNode;
+}
+```
+
+### Discriminated Unions for API State
+
+```typescript
+type AsyncState<T> =
+    | { status: 'idle' }
+    | { status: 'loading' }
+    | { status: 'success'; data: T }
+    | { status: 'error'; error: string };
+
+function useAsyncState<T>() {
+    const [state, setState] = useState<AsyncState<T>>({ status: 'idle' });
+    // ...
+    return state;
+}
+```
+
+---
+
+## Resources
+
+| Resource | Type | Link |
+|---|---|---|
+| TypeScript Handbook | Official | [typescriptlang.org/docs/handbook/intro.html](https://www.typescriptlang.org/docs/handbook/intro.html) |
+| React Native TypeScript | Official | [reactnative.dev/docs/typescript](https://reactnative.dev/docs/typescript) |
+| Total TypeScript (free tutorials) | Community | [totaltypescript.com/tutorials](https://www.totaltypescript.com/tutorials) |
+
+---
+
+Next → **[Web vs React Native](./web-vs-rn)**
