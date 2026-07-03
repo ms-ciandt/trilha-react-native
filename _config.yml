@@ -3,7 +3,7 @@ description: Conteúdo educacional para aprender React Native — trilha para de
 baseurl: "/trilha-react-native"
 url: "https://alimuramatheus.github.io"
 
-theme: just-the-docs
+remote_theme: just-the-docs/just-the-docs@v0.10.0
 
 # Cores
 color_scheme: default
