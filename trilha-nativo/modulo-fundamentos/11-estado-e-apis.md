@@ -11,270 +11,183 @@ sidebar_position: 11
 
 ---
 
-## Objetivo do tópico
-
-Ao final, o dev deve conseguir:
-- Gerenciar estado local com `useState` e `useReducer`
-- Usar Context API para estado compartilhado simples
-- Implementar estado global com Zustand (recomendado) ou Redux Toolkit
-- Consumir APIs REST com TanStack Query
-- Persistir dados localmente com MMKV
-- Entender a divisão: server state vs client state
-
----
-
 ## Mapeamento: Android/iOS → React/RN
 
 | Nativo | React Native | Observação |
 |--------|-------------|------------|
-| `ViewModel` + `LiveData` | Zustand store | Store reativo, sem boilerplate |
-| `@StateObject` (SwiftUI) | `useState` / `useReducer` | Estado local do componente |
-| `SharedPreferences` / `UserDefaults` | MMKV / AsyncStorage | MMKV é síncrono e 30x mais rápido |
-| `Retrofit` / `URLSession` | TanStack Query + Axios/fetch | Cache, retry e loading states automáticos |
-| `Repository Pattern` | Custom hook + TanStack Query | Separação de responsabilidades mantida |
-| `Room` / `CoreData` | MMKV + estrutura manual ou WatermelonDB | Para dados relacionais complexos |
+| `@State` / `mutableStateOf` | `useState` | Estado local do componente |
+| `ViewModel` + `LiveData` / `@StateObject` | Store reativo (Zustand, Redux) | Store global, sem prop drilling |
+| `SharedPreferences` / `UserDefaults` | Storage chave-valor (MMKV) | MMKV é síncrono, criptografado |
+| `Retrofit` / `URLSession` + Repository | Camada de dados com cache (TanStack Query) | Cache, retry e estados automáticos |
+| `Room` / `CoreData` | Storage estruturado (WatermelonDB) | Para dados relacionais complexos |
 
 ---
 
-## Estado local: useState e useReducer
+## Estado local: componente é dono dos dados
+
+O equivalente direto de `@State` (SwiftUI) ou `mutableStateOf` (Compose) é `useState`. O estado vive dentro do componente e provoca re-render quando muda — o mesmo modelo mental.
 
 ```tsx
-// useState — para valores simples
-const [count, setCount] = useState(0);
+const [isLoading, setIsLoading] = useState(false);
+const [user, setUser] = useState<User | null>(null);
+```
 
-// useReducer — para lógica mais complexa (análogo ao ViewModel com events)
-type State = { count: number; status: 'idle' | 'loading' };
-type Action = { type: 'INCREMENT' } | { type: 'SET_LOADING' };
+Para lógica mais complexa — múltiplos campos que mudam juntos, transições de estado explícitas — use `useReducer`. É conceitualmente idêntico a um `ViewModel` que recebe eventos (`Action`) e produz um novo estado:
+
+```tsx
+type State = { status: 'idle' | 'loading' | 'success' | 'error'; data: User | null };
+type Action = { type: 'FETCH_START' } | { type: 'FETCH_SUCCESS'; payload: User } | { type: 'FETCH_ERROR' };
 
 function reducer(state: State, action: Action): State {
   switch (action.type) {
-    case 'INCREMENT': return { ...state, count: state.count + 1 };
-    case 'SET_LOADING': return { ...state, status: 'loading' };
+    case 'FETCH_START':   return { status: 'loading', data: null };
+    case 'FETCH_SUCCESS': return { status: 'success', data: action.payload };
+    case 'FETCH_ERROR':   return { status: 'error', data: null };
     default: return state;
   }
 }
 
-const [state, dispatch] = useReducer(reducer, { count: 0, status: 'idle' });
+const [state, dispatch] = useReducer(reducer, { status: 'idle', data: null });
 ```
+
+**Diferença importante:** no React, estado é imutável. Você nunca muta o objeto diretamente — sempre cria um novo. `setUser({ ...user, name: 'João' })` em vez de `user.name = 'João'`.
 
 ---
 
-## Estado global: Zustand (recomendado para apps de médio porte)
+## Client state vs Server state
 
-```bash
-npm install zustand
-```
+Esta é a divisão de conceito mais importante no ecossistema React — e que não existe explicitamente no nativo:
+
+| | Client state | Server state |
+|---|---|---|
+| **O que é** | Estado que vive na memória do app | Dados que vêm do servidor |
+| **Quem controla** | O próprio app | O servidor é a fonte da verdade |
+| **Exemplos** | tema, sessão do usuário, carrinho | lista de produtos, perfil, pedidos |
+| **Problema principal** | sincronizar entre componentes | cache, refetch, stale data, loading |
+| **Ferramenta típica** | Zustand, Redux, Context | TanStack Query, SWR |
+
+No nativo, o `ViewModel` normalmente cuida dos dois ao mesmo tempo. No React, separá-los explicitamente reduz muito a complexidade — cada camada lida apenas com o problema que sabe resolver.
+
+---
+
+## Estado global: store reativo
+
+Quando múltiplas telas precisam do mesmo dado (ex.: sessão de autenticação), você precisa de um store compartilhado — o equivalente a um `ViewModel` no escopo do app inteiro.
+
+O conceito é sempre o mesmo, independente da biblioteca:
+1. Um objeto JavaScript centralizado guarda o estado
+2. Funções do store atualizam esse estado
+3. Qualquer componente pode ler e reagir a mudanças sem prop drilling
 
 ```tsx
-// store/useAuthStore.ts
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
-import { storage } from '../lib/storage'; // MMKV adapter
-
-type AuthStore = {
-  token: string | null;
-  user: User | null;
-  setAuth: (token: string, user: User) => void;
-  logout: () => void;
+// Conceito: um store de autenticação
+const authStore = {
+  token: null,
+  user: null,
+  setAuth(token, user) { /* atualiza e notifica subscribers */ },
+  logout()           { /* limpa e notifica subscribers */ },
 };
 
-export const useAuthStore = create<AuthStore>()(
-  persist(
-    (set) => ({
-      token: null,
-      user: null,
-      setAuth: (token, user) => set({ token, user }),
-      logout: () => set({ token: null, user: null }),
-    }),
-    {
-      name: 'auth-storage',
-      storage: createJSONStorage(() => storage), // MMKV
-    }
-  )
-);
-
-// Uso no componente
+// Qualquer componente lê diretamente — sem passar props pela árvore
 const { user, logout } = useAuthStore();
 ```
 
-> **Por que Zustand?** 2KB, sem providers, API baseada em hooks, 30-50% mais eficiente que Redux para apps médios. Para times grandes com regras complexas, Redux Toolkit ainda se justifica.
+**Zustand** é a opção mais leve (2KB, sem providers obrigatórios) e adequada para a maioria dos apps. **Redux Toolkit** faz mais sentido em times grandes que precisam de rastreabilidade total de mudanças e ferramentas de debug avançadas.
 
 ---
 
-## Estado global: Redux Toolkit (para apps grandes)
+## Persistência local: storage chave-valor
 
-```bash
-npm install @reduxjs/toolkit react-redux
-```
+O equivalente de `SharedPreferences` (Android) ou `UserDefaults` (iOS) no React Native é um storage chave-valor em JavaScript.
 
-```tsx
-// store/productsSlice.ts
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-
-export const fetchProducts = createAsyncThunk(
-  'products/fetch',
-  async () => {
-    const response = await fetch('https://api.example.com/products');
-    return response.json();
-  }
-);
-
-const productsSlice = createSlice({
-  name: 'products',
-  initialState: { items: [], status: 'idle' },
-  reducers: {},
-  extraReducers: (builder) => {
-    builder
-      .addCase(fetchProducts.pending, (state) => { state.status = 'loading'; })
-      .addCase(fetchProducts.fulfilled, (state, action) => {
-        state.status = 'succeeded';
-        state.items = action.payload;
-      });
-  },
-});
-```
-
----
-
-## APIs REST: TanStack Query
-
-```bash
-npm install @tanstack/react-query
-```
+O conceito é o mesmo: persistir pequenas quantidades de dados entre sessões — token de autenticação, preferências, tema.
 
 ```tsx
-// App.tsx — configuração da raiz
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 5 * 60 * 1000, // 5 minutos
-      retry: 2,
-    },
-  },
-});
-
-export default function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <Navigation />
-    </QueryClientProvider>
-  );
-}
-```
-
-```tsx
-// hooks/useProducts.ts
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-
-export function useProducts() {
-  return useQuery({
-    queryKey: ['products'],
-    queryFn: () => fetch('/api/products').then(r => r.json()),
-  });
-}
-
-export function useCreateProduct() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (data: NewProduct) =>
-      fetch('/api/products', { method: 'POST', body: JSON.stringify(data) }),
-    onSuccess: () => {
-      // Invalida cache — próxima renderização refaz o fetch
-      queryClient.invalidateQueries({ queryKey: ['products'] });
-    },
-  });
-}
-
-// Uso na tela
-const { data, isLoading, error } = useProducts();
-const { mutate: createProduct } = useCreateProduct();
-```
-
-> **TanStack Query + React Navigation:** Use `useIsFocused()` para refazer fetch ao voltar para uma tela, replicando o comportamento do `onResume` do Android.
-
----
-
-## Persistência local: MMKV
-
-```bash
-npm install react-native-mmkv react-native-nitro-modules
-cd ios && pod install
-```
-
-```tsx
-// lib/storage.ts
-import { MMKV } from 'react-native-mmkv';
-
-export const storage = new MMKV();
-
-// API síncrona — sem async/await
+// Gravar
 storage.set('token', 'abc123');
+
+// Ler
 const token = storage.getString('token');
+
+// Remover
 storage.delete('token');
 ```
 
-### Adapter MMKV para Zustand persist
+**MMKV** é a opção recomendada para produção: API síncrona (sem `async/await`), criptografia AES embutida e ~30x mais rápido que `AsyncStorage`. O ponto-chave é que a API **síncrona** é uma vantagem real — você lê o token no momento em que precisa, sem callbacks ou promises.
+
+O store de estado global (Zustand, Redux) pode usar esse storage como backend de persistência, fazendo com que o estado sobreviva a restarts do app automaticamente.
+
+---
+
+## Busca de dados: cache e estados automáticos
+
+No nativo, o padrão Repository + `Retrofit`/`URLSession` resolve o fetch mas deixa para você gerenciar: loading state, error state, cache, retry, invalidação. No React Native, uma camada de dados como **TanStack Query** centraliza tudo isso.
+
+O conceito central é: **a query é reativa**. Você descreve o que quer buscar e a biblioteca cuida do ciclo de vida.
 
 ```tsx
-import { StateStorage } from 'zustand/middleware';
+// Descreva o que quer — a biblioteca cuida do resto
+const { data, isLoading, error } = useQuery({
+  queryKey: ['products'],          // chave de cache — igual ao cache key de Retrofit
+  queryFn: fetchProducts,          // função que faz o fetch
+  staleTime: 5 * 60 * 1000,       // por quanto tempo o cache é considerado fresco
+});
+```
 
-export const zustandStorage: StateStorage = {
-  setItem: (name, value) => storage.set(name, value),
-  getItem: (name) => storage.getString(name) ?? null,
-  removeItem: (name) => storage.delete(name),
-};
+Isso substitui o padrão manual de:
+```kotlin
+// Android — o que você faria manualmente
+viewModel.state.observe(this) { state ->
+    when (state) {
+        is Loading -> showSpinner()
+        is Success -> showData(state.data)
+        is Error   -> showError(state.message)
+    }
+}
+```
+
+**Integração com React Navigation:** use `useFocusEffect` para refazer fetch ao voltar para uma tela, replicando o comportamento do `onResume` do Android:
+
+```tsx
+useFocusEffect(
+  useCallback(() => { query.refetch(); }, [])
+);
 ```
 
 ---
 
-## Arquitetura recomendada: Zustand (client state) + TanStack Query (server state)
+## Arquitetura recomendada
+
+A separação client state / server state resulta em uma estrutura clara:
 
 ```
 src/
-├── stores/          # Zustand: auth, UI state, preferências
-│   ├── useAuthStore.ts
-│   └── useThemeStore.ts
-├── hooks/           # TanStack Query: dados do servidor
-│   ├── useProducts.ts
-│   └── useOrders.ts
-├── services/        # Funções de fetch (sem lógica de UI)
-│   └── api.ts
+├── stores/          # Client state — Zustand: auth, tema, preferências de UI
+├── hooks/           # Server state — TanStack Query: dados do servidor
+├── services/        # Funções de fetch puras (sem lógica React)
 └── lib/
-    └── storage.ts   # MMKV instance
+    └── storage.ts   # Instância do storage (MMKV)
 ```
 
-> Essa separação cobre ~95% dos casos de uso de um app mobile — equivalente ao pattern ViewModel + Repository nativo.
+Essa separação é o equivalente ao padrão **ViewModel + Repository** do nativo — cada camada tem uma responsabilidade única e testável.
 
 ---
 
 ## Exercício prático
 
-1. Crie uma store Zustand para autenticação com persistência em MMKV
-2. Implemente `useProducts` com TanStack Query consumindo uma API pública (ex: `https://fakestoreapi.com/products`)
-3. Adicione paginação com `useInfiniteQuery`
-4. Invalide o cache após criar um novo produto com `useMutation`
-5. Teste o comportamento offline desligando o Wi-Fi
+1. Identifique em um app que você já construiu nativamente quais dados são **client state** e quais são **server state** — qual seria a divisão no modelo React?
+2. Modele um store de autenticação: quais campos ele precisa ter? Quais ações ele expõe? Esboce o tipo TypeScript antes de escrever qualquer implementação
+3. Pense em como o cache de uma lista de produtos deve se comportar: quando deve ser considerado "stale"? O que deve disparar um refetch? Compare com como você faria isso com Retrofit + Room no Android
 
 ---
 
 ## Materiais de estudo
 
-### Vídeos
-
-#### Learn Redux Toolkit In 11 Minutes — React Native Tutorial
-[Assistir no YouTube](https://www.youtube.com/watch?v=o21Ln1Ib4Bo)
-
-#### React Redux Toolkit Tutorial For Beginners — CRUD
-[Assistir no YouTube](https://www.youtube.com/watch?v=QgK_-G-hWeA)
-
-### Artigos e Docs
-- [Como Gerenciar Estado no React Native — OneUptime (2026)](https://oneuptime.com/blog/post/2026-02-02-react-native-state-management/view)
-- [Zustand + TanStack Query: Guia RN 2026 — React Native Relay](https://reactnativerelay.com/article/modern-state-management-react-native-zustand-tanstack-query)
-- [Do Básico ao Avançado: Dominando Zustand no React Native — Medium](https://medium.com/@harshitmadhav/from-basics-to-pro-mastering-zustand-in-react-native-7f372464d984)
-- [Comparativo de Gerenciamento de Estado: Redux vs Context vs Zustand — Java Code Geeks](https://www.javacodegeeks.com/2025/09/react-state-management-showdown-redux-vs-context-api-vs-zustand.html)
-- [Como Persistir Estado com AsyncStorage e MMKV — OneUptime](https://oneuptime.com/blog/post/2026-01-15-react-native-asyncstorage-mmkv/view)
-- [TanStack Query para React Native — Documentação oficial](https://tanstack.com/query/v5/docs/framework/react/react-native)
-- [Substituindo AsyncStorage por MMKV — DEV.to](https://dev.to/ajmal_hasan/react-native-mmkv-5787)
-- [react-native-mmkv — GitHub](https://github.com/mrousavy/react-native-mmkv)
+| Recurso | Tipo | Link |
+|---------|------|------|
+| Como Gerenciar Estado no React Native | Artigo | [OneUptime](https://oneuptime.com/blog/post/2026-02-02-react-native-state-management/view) |
+| Zustand + TanStack Query: Guia RN 2026 | Artigo | [React Native Relay](https://reactnativerelay.com/article/modern-state-management-react-native-zustand-tanstack-query) |
+| Comparativo: Redux vs Context vs Zustand | Artigo | [Java Code Geeks](https://www.javacodegeeks.com/2025/09/react-state-management-showdown-redux-vs-context-api-vs-zustand.html) |
+| Como Persistir Estado com AsyncStorage e MMKV | Artigo | [OneUptime](https://oneuptime.com/blog/post/2026-01-15-react-native-asyncstorage-mmkv/view) |
+| TanStack Query para React Native | Docs Oficiais | [tanstack.com](https://tanstack.com/query/v5/docs/framework/react/react-native) |
+| react-native-mmkv | GitHub | [mrousavy/react-native-mmkv](https://github.com/mrousavy/react-native-mmkv) |
