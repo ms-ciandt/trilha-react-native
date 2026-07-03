@@ -177,3 +177,9 @@ Tópicos:
 - Mapeando View/ViewModel/UseCase/Repository para componentes, hooks e services em RN.
 
 </details>
+
+### Video Demonstration
+
+You can watch a demonstration of the architecture in action here:
+
+[Watch Video: test_1.mp4](https://alimurasales.github.io/trilha-react-native/.github/videos/test_1.mp4)
