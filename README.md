@@ -58,8 +58,18 @@ trilha-react-native/
 │   │   ├── CLAUDE.md
 │   │   ├── COURSE-fundamentos.md
 │   │   ├── 01-js-ts-overview.md
-│   │   └── ...
-│   ├── modulo-recursos-nativos/     ← a criar
+│   │   ├── 02-js-fundamentals.md
+│   │   ├── 03-typescript.md
+│   │   ├── 04-react-fundamentals.md
+│   │   ├── 05-components-and-props.md
+│   │   ├── 06-state-and-hooks.md
+│   │   ├── 07-rn-core-components.md
+│   │   ├── 08-layout-and-flexbox.md
+│   │   ├── 09-styling.md
+│   │   ├── 10-navegacao.md
+│   │   └── 11-estado-e-apis.md
+│   ├── modulo-recursos-nativos/     ← EM ANDAMENTO
+│   │   └── 06-recursos-nativos.md
 │   ├── modulo-performance/          ← a criar
 │   ├── modulo-testes/               ← a criar
 │   ├── modulo-cicd/                 ← a criar
@@ -70,8 +80,16 @@ trilha-react-native/
     │   ├── CLAUDE.md
     │   ├── COURSE-fundamentos.md
     │   ├── 01-adaptando-js-ts.md
-    │   └── ...
-    ├── modulo-recursos-nativos/     ← a criar
+    │   ├── 02-typescript.md
+    │   ├── 03-web-vs-rn.md
+    │   ├── 04-sem-dom-sem-css.md
+    │   ├── 05-componentes-nativos.md
+    │   ├── 06-estilos-flexbox.md
+    │   ├── 07-listas-navegacao.md
+    │   ├── 08-navegacao.md
+    │   └── 09-estado-e-apis.md
+    ├── modulo-recursos-nativos/     ← EM ANDAMENTO
+    │   └── 06-recursos-nativos.md
     ├── modulo-performance/          ← a criar
     ├── modulo-testes/               ← a criar
     ├── modulo-cicd/                 ← a criar
@@ -145,7 +163,7 @@ claude
 | Módulo | Trilha Nativo | Trilha Web |
 |--------|--------------|------------|
 | Fundamentos | ✅ Concluído | ✅ Concluído |
-| Recursos Nativos | 🔲 A criar | 🔲 A criar |
+| Recursos Nativos | 🔄 Em andamento | 🔄 Em andamento |
 | Performance | 🔲 A criar | 🔲 A criar |
 | Testes | 🔲 A criar | 🔲 A criar |
 | CI/CD | 🔲 A criar | 🔲 A criar |

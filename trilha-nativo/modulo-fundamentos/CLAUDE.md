@@ -19,6 +19,8 @@ CONCLUÍDO.
 7. `07-rn-core-components.md` — tabela HTML/Android/iOS/RN, View, Text, Image, TextInput, Pressable, FlatList, Modal
 8. `08-layout-and-flexbox.md` — flexDirection, justifyContent, alignItems, flex, margin/padding, position, Dimensions, StyleSheet
 9. `09-styling.md` — camelCase, StyleSheet.create, estilos dinâmicos, Platform.OS, tipografia, cores, dark mode
+10. `10-navegacao.md` — Stack/Tab/Drawer Navigators, mapeamento Android/iOS→React Navigation, deep linking, auth condicional
+11. `11-estado-e-apis.md` — useState/useReducer, Zustand, Redux Toolkit, TanStack Query, MMKV, server vs client state
 
 ## Arquivo consolidado
 

@@ -17,6 +17,8 @@ CONCLUÍDO.
 5. `05-componentes-nativos.md` — tabela web→RN (12 mapeamentos), View/Text/TextInput/Pressable/FlatList/Switch
 6. `06-estilos-flexbox.md` — camelCase, sem unidades, column-first default, cheat sheet, NativeWind
 7. `07-listas-navegacao.md` — FlatList, SectionList, grid numColumns, React Navigation, navegação Stack/Tab
+8. `08-navegacao.md` — Stack/Tab/Drawer Navigators, React Router→React Navigation, deep linking, auth condicional, Expo Router
+9. `09-estado-e-apis.md` — Context API, Zustand, MMKV, TanStack Query mobile-first, offline-first, focusManager
 
 ## Arquivo consolidado
 

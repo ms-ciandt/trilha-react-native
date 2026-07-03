@@ -1,4 +1,11 @@
-# Tópico 5 — Estado Global & APIs (Trilha 2: Devs Web/React)
+---
+id: estado-e-apis-web
+title: "Estado Global & APIs"
+sidebar_label: "Estado Global & APIs"
+sidebar_position: 9
+---
+
+# Estado Global & APIs
 
 > **Perfil:** Devs com background React web. Já conhecem Redux, Context API e React Query na web. O foco aqui é entender as adaptações necessárias para o contexto mobile: offline-first, persistência local, comportamento sem browser cache e particularidades da rede móvel.
 

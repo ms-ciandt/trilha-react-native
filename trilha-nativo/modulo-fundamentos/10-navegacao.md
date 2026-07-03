@@ -1,4 +1,11 @@
-# Tópico 4 — Navegação (Trilha 1: Devs Nativos)
+---
+id: navegacao-nativo
+title: "Navegação"
+sidebar_label: "Navegação"
+sidebar_position: 10
+---
+
+# Navegação
 
 > **Perfil:** Devs com background Android/iOS. Já entendem ciclo de vida de Activities/ViewControllers, back stack e NavigationController — o foco aqui é mapear esses conceitos para o ecossistema React Navigation.
 
