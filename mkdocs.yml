@@ -2,6 +2,7 @@ site_name: Trilha React Native
 site_url: https://alimuramatheus.github.io/trilha-react-native
 repo_url: https://github.com/AlimuraMatheus/trilha-react-native
 repo_name: AlimuraMatheus/trilha-react-native
+docs_dir: .
 
 theme:
   name: material
