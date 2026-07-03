@@ -1,11 +1,5 @@
 ---
-render_with_liquid: false
-id: state-and-hooks
 title: State & Hooks in Depth
-sidebar_label: State & Hooks
-nav_order: 6
-parent: Fundamentos
-grand_parent: Trilha Nativo
 ---
 
 # State & Hooks in Depth
@@ -19,7 +13,6 @@ Before anything else — hooks have two hard rules:
 1. **Only call hooks at the top level** — not inside loops, conditions, or nested functions
 2. **Only call hooks from React components** (or other hooks)
 
-{% raw %}
 ```tsx
 // WRONG
 function MyComponent({ show }: { show: boolean }) {
@@ -35,13 +28,11 @@ function MyComponent({ show }: { show: boolean }) {
     return <Text>{value}</Text>;
 }
 ```
-{% endraw %}
 
 ---
 
 ## `useState` — Reactive State
 
-{% raw %}
 ```tsx
 // Simple value
 const [count, setCount] = useState(0);
@@ -56,7 +47,6 @@ const increment = () => setCount(prev => prev + 1);
 // Use the functional form when the new value depends on the old one
 // — avoids stale closure bugs in async code
 ```
-{% endraw %}
 
 ---
 
@@ -64,7 +54,6 @@ const increment = () => setCount(prev => prev + 1);
 
 Covered in React Fundamentals. Key patterns:
 
-{% raw %}
 ```tsx
 // Data fetching on mount
 useEffect(() => {
@@ -82,7 +71,6 @@ useEffect(() => {
     navigation.setOptions({ title: `Count: ${count}` });
 }, [count]);
 ```
-{% endraw %}
 
 ---
 
@@ -90,7 +78,6 @@ useEffect(() => {
 
 When state transitions get complex — multiple related values, state that depends on the previous state, or many different actions — `useReducer` is cleaner than several `useState` calls.
 
-{% raw %}
 ```tsx
 import { useReducer } from 'react';
 
@@ -141,7 +128,6 @@ function LoginScreen() {
     return <Button title="Login" onPress={() => handleLogin('a@b.com', 'pw')} />;
 }
 ```
-{% endraw %}
 
 **Native parallels:**
 
@@ -162,7 +148,6 @@ function LoginScreen() {
 
 `useRef` is like a mutable container that survives renders without triggering one. Think of it as an instance variable on a Compose `remember` — it persists across recompositions but changing it doesn't cause one.
 
-{% raw %}
 ```tsx
 import { useRef, useEffect } from 'react';
 import { TextInput } from 'react-native';
@@ -190,7 +175,6 @@ function SearchBar() {
     return <TextInput ref={inputRef} onChangeText={handleChange} />;
 }
 ```
-{% endraw %}
 
 ---
 
@@ -198,7 +182,6 @@ function SearchBar() {
 
 `useMemo` caches a computed value. Only recompute when dependencies change. Like Compose's `remember(key) { ... }`:
 
-{% raw %}
 ```tsx
 import { useMemo } from 'react';
 
@@ -213,7 +196,6 @@ function ProductList({ products, filterText }: Props) {
     return <FlatList data={filteredProducts} renderItem={...} />;
 }
 ```
-{% endraw %}
 
 Don't over-optimize with `useMemo` — only use it for genuinely expensive operations.
 
@@ -223,7 +205,6 @@ Don't over-optimize with `useMemo` — only use it for genuinely expensive opera
 
 `useCallback` memoizes a function. Prevents child components from re-rendering unnecessarily when a callback hasn't actually changed:
 
-{% raw %}
 ```tsx
 import { useCallback } from 'react';
 
@@ -247,7 +228,6 @@ function ParentList() {
     );
 }
 ```
-{% endraw %}
 
 ---
 
@@ -255,7 +235,6 @@ function ParentList() {
 
 You can extract stateful logic into your own hooks. Naming convention: **must start with `use`**.
 
-{% raw %}
 ```tsx
 // useLocalStorage-like hook for React Native (using AsyncStorage)
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -291,7 +270,6 @@ function SettingsScreen() {
     return <Switch value={isDark} onValueChange={setIsDark} />;
 }
 ```
-{% endraw %}
 
 Custom hooks are the equivalent of a Kotlin extension function on a ViewModel, or a SwiftUI view modifier — reusable logic that any component can plug in.
 

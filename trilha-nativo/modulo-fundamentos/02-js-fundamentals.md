@@ -1,11 +1,5 @@
 ---
-render_with_liquid: false
-id: js-fundamentals
 title: JavaScript Fundamentals for Native Developers
-sidebar_label: JS Fundamentals
-nav_order: 2
-parent: Fundamentos
-grand_parent: Trilha Nativo
 ---
 
 # JavaScript Fundamentals for Native Developers
@@ -14,14 +8,12 @@ grand_parent: Trilha Nativo
 
 ## Variables: `const`, `let`, never `var`
 
-{% raw %}
 ```typescript
 const name = "Alice";       // Kotlin: val name = "Alice"  — immutable binding
 let count = 0;              // Kotlin: var count = 0        — mutable binding
 count = 1;                  // OK
 // name = "Bob";            // Error — const cannot be reassigned
 ```
-{% endraw %}
 
 :::caution Always use const by default
 Use `const` for everything. Switch to `let` only when you need to reassign. Never use `var` — it has function-scoped hoisting that causes subtle bugs.
@@ -33,7 +25,6 @@ Use `const` for everything. Switch to `let` only when you need to reassign. Neve
 
 JavaScript is dynamically typed. TypeScript adds a compile-time type layer:
 
-{% raw %}
 ```typescript
 // Plain JS — no type checking
 let x = 5;
@@ -46,25 +37,20 @@ let y = 5;       // TypeScript infers: number
 // TypeScript — explicit annotation
 let z: number = 5;
 ```
-{% endraw %}
 
 **Kotlin/Swift comparison:**
 
-{% raw %}
 ```kotlin
 // Kotlin
 var x: Int = 5
 // x = "hello" // compile error
 ```
-{% endraw %}
 
-{% raw %}
 ```swift
 // Swift
 var x: Int = 5
 // x = "hello" // compile error
 ```
-{% endraw %}
 
 TypeScript with `strict: true` is comparably safe.
 
@@ -72,7 +58,6 @@ TypeScript with `strict: true` is comparably safe.
 
 ## Functions: Three Forms
 
-{% raw %}
 ```typescript
 // 1. Function declaration (hoisted — available before its line)
 function add(a: number, b: number): number {
@@ -93,10 +78,8 @@ const greet = (name: string): string => {
     return message;
 };
 ```
-{% endraw %}
 
 **Kotlin comparison:**
-{% raw %}
 ```kotlin
 // Regular function
 fun add(a: Int, b: Int): Int = a + b
@@ -104,10 +87,8 @@ fun add(a: Int, b: Int): Int = a + b
 // Lambda
 val multiply: (Int, Int) -> Int = { a, b -> a * b }
 ```
-{% endraw %}
 
 **Swift comparison:**
-{% raw %}
 ```swift
 // Regular function
 func add(a: Int, b: Int) -> Int { a + b }
@@ -115,7 +96,6 @@ func add(a: Int, b: Int) -> Int { a + b }
 // Closure
 let multiply: (Int, Int) -> Int = { a, b in a * b }
 ```
-{% endraw %}
 
 ---
 
@@ -123,7 +103,6 @@ let multiply: (Int, Int) -> Int = { a, b in a * b }
 
 Swift has proper named parameters. Kotlin has data class destructuring. JavaScript/TypeScript has **destructuring**:
 
-{% raw %}
 ```typescript
 // Object destructuring
 const user = { name: "Alice", age: 30, city: "NYC" };
@@ -149,10 +128,8 @@ const [first, second, ...rest] = [1, 2, 3, 4, 5];
 console.log(first);  // 1
 console.log(rest);   // [3, 4, 5]
 ```
-{% endraw %}
 
 **Swift comparison:**
-{% raw %}
 ```swift
 // Named parameters
 func createUser(name: String, age: Int) -> String {
@@ -160,13 +137,11 @@ func createUser(name: String, age: Int) -> String {
 }
 createUser(name: "Bob", age: 25)
 ```
-{% endraw %}
 
 ---
 
 ## Spread Operator & Rest Parameters
 
-{% raw %}
 ```typescript
 // Spread: expand an array or object
 const arr1 = [1, 2, 3];
@@ -183,7 +158,6 @@ function sum(...numbers: number[]): number {
 }
 sum(1, 2, 3, 4); // 10
 ```
-{% endraw %}
 
 ---
 
@@ -191,7 +165,6 @@ sum(1, 2, 3, 4); // 10
 
 These are the workhorses of React rendering. You'll use them constantly.
 
-{% raw %}
 ```typescript
 const numbers = [1, 2, 3, 4, 5];
 
@@ -209,17 +182,14 @@ const result = numbers
     .filter(n => n > 2)
     .map(n => n * 10);  // [30, 40, 50]
 ```
-{% endraw %}
 
 **Kotlin comparison:**
-{% raw %}
 ```kotlin
 val numbers = listOf(1, 2, 3, 4, 5)
 val doubled = numbers.map { it * 2 }
 val evens = numbers.filter { it % 2 == 0 }
 val total = numbers.fold(0) { acc, n -> acc + n }
 ```
-{% endraw %}
 
 ---
 
@@ -227,7 +197,6 @@ val total = numbers.fold(0) { acc, n -> acc + n }
 
 Before `async/await` there were Promises. You'll see them constantly in library code and RN APIs, so you need to recognize them even if you prefer `async/await`.
 
-{% raw %}
 ```typescript
 // A Promise represents a value that will arrive in the future
 const promise: Promise<User> = fetchUser('123');
@@ -254,7 +223,6 @@ function delay(ms: number): Promise<void> {
 }
 await delay(1000); // wait 1 second
 ```
-{% endraw %}
 
 `async/await` is syntax sugar over Promises — the two are interchangeable. Most modern code uses `async/await` but you must recognise `.then()` chains in library source and documentation.
 
@@ -262,7 +230,6 @@ await delay(1000); // wait 1 second
 
 ## Async/Await — The JS Equivalent of Kotlin Coroutines
 
-{% raw %}
 ```typescript
 // A function that returns a Promise (like Kotlin's suspend fun)
 async function fetchUser(id: string): Promise<User> {
@@ -281,10 +248,8 @@ async function loadProfile() {
     }
 }
 ```
-{% endraw %}
 
 **Kotlin coroutines comparison:**
-{% raw %}
 ```kotlin
 // Kotlin
 suspend fun fetchUser(id: String): User {
@@ -301,7 +266,6 @@ suspend fun loadProfile() {
     }
 }
 ```
-{% endraw %}
 
 The mental model is identical — `async/await` in JS is directly analogous to `suspend fun` in Kotlin.
 
@@ -313,7 +277,6 @@ This is the biggest mental-model shift from native development:
 
 **JavaScript in React Native runs on a single thread.** There is no `Dispatchers.IO`, no `DispatchQueue.global()`, no background thread pool you can spin up from JS.
 
-{% raw %}
 ```typescript
 // This blocks the JS thread — animations stutter, touches drop
 function processLargeDataset(data: number[]) {
@@ -333,7 +296,6 @@ async function processInChunks(data: number[]) {
     return results;
 }
 ```
-{% endraw %}
 
 | Native | React Native JS |
 |--------|----------------|
@@ -352,7 +314,6 @@ async function processInChunks(data: number[]) {
 
 Unlike Android's class path system or Swift's module system, JavaScript uses **ES modules**:
 
-{% raw %}
 ```typescript
 // math.ts — named exports
 export const PI = 3.14159;
@@ -362,9 +323,7 @@ export function multiply(a: number, b: number) { return a * b; }
 // Default export (one per file)
 export default function subtract(a: number, b: number) { return a - b; }
 ```
-{% endraw %}
 
-{% raw %}
 ```typescript
 // app.ts — importing
 import subtract from './math';           // default import
@@ -372,7 +331,6 @@ import { add, PI } from './math';        // named imports
 import { multiply as mult } from './math'; // rename on import
 import * as MathUtils from './math';     // import everything as namespace
 ```
-{% endraw %}
 
 ---
 
@@ -380,7 +338,6 @@ import * as MathUtils from './math';     // import everything as namespace
 
 Closures are functions that "remember" the variables from the scope where they were created. This is fundamental to React hooks.
 
-{% raw %}
 ```typescript
 function makeCounter(start: number) {
     let count = start; // this variable is "closed over"
@@ -398,11 +355,9 @@ counter.increment(); // 12
 counter.decrement(); // 11
 counter.value();     // 11
 ```
-{% endraw %}
 
 In React Native, you'll see closures in event handlers constantly:
 
-{% raw %}
 ```tsx
 function MyButton() {
     const [count, setCount] = useState(0);
@@ -415,7 +370,6 @@ function MyButton() {
     return <Button onPress={handlePress} title={`Pressed ${count} times`} />;
 }
 ```
-{% endraw %}
 
 ---
 

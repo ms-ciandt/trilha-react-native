@@ -1,11 +1,5 @@
 ---
-render_with_liquid: false
-id: js-ts-for-native-devs
 title: "Module 1: JS/TS for Native Developers"
-sidebar_label: "Module 1 Overview"
-nav_order: 1
-parent: Fundamentos
-grand_parent: Trilha Nativo
 ---
 
 # Module 1: JS/TS for Native Developers
@@ -60,25 +54,20 @@ Here's a quick feel for the three languages side by side:
 
 **Defining a function:**
 
-{% raw %}
 ```kotlin
 // Kotlin
 fun greet(name: String): String {
     return "Hello, $name!"
 }
 ```
-{% endraw %}
 
-{% raw %}
 ```swift
 // Swift
 func greet(name: String) -> String {
     return "Hello, \(name)!"
 }
 ```
-{% endraw %}
 
-{% raw %}
 ```typescript
 // TypeScript
 function greet(name: string): string {
@@ -87,7 +76,6 @@ function greet(name: string): string {
 // or as an arrow function:
 const greet = (name: string): string => `Hello, ${name}!`;
 ```
-{% endraw %}
 
 ## Video Overview
 

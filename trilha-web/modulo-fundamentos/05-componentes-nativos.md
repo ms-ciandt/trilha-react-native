@@ -1,11 +1,5 @@
 ---
-render_with_liquid: false
-id: native-components
 title: Native Components for Web Developers
-sidebar_label: Native Components
-nav_order: 5
-parent: Fundamentos
-grand_parent: Trilha Web
 ---
 
 # Native Components for Web Developers
@@ -18,7 +12,7 @@ grand_parent: Trilha Web
 |-----|--------------|-------|
 | `<div>` | `<View>` | The container for everything |
 | `<span>`, `<p>`, `<h1>`–`<h6>` | `<Text>` | ALL text must be in `<Text>` |
-| `<img>` | `<Image>` | `source={%raw%}{{ uri }}{%endraw%}` for remote, `require()` for local |
+| `<img>` | `<Image>` | `source={{ uri }}` for remote, `require()` for local |
 | `<input type="text">` | `<TextInput>` | `onChangeText` gives you the string directly |
 | `<button>` | `<Pressable>` + `<Text>` | Or `<Button>` for a simple native button |
 | `<a>` | `<Pressable>` + `navigation.navigate()` | No `href` on arbitrary elements; links are imperative |
@@ -34,7 +28,6 @@ grand_parent: Trilha Web
 
 ## `<View>` — Think `<div>` but Flexbox-First
 
-{% raw %}
 ```tsx
 // Web div
 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -48,7 +41,6 @@ grand_parent: Trilha Web
     <View><Text>Item 2</Text></View>
 </View>
 ```
-{% endraw %}
 
 ---
 
@@ -56,7 +48,6 @@ grand_parent: Trilha Web
 
 The biggest change: you cannot render text outside of a `<Text>` component.
 
-{% raw %}
 ```tsx
 // ❌ Text outside Text — CRASH
 <View>
@@ -76,13 +67,11 @@ The biggest change: you cannot render text outside of a `<Text>` component.
     <Text style={{ fontStyle: 'italic', color: '#0064d2' }}>italic blue</Text>
 </Text>
 ```
-{% endraw %}
 
 ---
 
 ## `<TextInput>` — The Input Element
 
-{% raw %}
 ```tsx
 // Web
 <input
@@ -102,11 +91,9 @@ The biggest change: you cannot render text outside of a `<Text>` component.
     autoCorrect={false}
 />
 ```
-{% endraw %}
 
 ### Common `TextInput` Props
 
-{% raw %}
 ```tsx
 <TextInput
     // Content
@@ -137,7 +124,6 @@ The biggest change: you cannot render text outside of a `<Text>` component.
     style={styles.input}
 />
 ```
-{% endraw %}
 
 ---
 
@@ -145,7 +131,6 @@ The biggest change: you cannot render text outside of a `<Text>` component.
 
 On the web, almost any element can have an `onClick`. In RN, you wrap things in `<Pressable>`:
 
-{% raw %}
 ```tsx
 // Web — click on anything
 <div onClick={handleClick}>Clickable div</div>
@@ -172,7 +157,6 @@ On the web, almost any element can have an `onClick`. In RN, you wrap things in 
     <Text style={styles.buttonText}>Press Me</Text>
 </Pressable>
 ```
-{% endraw %}
 
 ---
 
@@ -180,7 +164,6 @@ On the web, almost any element can have an `onClick`. In RN, you wrap things in 
 
 For long lists, `FlatList` is essential — it only renders what's visible on screen:
 
-{% raw %}
 ```tsx
 // Web — render all items (fine for short lists)
 {items.map(item => <ItemCard key={item.id} item={item} />)}
@@ -205,13 +188,11 @@ For long lists, `FlatList` is essential — it only renders what's visible on sc
     onEndReachedThreshold={0.3}
 />
 ```
-{% endraw %}
 
 ---
 
 ## `<Switch>` — Toggle
 
-{% raw %}
 ```tsx
 import { Switch } from 'react-native';
 
@@ -224,7 +205,6 @@ const [isEnabled, setIsEnabled] = useState(false);
     thumbColor={isEnabled ? '#ffffff' : '#f4f3f4'}
 />
 ```
-{% endraw %}
 
 ---
 

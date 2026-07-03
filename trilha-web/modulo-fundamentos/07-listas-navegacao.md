@@ -1,11 +1,5 @@
 ---
-render_with_liquid: false
-id: lists-and-navigation
 title: Lists & Navigation in React Native
-sidebar_label: Lists & Navigation
-nav_order: 7
-parent: Fundamentos
-grand_parent: Trilha Web
 ---
 
 # Lists & Navigation in React Native
@@ -25,7 +19,6 @@ grand_parent: Trilha Web
 
 ### `FlatList` — The Workhorse
 
-{% raw %}
 ```tsx
 interface Product {
     id: string;
@@ -76,11 +69,9 @@ function ProductList({ products }: { products: Product[] }) {
     );
 }
 ```
-{% endraw %}
 
 ### Grid with `numColumns`
 
-{% raw %}
 ```tsx
 // Like CSS grid with equal columns
 <FlatList
@@ -97,11 +88,9 @@ function ProductList({ products }: { products: Product[] }) {
     )}
 />
 ```
-{% endraw %}
 
 ### `SectionList` — Grouped Content
 
-{% raw %}
 ```tsx
 interface Section {
     title: string;
@@ -126,7 +115,6 @@ const sections: Section[] = [
     stickySectionHeadersEnabled={true}  // sticky like iOS section headers
 />
 ```
-{% endraw %}
 
 ---
 
@@ -143,7 +131,6 @@ npm install react-native-screens react-native-safe-area-context
 
 ### Setting Up the Navigator
 
-{% raw %}
 ```tsx
 // App.tsx
 import { NavigationContainer } from '@react-navigation/native';
@@ -169,11 +156,9 @@ export default function App() {
     );
 }
 ```
-{% endraw %}
 
 ### Navigating Between Screens
 
-{% raw %}
 ```tsx
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -201,11 +186,9 @@ function HomeScreen() {
     );
 }
 ```
-{% endraw %}
 
 ### Reading Route Params
 
-{% raw %}
 ```tsx
 import { useRoute, RouteProp } from '@react-navigation/native';
 
@@ -218,11 +201,9 @@ function ProfileScreen() {
     return <Text>User: {userId}</Text>;
 }
 ```
-{% endraw %}
 
 ### Tab Navigation
 
-{% raw %}
 ```tsx
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
@@ -239,7 +220,6 @@ function MainTabs() {
     );
 }
 ```
-{% endraw %}
 
 ---
 

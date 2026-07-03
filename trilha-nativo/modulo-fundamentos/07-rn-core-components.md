@@ -1,11 +1,5 @@
 ---
-render_with_liquid: false
-id: rn-core-components
 title: "Module 3: React Native Core Components"
-sidebar_label: "RN Core Components"
-nav_order: 7
-parent: Fundamentos
-grand_parent: Trilha Nativo
 ---
 
 # Module 3: React Native Core Components
@@ -31,7 +25,6 @@ grand_parent: Trilha Nativo
 
 `View` is the fundamental building block. It renders as a `ViewGroup` on Android and `UIView` on iOS:
 
-{% raw %}
 ```tsx
 import { View, StyleSheet } from 'react-native';
 
@@ -61,7 +54,6 @@ const styles = StyleSheet.create({
     body: { padding: 16, paddingTop: 0 },
 });
 ```
-{% endraw %}
 
 ---
 
@@ -69,7 +61,6 @@ const styles = StyleSheet.create({
 
 Unlike web HTML where text can float freely, **in React Native all text must be inside `<Text>`**:
 
-{% raw %}
 ```tsx
 // ERROR: raw text outside Text
 <View>
@@ -81,10 +72,8 @@ Unlike web HTML where text can float freely, **in React Native all text must be 
     <Text>Hello World</Text>
 </View>
 ```
-{% endraw %}
 
 Text features:
-{% raw %}
 ```tsx
 <Text
     style={{ fontSize: 16, fontWeight: 'bold', color: '#333' }}
@@ -101,13 +90,11 @@ Text features:
     Normal text <Text style={{ fontWeight: 'bold' }}>bold part</Text> normal again
 </Text>
 ```
-{% endraw %}
 
 ---
 
 ## `<Image>` — Local and Remote Images
 
-{% raw %}
 ```tsx
 import { Image } from 'react-native';
 
@@ -124,16 +111,13 @@ import { Image } from 'react-native';
     style={{ width: 100, height: 40 }}
 />
 ```
-{% endraw %}
 
 :::tip Use Expo Image for production
 For better performance (caching, transitions, blur hash placeholders), use `expo-image`:
-{% raw %}
 ```tsx
 import { Image } from 'expo-image';
 <Image source="https://..." style={{ width: 200, height: 200 }} contentFit="cover" />
 ```
-{% endraw %}
 :::
 
 ---
@@ -142,7 +126,6 @@ import { Image } from 'expo-image';
 
 Like `EditText` (Android) or `UITextField`/`UITextView` (iOS):
 
-{% raw %}
 ```tsx
 import { useState } from 'react';
 import { TextInput, View } from 'react-native';
@@ -173,7 +156,6 @@ function LoginForm() {
     );
 }
 ```
-{% endraw %}
 
 ---
 
@@ -181,7 +163,6 @@ function LoginForm() {
 
 Prefer `Pressable` over `TouchableOpacity` for new code (it's the modern API):
 
-{% raw %}
 ```tsx
 import { Pressable } from 'react-native';
 
@@ -200,7 +181,6 @@ import { Pressable } from 'react-native';
     )}
 </Pressable>
 ```
-{% endraw %}
 
 ---
 
@@ -208,7 +188,6 @@ import { Pressable } from 'react-native';
 
 The equivalent of `RecyclerView` (Android) or `UITableView` (iOS) — only renders visible items:
 
-{% raw %}
 ```tsx
 import { FlatList } from 'react-native';
 
@@ -244,7 +223,6 @@ function PostFeed({ posts }: { posts: Post[] }) {
     );
 }
 ```
-{% endraw %}
 
 ---
 
@@ -263,7 +241,6 @@ function PostFeed({ posts }: { posts: Post[] }) {
 
 Essential for iPhone notches and Android nav bars:
 
-{% raw %}
 ```tsx
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -275,7 +252,6 @@ function Screen() {
     );
 }
 ```
-{% endraw %}
 
 :::tip Use react-native-safe-area-context
 The built-in `SafeAreaView` from React Native only works on iOS. Use the community `react-native-safe-area-context` package for consistent cross-platform behavior.
@@ -285,7 +261,6 @@ The built-in `SafeAreaView` from React Native only works on iOS. Use the communi
 
 ## `<Modal>` — Overlays
 
-{% raw %}
 ```tsx
 import { Modal } from 'react-native';
 
@@ -308,7 +283,6 @@ function ConfirmDialog({ visible, onConfirm, onCancel }: Props) {
     );
 }
 ```
-{% endraw %}
 
 ---
 
@@ -316,7 +290,6 @@ function ConfirmDialog({ visible, onConfirm, onCancel }: Props) {
 
 One of the most common first-day RN problems: the software keyboard slides up and covers a text input. `KeyboardAvoidingView` shifts the layout to keep inputs visible.
 
-{% raw %}
 ```tsx
 import { KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 
@@ -335,7 +308,6 @@ function LoginScreen() {
     );
 }
 ```
-{% endraw %}
 
 The `behavior` prop differs by platform — this is one of the clearest examples of RN's cross-platform reality:
 
@@ -354,7 +326,6 @@ If `KeyboardAvoidingView` still isn't enough, `react-native-keyboard-controller`
 
 ## `<ActivityIndicator>` — Loading Spinner
 
-{% raw %}
 ```tsx
 <ActivityIndicator
     size="large"          // "small" | "large" | number
@@ -362,7 +333,6 @@ If `KeyboardAvoidingView` still isn't enough, `react-native-keyboard-controller`
     animating={isLoading}  // show/hide without unmounting
 />
 ```
-{% endraw %}
 
 ---
 

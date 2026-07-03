@@ -39,7 +39,6 @@ You can watch a demonstration of the architecture in action here:
 
 ## Estrutura de projeto sugerida
 
-{% raw %}
 ```txt
 src/
 ├── app/
@@ -69,7 +68,6 @@ src/
     ├── modules/
     └── ui/
 ```
-{% endraw %}
 
 - `app/`: infraestrutura (navegação, stores globais, config).
 - `features/`: módulos de negócio (auth, feed, profile, etc.).
@@ -80,7 +78,6 @@ src/
 
 ## Estado global (exemplo com Zustand)
 
-{% raw %}
 ```tsx
 // src/app/store/authStore.ts
 import { create } from 'zustand';
@@ -99,11 +96,9 @@ export const useAuthStore = create<AuthState>((set) => ({
   logout: () => set({ isAuthenticated: false, token: undefined }),
 }));
 ```
-{% endraw %}
 
 Uso em uma tela:
 
-{% raw %}
 ```tsx
 // src/features/profile/screens/ProfileScreen.tsx
 import React from 'react';
@@ -123,7 +118,6 @@ export function ProfileScreen() {
 }
 }
 ```
-{% endraw %}
 
 ---
 
@@ -131,7 +125,6 @@ export function ProfileScreen() {
 
 A navegação (Stack/Tab/Drawer) deve ficar em `app/navigation`, fora das features específicas, para evitar acoplamento excessivo.
 
-{% raw %}
 ```tsx
 // src/app/navigation/RootNavigator.tsx
 import React from 'react';
@@ -152,7 +145,6 @@ export function RootNavigator() {
 }
 }
 ```
-{% endraw %}
 
 ---
 

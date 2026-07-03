@@ -1,11 +1,5 @@
 ---
-render_with_liquid: false
-id: web-vs-rn
 title: Web vs React Native — Key Differences
-sidebar_label: Web vs React Native
-nav_order: 3
-parent: Fundamentos
-grand_parent: Trilha Web
 ---
 
 # Web vs React Native — Key Differences
@@ -31,7 +25,6 @@ grand_parent: Trilha Web
 
 This is the most immediate change. Every HTML element has an RN equivalent:
 
-{% raw %}
 ```tsx
 // Web React
 function WebCard() {
@@ -47,9 +40,7 @@ function WebCard() {
     );
 }
 ```
-{% endraw %}
 
-{% raw %}
 ```tsx
 // React Native — same structure, native components
 import { View, Text, Image, Pressable, StyleSheet } from 'react-native';
@@ -69,7 +60,6 @@ function NativeCard() {
     );
 }
 ```
-{% endraw %}
 
 The tree structure is identical — only the primitives change.
 
@@ -77,7 +67,6 @@ The tree structure is identical — only the primitives change.
 
 ## Styling: CSS → StyleSheet
 
-{% raw %}
 ```css
 /* styles.css */
 .button {
@@ -90,15 +79,11 @@ The tree structure is identical — only the primitives change.
     cursor: pointer;
 }
 ```
-{% endraw %}
 
-{% raw %}
 ```tsx
 <button className="button">Click me</button>
 ```
-{% endraw %}
 
-{% raw %}
 ```tsx
 // React Native (StyleSheet)
 const styles = StyleSheet.create({
@@ -120,7 +105,6 @@ const styles = StyleSheet.create({
     <Text style={styles.buttonText}>Click me</Text>
 </Pressable>
 ```
-{% endraw %}
 
 Key difference: **Text styling properties live on `<Text>`, not on container `<View>`**. There is no CSS inheritance in RN — `color` on a parent `View` does not apply to child `Text` elements.
 
@@ -130,7 +114,6 @@ Key difference: **Text styling properties live on `<Text>`, not on container `<V
 
 This trips up every web developer:
 
-{% raw %}
 ```tsx
 // Web — color inherits through the tree
 <div style={{ color: 'red' }}>
@@ -147,7 +130,6 @@ This trips up every web developer:
     This is red <Text style={{ fontWeight: 'bold' }}>and this is bold red</Text>
 </Text>
 ```
-{% endraw %}
 
 ---
 
@@ -160,7 +142,6 @@ You cannot use raw CSS files, CSS Modules, or the web version of `styled-compone
 
 The official approach is still `StyleSheet.create`. All three options exist in production apps. In this course:
 
-{% raw %}
 ```tsx
 // ❌ Does not work in React Native
 <View className="flex-1 bg-white p-4" />        // No Tailwind
@@ -174,13 +155,11 @@ The official approach is still `StyleSheet.create`. All three options exist in p
 // This DOES work if you install NativeWind:
 <View className="flex-1 bg-white p-4" />  // with NativeWind installed
 ```
-{% endraw %}
 
 ---
 
 ## Navigation: URLs → Stacks
 
-{% raw %}
 ```tsx
 // Web (React Router / Next.js)
 import { Link, useNavigate } from 'react-router-dom';
@@ -196,9 +175,7 @@ function NavExample() {
     );
 }
 ```
-{% endraw %}
 
-{% raw %}
 ```tsx
 // React Native with React Navigation (stack-based)
 import { useNavigation } from '@react-navigation/native';
@@ -214,7 +191,6 @@ function NavExample() {
     );
 }
 ```
-{% endraw %}
 
 React Navigation uses a **stack model** — screens are pushed and popped like a call stack, matching native iOS/Android navigation behavior. If you prefer file-based routing (closer to Next.js), **Expo Router** offers that mental model but is tied to the Expo toolchain — research it separately.
 
@@ -222,7 +198,6 @@ React Navigation uses a **stack model** — screens are pushed and popped like a
 
 ## Events: onClick → onPress
 
-{% raw %}
 ```tsx
 // Web
 <button onClick={handleClick}>Click</button>
@@ -234,13 +209,11 @@ React Navigation uses a **stack model** — screens are pushed and popped like a
 <TextInput onChangeText={setText} /> // onChange → onChangeText (gives you the string directly)
 // No form elements — just group inputs manually
 ```
-{% endraw %}
 
 ---
 
 ## Lists: map() → FlatList
 
-{% raw %}
 ```tsx
 // Web — rendering a list with .map()
 {users.map(user => (
@@ -249,9 +222,7 @@ React Navigation uses a **stack model** — screens are pushed and popped like a
     </div>
 ))}
 ```
-{% endraw %}
 
-{% raw %}
 ```tsx
 // React Native — for short lists, .map() inside ScrollView is fine
 <ScrollView>
@@ -273,7 +244,6 @@ React Navigation uses a **stack model** — screens are pushed and popped like a
     )}
 />
 ```
-{% endraw %}
 
 ---
 

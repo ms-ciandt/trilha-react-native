@@ -44,12 +44,20 @@ trilha-web/                  ← para devs React web
 
 ## Convenções obrigatórias
 
-- Arquivos individuais: `NN-slug-do-tema.md` com frontmatter (`id`, `title`, `sidebar_label`, `sidebar_position`)
-- Cada pasta de módulo tem um `COURSE-[nome-modulo].md` consolidando tudo sem frontmatter
-- Cada pasta tem seu próprio `CLAUDE.md` com contexto local
+- Arquivos individuais: `NN-slug-do-tema.md` com frontmatter mínimo (`title` apenas)
+- Cada pasta de módulo tem um `COURSE-[nome-modulo].md` consolidando tudo — não publicado no site
+- Cada pasta tem seu próprio `CLAUDE.md` com contexto local — não publicado no site
 - `trilha-nativo`: analogias com Kotlin/Swift; `trilha-web`: analogias com HTML/CSS/React web
 - Comando `/novo-modulo` disponível em `.claude/commands/novo-modulo.md`
-- Todo bloco de código fenced (``` ```) deve ser envolvido por `{% raw %}` e `{% endraw %}` para não quebrar o pipeline de template
+- **NÃO usar** `{% raw %}`/`{% endraw %}` — o site usa MkDocs (não Jekyll), blocos de código são renderizados diretamente
+
+## Site (MkDocs)
+
+- Gerador: **MkDocs** com tema **Material**
+- Configuração: `mkdocs.yml` na raiz
+- Deploy: GitHub Actions (`.github/workflows/deploy.yml`) — push para `main` publica automaticamente
+- Navegação declarada em `mkdocs.yml` — ao criar novo módulo, adicionar as páginas na seção `nav:` correspondente
+- Ao adicionar novo módulo/arquivo ao nav, adicionar também em `mkdocs.yml` sob a trilha e módulo corretos
 
 ## Vídeos
 

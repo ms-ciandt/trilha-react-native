@@ -1,10 +1,5 @@
 ---
-render_with_liquid: false
-id: history-and-architecture
 title: History & Architecture of React Native
-sidebar_label: History & Architecture
-nav_order: 2
-parent: Introdução
 ---
 
 # History & Architecture of React Native
@@ -37,7 +32,6 @@ After years of incremental work, the **New Architecture** shipped as the default
 
 ### Old Architecture (the Bridge)
 
-{% raw %}
 ```
 ┌─────────────────────────────────────────────────┐
 │  JavaScript Thread                               │
@@ -54,13 +48,11 @@ After years of incremental work, the **New Architecture** shipped as the default
 │  (UIKit on iOS, Android Views)                   │
 └─────────────────────────────────────────────────┘
 ```
-{% endraw %}
 
 Every interaction — drawing a pixel, responding to a gesture, measuring text — had to cross this bridge as a serialized JSON message. It was like sending a letter every time you wanted to talk to your neighbour.
 
 ### New Architecture (JSI + Fabric + TurboModules)
 
-{% raw %}
 ```
 ┌─────────────────────────────────────────────────┐
 │  JavaScript Engine (Hermes)                      │
@@ -78,7 +70,6 @@ Every interaction — drawing a pixel, responding to a gesture, measuring text �
 │  UIKit / SwiftUI (iOS) | Android Views / Compose │
 └─────────────────────────────────────────────────┘
 ```
-{% endraw %}
 
 #### The Three Pillars
 
@@ -129,7 +120,6 @@ The New Architecture was co-authored by Meta and Microsoft. Shopify rewrote thei
 Let's see a simple "Hello World" screen across all four platforms:
 
 **Web (React)**
-{% raw %}
 ```jsx
 // React web
 function App() {
@@ -140,10 +130,8 @@ function App() {
   );
 }
 ```
-{% endraw %}
 
 **Android (Kotlin)**
-{% raw %}
 ```kotlin
 // activity_main.xml + MainActivity.kt
 class MainActivity : AppCompatActivity() {
@@ -154,10 +142,8 @@ class MainActivity : AppCompatActivity() {
     }
 }
 ```
-{% endraw %}
 
 **iOS (Swift)**
-{% raw %}
 ```swift
 // SwiftUI
 struct ContentView: View {
@@ -172,10 +158,8 @@ struct ContentView: View {
     }
 }
 ```
-{% endraw %}
 
 **React Native (runs on both iOS and Android)**
-{% raw %}
 ```jsx
 import { View, Text, StyleSheet } from 'react-native';
 
@@ -200,7 +184,6 @@ const styles = StyleSheet.create({
   },
 });
 ```
-{% endraw %}
 
 Notice:
 - RN uses `View` instead of `div`, `Text` instead of `h1`
