@@ -14,6 +14,17 @@ Ao final, o dev deve conseguir:
 
 ---
 
+
+### Video Demonstration
+
+You can watch a demonstration of the architecture in action here:
+
+<video width="100%" max-width="800px" controls style="border-radius: 8px; margin: 16px 0;">
+  <source src="https://alimuramatheus.github.io/trilha-react-native/assets/videos/test_1.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+---
 ## Mapeamento: MVVM/Clean → React Native
 
 | Conceito Nativo       | React Native                              | Observação |
@@ -177,12 +188,3 @@ Tópicos:
 - Mapeando View/ViewModel/UseCase/Repository para componentes, hooks e services em RN.
 
 </details>
-
-### Video Demonstration
-
-You can watch a demonstration of the architecture in action here:
-
-<video width="100%" max-width="800px" controls style="border-radius: 8px; margin: 16px 0;">
-  <source src="https://alimuramatheus.github.io/trilha-react-native/assets/videos/test_1.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
