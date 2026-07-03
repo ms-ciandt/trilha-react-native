@@ -2,7 +2,9 @@
 id: lists-and-navigation
 title: Lists & Navigation in React Native
 sidebar_label: Lists & Navigation
-sidebar_position: 7
+nav_order: 7
+parent: Fundamentos
+grand_parent: Trilha Web
 ---
 
 # Lists & Navigation in React Native

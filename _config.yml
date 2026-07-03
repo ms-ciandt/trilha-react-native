@@ -1,0 +1,31 @@
+title: Trilha React Native
+description: Conteúdo educacional para aprender React Native — trilha para devs nativos e devs web.
+baseurl: "/trilha-react-native"
+url: "https://alimuramatheus.github.io"
+
+theme: just-the-docs
+
+# Cores
+color_scheme: default
+
+# Habilita busca
+search_enabled: true
+
+# Auxiliar para ordenar nav por ordem dos arquivos
+nav_sort: order
+
+# Exclui arquivos internos da navegação
+exclude:
+  - CLAUDE.md
+  - "*/CLAUDE.md"
+  - "*/COURSE-*.md"
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+
+# Desabilita Liquid nos arquivos de conteúdo (os arquivos usam {% raw %})
+defaults:
+  - scope:
+      path: ""
+    values:
+      render_with_liquid: false

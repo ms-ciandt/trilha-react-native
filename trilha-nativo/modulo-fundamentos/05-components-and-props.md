@@ -2,7 +2,9 @@
 id: components-and-props
 title: Components & Props in Depth
 sidebar_label: Components & Props
-sidebar_position: 5
+nav_order: 5
+parent: Fundamentos
+grand_parent: Trilha Nativo
 ---
 
 # Components & Props in Depth

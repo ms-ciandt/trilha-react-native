@@ -2,7 +2,9 @@
 id: js-fundamentals
 title: JavaScript Fundamentals for Native Developers
 sidebar_label: JS Fundamentals
-sidebar_position: 2
+nav_order: 2
+parent: Fundamentos
+grand_parent: Trilha Nativo
 ---
 
 # JavaScript Fundamentals for Native Developers

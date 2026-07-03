@@ -2,7 +2,9 @@
 id: react-fundamentals
 title: "Module 2: React Fundamentals for Native Developers"
 sidebar_label: "Module 2 Overview"
-sidebar_position: 4
+nav_order: 4
+parent: Fundamentos
+grand_parent: Trilha Nativo
 ---
 
 # Module 2: React Fundamentals for Native Developers

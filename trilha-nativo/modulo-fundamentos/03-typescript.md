@@ -2,7 +2,9 @@
 id: typescript-for-native-devs
 title: TypeScript for Native Developers
 sidebar_label: TypeScript for Native Devs
-sidebar_position: 3
+nav_order: 3
+parent: Fundamentos
+grand_parent: Trilha Nativo
 ---
 
 # TypeScript for Native Developers

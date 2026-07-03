@@ -2,7 +2,9 @@
 id: typescript-for-web-devs
 title: TypeScript for Web Developers in React Native
 sidebar_label: TypeScript for Web Devs
-sidebar_position: 2
+nav_order: 2
+parent: Fundamentos
+grand_parent: Trilha Web
 ---
 
 # TypeScript for Web Developers

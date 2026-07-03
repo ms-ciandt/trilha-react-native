@@ -2,7 +2,9 @@
 id: styling
 title: Styling in React Native
 sidebar_label: Styling
-sidebar_position: 9
+nav_order: 9
+parent: Fundamentos
+grand_parent: Trilha Nativo
 ---
 
 # Styling in React Native

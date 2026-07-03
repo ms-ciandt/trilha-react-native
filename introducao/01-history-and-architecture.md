@@ -2,7 +2,8 @@
 id: history-and-architecture
 title: History & Architecture of React Native
 sidebar_label: History & Architecture
-sidebar_position: 2
+nav_order: 2
+parent: Introdução
 ---
 
 # History & Architecture of React Native
@@ -205,6 +206,15 @@ Notice:
 - Styles are JavaScript objects, not CSS files
 - `flex: 1` means "fill all available space" — same flexbox model as web CSS
 - The same file produces a native `UILabel` on iOS and a native `TextView` on Android
+
+---
+
+## Video Overview
+
+<video width="100%" controls style="border-radius: 8px; margin: 16px 0;">
+  <source src="https://alimuramatheus.github.io/trilha-react-native/assets/videos/intro_01_history_and_architecture.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 ---
 

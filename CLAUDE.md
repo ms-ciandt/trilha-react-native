@@ -51,6 +51,21 @@ trilha-web/                  ← para devs React web
 - Comando `/novo-modulo` disponível em `.claude/commands/novo-modulo.md`
 - Todo bloco de código fenced (``` ```) deve ser envolvido por `{% raw %}` e `{% endraw %}` para não quebrar o pipeline de template
 
+## Vídeos
+
+Se existir um arquivo `.mp4` com o mesmo slug do tópico na mesma pasta, adicionar uma seção **"## Video Overview"** no arquivo `.md` correspondente, antes da seção de Resources (ou antes do "Next →" se não houver Resources). Usar sempre este bloco:
+
+```html
+## Video Overview
+
+<video width="100%" controls style="border-radius: 8px; margin: 16px 0;">
+  <source src="https://alimuramatheus.github.io/trilha-react-native/[caminho-relativo-do-arquivo.mp4]" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+```
+
+Todos os vídeos ficam em `assets/videos/`. O `[caminho-relativo-do-arquivo.mp4]` é sempre `assets/videos/nome-do-arquivo.mp4` (ex: `assets/videos/01-history-and-architecture.mp4`).
+
 ## Tecnologia de referência
 
 - React Native 0.76+ (New Architecture por padrão)

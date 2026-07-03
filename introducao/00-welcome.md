@@ -2,7 +2,8 @@
 id: welcome
 title: Welcome to React Native Trail
 sidebar_label: Welcome
-sidebar_position: 1
+nav_order: 1
+parent: Introdução
 ---
 
 # Welcome to React Native Trail 🚀
@@ -59,6 +60,15 @@ Each module contains:
 :::tip Run code in your browser
 Every code example in this course can be run immediately in **[Expo Snack](https://snack.expo.dev)** — no setup required. Just paste the code and hit Run.
 :::
+
+---
+
+## Video Overview
+
+<video width="100%" controls style="border-radius: 8px; margin: 16px 0;">
+  <source src="https://alimuramatheus.github.io/trilha-react-native/assets/videos/intro_00_welcome.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 ---
 

@@ -2,7 +2,9 @@
 id: js-ts-for-native-devs
 title: "Module 1: JS/TS for Native Developers"
 sidebar_label: "Module 1 Overview"
-sidebar_position: 1
+nav_order: 1
+parent: Fundamentos
+grand_parent: Trilha Nativo
 ---
 
 # Module 1: JS/TS for Native Developers
@@ -85,5 +87,14 @@ function greet(name: string): string {
 const greet = (name: string): string => `Hello, ${name}!`;
 ```
 {% endraw %}
+
+## Video Overview
+
+<video width="100%" controls style="border-radius: 8px; margin: 16px 0;">
+  <source src="https://alimuramatheus.github.io/trilha-react-native/assets/videos/trilha_nativo_fundamentos-01_js_ts_overview.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+---
 
 **Next:** [JS Fundamentals →](./js-fundamentals)

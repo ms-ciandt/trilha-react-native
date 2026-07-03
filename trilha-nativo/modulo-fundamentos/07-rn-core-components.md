@@ -2,7 +2,9 @@
 id: rn-core-components
 title: "Module 3: React Native Core Components"
 sidebar_label: "RN Core Components"
-sidebar_position: 7
+nav_order: 7
+parent: Fundamentos
+grand_parent: Trilha Nativo
 ---
 
 # Module 3: React Native Core Components

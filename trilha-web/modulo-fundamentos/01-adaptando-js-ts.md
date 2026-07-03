@@ -2,7 +2,9 @@
 id: adapting-js-for-mobile
 title: "Module 1: Adapting JS/TS for Mobile"
 sidebar_label: "Adapting JS for Mobile"
-sidebar_position: 1
+nav_order: 1
+parent: Fundamentos
+grand_parent: Trilha Web
 ---
 
 # Module 1: Adapting JavaScript/TypeScript for Mobile

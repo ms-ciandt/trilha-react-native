@@ -2,7 +2,9 @@
 id: web-vs-rn
 title: Web vs React Native — Key Differences
 sidebar_label: Web vs React Native
-sidebar_position: 3
+nav_order: 3
+parent: Fundamentos
+grand_parent: Trilha Web
 ---
 
 # Web vs React Native — Key Differences

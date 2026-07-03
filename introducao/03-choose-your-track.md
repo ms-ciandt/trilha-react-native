@@ -2,7 +2,8 @@
 id: choose-your-track
 title: Choose Your Track
 sidebar_label: Choose Your Track
-sidebar_position: 4
+nav_order: 4
+parent: Introdução
 ---
 
 # Choose Your Track
@@ -46,3 +47,12 @@ You already understand _why_ native rendering matters, what thread safety means,
 React Native components work exactly like React components. Your hook knowledge, component patterns, and JS ecosystem experience transfer directly.
 
 → **[Start Web Dev Track: Adapting JS for Mobile](../web-track/adapting-js-for-mobile)**
+
+---
+
+## Video Overview
+
+<video width="100%" controls style="border-radius: 8px; margin: 16px 0;">
+  <source src="https://alimuramatheus.github.io/trilha-react-native/assets/videos/intro_03_choose_your_track.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>

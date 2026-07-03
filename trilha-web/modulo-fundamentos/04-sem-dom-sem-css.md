@@ -2,7 +2,9 @@
 id: no-dom-no-css
 title: No DOM, No CSS — What That Actually Means
 sidebar_label: No DOM, No CSS
-sidebar_position: 4
+nav_order: 4
+parent: Fundamentos
+grand_parent: Trilha Web
 ---
 
 # No DOM, No CSS — What That Actually Means

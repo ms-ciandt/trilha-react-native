@@ -2,7 +2,9 @@
 id: layout-and-flexbox
 title: Layout & Flexbox in React Native
 sidebar_label: Layout & Flexbox
-sidebar_position: 8
+nav_order: 8
+parent: Fundamentos
+grand_parent: Trilha Nativo
 ---
 
 # Layout & Flexbox in React Native

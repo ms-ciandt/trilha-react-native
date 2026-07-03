@@ -2,7 +2,9 @@
 id: styling-and-flexbox
 title: Styling & Flexbox for Web Developers
 sidebar_label: Styling & Flexbox
-sidebar_position: 6
+nav_order: 6
+parent: Fundamentos
+grand_parent: Trilha Web
 ---
 
 # Styling & Flexbox for Web Developers

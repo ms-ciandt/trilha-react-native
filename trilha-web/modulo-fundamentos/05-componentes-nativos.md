@@ -2,7 +2,9 @@
 id: native-components
 title: Native Components for Web Developers
 sidebar_label: Native Components
-sidebar_position: 5
+nav_order: 5
+parent: Fundamentos
+grand_parent: Trilha Web
 ---
 
 # Native Components for Web Developers

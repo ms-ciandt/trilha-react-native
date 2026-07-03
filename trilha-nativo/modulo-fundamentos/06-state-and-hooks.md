@@ -2,7 +2,9 @@
 id: state-and-hooks
 title: State & Hooks in Depth
 sidebar_label: State & Hooks
-sidebar_position: 6
+nav_order: 6
+parent: Fundamentos
+grand_parent: Trilha Nativo
 ---
 
 # State & Hooks in Depth
