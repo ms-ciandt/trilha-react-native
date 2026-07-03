@@ -1,0 +1,73 @@
+site_name: Trilha React Native
+site_url: https://alimuramatheus.github.io/trilha-react-native
+repo_url: https://github.com/AlimuraMatheus/trilha-react-native
+repo_name: AlimuraMatheus/trilha-react-native
+
+theme:
+  name: material
+  language: pt
+  palette:
+    - scheme: default
+      primary: deep purple
+      accent: deep purple
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: deep purple
+      accent: deep purple
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.expand
+    - navigation.footer
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+  - attr_list
+
+plugins:
+  - search
+
+nav:
+  - Início: README.md
+  - Introdução:
+    - Bem-vindo: introducao/00-welcome.md
+    - História & Arquitetura: introducao/01-history-and-architecture.md
+    - New Architecture: introducao/02-new-architecture.md
+    - Escolha sua Trilha: introducao/03-choose-your-track.md
+  - Trilha Nativo:
+    - Fundamentos:
+      - Visão Geral JS/TS: trilha-nativo/modulo-fundamentos/01-js-ts-overview.md
+      - JS Fundamentals: trilha-nativo/modulo-fundamentos/02-js-fundamentals.md
+      - TypeScript: trilha-nativo/modulo-fundamentos/03-typescript.md
+      - React Fundamentals: trilha-nativo/modulo-fundamentos/04-react-fundamentals.md
+      - Components & Props: trilha-nativo/modulo-fundamentos/05-components-and-props.md
+      - State & Hooks: trilha-nativo/modulo-fundamentos/06-state-and-hooks.md
+      - RN Core Components: trilha-nativo/modulo-fundamentos/07-rn-core-components.md
+      - Layout & Flexbox: trilha-nativo/modulo-fundamentos/08-layout-and-flexbox.md
+      - Styling: trilha-nativo/modulo-fundamentos/09-styling.md
+  - Trilha Web:
+    - Fundamentos:
+      - Adaptando JS para Mobile: trilha-web/modulo-fundamentos/01-adaptando-js-ts.md
+      - TypeScript: trilha-web/modulo-fundamentos/02-typescript.md
+      - Web vs React Native: trilha-web/modulo-fundamentos/03-web-vs-rn.md
+      - Sem DOM, Sem CSS: trilha-web/modulo-fundamentos/04-sem-dom-sem-css.md
+      - Componentes Nativos: trilha-web/modulo-fundamentos/05-componentes-nativos.md
+      - Estilos & Flexbox: trilha-web/modulo-fundamentos/06-estilos-flexbox.md
+      - Listas & Navegação: trilha-web/modulo-fundamentos/07-listas-navegacao.md

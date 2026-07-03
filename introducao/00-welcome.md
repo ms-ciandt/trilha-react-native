@@ -1,10 +1,5 @@
 ---
-render_with_liquid: false
-id: welcome
 title: Welcome to React Native Trail
-sidebar_label: Welcome
-nav_order: 1
-parent: Introdução
 ---
 
 # Welcome to React Native Trail 🚀

@@ -1,11 +1,5 @@
 ---
-render_with_liquid: false
-id: typescript-for-native-devs
 title: TypeScript for Native Developers
-sidebar_label: TypeScript for Native Devs
-nav_order: 3
-parent: Fundamentos
-grand_parent: Trilha Nativo
 ---
 
 # TypeScript for Native Developers
@@ -16,7 +10,6 @@ grand_parent: Trilha Nativo
 
 Always enable strict mode. It makes TypeScript behave closer to Kotlin/Swift:
 
-{% raw %}
 ```json
 // tsconfig.json
 {
@@ -27,7 +20,6 @@ Always enable strict mode. It makes TypeScript behave closer to Kotlin/Swift:
   }
 }
 ```
-{% endraw %}
 
 Expo and React Native projects generate this for you by default.
 
@@ -35,7 +27,6 @@ Expo and React Native projects generate this for you by default.
 
 ## Primitive Types
 
-{% raw %}
 ```typescript
 const name: string = "Alice";
 const age: number = 30;          // no Int/Float/Double split — all numbers are `number`
@@ -45,7 +36,6 @@ const notSet: undefined = undefined;
 const id: bigint = 9007199254740991n;
 const sym: symbol = Symbol("id");
 ```
-{% endraw %}
 
 **Kotlin comparison:**
 
@@ -65,7 +55,6 @@ const sym: symbol = Symbol("id");
 
 TypeScript has two ways to define shapes: `interface` and `type`. Use `interface` for objects that might be extended; `type` for unions and utility types.
 
-{% raw %}
 ```typescript
 // Interface — like a Kotlin interface or data class shape
 interface User {
@@ -84,10 +73,8 @@ type AdminUser = User & {
     permissions: string[];
 };
 ```
-{% endraw %}
 
 **Kotlin data class comparison:**
-{% raw %}
 ```kotlin
 data class User(
     val id: String,
@@ -96,10 +83,8 @@ data class User(
     val age: Int? = null    // optional
 )
 ```
-{% endraw %}
 
 **Swift struct comparison:**
-{% raw %}
 ```swift
 struct User {
     let id: String
@@ -108,7 +93,6 @@ struct User {
     var age: Int?
 }
 ```
-{% endraw %}
 
 ---
 
@@ -116,7 +100,6 @@ struct User {
 
 TypeScript's **discriminated unions** are the equivalent of Kotlin sealed classes or Swift enums with associated values:
 
-{% raw %}
 ```typescript
 // TypeScript discriminated union
 type NetworkState =
@@ -135,10 +118,8 @@ function renderState(state: NetworkState) {
     }
 }
 ```
-{% endraw %}
 
 **Kotlin sealed class comparison:**
-{% raw %}
 ```kotlin
 sealed class NetworkState {
     object Loading : NetworkState()
@@ -152,7 +133,6 @@ fun renderState(state: NetworkState) = when (state) {
     is NetworkState.Error -> "Error: ${state.message}"
 }
 ```
-{% endraw %}
 
 This pattern is used constantly in React Native for loading states, API responses, and navigation parameters.
 
@@ -160,7 +140,6 @@ This pattern is used constantly in React Native for loading states, API response
 
 ## Generics
 
-{% raw %}
 ```typescript
 // Generic function — like Kotlin's <T> generics
 function first<T>(arr: T[]): T | undefined {
@@ -180,10 +159,8 @@ interface ApiResponse<T> {
 type UserResponse = ApiResponse<User>;
 type UserListResponse = ApiResponse<User[]>;
 ```
-{% endraw %}
 
 **Kotlin comparison:**
-{% raw %}
 ```kotlin
 fun <T> first(list: List<T>): T? = list.firstOrNull()
 
@@ -193,7 +170,6 @@ data class ApiResponse<T>(
     val message: String
 )
 ```
-{% endraw %}
 
 ---
 
@@ -201,7 +177,6 @@ data class ApiResponse<T>(
 
 TypeScript with `strictNullChecks` requires you to handle null explicitly — like Kotlin's nullable types:
 
-{% raw %}
 ```typescript
 // Without strict: both null and undefined are assignable to any type (dangerous)
 // With strict: you must declare nullability
@@ -223,17 +198,14 @@ const displayName = user?.name ?? "Anonymous";
 // Non-null assertion — like Kotlin's !!  (use sparingly!)
 const forcedName = user!.name; // throws at runtime if user is null
 ```
-{% endraw %}
 
 **Kotlin comparison:**
-{% raw %}
 ```kotlin
 var maybeName: String? = null
 val email = user?.email
 val displayName = user?.name ?: "Anonymous"
 val forcedName = user!!.name  // throws KotlinNullPointerException if null
 ```
-{% endraw %}
 
 The patterns are near-identical.
 
@@ -243,7 +215,6 @@ The patterns are near-identical.
 
 TypeScript has built-in utility types that you'll use constantly in React Native:
 
-{% raw %}
 ```typescript
 interface User {
     id: string;
@@ -274,13 +245,11 @@ type ImmutableUser = Readonly<User>;
 type UserMap = Record<string, User>;
 // { [key: string]: User }
 ```
-{% endraw %}
 
 ---
 
 ## Type Guards (Runtime Type Narrowing)
 
-{% raw %}
 ```typescript
 // typeof guard
 function processInput(input: string | number) {
@@ -305,7 +274,6 @@ function isUser(obj: unknown): obj is User {
            'name' in obj;
 }
 ```
-{% endraw %}
 
 ---
 
@@ -313,7 +281,6 @@ function isUser(obj: unknown): obj is User {
 
 TypeScript has `enum` but the community prefers **union types** (they're simpler and don't generate extra runtime code):
 
-{% raw %}
 ```typescript
 // Avoid: TypeScript enum
 enum Direction { Up, Down, Left, Right }
@@ -330,13 +297,11 @@ const Direction = {
 } as const;
 type Direction = typeof Direction[keyof typeof Direction];
 ```
-{% endraw %}
 
 ---
 
 ## React Native Type Annotations in Practice
 
-{% raw %}
 ```typescript
 import { StyleSheet, ViewStyle, TextStyle } from 'react-native';
 
@@ -364,7 +329,6 @@ const styles = StyleSheet.create({
     } satisfies ViewStyle,   // `satisfies` checks without widening the type
 });
 ```
-{% endraw %}
 
 ---
 

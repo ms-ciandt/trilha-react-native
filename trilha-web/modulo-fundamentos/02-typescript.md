@@ -1,11 +1,5 @@
 ---
-render_with_liquid: false
-id: typescript-for-web-devs
 title: TypeScript for Web Developers in React Native
-sidebar_label: TypeScript for Web Devs
-nav_order: 2
-parent: Fundamentos
-grand_parent: Trilha Web
 ---
 
 # TypeScript for Web Developers
@@ -16,7 +10,6 @@ grand_parent: Trilha Web
 
 ### Style Types
 
-{% raw %}
 ```typescript
 import { ViewStyle, TextStyle, ImageStyle, StyleProp } from 'react-native';
 
@@ -43,11 +36,9 @@ interface ButtonProps {
     labelStyle?: StyleProp<TextStyle>;
 }
 ```
-{% endraw %}
 
 ### Component Ref Types
 
-{% raw %}
 ```typescript
 import { useRef } from 'react';
 import { TextInput, ScrollView, FlatList } from 'react-native';
@@ -61,11 +52,9 @@ inputRef.current?.focus();
 scrollRef.current?.scrollTo({ y: 0, animated: true });
 listRef.current?.scrollToIndex({ index: 0 });
 ```
-{% endraw %}
 
 ### Event Types
 
-{% raw %}
 ```typescript
 import {
     NativeSyntheticEvent,
@@ -90,7 +79,6 @@ function handlePress(event: GestureResponderEvent) {
     console.log('pressed at:', event.nativeEvent.locationX, event.nativeEvent.locationY);
 }
 ```
-{% endraw %}
 
 ---
 
@@ -98,7 +86,6 @@ function handlePress(event: GestureResponderEvent) {
 
 React Navigation uses a typed param list to make navigation type-safe:
 
-{% raw %}
 ```typescript
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
@@ -129,13 +116,11 @@ export default function ProfileScreen() {
     );
 }
 ```
-{% endraw %}
 
 ---
 
 ## Typing AsyncStorage & Async Operations
 
-{% raw %}
 ```typescript
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -158,7 +143,6 @@ async function loadSession(): Promise<UserSession | null> {
     return JSON.parse(raw) as UserSession;
 }
 ```
-{% endraw %}
 
 ---
 
@@ -166,7 +150,6 @@ async function loadSession(): Promise<UserSession | null> {
 
 ### Typing Component Variants
 
-{% raw %}
 ```typescript
 type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'ghost';
 type ButtonSize = 'sm' | 'md' | 'lg';
@@ -181,11 +164,9 @@ interface ButtonProps {
     leftIcon?: React.ReactNode;
 }
 ```
-{% endraw %}
 
 ### Discriminated Unions for API State
 
-{% raw %}
 ```typescript
 type AsyncState<T> =
     | { status: 'idle' }
@@ -199,7 +180,6 @@ function useAsyncState<T>() {
     return state;
 }
 ```
-{% endraw %}
 
 ---
 

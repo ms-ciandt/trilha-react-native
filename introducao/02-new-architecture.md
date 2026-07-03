@@ -1,10 +1,5 @@
 ---
-render_with_liquid: false
-id: new-architecture
 title: New Architecture Deep Dive
-sidebar_label: New Architecture Deep Dive
-nav_order: 3
-parent: Introdução
 ---
 
 # New Architecture Deep Dive
@@ -15,7 +10,6 @@ parent: Introdução
 
 The old Bridge serialized every JS↔Native call to JSON. That meant:
 
-{% raw %}
 ```
 JS: I need the height of this view
 → Serialize to JSON string
@@ -27,17 +21,14 @@ JS: I need the height of this view
 → JS receives, deserializes JSON
 → Now JS has the height (but render already happened)
 ```
-{% endraw %}
 
 With **JSI**, JavaScript holds a **direct C++ reference** to native objects:
 
-{% raw %}
 ```
 JS: I need the height of this view
 → Call C++ method directly via JSI reference (synchronous)
 → Return value immediately
 ```
-{% endraw %}
 
 This is how **Reanimated 3** achieves 60/120fps animations — the animation code runs on the UI thread via a JSI worklet, with zero round-trips to the JS thread.
 
@@ -83,7 +74,6 @@ Old native modules were all **eagerly initialized** at startup — even if you n
 ### Codegen
 TurboModules use a code generation step. You define your native module's interface in TypeScript:
 
-{% raw %}
 ```typescript
 // NativeCalculator.ts — the spec file
 import type { TurboModule } from 'react-native';
@@ -95,7 +85,6 @@ export interface Spec extends TurboModule {
 
 export default TurboModuleRegistry.getEnforcing<Spec>('NativeCalculator');
 ```
-{% endraw %}
 
 Codegen reads this spec and generates the C++ glue code automatically. No more manually writing JNI (Android) or Objective-C bridges (iOS).
 

@@ -1,11 +1,5 @@
 ---
-render_with_liquid: false
-id: components-and-props
 title: Components & Props in Depth
-sidebar_label: Components & Props
-nav_order: 5
-parent: Fundamentos
-grand_parent: Trilha Nativo
 ---
 
 # Components & Props in Depth
@@ -14,7 +8,6 @@ grand_parent: Trilha Nativo
 
 React's power comes from composing small, focused components. Each component does one thing well.
 
-{% raw %}
 ```tsx
 // Small, focused components
 function Avatar({ uri, size = 40 }: { uri: string; size?: number }) {
@@ -45,7 +38,6 @@ function UserCard({ user }: { user: User }) {
     );
 }
 ```
-{% endraw %}
 
 ---
 
@@ -53,7 +45,6 @@ function UserCard({ user }: { user: User }) {
 
 The `children` prop lets you build container/wrapper components — like Compose's `content: @Composable () -> Unit` slot:
 
-{% raw %}
 ```tsx
 interface SectionProps {
     title: string;
@@ -75,7 +66,6 @@ function Section({ title, children }: SectionProps) {
     <ActivityItem text="Posted a comment" />
 </Section>
 ```
-{% endraw %}
 
 ---
 
@@ -83,7 +73,6 @@ function Section({ title, children }: SectionProps) {
 
 When you need to pass data through many levels of components, **Context** avoids the "prop drilling" problem — like a Compose `CompositionLocal` or a SwiftUI `@EnvironmentObject`:
 
-{% raw %}
 ```tsx
 import { createContext, useContext, useState } from 'react';
 
@@ -122,7 +111,6 @@ function ThemedButton() {
     );
 }
 ```
-{% endraw %}
 
 ---
 
@@ -130,7 +118,6 @@ function ThemedButton() {
 
 Instead of `RecyclerView` (Android) or `UITableView/UICollectionView` (iOS), React Native uses `FlatList`:
 
-{% raw %}
 ```tsx
 interface Item { id: string; title: string; }
 
@@ -159,7 +146,6 @@ function MyList() {
     );
 }
 ```
-{% endraw %}
 
 `FlatList` is lazy — like `RecyclerView`, it only renders items visible on screen.
 
@@ -167,7 +153,6 @@ function MyList() {
 
 ## Conditional Rendering Patterns
 
-{% raw %}
 ```tsx
 // Pattern 1: Early return (cleanest for loading/error states)
 function UserScreen({ userId }: { userId: string }) {
@@ -201,7 +186,6 @@ function StatusBadge({ status }: { status: 'pending' | 'active' | 'closed' }) {
     );
 }
 ```
-{% endraw %}
 
 ---
 
@@ -209,7 +193,6 @@ function StatusBadge({ status }: { status: 'pending' | 'active' | 'closed' }) {
 
 When rendering arrays, React needs a stable `key` to track which items changed:
 
-{% raw %}
 ```tsx
 // BAD — using array index as key (causes bugs when list reorders)
 {users.map((user, index) => <UserRow key={index} user={user} />)}
@@ -217,7 +200,6 @@ When rendering arrays, React needs a stable `key` to track which items changed:
 // GOOD — use a stable unique identifier
 {users.map(user => <UserRow key={user.id} user={user} />)}
 ```
-{% endraw %}
 
 ---
 
@@ -225,7 +207,6 @@ When rendering arrays, React needs a stable `key` to track which items changed:
 
 By default, a child component re-renders whenever its parent re-renders — even if its own props haven't changed. `React.memo` wraps a component and skips the re-render when props are shallowly equal.
 
-{% raw %}
 ```tsx
 // Without memo — re-renders on every parent render, even if user is the same
 function UserRow({ user }: { user: User }) {
@@ -237,11 +218,9 @@ const UserRow = React.memo(function UserRow({ user }: { user: User }) {
     return <Text>{user.name}</Text>;
 });
 ```
-{% endraw %}
 
 `React.memo` pairs with `useCallback` — both are needed for a FlatList row to truly avoid unnecessary re-renders:
 
-{% raw %}
 ```tsx
 function UserList() {
     const [users, setUsers] = useState<User[]>([]);
@@ -276,7 +255,6 @@ const UserRow = React.memo(function UserRow({
     );
 });
 ```
-{% endraw %}
 
 **Kotlin/Compose parallel:** `React.memo` is analogous to Compose's stable parameter system — a composable with stable inputs skips recomposition when they haven't changed.
 
