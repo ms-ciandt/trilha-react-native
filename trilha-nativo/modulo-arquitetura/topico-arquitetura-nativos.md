@@ -182,4 +182,4 @@ Tópicos:
 
 You can watch a demonstration of the architecture in action here:
 
-[Watch Video: test_1.mp4](https://alimurasales.github.io/trilha-react-native/.github/videos/test_1.mp4)
+[Watch Video: test_1.mp4](https://alimurasales.github.io/trilha-react-native/assets/videos/test_1.mp4)
