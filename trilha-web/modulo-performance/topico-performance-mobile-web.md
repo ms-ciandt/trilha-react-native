@@ -26,6 +26,7 @@ RN não tem DOM, mas tem problemas equivalentes a “excesso de render” que vo
 
 Assim como você não renderiza 10.000 itens no DOM de uma vez, em RN você usa `FlatList`:
 
+{% raw %}
 ```tsx
 import React, { useCallback } from 'react';
 import { FlatList, Text, View } from 'react-native';
@@ -66,6 +67,7 @@ export function BigList({ items }: { items: Item[] }) {
   );
 }
 ```
+{% endraw %}
 
 Boas práticas (paralelo com web):
 
