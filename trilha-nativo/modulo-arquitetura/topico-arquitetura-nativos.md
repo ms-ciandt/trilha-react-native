@@ -12,6 +12,18 @@ Ao final, o dev deve conseguir:
   - Módulos nativos
 - Mapear conceitos como MVVM/Clean para RN (View, ViewModel, Use Cases, Repositories)
 
+
+---
+
+### Video Demonstration
+
+You can watch a demonstration of the architecture in action here:
+
+<video width="100%" max-width="800px" controls style="border-radius: 8px; margin: 16px 0;">
+  <source src="https://alimuramatheus.github.io/trilha-react-native/assets/videos/Architecting_React_Native_for_Scale.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 ---
 
 ## Mapeamento: MVVM/Clean → React Native
@@ -177,12 +189,3 @@ Tópicos:
 - Mapeando View/ViewModel/UseCase/Repository para componentes, hooks e services em RN.
 
 </details>
-
-### Video Demonstration
-
-You can watch a demonstration of the architecture in action here:
-
-<video width="100%" max-width="800px" controls style="border-radius: 8px; margin: 16px 0;">
-  <source src="https://alimuramatheus.github.io/trilha-react-native/assets/videos/test_1.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
