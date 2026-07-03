@@ -13,6 +13,7 @@ sidebar_position: 2
 
 ### Style Types
 
+{% raw %}
 ```typescript
 import { ViewStyle, TextStyle, ImageStyle, StyleProp } from 'react-native';
 
@@ -39,9 +40,11 @@ interface ButtonProps {
     labelStyle?: StyleProp<TextStyle>;
 }
 ```
+{% endraw %}
 
 ### Component Ref Types
 
+{% raw %}
 ```typescript
 import { useRef } from 'react';
 import { TextInput, ScrollView, FlatList } from 'react-native';
@@ -55,9 +58,11 @@ inputRef.current?.focus();
 scrollRef.current?.scrollTo({ y: 0, animated: true });
 listRef.current?.scrollToIndex({ index: 0 });
 ```
+{% endraw %}
 
 ### Event Types
 
+{% raw %}
 ```typescript
 import {
     NativeSyntheticEvent,
@@ -82,37 +87,52 @@ function handlePress(event: GestureResponderEvent) {
     console.log('pressed at:', event.nativeEvent.locationX, event.nativeEvent.locationY);
 }
 ```
+{% endraw %}
 
 ---
 
-## Typing Navigation (Expo Router)
+## Typing Navigation (React Navigation)
 
-With Expo Router (file-based routing), TypeScript support is built-in:
+React Navigation uses a typed param list to make navigation type-safe:
 
+{% raw %}
 ```typescript
-// app/(tabs)/profile.tsx
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { View, Text, Button } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
 
-// For dynamic routes: app/user/[id].tsx
-export default function UserScreen() {
-    const { id } = useLocalSearchParams<{ id: string }>();
-    const router = useRouter();
+// Define the param list for the entire stack
+type RootStackParamList = {
+    Home: undefined;                    // no params
+    Profile: { userId: string };        // requires userId
+    Settings: { tab?: 'account' | 'privacy' };  // optional param
+};
 
+// Typed navigation hook for the Profile screen
+type ProfileNavProp = NativeStackNavigationProp<RootStackParamList, 'Profile'>;
+type ProfileRouteProp = RouteProp<RootStackParamList, 'Profile'>;
+
+export default function ProfileScreen() {
+    const navigation = useNavigation<ProfileNavProp>();
+    const route = useRoute<ProfileRouteProp>();
+
+    // route.params.userId is typed as `string` — no casting needed
     return (
         <View>
-            <Text>User ID: {id}</Text>
-            <Button title="Go Back" onPress={() => router.back()} />
-            <Button title="Go Home" onPress={() => router.push('/')} />
+            <Text>User ID: {route.params.userId}</Text>
+            <Button title="Go Back" onPress={() => navigation.goBack()} />
+            <Button title="Go Home" onPress={() => navigation.navigate('Home')} />
         </View>
     );
 }
 ```
+{% endraw %}
 
 ---
 
 ## Typing AsyncStorage & Async Operations
 
+{% raw %}
 ```typescript
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -135,6 +155,7 @@ async function loadSession(): Promise<UserSession | null> {
     return JSON.parse(raw) as UserSession;
 }
 ```
+{% endraw %}
 
 ---
 
@@ -142,6 +163,7 @@ async function loadSession(): Promise<UserSession | null> {
 
 ### Typing Component Variants
 
+{% raw %}
 ```typescript
 type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'ghost';
 type ButtonSize = 'sm' | 'md' | 'lg';
@@ -156,9 +178,11 @@ interface ButtonProps {
     leftIcon?: React.ReactNode;
 }
 ```
+{% endraw %}
 
 ### Discriminated Unions for API State
 
+{% raw %}
 ```typescript
 type AsyncState<T> =
     | { status: 'idle' }
@@ -172,6 +196,7 @@ function useAsyncState<T>() {
     return state;
 }
 ```
+{% endraw %}
 
 ---
 

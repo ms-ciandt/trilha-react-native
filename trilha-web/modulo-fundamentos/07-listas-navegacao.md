@@ -7,7 +7,7 @@ sidebar_position: 7
 
 # Lists & Navigation in React Native
 
-> You've built lists with `.map()` and navigated with React Router. This module shows you RN's virtualized list APIs and how Expo Router maps almost 1:1 to Next.js App Router.
+> You've built lists with `.map()` and navigated with React Router. This module shows you RN's virtualized list APIs and how React Navigation handles screen transitions on mobile.
 
 ## Lists
 
@@ -22,6 +22,7 @@ sidebar_position: 7
 
 ### `FlatList` — The Workhorse
 
+{% raw %}
 ```tsx
 interface Product {
     id: string;
@@ -72,9 +73,11 @@ function ProductList({ products }: { products: Product[] }) {
     );
 }
 ```
+{% endraw %}
 
 ### Grid with `numColumns`
 
+{% raw %}
 ```tsx
 // Like CSS grid with equal columns
 <FlatList
@@ -91,9 +94,11 @@ function ProductList({ products }: { products: Product[] }) {
     )}
 />
 ```
+{% endraw %}
 
 ### `SectionList` — Grouped Content
 
+{% raw %}
 ```tsx
 interface Section {
     title: string;
@@ -118,137 +123,140 @@ const sections: Section[] = [
     stickySectionHeadersEnabled={true}  // sticky like iOS section headers
 />
 ```
+{% endraw %}
 
 ---
 
-## Navigation with Expo Router
+## Navigation with React Navigation
 
-Expo Router uses file-based routing — **the same mental model as Next.js App Router**.
+Mobile navigation is fundamentally different from the web. There's no URL bar — navigation is a **stack of screens pushed onto memory**, with native gestures (swipe back on iOS, Android back button) to pop them off.
 
-### File Structure → Routes
+**React Navigation** is the standard library for this. Install it in a React Native CLI project:
 
-```
-app/
-├── _layout.tsx          → Root layout (like layout.tsx in Next.js)
-├── index.tsx            → Route: /
-├── (tabs)/              → Tab group (parentheses = layout group)
-│   ├── _layout.tsx      → Tab bar layout
-│   ├── home.tsx         → Route: /home
-│   ├── explore.tsx      → Route: /explore
-│   └── profile.tsx      → Route: /profile
-├── user/
-│   ├── [id].tsx         → Route: /user/123 (dynamic segment)
-│   └── index.tsx        → Route: /user
-└── modal.tsx            → Route: /modal
+```bash
+npm install @react-navigation/native @react-navigation/native-stack
+npm install react-native-screens react-native-safe-area-context
 ```
 
-### Navigation
+### Setting Up the Navigator
 
+{% raw %}
 ```tsx
-import { Link, useRouter } from 'expo-router';
+// App.tsx
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import HomeScreen from './screens/HomeScreen';
+import ProfileScreen from './screens/ProfileScreen';
+
+type RootStackParamList = {
+    Home: undefined;
+    Profile: { userId: string };
+};
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
+
+export default function App() {
+    return (
+        <NavigationContainer>
+            <Stack.Navigator>
+                <Stack.Screen name="Home" component={HomeScreen} />
+                <Stack.Screen name="Profile" component={ProfileScreen} />
+            </Stack.Navigator>
+        </NavigationContainer>
+    );
+}
+```
+{% endraw %}
+
+### Navigating Between Screens
+
+{% raw %}
+```tsx
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
+type HomeNavProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 
 function HomeScreen() {
-    const router = useRouter();
+    const navigation = useNavigation<HomeNavProp>();
 
     return (
         <View>
-            {/* Declarative navigation (like <a> or <Link> in Next.js) */}
-            <Link href="/profile">Go to Profile</Link>
-            <Link href="/user/123">User 123</Link>
-            <Link href={{ pathname: '/user/[id]', params: { id: '123' } }}>User 123</Link>
-
-            {/* Programmatic navigation */}
-            <Pressable onPress={() => router.push('/settings')}>
-                <Text>Settings</Text>
+            {/* Push a new screen */}
+            <Pressable onPress={() => navigation.navigate('Profile', { userId: '123' })}>
+                <Text>Go to Profile</Text>
             </Pressable>
-            <Pressable onPress={() => router.back()}>
+            {/* Go back */}
+            <Pressable onPress={() => navigation.goBack()}>
                 <Text>Back</Text>
             </Pressable>
-            <Pressable onPress={() => router.replace('/login')}>
-                <Text>Logout (replace history)</Text>
+            {/* Replace current screen (no back) */}
+            <Pressable onPress={() => navigation.replace('Home')}>
+                <Text>Reset</Text>
             </Pressable>
         </View>
     );
 }
 ```
+{% endraw %}
 
 ### Reading Route Params
 
+{% raw %}
 ```tsx
-// app/user/[id].tsx
-import { useLocalSearchParams } from 'expo-router';
+import { useRoute, RouteProp } from '@react-navigation/native';
 
-export default function UserScreen() {
-    const { id } = useLocalSearchParams<{ id: string }>();
-    return <Text>User: {id}</Text>;
+type ProfileRouteProp = RouteProp<RootStackParamList, 'Profile'>;
+
+function ProfileScreen() {
+    const route = useRoute<ProfileRouteProp>();
+    const { userId } = route.params;
+
+    return <Text>User: {userId}</Text>;
 }
 ```
-
-### Root Layout
-
-```tsx
-// app/_layout.tsx — like Next.js root layout
-import { Stack } from 'expo-router';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-
-export default function RootLayout() {
-    return (
-        <SafeAreaProvider>
-            <Stack>
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-            </Stack>
-        </SafeAreaProvider>
-    );
-}
-```
+{% endraw %}
 
 ### Tab Navigation
 
+{% raw %}
 ```tsx
-// app/(tabs)/_layout.tsx
-import { Tabs } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-export default function TabLayout() {
+// npm install @react-navigation/bottom-tabs
+
+const Tab = createBottomTabNavigator();
+
+function MainTabs() {
     return (
-        <Tabs>
-            <Tabs.Screen
-                name="home"
-                options={{
-                    title: 'Home',
-                    tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="home" size={size} color={color} />
-                    ),
-                }}
-            />
-            <Tabs.Screen
-                name="profile"
-                options={{
-                    title: 'Profile',
-                    tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="person" size={size} color={color} />
-                    ),
-                }}
-            />
-        </Tabs>
+        <Tab.Navigator>
+            <Tab.Screen name="Home" component={HomeScreen} />
+            <Tab.Screen name="Profile" component={ProfileScreen} />
+        </Tab.Navigator>
     );
 }
 ```
+{% endraw %}
 
 ---
 
 ## Web Routing vs Mobile Navigation
 
-| Web (React Router / Next.js) | React Native (Expo Router) |
-|------------------------------|---------------------------|
+| Web (React Router / Next.js) | React Native (React Navigation) |
+|------------------------------|---------------------------------|
 | URL-based, shareable links | Deep links supported, but optional |
 | Browser back button | Native back gesture (swipe left on iOS) |
-| `<Link href="...">` | `<Link href="...">` (same!) |
-| `useNavigate()` push/replace | `router.push()` / `router.replace()` |
-| Query strings `?key=val` | `useLocalSearchParams()` |
-| Modal via route | `presentation: 'modal'` in Stack |
-| 404 page | `+not-found.tsx` file |
+| `<Link to="...">` | `navigation.navigate('ScreenName')` |
+| `useNavigate()` push/replace | `navigation.navigate()` / `navigation.replace()` |
+| Query strings `?key=val` | `route.params` object |
+| Modal via route | `presentation: 'modal'` in Stack.Screen |
+| 404 page | Catch-all screen in navigator |
+
+---
+
+> **About Expo Router**
+>
+> If you use **Expo** (instead of React Native CLI), **Expo Router** offers file-based routing — closer to Next.js App Router in mental model. It's a valid alternative, but it's tied to the Expo toolchain. Research it separately at [docs.expo.dev/router/introduction/](https://docs.expo.dev/router/introduction/).
 
 ---
 
@@ -256,7 +264,8 @@ export default function TabLayout() {
 
 | Resource | Type | Link |
 |---|---|---|
-| Expo Router Introduction | Official | [docs.expo.dev/router/introduction/](https://docs.expo.dev/router/introduction/) |
+| React Navigation Getting Started | Official | [reactnavigation.org/docs/getting-started](https://reactnavigation.org/docs/getting-started) |
+| React Navigation — Stack Navigator | Official | [reactnavigation.org/docs/native-stack-navigator](https://reactnavigation.org/docs/native-stack-navigator) |
 | FlatList API | Official | [reactnative.dev/docs/flatlist](https://reactnative.dev/docs/flatlist) |
 | SectionList API | Official | [reactnative.dev/docs/sectionlist](https://reactnative.dev/docs/sectionlist) |
 | notJust.dev — Full Course (8hr) | Video | [youtube.com/@notjustdev](https://www.youtube.com/@notjustdev) |

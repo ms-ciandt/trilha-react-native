@@ -31,6 +31,7 @@ When you write React Native, your JS runs in **Hermes** (a mobile JS engine) wit
 
 Most of your JavaScript knowledge transfers directly:
 
+{% raw %}
 ```typescript
 // ✅ All of this works the same in React Native
 
@@ -56,6 +57,7 @@ type Status = 'loading' | 'success' | 'error';
 // All React hooks
 useState, useEffect, useRef, useMemo, useCallback, useContext, useReducer
 ```
+{% endraw %}
 
 ---
 
@@ -63,6 +65,7 @@ useState, useEffect, useRef, useMemo, useCallback, useContext, useReducer
 
 ### Storage
 
+{% raw %}
 ```typescript
 // Web
 localStorage.setItem('token', value);
@@ -79,9 +82,11 @@ const storage = new MMKV();
 storage.set('token', value);
 const token = storage.getString('token');
 ```
+{% endraw %}
 
 ### Platform Detection
 
+{% raw %}
 ```typescript
 // Web
 if (navigator.userAgent.includes('Mobile')) { ... }
@@ -92,9 +97,11 @@ if (Platform.OS === 'ios') { ... }
 if (Platform.OS === 'android') { ... }
 Platform.select({ ios: '#f2f2f7', android: '#ffffff', default: '#fff' });
 ```
+{% endraw %}
 
 ### Linking & Deep Links
 
+{% raw %}
 ```typescript
 // Web
 window.open('https://example.com');
@@ -106,9 +113,11 @@ await Linking.openURL('https://example.com');
 await Linking.openURL('mailto:hello@example.com');
 await Linking.openURL('tel:+15555555');
 ```
+{% endraw %}
 
 ### Clipboard
 
+{% raw %}
 ```typescript
 // Web
 navigator.clipboard.writeText('hello');
@@ -117,6 +126,7 @@ navigator.clipboard.writeText('hello');
 import * as Clipboard from 'expo-clipboard';
 await Clipboard.setStringAsync('hello');
 ```
+{% endraw %}
 
 ---
 
@@ -125,6 +135,7 @@ await Clipboard.setStringAsync('hello');
 ### 1. Safe Areas
 Mobile screens have notches, dynamic islands, and home indicators. Content can be hidden behind them.
 
+{% raw %}
 ```tsx
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -137,10 +148,12 @@ function HomeScreen() {
     );
 }
 ```
+{% endraw %}
 
 ### 2. Keyboard Avoidance
 The keyboard pushes up from the bottom and can cover input fields.
 
+{% raw %}
 ```tsx
 import { KeyboardAvoidingView, Platform } from 'react-native';
 
@@ -159,10 +172,12 @@ function LoginForm() {
     );
 }
 ```
+{% endraw %}
 
 ### 3. Gesture Handling
 Mobile apps respond to swipes, pinches, and long presses — not just taps:
 
+{% raw %}
 ```tsx
 import { useSharedValue, useAnimatedStyle, withSpring, runOnJS } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
@@ -198,10 +213,12 @@ function SwipeCard() {
     );
 }
 ```
+{% endraw %}
 
 ### 4. Status Bar
 The thin bar at the top of the screen with time and battery:
 
+{% raw %}
 ```tsx
 import { StatusBar } from 'expo-status-bar';
 
@@ -214,6 +231,7 @@ function App() {
     );
 }
 ```
+{% endraw %}
 
 ---
 
@@ -221,6 +239,7 @@ function App() {
 
 Expo projects come with TypeScript pre-configured. Key things to know:
 
+{% raw %}
 ```json
 // tsconfig.json — what Expo generates
 {
@@ -230,6 +249,7 @@ Expo projects come with TypeScript pre-configured. Key things to know:
   }
 }
 ```
+{% endraw %}
 
 The `expo/tsconfig.base` already configures path aliases, module resolution for React Native, and JSX settings. You don't need to configure these manually.
 

@@ -27,6 +27,7 @@ The biggest gotcha: **`flexDirection` defaults to `column`** in RN. Content stac
 
 Think of every `View` as a **flex container**. The `style` prop is how you configure it.
 
+{% raw %}
 ```tsx
 // This is a vertical stack (column is default)
 <View style={{ flex: 1 }}>
@@ -35,6 +36,7 @@ Think of every `View` as a **flex container**. The `style` prop is how you confi
     <View style={{ height: 60, backgroundColor: 'blue' }} />
 </View>
 ```
+{% endraw %}
 
 ---
 
@@ -42,6 +44,7 @@ Think of every `View` as a **flex container**. The `style` prop is how you confi
 
 ### `flexDirection`
 
+{% raw %}
 ```tsx
 // Column (default) — children stack top to bottom
 <View style={{ flexDirection: 'column' }}>
@@ -53,9 +56,11 @@ Think of every `View` as a **flex container**. The `style` prop is how you confi
 <View style={{ flexDirection: 'column-reverse' }}>
 <View style={{ flexDirection: 'row-reverse' }}>
 ```
+{% endraw %}
 
 ### `justifyContent` — Main Axis Alignment
 
+{% raw %}
 ```tsx
 // Along flexDirection axis (vertical for column, horizontal for row)
 <View style={{ justifyContent: 'flex-start' }}>  {/* default */}
@@ -65,9 +70,11 @@ Think of every `View` as a **flex container**. The `style` prop is how you confi
 <View style={{ justifyContent: 'space-around' }}>
 <View style={{ justifyContent: 'space-evenly' }}>
 ```
+{% endraw %}
 
 ### `alignItems` — Cross Axis Alignment
 
+{% raw %}
 ```tsx
 // Perpendicular to flexDirection
 <View style={{ alignItems: 'flex-start' }}>
@@ -76,24 +83,30 @@ Think of every `View` as a **flex container**. The `style` prop is how you confi
 <View style={{ alignItems: 'stretch' }}>  {/* default */}
 <View style={{ alignItems: 'baseline' }}>
 ```
+{% endraw %}
 
 ### Center Something (The Classic)
 
+{% raw %}
 ```tsx
 // Center a child horizontally and vertically — the most common layout pattern
 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
     <Text>Centered Content</Text>
 </View>
 ```
+{% endraw %}
 
 **Kotlin/Android comparison:**
+{% raw %}
 ```xml
 <!-- ConstraintLayout or Gravity -->
 <FrameLayout android:layout_gravity="center" />
 <LinearLayout android:gravity="center" />
 ```
+{% endraw %}
 
 **SwiftUI comparison:**
+{% raw %}
 ```swift
 // Idiomatic SwiftUI centering
 ZStack {
@@ -101,11 +114,13 @@ ZStack {
 }
 .frame(maxWidth: .infinity, maxHeight: .infinity)
 ```
+{% endraw %}
 
 ---
 
 ## `flex` — Proportional Space
 
+{% raw %}
 ```tsx
 // flex: N — take N proportional shares of available space
 <View style={{ flexDirection: 'row', height: 100 }}>
@@ -118,11 +133,13 @@ ZStack {
     {/* This fills the entire screen */}
 </View>
 ```
+{% endraw %}
 
 ---
 
 ## Spacing: `margin` and `padding`
 
+{% raw %}
 ```tsx
 // Individual sides
 <View style={{
@@ -140,6 +157,7 @@ ZStack {
 // marginTop == android:layout_marginTop
 // paddingHorizontal has no direct Android XML equivalent (use paddingLeft+paddingRight)
 ```
+{% endraw %}
 
 ---
 
@@ -147,6 +165,7 @@ ZStack {
 
 For overlays, badges, and elements that float outside the normal flow:
 
+{% raw %}
 ```tsx
 // Parent needs position: 'relative' (the default)
 <View style={{ width: 60, height: 60 }}>
@@ -163,11 +182,13 @@ For overlays, badges, and elements that float outside the normal flow:
     }} />
 </View>
 ```
+{% endraw %}
 
 ---
 
 ## Responsive Sizing with `Dimensions`
 
+{% raw %}
 ```tsx
 import { Dimensions } from 'react-native';
 
@@ -180,6 +201,7 @@ const styles = StyleSheet.create({
     },
 });
 ```
+{% endraw %}
 
 :::caution Stale on orientation change
 `Dimensions.get('window')` captures the value once at module load. If the user rotates their device the value stays stale. Use `useWindowDimensions` instead for anything that should respond to rotation.
@@ -187,6 +209,7 @@ const styles = StyleSheet.create({
 
 For dynamic responsive layouts (handles rotation/orientation changes), use `useWindowDimensions`:
 
+{% raw %}
 ```tsx
 import { useWindowDimensions } from 'react-native';
 
@@ -196,11 +219,13 @@ function ResponsiveCard() {
     // ...
 }
 ```
+{% endraw %}
 
 ---
 
 ## `StyleSheet.create` vs Inline Styles
 
+{% raw %}
 ```tsx
 // Inline styles — convenient but slightly slower (no optimization)
 <View style={{ flex: 1, backgroundColor: 'red' }} />
@@ -217,6 +242,7 @@ const styles = StyleSheet.create({
 // Combining styles (like applying multiple Android XML attributes)
 <View style={[styles.container, styles.padded, { marginTop: 8 }]} />
 ```
+{% endraw %}
 
 ---
 
@@ -224,6 +250,7 @@ const styles = StyleSheet.create({
 
 Since React Native 0.71, you can use `gap`, `rowGap`, and `columnGap` instead of adding margin to every child:
 
+{% raw %}
 ```tsx
 // Before gap — manual margin on all-but-last child
 <View style={{ flexDirection: 'row' }}>
@@ -244,6 +271,7 @@ Since React Native 0.71, you can use `gap`, `rowGap`, and `columnGap` instead of
     {items.map(item => <Card key={item.id} />)}
 </View>
 ```
+{% endraw %}
 
 **SwiftUI parallel:** `spacing:` parameter on `HStack`/`VStack`. **Compose parallel:** `Arrangement.spacedBy(8.dp)`.
 
@@ -259,6 +287,7 @@ The best way to internalize Flexbox is through play. Since RN uses the same flex
 
 ## Common Layout Patterns
 
+{% raw %}
 ```tsx
 // Navigation bar with title and action button
 <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16 }}>
@@ -287,6 +316,7 @@ The best way to internalize Flexbox is through play. Since RN uses the same flex
     </View>
 </View>
 ```
+{% endraw %}
 
 ---
 

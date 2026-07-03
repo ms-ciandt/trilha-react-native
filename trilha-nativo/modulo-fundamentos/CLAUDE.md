@@ -30,7 +30,7 @@ CONCLUÍDO.
 - Hooks fundamentais (useState, useEffect, useRef)
 - Componentes core (View, Text, Pressable, FlatList)
 - Flexbox e StyleSheet
-- Navegação básica com Expo Router
+- Navegação básica com React Navigation
 
 ## Próximo módulo
 

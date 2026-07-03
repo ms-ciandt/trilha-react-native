@@ -11,12 +11,12 @@ CONCLUÍDO.
 ## O que este módulo cobre
 
 1. `01-adaptando-js-ts.md` — diferenças de ambiente (browser vs mobile), storage, Platform.OS, safe areas, teclado, gestos
-2. `02-typescript.md` — ViewStyle/TextStyle/StyleProp, tipos de ref, event types, Expo Router typing, AsyncStorage typing
+2. `02-typescript.md` — ViewStyle/TextStyle/StyleProp, tipos de ref, event types, React Navigation typing, AsyncStorage typing
 3. `03-web-vs-rn.md` — tabela de diferenças fundamentais, HTML→RN, CSS→StyleSheet, navegação URLs→stacks
 4. `04-sem-dom-sem-css.md` — sem document/window, sem innerHTML, sem seletores/cascade, sem box-sizing
 5. `05-componentes-nativos.md` — tabela web→RN (12 mapeamentos), View/Text/TextInput/Pressable/FlatList/Switch
 6. `06-estilos-flexbox.md` — camelCase, sem unidades, column-first default, cheat sheet, NativeWind
-7. `07-listas-navegacao.md` — FlatList, SectionList, grid numColumns, Expo Router, navegação Stack/Tab
+7. `07-listas-navegacao.md` — FlatList, SectionList, grid numColumns, React Navigation, navegação Stack/Tab
 
 ## Arquivo consolidado
 
@@ -27,7 +27,7 @@ CONCLUÍDO.
 - Diferenças DOM/CSS vs RN (explicado em 03 e 04)
 - Componentes core básicos (View, Text, Pressable, FlatList)
 - StyleSheet e Flexbox fundamentals
-- Expo Router básico (arquivo 07 já cobre o essencial)
+- React Navigation básico (arquivo 07 já cobre o essencial)
 
 ## Próximo módulo
 

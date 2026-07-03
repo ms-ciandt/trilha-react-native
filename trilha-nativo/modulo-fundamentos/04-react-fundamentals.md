@@ -12,6 +12,7 @@ sidebar_position: 4
 ## The Declarative Paradigm
 
 **Imperative (Android View system / UIKit):**
+{% raw %}
 ```kotlin
 // You tell the system HOW to change the UI step by step
 val button = findViewById<Button>(R.id.myButton)
@@ -19,15 +20,19 @@ button.text = "Loading..."
 button.isEnabled = false
 spinner.visibility = View.VISIBLE
 ```
+{% endraw %}
 
+{% raw %}
 ```swift
 // UIKit
 button.setTitle("Loading...", for: .normal)
 button.isEnabled = false
 spinner.startAnimating()
 ```
+{% endraw %}
 
 **Declarative (Compose / SwiftUI / React):**
+{% raw %}
 ```kotlin
 // Compose — UI is a function of state
 @Composable
@@ -39,7 +44,9 @@ fun MyButton(isLoading: Boolean) {
     }
 }
 ```
+{% endraw %}
 
+{% raw %}
 ```tsx
 // React — same idea, different syntax
 function MyButton({ isLoading }: { isLoading: boolean }) {
@@ -49,6 +56,7 @@ function MyButton({ isLoading }: { isLoading: boolean }) {
     return <Button onPress={() => {}} title="Submit" />;
 }
 ```
+{% endraw %}
 
 The mental model: **describe what the UI should look like for a given state, not how to transition to it.** React figures out the diff and updates only what changed — exactly like Compose's recomposition or SwiftUI's view diffing.
 
@@ -58,6 +66,7 @@ The mental model: **describe what the UI should look like for a given state, not
 
 A React component is a function that takes **props** and returns **JSX**:
 
+{% raw %}
 ```tsx
 // The simplest possible component
 function Greeting() {
@@ -83,8 +92,10 @@ function Greeting({ name, age }: GreetingProps) {
 <Greeting name="Alice" age={30} />
 <Greeting name="Bob" />
 ```
+{% endraw %}
 
 **Compose comparison:**
+{% raw %}
 ```kotlin
 @Composable
 fun Greeting(name: String, age: Int? = null) {
@@ -94,6 +105,7 @@ fun Greeting(name: String, age: Int? = null) {
     }
 }
 ```
+{% endraw %}
 
 Components can be nested, composed, and reused — just like Composables.
 
@@ -103,6 +115,7 @@ Components can be nested, composed, and reused — just like Composables.
 
 JSX looks like HTML/XML but it's **JavaScript syntax sugar** that compiles to function calls:
 
+{% raw %}
 ```tsx
 // JSX (what you write)
 const element = <Text style={{ color: 'red' }}>Hello</Text>;
@@ -110,9 +123,11 @@ const element = <Text style={{ color: 'red' }}>Hello</Text>;
 // What it compiles to (what you DON'T write)
 const element = React.createElement(Text, { style: { color: 'red' } }, "Hello");
 ```
+{% endraw %}
 
 ### JSX Rules
 
+{% raw %}
 ```tsx
 // 1. Must return ONE root element (wrap in View or <> fragments)
 function BadComponent() {
@@ -145,6 +160,7 @@ const name = "Alice";
 {isLoggedIn && <ProfileScreen />}
 {isLoggedIn ? <ProfileScreen /> : <LoginScreen />}
 ```
+{% endraw %}
 
 ---
 
@@ -152,6 +168,7 @@ const name = "Alice";
 
 Props are the component's interface — like constructor parameters in a Compose `@Composable` or a SwiftUI `View`.
 
+{% raw %}
 ```tsx
 interface CardProps {
     title: string;
@@ -175,6 +192,7 @@ function Card({ title, subtitle, onPress, children }: CardProps) {
     <Text>This is child content</Text>
 </Card>
 ```
+{% endraw %}
 
 **Props are read-only.** A component can never modify its own props — only the parent can change what it passes down.
 
@@ -184,6 +202,7 @@ function Card({ title, subtitle, onPress, children }: CardProps) {
 
 State is data that, when changed, causes the component to re-render. Think of it like `mutableStateOf` in Compose or `@State` in SwiftUI.
 
+{% raw %}
 ```tsx
 import { useState } from 'react';
 
@@ -201,8 +220,10 @@ function Counter() {
     );
 }
 ```
+{% endraw %}
 
 **Compose comparison:**
+{% raw %}
 ```kotlin
 @Composable
 fun Counter() {
@@ -215,8 +236,10 @@ fun Counter() {
     }
 }
 ```
+{% endraw %}
 
 **SwiftUI comparison:**
+{% raw %}
 ```swift
 struct Counter: View {
     @State private var count = 0
@@ -230,11 +253,13 @@ struct Counter: View {
     }
 }
 ```
+{% endraw %}
 
 The mental model is identical across all three — a reactive value that triggers re-render on change.
 
 ### Updating State Correctly
 
+{% raw %}
 ```tsx
 // WRONG — mutating state directly (doesn't trigger re-render)
 const [items, setItems] = useState(['a', 'b', 'c']);
@@ -249,6 +274,7 @@ setItems(items.map(i => i === 'a' ? 'A' : i)); // Update item
 const [user, setUser] = useState({ name: 'Alice', age: 30 });
 setUser({ ...user, age: 31 }); // Update one field — spread creates new object
 ```
+{% endraw %}
 
 This immutable update pattern is fundamental to React's change detection.
 
@@ -258,6 +284,7 @@ This immutable update pattern is fundamental to React's change detection.
 
 `useEffect` handles side effects — like `LaunchedEffect` in Compose, `onAppear` in SwiftUI, or `onCreate`/`viewDidLoad` in traditional native.
 
+{% raw %}
 ```tsx
 import { useState, useEffect } from 'react';
 
@@ -289,14 +316,17 @@ function UserProfile({ userId }: { userId: string }) {
     return <Text>{user.name}</Text>;
 }
 ```
+{% endraw %}
 
 ### `useEffect` Dependency Array
 
+{% raw %}
 ```tsx
 useEffect(() => { /* runs after EVERY render */ });
 useEffect(() => { /* runs ONCE on mount */ }, []);
 useEffect(() => { /* runs when dep1 or dep2 changes */ }, [dep1, dep2]);
 ```
+{% endraw %}
 
 | Native Equivalent | useEffect Pattern |
 |-------------------|-------------------|
@@ -309,11 +339,13 @@ useEffect(() => { /* runs when dep1 or dep2 changes */ }, [dep1, dep2]);
 
 ## The Component Lifecycle at a Glance
 
+{% raw %}
 ```
 Mount:   render → paint to screen → useEffect([], run once)
 Update:  state/prop changes → re-render → paint → useEffect([deps], if deps changed)
 Unmount: cleanup from useEffect → component removed
 ```
+{% endraw %}
 
 :::info useEffect runs after paint
 Unlike `viewDidLoad` (iOS) or `onCreate` (Android) which run before the view is visible, `useEffect` fires **after** the screen has already painted. This is usually what you want (data fetches, subscriptions). For layout measurements that must happen synchronously before paint, use `useLayoutEffect` — the React Native equivalent of `viewDidLayoutSubviews`.
@@ -325,6 +357,7 @@ Unlike `viewDidLoad` (iOS) or `onCreate` (Android) which run before the view is 
 
 When two sibling components need to share state, move it to their common parent:
 
+{% raw %}
 ```tsx
 // Parent owns the state
 function App() {
@@ -338,6 +371,7 @@ function App() {
     );
 }
 ```
+{% endraw %}
 
 This is analogous to a ViewModel in Android MVVM that both an Activity and a Fragment observe, or a Combine publisher that multiple SwiftUI views subscribe to.
 

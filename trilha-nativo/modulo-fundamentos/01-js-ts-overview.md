@@ -57,20 +57,25 @@ Here's a quick feel for the three languages side by side:
 
 **Defining a function:**
 
+{% raw %}
 ```kotlin
 // Kotlin
 fun greet(name: String): String {
     return "Hello, $name!"
 }
 ```
+{% endraw %}
 
+{% raw %}
 ```swift
 // Swift
 func greet(name: String) -> String {
     return "Hello, \(name)!"
 }
 ```
+{% endraw %}
 
+{% raw %}
 ```typescript
 // TypeScript
 function greet(name: string): string {
@@ -79,5 +84,6 @@ function greet(name: string): string {
 // or as an arrow function:
 const greet = (name: string): string => `Hello, ${name}!`;
 ```
+{% endraw %}
 
 **Next:** [JS Fundamentals →](./js-fundamentals)

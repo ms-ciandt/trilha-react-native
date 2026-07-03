@@ -29,7 +29,7 @@ By the end of this course you will:
 - Understand why React Native is a **serious production choice** in 2026
 - Read and write **TypeScript** fluently in a mobile context
 - Build screens using **React Native's core components** with proper **Flexbox layout**
-- Navigate between screens with **Expo Router**
+- Navigate between screens with **React Navigation**
 - Call platform APIs through **native modules** (camera, location, storage)
 - Deploy to both **iOS and Android** from a single codebase
 

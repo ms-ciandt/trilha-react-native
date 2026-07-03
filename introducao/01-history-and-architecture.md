@@ -35,6 +35,7 @@ After years of incremental work, the **New Architecture** shipped as the default
 
 ### Old Architecture (the Bridge)
 
+{% raw %}
 ```
 ┌─────────────────────────────────────────────────┐
 │  JavaScript Thread                               │
@@ -51,11 +52,13 @@ After years of incremental work, the **New Architecture** shipped as the default
 │  (UIKit on iOS, Android Views)                   │
 └─────────────────────────────────────────────────┘
 ```
+{% endraw %}
 
 Every interaction — drawing a pixel, responding to a gesture, measuring text — had to cross this bridge as a serialized JSON message. It was like sending a letter every time you wanted to talk to your neighbour.
 
 ### New Architecture (JSI + Fabric + TurboModules)
 
+{% raw %}
 ```
 ┌─────────────────────────────────────────────────┐
 │  JavaScript Engine (Hermes)                      │
@@ -73,6 +76,7 @@ Every interaction — drawing a pixel, responding to a gesture, measuring text �
 │  UIKit / SwiftUI (iOS) | Android Views / Compose │
 └─────────────────────────────────────────────────┘
 ```
+{% endraw %}
 
 #### The Three Pillars
 
@@ -95,18 +99,20 @@ With JSI, layout measurement is synchronous. Animations via **Reanimated 3** run
 ### 3. React Concurrent Mode Support
 Fabric enables React 18/19 features: **Suspense**, **useTransition**, **startTransition** — the same concurrent features that make web React fast now work on mobile too.
 
-### 4. Expo as the Official Recommended Toolchain
-**Expo SDK 56** (mid-2026) gives you:
-- File-based routing with **Expo Router**
+### 4. Expo as an Alternative Toolchain
+**Expo** is a popular framework built on top of React Native that simplifies project setup and adds first-party libraries. It offers:
 - Over-the-air updates with **EAS Update**
 - Native module access without Xcode/Android Studio for most use cases
+- File-based routing with **Expo Router** (an alternative to React Navigation)
 - Direct **SwiftUI** and **Jetpack Compose** interop
+
+**This course uses React Native CLI + React Navigation** — the industry baseline you'll find in most production codebases. Expo (including Expo Router) is a valid alternative with its own trade-offs; if you want to explore it, the [Expo documentation](https://docs.expo.dev) is an excellent starting point.
 
 ### 5. One Language, Two Platforms
 Write TypeScript once. Ship to both iOS and Android. Your Kotlin/Swift stays for the platform-specific modules that truly need it — but most app logic is shared.
 
 ### 6. Massive Ecosystem
-- **React Navigation** / **Expo Router** for navigation
+- **React Navigation** for navigation (or **Expo Router** if using Expo)
 - **React Query** / **Zustand** / **Jotai** for state management
 - **MMKV** for fast storage, **Reanimated** for animations, **Skia** for 2D graphics
 - All the JavaScript/TypeScript tooling you already know (ESLint, Prettier, Vitest)
@@ -121,6 +127,7 @@ The New Architecture was co-authored by Meta and Microsoft. Shopify rewrote thei
 Let's see a simple "Hello World" screen across all four platforms:
 
 **Web (React)**
+{% raw %}
 ```jsx
 // React web
 function App() {
@@ -131,8 +138,10 @@ function App() {
   );
 }
 ```
+{% endraw %}
 
 **Android (Kotlin)**
+{% raw %}
 ```kotlin
 // activity_main.xml + MainActivity.kt
 class MainActivity : AppCompatActivity() {
@@ -143,8 +152,10 @@ class MainActivity : AppCompatActivity() {
     }
 }
 ```
+{% endraw %}
 
 **iOS (Swift)**
+{% raw %}
 ```swift
 // SwiftUI
 struct ContentView: View {
@@ -159,8 +170,10 @@ struct ContentView: View {
     }
 }
 ```
+{% endraw %}
 
 **React Native (runs on both iOS and Android)**
+{% raw %}
 ```jsx
 import { View, Text, StyleSheet } from 'react-native';
 
@@ -185,6 +198,7 @@ const styles = StyleSheet.create({
   },
 });
 ```
+{% endraw %}
 
 Notice:
 - RN uses `View` instead of `div`, `Text` instead of `h1`

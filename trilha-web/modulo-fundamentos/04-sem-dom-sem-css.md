@@ -13,6 +13,7 @@ sidebar_position: 4
 
 These browser globals simply don't exist in React Native:
 
+{% raw %}
 ```typescript
 // ❌ None of this exists in React Native
 document.getElementById('app');
@@ -25,17 +26,20 @@ window.location.href;
 navigator.geolocation;    // ← removed from RN core in 0.60 — use expo-location
 navigator.clipboard;      // ← not available — use expo-clipboard
 ```
+{% endraw %}
 
+{% raw %}
 ```typescript
 // ✅ React Native equivalents
 // Get element ref → useRef()
 // Scroll → ref.current.scrollTo()
 // Screen dimensions → Dimensions.get('window') or useWindowDimensions()
 // Resize/orientation → useWindowDimensions() hook updates automatically
-// Navigation → Expo Router / React Navigation
+// Navigation → React Navigation (or Expo Router if using Expo)
 // Geolocation → expo-location
 // Clipboard → expo-clipboard
 ```
+{% endraw %}
 
 ---
 
@@ -43,6 +47,7 @@ navigator.clipboard;      // ← not available — use expo-clipboard
 
 You cannot modify the native view tree imperatively the way you can with the DOM.
 
+{% raw %}
 ```typescript
 // ❌ Web — direct DOM manipulation
 document.getElementById('title').innerHTML = '<strong>New Title</strong>';
@@ -57,6 +62,7 @@ const [isActive, setIsActive] = useState(false);
     {title}
 </Text>
 ```
+{% endraw %}
 
 This is actually the same constraint that React itself imposes on web. If you've been using React correctly (no `document.querySelector` in useEffect), you're already used to this.
 
@@ -64,6 +70,7 @@ This is actually the same constraint that React itself imposes on web. If you've
 
 ## No CSS Selectors, No Cascade
 
+{% raw %}
 ```css
 /* ❌ None of this works in React Native */
 .card > .title { font-size: 18px; }
@@ -73,7 +80,9 @@ This is actually the same constraint that React itself imposes on web. If you've
 * { box-sizing: border-box; }
 :root { --primary: #0064d2; }
 ```
+{% endraw %}
 
+{% raw %}
 ```typescript
 // ✅ React Native — no selectors, no cascade, no hover, no media queries
 // You express all of this in JS
@@ -95,6 +104,7 @@ const isTablet = width >= 768;
 import { colors } from './theme';
 <View style={{ backgroundColor: colors.primary }} />
 ```
+{% endraw %}
 
 ---
 
@@ -140,6 +150,7 @@ React Native has a simplified layout model:
 
 On web, sticky positioning keeps a header visible during scroll. In RN, you handle this differently:
 
+{% raw %}
 ```tsx
 // Web: CSS position: sticky
 <div style={{ position: 'sticky', top: 0 }}>Sticky header</div>
@@ -152,6 +163,7 @@ On web, sticky positioning keeps a header visible during scroll. In RN, you hand
     ListHeaderComponent={<StickyHeader />}
 />
 ```
+{% endraw %}
 
 ---
 

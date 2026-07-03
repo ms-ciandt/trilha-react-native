@@ -13,6 +13,7 @@ sidebar_position: 6
 
 ### Property Names — camelCase
 
+{% raw %}
 ```css
 /* CSS */
 background-color: #fff;
@@ -20,7 +21,9 @@ font-size: 16px;
 border-radius: 8px;
 padding-horizontal: 16px;  /* doesn't exist in CSS */
 ```
+{% endraw %}
 
+{% raw %}
 ```typescript
 // React Native StyleSheet
 backgroundColor: '#fff',   // camelCase, no hyphens
@@ -28,9 +31,11 @@ fontSize: 16,              // no 'px' unit — numbers are device-independent pi
 borderRadius: 8,
 paddingHorizontal: 16,     // RN shorthand (= paddingLeft + paddingRight)
 ```
+{% endraw %}
 
 ### No Units
 
+{% raw %}
 ```typescript
 // All values are unitless numbers = density-independent pixels
 // Equivalent to CSS px on 1x screens; scales automatically on 2x/3x screens
@@ -40,9 +45,11 @@ borderRadius: 8,    // NOT '8px'
 width: 200,         // fixed width in dp
 width: '100%',      // percentage strings ARE supported for some properties
 ```
+{% endraw %}
 
 ### Flexbox Default is Column
 
+{% raw %}
 ```typescript
 // CSS Flexbox default:    flexDirection: 'row'
 // React Native default:   flexDirection: 'column'
@@ -50,11 +57,13 @@ width: '100%',      // percentage strings ARE supported for some properties
 // To get a horizontal row in RN (like a horizontal flex div):
 <View style={{ flexDirection: 'row' }}>
 ```
+{% endraw %}
 
 ---
 
 ## Flexbox Cheat Sheet (RN-Specific)
 
+{% raw %}
 ```typescript
 // Container properties
 flexDirection: 'column' | 'row' | 'column-reverse' | 'row-reverse'
@@ -73,6 +82,7 @@ flexShrink: 1        // how much to shrink
 flexBasis: 'auto' | 100  // initial size before grow/shrink
 alignSelf: 'auto' | 'flex-start' | 'flex-end' | 'center' | 'stretch'
 ```
+{% endraw %}
 
 ---
 
@@ -80,21 +90,25 @@ alignSelf: 'auto' | 'flex-start' | 'flex-end' | 'center' | 'stretch'
 
 ### 1. Fill the Screen
 
+{% raw %}
 ```tsx
 // Make a component fill all available space (like height: 100vh in CSS)
 <View style={{ flex: 1 }}>
     {/* fills the screen */}
 </View>
 ```
+{% endraw %}
 
 ### 2. Center Content
 
+{% raw %}
 ```tsx
 // Center horizontally and vertically (like CSS flexbox centering)
 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
     <Text>Centered!</Text>
 </View>
 ```
+{% endraw %}
 
 ---
 
@@ -110,6 +124,7 @@ The same Flexbox model you already know from web CSS works in RN:
 
 CSS `box-shadow` splits into two in RN — and they behave very differently per platform:
 
+{% raw %}
 ```typescript
 const styles = StyleSheet.create({
     card: {
@@ -126,6 +141,7 @@ const styles = StyleSheet.create({
     },
 });
 ```
+{% endraw %}
 
 :::note Android shadow limitation
 To get a custom-colored shadow on Android, use a solid-color View as a backdrop or the community library `react-native-shadow-2`.
@@ -137,6 +153,7 @@ To get a custom-colored shadow on Android, use a solid-color View as a backdrop 
 
 Same as CSS transforms, but written as an array of objects inside the style prop:
 
+{% raw %}
 ```tsx
 // CSS: transform: translateX(10px) rotate(45deg) scale(1.2);
 
@@ -149,11 +166,13 @@ Same as CSS transforms, but written as an array of objects inside the style prop
     ],
 }} />
 ```
+{% endraw %}
 
 ---
 
 ## Responsive Design Without Media Queries
 
+{% raw %}
 ```tsx
 import { useWindowDimensions } from 'react-native';
 
@@ -181,6 +200,7 @@ function ResponsiveLayout() {
     );
 }
 ```
+{% endraw %}
 
 ---
 
@@ -193,16 +213,21 @@ The install command alone won't work — styles will appear to compile but never
 :::
 
 **1. Install packages**
+{% raw %}
 ```bash
 npx expo install nativewind tailwindcss
 ```
+{% endraw %}
 
 **2. Initialize Tailwind**
+{% raw %}
 ```bash
 npx tailwindcss init
 ```
+{% endraw %}
 
 **3. Configure `tailwind.config.js`**
+{% raw %}
 ```js
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -212,15 +237,19 @@ module.exports = {
   plugins: [],
 };
 ```
+{% endraw %}
 
 **4. Create `global.css`**
+{% raw %}
 ```css
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 ```
+{% endraw %}
 
 **5. Update `babel.config.js`**
+{% raw %}
 ```js
 module.exports = function (api) {
     api.cache(true);
@@ -230,8 +259,10 @@ module.exports = function (api) {
     };
 };
 ```
+{% endraw %}
 
 **6. Update `metro.config.js`**
+{% raw %}
 ```js
 const { getDefaultConfig } = require('expo/metro-config');
 const { withNativeWind } = require('nativewind/metro');
@@ -239,20 +270,25 @@ const { withNativeWind } = require('nativewind/metro');
 const config = getDefaultConfig(__dirname);
 module.exports = withNativeWind(config, { input: './global.css' });
 ```
+{% endraw %}
 
 **7. Import `global.css` in your root `_layout.tsx`**
+{% raw %}
 ```tsx
 import '../global.css';
 ```
+{% endraw %}
 
 Now the Tailwind classes work:
 
+{% raw %}
 ```tsx
 <View className="flex-1 bg-white p-4">
     <Text className="text-lg font-bold text-gray-900">Title</Text>
     <Text className="text-sm text-gray-500 mt-1">Subtitle</Text>
 </View>
 ```
+{% endraw %}
 
 :::note NativeWind is not required
 The official approach is `StyleSheet.create`. NativeWind compiles Tailwind classes to RN styles at build time. Full setup docs: [nativewind.dev/getting-started/expo-router](https://www.nativewind.dev/getting-started/expo-router)

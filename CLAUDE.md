@@ -49,6 +49,7 @@ trilha-web/                  ← para devs React web
 - Cada pasta tem seu próprio `CLAUDE.md` com contexto local
 - `trilha-nativo`: analogias com Kotlin/Swift; `trilha-web`: analogias com HTML/CSS/React web
 - Comando `/novo-modulo` disponível em `.claude/commands/novo-modulo.md`
+- Todo bloco de código fenced (``` ```) deve ser envolvido por `{% raw %}` e `{% endraw %}` para não quebrar o pipeline de template
 
 ## Tecnologia de referência
 

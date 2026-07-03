@@ -11,6 +11,7 @@ sidebar_position: 9
 
 ## How Styling Works
 
+{% raw %}
 ```tsx
 // Every component accepts a `style` prop
 // Styles are plain JS objects (or arrays of objects)
@@ -18,6 +19,7 @@ sidebar_position: 9
     <Text style={{ fontSize: 16, color: '#333' }}>Hello</Text>
 </View>
 ```
+{% endraw %}
 
 Property names are **camelCase** (like JavaScript, not kebab-case like CSS):
 
@@ -35,6 +37,7 @@ Property names are **camelCase** (like JavaScript, not kebab-case like CSS):
 
 The preferred way to define styles — provides type checking, optimization, and IDE autocomplete:
 
+{% raw %}
 ```tsx
 import { StyleSheet, View, Text } from 'react-native';
 
@@ -73,11 +76,13 @@ const styles = StyleSheet.create({
     },
 });
 ```
+{% endraw %}
 
 ---
 
 ## Dynamic Styles
 
+{% raw %}
 ```tsx
 // Conditional styles using arrays
 <View style={[
@@ -101,11 +106,13 @@ function getButtonStyle(variant: 'primary' | 'secondary', size: 'sm' | 'md' | 'l
     };
 }
 ```
+{% endraw %}
 
 ---
 
 ## Platform-Specific Styles
 
+{% raw %}
 ```tsx
 import { Platform, StyleSheet } from 'react-native';
 
@@ -130,11 +137,13 @@ const styles = StyleSheet.create({
     },
 });
 ```
+{% endraw %}
 
 ---
 
 ## Typography
 
+{% raw %}
 ```tsx
 const styles = StyleSheet.create({
     heading1: {
@@ -161,8 +170,10 @@ const styles = StyleSheet.create({
     },
 });
 ```
+{% endraw %}
 
 **Custom fonts** — load them at app startup:
+{% raw %}
 ```tsx
 // Using Expo Font
 import { useFonts, Inter_400Regular, Inter_700Bold } from '@expo-google-fonts/inter';
@@ -173,6 +184,7 @@ export default function App() {
     return <Navigation />;
 }
 ```
+{% endraw %}
 
 ---
 
@@ -180,6 +192,7 @@ export default function App() {
 
 RN supports the same color formats as CSS:
 
+{% raw %}
 ```tsx
 const colors = {
     hex: '#0064d2',
@@ -191,9 +204,11 @@ const colors = {
     transparent: 'transparent',
 };
 ```
+{% endraw %}
 
 Best practice: define a **theme constants file**:
 
+{% raw %}
 ```typescript
 // theme.ts
 export const colors = {
@@ -218,11 +233,13 @@ export const spacing = {
     xxl: 48,
 } as const;
 ```
+{% endraw %}
 
 ---
 
 ## Borders
 
+{% raw %}
 ```tsx
 const styles = StyleSheet.create({
     card: {
@@ -242,11 +259,13 @@ const styles = StyleSheet.create({
     },
 });
 ```
+{% endraw %}
 
 ---
 
 ## Transforms
 
+{% raw %}
 ```tsx
 <View style={{
     transform: [
@@ -257,6 +276,7 @@ const styles = StyleSheet.create({
     ],
 }} />
 ```
+{% endraw %}
 
 ---
 
@@ -264,6 +284,7 @@ const styles = StyleSheet.create({
 
 For dark mode / dynamic theming, combine a theme context with `StyleSheet`:
 
+{% raw %}
 ```tsx
 // hooks/useThemeStyles.ts
 import { useColorScheme } from 'react-native';
@@ -286,6 +307,7 @@ function MyScreen() {
     );
 }
 ```
+{% endraw %}
 
 ---
 
@@ -313,6 +335,6 @@ function MyScreen() {
 🎉 **You've completed the Native Dev Track — Modules 1, 2, and 3!**
 
 You now have the foundations to build real React Native apps. Next steps:
-- Set up your first Expo project: `npx create-expo-app@latest MyApp`
-- Try [Expo Snack](https://snack.expo.dev) for quick experiments
-- Explore [Expo Router](https://docs.expo.dev/router/introduction/) for navigation
+- Set up your first project: `npx @react-native-community/cli init MyApp`
+- Try [Expo Snack](https://snack.expo.dev) for quick experiments without local setup
+- Add navigation with [React Navigation](https://reactnavigation.org/docs/getting-started)

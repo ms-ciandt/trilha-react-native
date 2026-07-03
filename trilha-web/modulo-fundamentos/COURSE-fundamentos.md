@@ -31,6 +31,7 @@ When you write React Native, your JS runs in **Hermes** (a mobile JS engine) wit
 
 Most of your JavaScript knowledge transfers directly:
 
+{% raw %}
 ```typescript
 // ✅ All of this works the same in React Native
 
@@ -56,6 +57,7 @@ type Status = 'loading' | 'success' | 'error';
 // All React hooks
 useState, useEffect, useRef, useMemo, useCallback, useContext, useReducer
 ```
+{% endraw %}
 
 ---
 
@@ -63,6 +65,7 @@ useState, useEffect, useRef, useMemo, useCallback, useContext, useReducer
 
 ### Storage
 
+{% raw %}
 ```typescript
 // Web
 localStorage.setItem('token', value);
@@ -79,9 +82,11 @@ const storage = new MMKV();
 storage.set('token', value);
 const token = storage.getString('token');
 ```
+{% endraw %}
 
 ### Platform Detection
 
+{% raw %}
 ```typescript
 // Web
 if (navigator.userAgent.includes('Mobile')) { ... }
@@ -92,9 +97,11 @@ if (Platform.OS === 'ios') { ... }
 if (Platform.OS === 'android') { ... }
 Platform.select({ ios: '#f2f2f7', android: '#ffffff', default: '#fff' });
 ```
+{% endraw %}
 
 ### Linking & Deep Links
 
+{% raw %}
 ```typescript
 // Web
 window.open('https://example.com');
@@ -106,9 +113,11 @@ await Linking.openURL('https://example.com');
 await Linking.openURL('mailto:hello@example.com');
 await Linking.openURL('tel:+15555555');
 ```
+{% endraw %}
 
 ### Clipboard
 
+{% raw %}
 ```typescript
 // Web
 navigator.clipboard.writeText('hello');
@@ -117,6 +126,7 @@ navigator.clipboard.writeText('hello');
 import * as Clipboard from 'expo-clipboard';
 await Clipboard.setStringAsync('hello');
 ```
+{% endraw %}
 
 ---
 
@@ -125,6 +135,7 @@ await Clipboard.setStringAsync('hello');
 ### 1. Safe Areas
 Mobile screens have notches, dynamic islands, and home indicators. Content can be hidden behind them.
 
+{% raw %}
 ```tsx
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -137,10 +148,12 @@ function HomeScreen() {
     );
 }
 ```
+{% endraw %}
 
 ### 2. Keyboard Avoidance
 The keyboard pushes up from the bottom and can cover input fields.
 
+{% raw %}
 ```tsx
 import { KeyboardAvoidingView, Platform } from 'react-native';
 
@@ -159,10 +172,12 @@ function LoginForm() {
     );
 }
 ```
+{% endraw %}
 
 ### 3. Gesture Handling
 Mobile apps respond to swipes, pinches, and long presses — not just taps:
 
+{% raw %}
 ```tsx
 import { useSharedValue, useAnimatedStyle, withSpring, runOnJS } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
@@ -198,10 +213,12 @@ function SwipeCard() {
     );
 }
 ```
+{% endraw %}
 
 ### 4. Status Bar
 The thin bar at the top of the screen with time and battery:
 
+{% raw %}
 ```tsx
 import { StatusBar } from 'expo-status-bar';
 
@@ -214,6 +231,7 @@ function App() {
     );
 }
 ```
+{% endraw %}
 
 ---
 
@@ -221,6 +239,7 @@ function App() {
 
 Expo projects come with TypeScript pre-configured. Key things to know:
 
+{% raw %}
 ```json
 // tsconfig.json — what Expo generates
 {
@@ -230,6 +249,7 @@ Expo projects come with TypeScript pre-configured. Key things to know:
   }
 }
 ```
+{% endraw %}
 
 The `expo/tsconfig.base` already configures path aliases, module resolution for React Native, and JSX settings. You don't need to configure these manually.
 
@@ -258,6 +278,7 @@ Next → **[TypeScript for Web Devs](./typescript-for-web-devs)**
 
 ### Style Types
 
+{% raw %}
 ```typescript
 import { ViewStyle, TextStyle, ImageStyle, StyleProp } from 'react-native';
 
@@ -284,9 +305,11 @@ interface ButtonProps {
     labelStyle?: StyleProp<TextStyle>;
 }
 ```
+{% endraw %}
 
 ### Component Ref Types
 
+{% raw %}
 ```typescript
 import { useRef } from 'react';
 import { TextInput, ScrollView, FlatList } from 'react-native';
@@ -300,9 +323,11 @@ inputRef.current?.focus();
 scrollRef.current?.scrollTo({ y: 0, animated: true });
 listRef.current?.scrollToIndex({ index: 0 });
 ```
+{% endraw %}
 
 ### Event Types
 
+{% raw %}
 ```typescript
 import {
     NativeSyntheticEvent,
@@ -327,37 +352,52 @@ function handlePress(event: GestureResponderEvent) {
     console.log('pressed at:', event.nativeEvent.locationX, event.nativeEvent.locationY);
 }
 ```
+{% endraw %}
 
 ---
 
-## Typing Navigation (Expo Router)
+## Typing Navigation (React Navigation)
 
-With Expo Router (file-based routing), TypeScript support is built-in:
+React Navigation uses a typed param list to make navigation type-safe:
 
+{% raw %}
 ```typescript
-// app/(tabs)/profile.tsx
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { View, Text, Button } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
 
-// For dynamic routes: app/user/[id].tsx
-export default function UserScreen() {
-    const { id } = useLocalSearchParams<{ id: string }>();
-    const router = useRouter();
+// Define the param list for the entire stack
+type RootStackParamList = {
+    Home: undefined;                    // no params
+    Profile: { userId: string };        // requires userId
+    Settings: { tab?: 'account' | 'privacy' };  // optional param
+};
 
+// Typed navigation hook for the Profile screen
+type ProfileNavProp = NativeStackNavigationProp<RootStackParamList, 'Profile'>;
+type ProfileRouteProp = RouteProp<RootStackParamList, 'Profile'>;
+
+export default function ProfileScreen() {
+    const navigation = useNavigation<ProfileNavProp>();
+    const route = useRoute<ProfileRouteProp>();
+
+    // route.params.userId is typed as `string` — no casting needed
     return (
         <View>
-            <Text>User ID: {id}</Text>
-            <Button title="Go Back" onPress={() => router.back()} />
-            <Button title="Go Home" onPress={() => router.push('/')} />
+            <Text>User ID: {route.params.userId}</Text>
+            <Button title="Go Back" onPress={() => navigation.goBack()} />
+            <Button title="Go Home" onPress={() => navigation.navigate('Home')} />
         </View>
     );
 }
 ```
+{% endraw %}
 
 ---
 
 ## Typing AsyncStorage & Async Operations
 
+{% raw %}
 ```typescript
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -380,6 +420,7 @@ async function loadSession(): Promise<UserSession | null> {
     return JSON.parse(raw) as UserSession;
 }
 ```
+{% endraw %}
 
 ---
 
@@ -387,6 +428,7 @@ async function loadSession(): Promise<UserSession | null> {
 
 ### Typing Component Variants
 
+{% raw %}
 ```typescript
 type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'ghost';
 type ButtonSize = 'sm' | 'md' | 'lg';
@@ -401,9 +443,11 @@ interface ButtonProps {
     leftIcon?: React.ReactNode;
 }
 ```
+{% endraw %}
 
 ### Discriminated Unions for API State
 
+{% raw %}
 ```typescript
 type AsyncState<T> =
     | { status: 'idle' }
@@ -417,6 +461,7 @@ function useAsyncState<T>() {
     return state;
 }
 ```
+{% endraw %}
 
 ---
 
@@ -458,6 +503,7 @@ Next → **[Web vs React Native](./web-vs-rn)**
 
 This is the most immediate change. Every HTML element has an RN equivalent:
 
+{% raw %}
 ```tsx
 // Web React
 function WebCard() {
@@ -473,7 +519,9 @@ function WebCard() {
     );
 }
 ```
+{% endraw %}
 
+{% raw %}
 ```tsx
 // React Native — same structure, native components
 import { View, Text, Image, Pressable, StyleSheet } from 'react-native';
@@ -493,6 +541,7 @@ function NativeCard() {
     );
 }
 ```
+{% endraw %}
 
 The tree structure is identical — only the primitives change.
 
@@ -500,6 +549,7 @@ The tree structure is identical — only the primitives change.
 
 ## Styling: CSS → StyleSheet
 
+{% raw %}
 ```css
 /* styles.css */
 .button {
@@ -512,11 +562,15 @@ The tree structure is identical — only the primitives change.
     cursor: pointer;
 }
 ```
+{% endraw %}
 
+{% raw %}
 ```tsx
 <button className="button">Click me</button>
 ```
+{% endraw %}
 
+{% raw %}
 ```tsx
 // React Native (StyleSheet)
 const styles = StyleSheet.create({
@@ -538,6 +592,7 @@ const styles = StyleSheet.create({
     <Text style={styles.buttonText}>Click me</Text>
 </Pressable>
 ```
+{% endraw %}
 
 Key difference: **Text styling properties live on `<Text>`, not on container `<View>`**. There is no CSS inheritance in RN — `color` on a parent `View` does not apply to child `Text` elements.
 
@@ -547,6 +602,7 @@ Key difference: **Text styling properties live on `<Text>`, not on container `<V
 
 This trips up every web developer:
 
+{% raw %}
 ```tsx
 // Web — color inherits through the tree
 <div style={{ color: 'red' }}>
@@ -563,6 +619,7 @@ This trips up every web developer:
     This is red <Text style={{ fontWeight: 'bold' }}>and this is bold red</Text>
 </Text>
 ```
+{% endraw %}
 
 ---
 
@@ -575,6 +632,7 @@ You cannot use raw CSS files, CSS Modules, or the web version of `styled-compone
 
 The official approach is still `StyleSheet.create`. All three options exist in production apps. In this course:
 
+{% raw %}
 ```tsx
 // ❌ Does not work in React Native
 <View className="flex-1 bg-white p-4" />        // No Tailwind
@@ -588,11 +646,13 @@ The official approach is still `StyleSheet.create`. All three options exist in p
 // This DOES work if you install NativeWind:
 <View className="flex-1 bg-white p-4" />  // with NativeWind installed
 ```
+{% endraw %}
 
 ---
 
 ## Navigation: URLs → Stacks
 
+{% raw %}
 ```tsx
 // Web (React Router / Next.js)
 import { Link, useNavigate } from 'react-router-dom';
@@ -608,29 +668,33 @@ function NavExample() {
     );
 }
 ```
+{% endraw %}
 
+{% raw %}
 ```tsx
-// React Native with Expo Router (file-based, similar to Next.js)
-import { Link, useRouter } from 'expo-router';
+// React Native with React Navigation (stack-based)
+import { useNavigation } from '@react-navigation/native';
 
 function NavExample() {
-    const router = useRouter();
+    const navigation = useNavigation();
     return (
         <>
-            <Link href="/profile">Go to Profile</Link>
-            <Pressable onPress={() => router.push('/home')}><Text>Home</Text></Pressable>
-            <Pressable onPress={() => router.back()}><Text>Back</Text></Pressable>
+            <Pressable onPress={() => navigation.navigate('Profile')}><Text>Go to Profile</Text></Pressable>
+            <Pressable onPress={() => navigation.navigate('Home')}><Text>Home</Text></Pressable>
+            <Pressable onPress={() => navigation.goBack()}><Text>Back</Text></Pressable>
         </>
     );
 }
 ```
+{% endraw %}
 
-Expo Router is the closest thing to Next.js in the RN world — file-based routing with the same mental model.
+React Navigation uses a **stack model** — screens are pushed and popped like a call stack, matching native iOS/Android navigation behavior. If you prefer file-based routing (closer to Next.js), **Expo Router** offers that mental model but is tied to the Expo toolchain — research it separately.
 
 ---
 
 ## Events: onClick → onPress
 
+{% raw %}
 ```tsx
 // Web
 <button onClick={handleClick}>Click</button>
@@ -642,11 +706,13 @@ Expo Router is the closest thing to Next.js in the RN world — file-based routi
 <TextInput onChangeText={setText} /> // onChange → onChangeText (gives you the string directly)
 // No form elements — just group inputs manually
 ```
+{% endraw %}
 
 ---
 
 ## Lists: map() → FlatList
 
+{% raw %}
 ```tsx
 // Web — rendering a list with .map()
 {users.map(user => (
@@ -655,7 +721,9 @@ Expo Router is the closest thing to Next.js in the RN world — file-based routi
     </div>
 ))}
 ```
+{% endraw %}
 
+{% raw %}
 ```tsx
 // React Native — for short lists, .map() inside ScrollView is fine
 <ScrollView>
@@ -677,6 +745,7 @@ Expo Router is the closest thing to Next.js in the RN world — file-based routi
     )}
 />
 ```
+{% endraw %}
 
 ---
 
@@ -685,7 +754,7 @@ Expo Router is the closest thing to Next.js in the RN world — file-based routi
 | Resource | Type | Link |
 |---|---|---|
 | RN Intro for React Web Devs | Official Docs | [reactnative.dev/docs/intro-react](https://reactnative.dev/docs/intro-react) |
-| Expo Router (Next.js-style routing) | Official | [docs.expo.dev/router/introduction/](https://docs.expo.dev/router/introduction/) |
+| React Navigation | Official | [reactnavigation.org/docs/getting-started](https://reactnavigation.org/docs/getting-started) |
 | NativeWind (Tailwind for RN) | Community | [nativewind.dev](https://www.nativewind.dev/) |
 
 ---
@@ -703,6 +772,7 @@ Next → **[No DOM, No CSS — Styling in Depth](./no-dom-no-css)**
 
 These browser globals simply don't exist in React Native:
 
+{% raw %}
 ```typescript
 // ❌ None of this exists in React Native
 document.getElementById('app');
@@ -715,17 +785,20 @@ window.location.href;
 navigator.geolocation;    // ← removed from RN core in 0.60 — use expo-location
 navigator.clipboard;      // ← not available — use expo-clipboard
 ```
+{% endraw %}
 
+{% raw %}
 ```typescript
 // ✅ React Native equivalents
 // Get element ref → useRef()
 // Scroll → ref.current.scrollTo()
 // Screen dimensions → Dimensions.get('window') or useWindowDimensions()
 // Resize/orientation → useWindowDimensions() hook updates automatically
-// Navigation → Expo Router / React Navigation
+// Navigation → React Navigation (or Expo Router if using Expo)
 // Geolocation → expo-location
 // Clipboard → expo-clipboard
 ```
+{% endraw %}
 
 ---
 
@@ -733,6 +806,7 @@ navigator.clipboard;      // ← not available — use expo-clipboard
 
 You cannot modify the native view tree imperatively the way you can with the DOM.
 
+{% raw %}
 ```typescript
 // ❌ Web — direct DOM manipulation
 document.getElementById('title').innerHTML = '<strong>New Title</strong>';
@@ -747,6 +821,7 @@ const [isActive, setIsActive] = useState(false);
     {title}
 </Text>
 ```
+{% endraw %}
 
 This is actually the same constraint that React itself imposes on web. If you've been using React correctly (no `document.querySelector` in useEffect), you're already used to this.
 
@@ -754,6 +829,7 @@ This is actually the same constraint that React itself imposes on web. If you've
 
 ## No CSS Selectors, No Cascade
 
+{% raw %}
 ```css
 /* ❌ None of this works in React Native */
 .card > .title { font-size: 18px; }
@@ -763,7 +839,9 @@ This is actually the same constraint that React itself imposes on web. If you've
 * { box-sizing: border-box; }
 :root { --primary: #0064d2; }
 ```
+{% endraw %}
 
+{% raw %}
 ```typescript
 // ✅ React Native — no selectors, no cascade, no hover, no media queries
 // You express all of this in JS
@@ -785,6 +863,7 @@ const isTablet = width >= 768;
 import { colors } from './theme';
 <View style={{ backgroundColor: colors.primary }} />
 ```
+{% endraw %}
 
 ---
 
@@ -830,6 +909,7 @@ React Native has a simplified layout model:
 
 On web, sticky positioning keeps a header visible during scroll. In RN, you handle this differently:
 
+{% raw %}
 ```tsx
 // Web: CSS position: sticky
 <div style={{ position: 'sticky', top: 0 }}>Sticky header</div>
@@ -842,6 +922,7 @@ On web, sticky positioning keeps a header visible during scroll. In RN, you hand
     ListHeaderComponent={<StickyHeader />}
 />
 ```
+{% endraw %}
 
 ---
 
@@ -891,7 +972,7 @@ Next → **[Native Components for Web Devs](./native-components)**
 | `<img>` | `<Image>` | `source={{ uri }}` for remote, `require()` for local |
 | `<input type="text">` | `<TextInput>` | `onChangeText` gives you the string directly |
 | `<button>` | `<Pressable>` + `<Text>` | Or `<Button>` for a simple native button |
-| `<a>` | `<Link>` (Expo Router) or `<Pressable>` | No `href` on arbitrary elements |
+| `<a>` | `<Pressable>` + `navigation.navigate()` | No `href` on arbitrary elements; links are imperative |
 | `<ul>` + infinite scroll | `<FlatList>` | Virtualized, handles large lists |
 | `<select>` | Community `<Picker>` or ActionSheet | No built-in dropdown |
 | `<textarea>` | `<TextInput multiline />` | Same component, different props |
@@ -904,6 +985,7 @@ Next → **[Native Components for Web Devs](./native-components)**
 
 ## `<View>` — Think `<div>` but Flexbox-First
 
+{% raw %}
 ```tsx
 // Web div
 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -917,6 +999,7 @@ Next → **[Native Components for Web Devs](./native-components)**
     <View><Text>Item 2</Text></View>
 </View>
 ```
+{% endraw %}
 
 ---
 
@@ -924,6 +1007,7 @@ Next → **[Native Components for Web Devs](./native-components)**
 
 The biggest change: you cannot render text outside of a `<Text>` component.
 
+{% raw %}
 ```tsx
 // ❌ Text outside Text — CRASH
 <View>
@@ -943,11 +1027,13 @@ The biggest change: you cannot render text outside of a `<Text>` component.
     <Text style={{ fontStyle: 'italic', color: '#0064d2' }}>italic blue</Text>
 </Text>
 ```
+{% endraw %}
 
 ---
 
 ## `<TextInput>` — The Input Element
 
+{% raw %}
 ```tsx
 // Web
 <input
@@ -967,9 +1053,11 @@ The biggest change: you cannot render text outside of a `<Text>` component.
     autoCorrect={false}
 />
 ```
+{% endraw %}
 
 ### Common `TextInput` Props
 
+{% raw %}
 ```tsx
 <TextInput
     // Content
@@ -1000,6 +1088,7 @@ The biggest change: you cannot render text outside of a `<Text>` component.
     style={styles.input}
 />
 ```
+{% endraw %}
 
 ---
 
@@ -1007,6 +1096,7 @@ The biggest change: you cannot render text outside of a `<Text>` component.
 
 On the web, almost any element can have an `onClick`. In RN, you wrap things in `<Pressable>`:
 
+{% raw %}
 ```tsx
 // Web — click on anything
 <div onClick={handleClick}>Clickable div</div>
@@ -1033,6 +1123,7 @@ On the web, almost any element can have an `onClick`. In RN, you wrap things in 
     <Text style={styles.buttonText}>Press Me</Text>
 </Pressable>
 ```
+{% endraw %}
 
 ---
 
@@ -1040,6 +1131,7 @@ On the web, almost any element can have an `onClick`. In RN, you wrap things in 
 
 For long lists, `FlatList` is essential — it only renders what's visible on screen:
 
+{% raw %}
 ```tsx
 // Web — render all items (fine for short lists)
 {items.map(item => <ItemCard key={item.id} item={item} />)}
@@ -1064,11 +1156,13 @@ For long lists, `FlatList` is essential — it only renders what's visible on sc
     onEndReachedThreshold={0.3}
 />
 ```
+{% endraw %}
 
 ---
 
 ## `<Switch>` — Toggle
 
+{% raw %}
 ```tsx
 import { Switch } from 'react-native';
 
@@ -1081,6 +1175,7 @@ const [isEnabled, setIsEnabled] = useState(false);
     thumbColor={isEnabled ? '#ffffff' : '#f4f3f4'}
 />
 ```
+{% endraw %}
 
 ---
 
@@ -1120,6 +1215,7 @@ Next → **[Styling & Flexbox for Web Devs](./styling-and-flexbox)**
 
 ### Property Names — camelCase
 
+{% raw %}
 ```css
 /* CSS */
 background-color: #fff;
@@ -1127,7 +1223,9 @@ font-size: 16px;
 border-radius: 8px;
 padding-horizontal: 16px;  /* doesn't exist in CSS */
 ```
+{% endraw %}
 
+{% raw %}
 ```typescript
 // React Native StyleSheet
 backgroundColor: '#fff',   // camelCase, no hyphens
@@ -1135,9 +1233,11 @@ fontSize: 16,              // no 'px' unit — numbers are device-independent pi
 borderRadius: 8,
 paddingHorizontal: 16,     // RN shorthand (= paddingLeft + paddingRight)
 ```
+{% endraw %}
 
 ### No Units
 
+{% raw %}
 ```typescript
 // All values are unitless numbers = density-independent pixels
 // Equivalent to CSS px on 1x screens; scales automatically on 2x/3x screens
@@ -1147,9 +1247,11 @@ borderRadius: 8,    // NOT '8px'
 width: 200,         // fixed width in dp
 width: '100%',      // percentage strings ARE supported for some properties
 ```
+{% endraw %}
 
 ### Flexbox Default is Column
 
+{% raw %}
 ```typescript
 // CSS Flexbox default:    flexDirection: 'row'
 // React Native default:   flexDirection: 'column'
@@ -1157,11 +1259,13 @@ width: '100%',      // percentage strings ARE supported for some properties
 // To get a horizontal row in RN (like a horizontal flex div):
 <View style={{ flexDirection: 'row' }}>
 ```
+{% endraw %}
 
 ---
 
 ## Flexbox Cheat Sheet (RN-Specific)
 
+{% raw %}
 ```typescript
 // Container properties
 flexDirection: 'column' | 'row' | 'column-reverse' | 'row-reverse'
@@ -1180,6 +1284,7 @@ flexShrink: 1        // how much to shrink
 flexBasis: 'auto' | 100  // initial size before grow/shrink
 alignSelf: 'auto' | 'flex-start' | 'flex-end' | 'center' | 'stretch'
 ```
+{% endraw %}
 
 ---
 
@@ -1187,21 +1292,25 @@ alignSelf: 'auto' | 'flex-start' | 'flex-end' | 'center' | 'stretch'
 
 ### 1. Fill the Screen
 
+{% raw %}
 ```tsx
 // Make a component fill all available space (like height: 100vh in CSS)
 <View style={{ flex: 1 }}>
     {/* fills the screen */}
 </View>
 ```
+{% endraw %}
 
 ### 2. Center Content
 
+{% raw %}
 ```tsx
 // Center horizontally and vertically (like CSS flexbox centering)
 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
     <Text>Centered!</Text>
 </View>
 ```
+{% endraw %}
 
 ---
 
@@ -1217,6 +1326,7 @@ The same Flexbox model you already know from web CSS works in RN:
 
 CSS `box-shadow` splits into two in RN — and they behave very differently per platform:
 
+{% raw %}
 ```typescript
 const styles = StyleSheet.create({
     card: {
@@ -1233,6 +1343,7 @@ const styles = StyleSheet.create({
     },
 });
 ```
+{% endraw %}
 
 :::note Android shadow limitation
 To get a custom-colored shadow on Android, use a solid-color View as a backdrop or the community library `react-native-shadow-2`.
@@ -1244,6 +1355,7 @@ To get a custom-colored shadow on Android, use a solid-color View as a backdrop 
 
 Same as CSS transforms, but written as an array of objects inside the style prop:
 
+{% raw %}
 ```tsx
 // CSS: transform: translateX(10px) rotate(45deg) scale(1.2);
 
@@ -1256,11 +1368,13 @@ Same as CSS transforms, but written as an array of objects inside the style prop
     ],
 }} />
 ```
+{% endraw %}
 
 ---
 
 ## Responsive Design Without Media Queries
 
+{% raw %}
 ```tsx
 import { useWindowDimensions } from 'react-native';
 
@@ -1288,6 +1402,7 @@ function ResponsiveLayout() {
     );
 }
 ```
+{% endraw %}
 
 ---
 
@@ -1300,16 +1415,21 @@ The install command alone won't work — styles will appear to compile but never
 :::
 
 **1. Install packages**
+{% raw %}
 ```bash
 npx expo install nativewind tailwindcss
 ```
+{% endraw %}
 
 **2. Initialize Tailwind**
+{% raw %}
 ```bash
 npx tailwindcss init
 ```
+{% endraw %}
 
 **3. Configure `tailwind.config.js`**
+{% raw %}
 ```js
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -1319,15 +1439,19 @@ module.exports = {
   plugins: [],
 };
 ```
+{% endraw %}
 
 **4. Create `global.css`**
+{% raw %}
 ```css
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 ```
+{% endraw %}
 
 **5. Update `babel.config.js`**
+{% raw %}
 ```js
 module.exports = function (api) {
     api.cache(true);
@@ -1337,8 +1461,10 @@ module.exports = function (api) {
     };
 };
 ```
+{% endraw %}
 
 **6. Update `metro.config.js`**
+{% raw %}
 ```js
 const { getDefaultConfig } = require('expo/metro-config');
 const { withNativeWind } = require('nativewind/metro');
@@ -1346,20 +1472,25 @@ const { withNativeWind } = require('nativewind/metro');
 const config = getDefaultConfig(__dirname);
 module.exports = withNativeWind(config, { input: './global.css' });
 ```
+{% endraw %}
 
 **7. Import `global.css` in your root `_layout.tsx`**
+{% raw %}
 ```tsx
 import '../global.css';
 ```
+{% endraw %}
 
 Now the Tailwind classes work:
 
+{% raw %}
 ```tsx
 <View className="flex-1 bg-white p-4">
     <Text className="text-lg font-bold text-gray-900">Title</Text>
     <Text className="text-sm text-gray-500 mt-1">Subtitle</Text>
 </View>
 ```
+{% endraw %}
 
 :::note NativeWind is not required
 The official approach is `StyleSheet.create`. NativeWind compiles Tailwind classes to RN styles at build time. Full setup docs: [nativewind.dev/getting-started/expo-router](https://www.nativewind.dev/getting-started/expo-router)
@@ -1385,7 +1516,7 @@ Next → **[Lists & Navigation](./lists-and-navigation)**
 
 # Lists & Navigation in React Native
 
-> You've built lists with `.map()` and navigated with React Router. This module shows you RN's virtualized list APIs and how Expo Router maps almost 1:1 to Next.js App Router.
+> You've built lists with `.map()` and navigated with React Router. This module shows you RN's virtualized list APIs and how React Navigation handles screen transitions on mobile.
 
 ## Lists
 
@@ -1400,6 +1531,7 @@ Next → **[Lists & Navigation](./lists-and-navigation)**
 
 ### `FlatList` — The Workhorse
 
+{% raw %}
 ```tsx
 interface Product {
     id: string;
@@ -1450,9 +1582,11 @@ function ProductList({ products }: { products: Product[] }) {
     );
 }
 ```
+{% endraw %}
 
 ### Grid with `numColumns`
 
+{% raw %}
 ```tsx
 // Like CSS grid with equal columns
 <FlatList
@@ -1469,9 +1603,11 @@ function ProductList({ products }: { products: Product[] }) {
     )}
 />
 ```
+{% endraw %}
 
 ### `SectionList` — Grouped Content
 
+{% raw %}
 ```tsx
 interface Section {
     title: string;
@@ -1496,137 +1632,140 @@ const sections: Section[] = [
     stickySectionHeadersEnabled={true}  // sticky like iOS section headers
 />
 ```
+{% endraw %}
 
 ---
 
-## Navigation with Expo Router
+## Navigation with React Navigation
 
-Expo Router uses file-based routing — **the same mental model as Next.js App Router**.
+Mobile navigation is fundamentally different from the web. There's no URL bar — navigation is a **stack of screens pushed onto memory**, with native gestures (swipe back on iOS, Android back button) to pop them off.
 
-### File Structure → Routes
+**React Navigation** is the standard library for this. Install it in a React Native CLI project:
 
-```
-app/
-├── _layout.tsx          → Root layout (like layout.tsx in Next.js)
-├── index.tsx            → Route: /
-├── (tabs)/              → Tab group (parentheses = layout group)
-│   ├── _layout.tsx      → Tab bar layout
-│   ├── home.tsx         → Route: /home
-│   ├── explore.tsx      → Route: /explore
-│   └── profile.tsx      → Route: /profile
-├── user/
-│   ├── [id].tsx         → Route: /user/123 (dynamic segment)
-│   └── index.tsx        → Route: /user
-└── modal.tsx            → Route: /modal
+```bash
+npm install @react-navigation/native @react-navigation/native-stack
+npm install react-native-screens react-native-safe-area-context
 ```
 
-### Navigation
+### Setting Up the Navigator
 
+{% raw %}
 ```tsx
-import { Link, useRouter } from 'expo-router';
+// App.tsx
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import HomeScreen from './screens/HomeScreen';
+import ProfileScreen from './screens/ProfileScreen';
+
+type RootStackParamList = {
+    Home: undefined;
+    Profile: { userId: string };
+};
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
+
+export default function App() {
+    return (
+        <NavigationContainer>
+            <Stack.Navigator>
+                <Stack.Screen name="Home" component={HomeScreen} />
+                <Stack.Screen name="Profile" component={ProfileScreen} />
+            </Stack.Navigator>
+        </NavigationContainer>
+    );
+}
+```
+{% endraw %}
+
+### Navigating Between Screens
+
+{% raw %}
+```tsx
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
+type HomeNavProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 
 function HomeScreen() {
-    const router = useRouter();
+    const navigation = useNavigation<HomeNavProp>();
 
     return (
         <View>
-            {/* Declarative navigation (like <a> or <Link> in Next.js) */}
-            <Link href="/profile">Go to Profile</Link>
-            <Link href="/user/123">User 123</Link>
-            <Link href={{ pathname: '/user/[id]', params: { id: '123' } }}>User 123</Link>
-
-            {/* Programmatic navigation */}
-            <Pressable onPress={() => router.push('/settings')}>
-                <Text>Settings</Text>
+            {/* Push a new screen */}
+            <Pressable onPress={() => navigation.navigate('Profile', { userId: '123' })}>
+                <Text>Go to Profile</Text>
             </Pressable>
-            <Pressable onPress={() => router.back()}>
+            {/* Go back */}
+            <Pressable onPress={() => navigation.goBack()}>
                 <Text>Back</Text>
             </Pressable>
-            <Pressable onPress={() => router.replace('/login')}>
-                <Text>Logout (replace history)</Text>
+            {/* Replace current screen (no back) */}
+            <Pressable onPress={() => navigation.replace('Home')}>
+                <Text>Reset</Text>
             </Pressable>
         </View>
     );
 }
 ```
+{% endraw %}
 
 ### Reading Route Params
 
+{% raw %}
 ```tsx
-// app/user/[id].tsx
-import { useLocalSearchParams } from 'expo-router';
+import { useRoute, RouteProp } from '@react-navigation/native';
 
-export default function UserScreen() {
-    const { id } = useLocalSearchParams<{ id: string }>();
-    return <Text>User: {id}</Text>;
+type ProfileRouteProp = RouteProp<RootStackParamList, 'Profile'>;
+
+function ProfileScreen() {
+    const route = useRoute<ProfileRouteProp>();
+    const { userId } = route.params;
+
+    return <Text>User: {userId}</Text>;
 }
 ```
-
-### Root Layout
-
-```tsx
-// app/_layout.tsx — like Next.js root layout
-import { Stack } from 'expo-router';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-
-export default function RootLayout() {
-    return (
-        <SafeAreaProvider>
-            <Stack>
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-            </Stack>
-        </SafeAreaProvider>
-    );
-}
-```
+{% endraw %}
 
 ### Tab Navigation
 
+{% raw %}
 ```tsx
-// app/(tabs)/_layout.tsx
-import { Tabs } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-export default function TabLayout() {
+// npm install @react-navigation/bottom-tabs
+
+const Tab = createBottomTabNavigator();
+
+function MainTabs() {
     return (
-        <Tabs>
-            <Tabs.Screen
-                name="home"
-                options={{
-                    title: 'Home',
-                    tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="home" size={size} color={color} />
-                    ),
-                }}
-            />
-            <Tabs.Screen
-                name="profile"
-                options={{
-                    title: 'Profile',
-                    tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="person" size={size} color={color} />
-                    ),
-                }}
-            />
-        </Tabs>
+        <Tab.Navigator>
+            <Tab.Screen name="Home" component={HomeScreen} />
+            <Tab.Screen name="Profile" component={ProfileScreen} />
+        </Tab.Navigator>
     );
 }
 ```
+{% endraw %}
 
 ---
 
 ## Web Routing vs Mobile Navigation
 
-| Web (React Router / Next.js) | React Native (Expo Router) |
-|------------------------------|---------------------------|
+| Web (React Router / Next.js) | React Native (React Navigation) |
+|------------------------------|---------------------------------|
 | URL-based, shareable links | Deep links supported, but optional |
 | Browser back button | Native back gesture (swipe left on iOS) |
-| `<Link href="...">` | `<Link href="...">` (same!) |
-| `useNavigate()` push/replace | `router.push()` / `router.replace()` |
-| Query strings `?key=val` | `useLocalSearchParams()` |
-| Modal via route | `presentation: 'modal'` in Stack |
-| 404 page | `+not-found.tsx` file |
+| `<Link to="...">` | `navigation.navigate('ScreenName')` |
+| `useNavigate()` push/replace | `navigation.navigate()` / `navigation.replace()` |
+| Query strings `?key=val` | `route.params` object |
+| Modal via route | `presentation: 'modal'` in Stack.Screen |
+| 404 page | Catch-all screen in navigator |
+
+---
+
+> **About Expo Router**
+>
+> If you use **Expo** (instead of React Native CLI), **Expo Router** offers file-based routing — closer to Next.js App Router in mental model. It's a valid alternative, but it's tied to the Expo toolchain. Research it separately at [docs.expo.dev/router/introduction/](https://docs.expo.dev/router/introduction/).
 
 ---
 
@@ -1634,7 +1773,8 @@ export default function TabLayout() {
 
 | Resource | Type | Link |
 |---|---|---|
-| Expo Router Introduction | Official | [docs.expo.dev/router/introduction/](https://docs.expo.dev/router/introduction/) |
+| React Navigation Getting Started | Official | [reactnavigation.org/docs/getting-started](https://reactnavigation.org/docs/getting-started) |
+| React Navigation — Stack Navigator | Official | [reactnavigation.org/docs/native-stack-navigator](https://reactnavigation.org/docs/native-stack-navigator) |
 | FlatList API | Official | [reactnative.dev/docs/flatlist](https://reactnative.dev/docs/flatlist) |
 | SectionList API | Official | [reactnative.dev/docs/sectionlist](https://reactnative.dev/docs/sectionlist) |
 | notJust.dev — Full Course (8hr) | Video | [youtube.com/@notjustdev](https://www.youtube.com/@notjustdev) |
@@ -1644,8 +1784,8 @@ export default function TabLayout() {
 🎉 **You've completed the Web Dev Track!**
 
 You now have the foundations to build real React Native apps. Next steps:
-- Create your first Expo project: `npx create-expo-app@latest MyApp`
-- Try [Expo Snack](https://snack.expo.dev) for quick experiments
+- Create your first project: `npx @react-native-community/cli init MyApp`
+- Try [Expo Snack](https://snack.expo.dev) for quick experiments without local setup
 - Watch [notJust.dev's free 8-hour course](https://www.youtube.com/@notjustdev) for a full project walkthrough
 
 
