@@ -182,4 +182,7 @@ Tópicos:
 
 You can watch a demonstration of the architecture in action here:
 
-[Watch Video: test_1.mp4](https://alimurasales.github.io/trilha-react-native/assets/videos/test_1.mp4)
+<video width="100%" max-width="800px" controls style="border-radius: 8px; margin: 16px 0;">
+  <source src="https://alimuramatheus.github.io/trilha-react-native/assets/videos/test_1.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
