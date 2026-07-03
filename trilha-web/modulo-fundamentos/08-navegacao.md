@@ -7,8 +7,6 @@ sidebar_position: 8
 
 # Navegação
 
-> **Perfil:** Devs com background React web. Já usam React Router — o maior gap aqui é entender que não existe URL no mobile, que o modelo de histórico é diferente e que há comportamentos nativos (swipe-back, hardware back button) que precisam ser considerados.
-
 ---
 
 ## Objetivo do tópico

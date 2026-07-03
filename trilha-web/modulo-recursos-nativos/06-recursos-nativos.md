@@ -1,7 +1,5 @@
 # Tópico 6 — Recursos Nativos (Trilha 2: Devs Web/React)
 
-> **Perfil:** Devs com background React web. Já usaram browser APIs como `navigator.geolocation`, `navigator.mediaDevices` e `Notification`. O foco é entender por que essas APIs não existem no mobile, como é o modelo de permissões nativo e como acessar esses recursos através das libs do ecossistema RN/Expo.
-
 ---
 
 ## Objetivo do tópico

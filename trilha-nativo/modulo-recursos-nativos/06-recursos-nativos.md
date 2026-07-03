@@ -1,7 +1,5 @@
 # Tópico 6 — Recursos Nativos (Trilha 1: Devs Nativos)
 
-> **Perfil:** Devs com background Android/iOS. Já implementaram permissões e câmera no nativo — o desafio aqui é entender como acessar esses recursos a partir do JavaScript e quando usar a camada JS vs descer para o nativo.
-
 ---
 
 ## Objetivo do tópico

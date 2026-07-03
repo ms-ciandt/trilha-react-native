@@ -7,8 +7,6 @@ sidebar_position: 11
 
 # Estado & APIs
 
-> **Perfil:** Devs com background Android/iOS. Já lidam com ViewModel/LiveData (Android) ou @StateObject/@ObservedObject (iOS/SwiftUI). O foco é mapear esses padrões para o ecossistema React e entender as diferenças de modelo mental.
-
 ---
 
 ## Mapeamento: Android/iOS → React/RN

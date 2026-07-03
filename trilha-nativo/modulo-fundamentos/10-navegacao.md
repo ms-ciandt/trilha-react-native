@@ -7,8 +7,6 @@ sidebar_position: 10
 
 # Navegação
 
-> **Perfil:** Devs com background Android/iOS. Já entendem ciclo de vida de Activities/ViewControllers, back stack e NavigationController — o foco aqui é mapear esses conceitos para o ecossistema React Navigation.
-
 ---
 
 ## Objetivo do tópico

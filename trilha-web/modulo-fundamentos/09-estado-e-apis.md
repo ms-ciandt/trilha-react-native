@@ -7,8 +7,6 @@ sidebar_position: 9
 
 # Estado Global & APIs
 
-> **Perfil:** Devs com background React web. Já conhecem Redux, Context API e React Query na web. O foco aqui é entender o que muda no contexto mobile: como o ambiente sem browser afeta o estado, a persistência e o comportamento das APIs.
-
 ---
 
 ## O que muda da web para o mobile
