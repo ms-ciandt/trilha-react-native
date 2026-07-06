@@ -9,6 +9,17 @@ sidebar_position: 11
 
 ---
 
+## Video Demonstration
+
+Você pode ver o video demonstrativo aqui:
+
+<video width="100%" max-width="800px" controls style="border-radius: 8px; margin: 16px 0;">
+  <source src="https://alimuramatheus.github.io/trilha-react-native/assets/videos/trilha_nativa_11_estado_e_apis_en.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+---
+
 ## Mapeamento: Android/iOS → React/RN
 
 | Nativo | React Native | Observação |

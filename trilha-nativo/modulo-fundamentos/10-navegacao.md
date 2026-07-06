@@ -9,6 +9,17 @@ sidebar_position: 10
 
 ---
 
+## Video Demonstration
+
+Você pode ver o video demonstrativo aqui:
+
+<video width="100%" max-width="800px" controls style="border-radius: 8px; margin: 16px 0;">
+  <source src="https://alimuramatheus.github.io/trilha-react-native/assets/videos/trilha_nativo_10_navegacao_en.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+---
+
 ## Objetivo do tópico
 
 Ao final, o dev deve conseguir:
