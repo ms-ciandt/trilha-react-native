@@ -1,3 +1,7 @@
+---
+title: Performance React Native
+---
+
 # Tópico — Performance React Native (Trilha 1: Devs Nativos)
 
 ## Objetivo do tópico

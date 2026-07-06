@@ -44,6 +44,14 @@ const sidebars = {
         'trilha-nativo/modulo-recursos-nativos/integracao-nativa-avancada',
       ],
     },
+    {
+      type: 'category',
+      label: 'Performance',
+      collapsed: false,
+      items: [
+        'trilha-nativo/modulo-performance/topico-performance-rn-nativos',
+      ],
+    },
   ],
 
   trilhaWeb: [

@@ -177,9 +177,13 @@ video {
   opacity: 0.6;
 }
 
-/* Add padding to page content so fixed footer doesn't overlap last lines */
+/* Add padding so fixed footer doesn't overlap last content/sidebar items */
 .theme-doc-markdown {
   padding-bottom: 80px;
+}
+
+.theme-doc-sidebar-menu {
+  padding-bottom: 80px !important;
 }
 
 /* ─── Admonitions ────────────────────────────────────────────────────── */
