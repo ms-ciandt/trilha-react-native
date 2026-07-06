@@ -15,6 +15,15 @@ Ao final, o dev deve conseguir:
 
 ---
 
+### Video Demonstration
+
+<video width="100%" max-width="800px" controls style="border-radius: 8px; margin: 16px 0;">
+  <source src="https://alimuramatheus.github.io/trilha-react-native/assets/videos/Web_to_RN_CI_CD_Pipelines_-_web.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+---
+
 ### Fluxo típico: de CI web para CI RN
 
 Na web:

@@ -12,6 +12,15 @@ Ao final, o dev deve conseguir:
 
 ---
 
+### Video Demonstration
+
+<video width="100%" max-width="800px" controls style="border-radius: 8px; margin: 16px 0;">
+  <source src="https://alimuramatheus.github.io/trilha-react-native/assets/videos/Mobile_Performance_-_web.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+---
+
 ### Modelo mental de performance em RN
 
 RN não tem DOM, mas tem problemas equivalentes a “excesso de render” que você já conhece:
