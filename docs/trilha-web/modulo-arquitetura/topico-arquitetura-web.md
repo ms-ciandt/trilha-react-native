@@ -1,3 +1,7 @@
+---
+title: Arquitetura
+---
+
 # Tópico — Arquitetura (Trilha Web)
 
 ### Objetivo do tópico
