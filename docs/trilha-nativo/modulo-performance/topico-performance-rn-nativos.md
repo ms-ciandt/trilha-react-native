@@ -179,11 +179,6 @@ Monte um cenário de lista grande e otimize:
 - *Improving FlatList Performance in React Native* — boas práticas para listas.
 - *React Native Performance Tuning for Production Apps* — visão mais ampla (bridge, animações, memória).
 
-### Vídeos
-
-#### React Native Performance in Real Apps (35 min)
-
-
 ---
 
 Next → **[Testes](../modulo-testes/topico-testes-nativos)**

@@ -328,14 +328,6 @@ useFocusEffect(
 
 ## Materiais de estudo
 
-### Vídeos
-
-#### Navigation in React Native — Stack, Drawer & Bottom Tab (20 min)
-[Assistir no YouTube](https://www.youtube.com/watch?v=pyWIzdYB2Xk)
-
-#### React Native Navigation: Stack + Tab + Drawer in One App (Guia 2025)
-[Assistir no YouTube](https://www.youtube.com/watch?v=C6UTib0dMJE)
-
 ### Artigos e Docs
 - [React Navigation 7 vs Expo Router: Complete Comparison Guide 2025 — Viewlytics](https://viewlytics.ai/blog/react-navigation-7-vs-expo-router)
 - [Expo Router vs React Navigation: Which to Use in 2026? — DEV Community](https://dev.to/satyasootar/expo-router-vs-react-navigation-which-one-should-you-use-in-2026-40mm)

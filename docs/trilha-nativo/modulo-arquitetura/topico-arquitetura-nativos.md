@@ -170,7 +170,4 @@ export function RootNavigator() {
 - *Feature-based Folder Structure in React Native* — foco em modularização por feature.
 - *Clean Architecture in Mobile Apps — Mapping to React Native* — mapeia MVVM/Clean para RN.
 
-### Vídeos
-
-#### Architecting Large React Native Apps (40 min)
 

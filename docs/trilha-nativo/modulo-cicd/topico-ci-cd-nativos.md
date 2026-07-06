@@ -146,11 +146,6 @@ jobs:
 - *React Native CI/CD Best Practices* — visão geral de pipelines para RN.
 - *Automating Android & iOS Builds for React Native Apps* — foco em deployment.
 
-### Vídeos
-
-#### CI/CD for React Native Apps (40 min)
-
-
 ---
 
 Next → **[Arquitetura](../modulo-arquitetura/topico-arquitetura-nativos)**

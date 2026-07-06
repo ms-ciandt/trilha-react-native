@@ -387,12 +387,6 @@ Construa uma feature RN que consuma código nativo:
 - *React Native Bridge Architecture Explained* — overview de como o JS conversa com código nativo.
 - *Building Custom Native Modules in React Native (2025)* — guia passo a passo para Android e iOS.
 
-### Vídeos
-
-#### React Native Native Modules — Android & iOS (30 min)
-
-#### React Native Native UI Components — Expondo Views Nativas para JSX (25 min)
-
 ---
 
 Next → **[Performance React Native](../modulo-performance/topico-performance-rn-nativos)**

@@ -267,14 +267,6 @@ Construa um app com:
 
 ## Materiais de estudo
 
-### Vídeos
-
-#### Navigation in React Native — Stack, Drawer & Bottom Tab (20 min)
-[Assistir no YouTube](https://www.youtube.com/watch?v=pyWIzdYB2Xk)
-
-#### React Native Navigation: Stack + Tab + Drawer in One App (2025 Guide)
-[Assistir no YouTube](https://www.youtube.com/watch?v=C6UTib0dMJE)
-
 ### Artigos e Docs
 - [Documentação oficial — Drawer Navigator](https://reactnavigation.org/docs/drawer-navigator/)
 - [Deep Links and Authentication in React Navigation 7 — Callstack Blog](https://www.callstack.com/blog/deep-links-with-authentication-in-react-navigation)

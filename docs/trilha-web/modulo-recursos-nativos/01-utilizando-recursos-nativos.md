@@ -383,11 +383,6 @@ A compatibilidade com **New Architecture** (JSI + TurboModules) é um critério 
 
 ## Materiais de estudo
 
-### Vídeos
-
-#### Building a Camera App with React Native Vision Camera and Expo
-[Assistir no YouTube](https://www.youtube.com/watch?v=xNaGYGDZ2JU)
-
 ### Artigos e Docs
 - [Expo Permissions Guide — Documentação oficial](https://docs.expo.dev/guides/permissions/)
 - [Expo Camera — Documentação oficial](https://docs.expo.dev/versions/latest/sdk/camera/)

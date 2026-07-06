@@ -174,11 +174,6 @@ Recomendação neste tópico:
 - *Testing React Native Components with Testing Library*.
 - *From JUnit/XCTest to Jest: Mapping Mobile Test Practices to React Native*.
 
-### Vídeos
-
-#### Unit & UI Testing in React Native (Jest + Testing Library) — 30 min
-
-
 ---
 
 Next → **[CI/CD](../modulo-cicd/topico-ci-cd-nativos)**

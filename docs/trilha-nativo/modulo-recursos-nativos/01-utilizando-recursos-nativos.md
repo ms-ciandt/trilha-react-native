@@ -355,11 +355,6 @@ A regra prática: pesquise no [React Native Directory](https://reactnative.direc
 
 ## Materiais de estudo
 
-### Vídeos
-
-#### Building a Camera App with React Native Vision Camera and Expo
-[Assistir no YouTube](https://www.youtube.com/watch?v=xNaGYGDZ2JU)
-
 ### Artigos e Docs
 - [Master React Native Permissions: Camera & Location — CoderCrafter](https://codercrafter.in/blogs/react-native/master-react-native-permissions-a-no-bs-guide-to-camera-location-access)
 - [Comprehensive Guide to Managing Permissions in React Native (2025)](https://www.iamrajklwr.com/blogs/a-comprehensive-guide-to-managing-permissions-in-react-native-2025)
