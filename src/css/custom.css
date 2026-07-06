@@ -1,0 +1,194 @@
+/* ─── Design tokens ─────────────────────────────────────────────────── */
+:root {
+  --ifm-color-primary: #2563eb;
+  --ifm-color-primary-dark: #1d4ed8;
+  --ifm-color-primary-darker: #1e40af;
+  --ifm-color-primary-darkest: #1e3a8a;
+  --ifm-color-primary-light: #3b82f6;
+  --ifm-color-primary-lighter: #60a5fa;
+  --ifm-color-primary-lightest: #93c5fd;
+
+  --ifm-font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --ifm-font-family-monospace: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+  --ifm-code-font-size: 88%;
+  --ifm-line-height-base: 1.75;
+  --ifm-heading-font-weight: 600;
+
+  --ifm-navbar-height: 56px;
+  --ifm-navbar-shadow: 0 1px 0 0 var(--ifm-toc-border-color);
+
+  --ifm-global-radius: 6px;
+  --ifm-code-border-radius: 4px;
+
+  --doc-sidebar-width: 260px !important;
+}
+
+[data-theme='dark'] {
+  --ifm-color-primary: #60a5fa;
+  --ifm-color-primary-dark: #3b82f6;
+  --ifm-color-primary-darker: #2563eb;
+  --ifm-color-primary-darkest: #1d4ed8;
+  --ifm-color-primary-light: #93c5fd;
+  --ifm-color-primary-lighter: #bfdbfe;
+  --ifm-color-primary-lightest: #dbeafe;
+
+  --ifm-background-color: #0f172a;
+  --ifm-background-surface-color: #1e293b;
+  --ifm-navbar-background-color: #0f172a;
+  --ifm-sidebar-background: #0f172a;
+  --ifm-toc-border-color: #1e293b;
+  --ifm-color-emphasis-200: #1e293b;
+  --ifm-color-emphasis-300: #334155;
+}
+
+/* ─── Navbar ─────────────────────────────────────────────────────────── */
+.navbar {
+  padding: 0 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.navbar__title {
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: -0.01em;
+}
+
+.navbar__link {
+  font-weight: 500;
+}
+
+/* ─── Sidebar ────────────────────────────────────────────────────────── */
+.theme-doc-sidebar-container {
+  border-right: 1px solid var(--ifm-toc-border-color) !important;
+}
+
+.menu__link {
+  font-size: 0.875rem;
+  border-radius: var(--ifm-global-radius);
+  padding: 0.35rem 0.75rem;
+}
+
+.menu__link--active {
+  font-weight: 600;
+}
+
+/* ─── Content ────────────────────────────────────────────────────────── */
+.markdown h1 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.5rem;
+}
+
+.markdown h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-top: 2rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--ifm-toc-border-color);
+}
+
+.markdown h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.markdown table {
+  font-size: 0.875rem;
+  display: block;
+  overflow-x: auto;
+}
+
+.markdown table th {
+  background: var(--ifm-color-emphasis-200);
+  font-weight: 600;
+}
+
+/* ─── Code blocks ────────────────────────────────────────────────────── */
+.prism-code {
+  font-size: 0.84rem;
+  line-height: 1.6;
+}
+
+div[class^='codeBlockContainer'] {
+  border-radius: var(--ifm-global-radius);
+  box-shadow: none;
+  border: 1px solid var(--ifm-toc-border-color);
+}
+
+/* ─── Video ──────────────────────────────────────────────────────────── */
+video {
+  width: 100%;
+  border-radius: var(--ifm-global-radius);
+  border: 1px solid var(--ifm-toc-border-color);
+  margin: 0 0 1.5rem 0;
+  display: block;
+  background: #000;
+}
+
+/* ─── Pagination (Prev/Next) — fixed to viewport bottom ─────────────── */
+.pagination-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  margin: 0;
+  padding: 0.6rem 1rem;
+  background: var(--ifm-navbar-background-color);
+  border-top: 1px solid var(--ifm-toc-border-color);
+  backdrop-filter: blur(8px);
+}
+
+.pagination-nav__item {
+  flex: 0 0 auto;
+}
+
+.pagination-nav__item--next {
+  margin-left: auto;
+}
+
+.pagination-nav__link {
+  padding: 0.4rem 0.875rem;
+  border-radius: var(--ifm-global-radius);
+  border: 1px solid var(--ifm-toc-border-color);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  transition: border-color 0.15s, background 0.15s;
+  background: var(--ifm-background-surface-color);
+  max-width: 320px;
+}
+
+.pagination-nav__link:hover {
+  border-color: var(--ifm-color-primary);
+  text-decoration: none;
+}
+
+.pagination-nav__label {
+  font-size: 0.8125rem;
+}
+
+.pagination-nav__sublabel {
+  font-size: 0.7rem;
+  opacity: 0.6;
+}
+
+/* Add padding to page content so fixed footer doesn't overlap last lines */
+.theme-doc-markdown {
+  padding-bottom: 80px;
+}
+
+/* ─── Admonitions ────────────────────────────────────────────────────── */
+.admonition {
+  border-radius: var(--ifm-global-radius);
+  font-size: 0.875rem;
+}
+
+/* ─── TOC (right sidebar) ────────────────────────────────────────────── */
+.table-of-contents__link {
+  font-size: 0.8125rem;
+}

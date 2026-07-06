@@ -48,31 +48,47 @@ trilha-web/                  ← para devs React web
 - Cada pasta de módulo tem um `COURSE-[nome-modulo].md` consolidando tudo — não publicado no site
 - Cada pasta tem seu próprio `CLAUDE.md` com contexto local — não publicado no site
 - `trilha-nativo`: analogias com Kotlin/Swift; `trilha-web`: analogias com HTML/CSS/React web
-- Comando `/novo-modulo` disponível em `.claude/commands/novo-modulo.md`
-- **NÃO usar** `{% raw %}`/`{% endraw %}` — o site usa MkDocs (não Jekyll), blocos de código são renderizados diretamente
+- Comando `/adicionar-topico` disponível em `.claude/commands/adicionar-topico.md`
+- Sem emojis em nenhum arquivo de conteúdo
+- Sem `{% raw %}`/`{% endraw %}` — o site usa Docusaurus, blocos de código são renderizados diretamente
 
-## Site (MkDocs)
+## Site (Docusaurus)
 
-- Gerador: **MkDocs** com tema **Material**
-- Configuração: `mkdocs.yml` na raiz
+- Gerador: **Docusaurus 3** com tema Classic
+- Configuração: `docusaurus.config.js` na raiz
+- Sidebars: `sidebars.js` na raiz — **toda nova página deve ser registrada aqui**
+- Conteúdo: pasta `docs/`
+- Assets estáticos (vídeos): pasta `static/assets/videos/`
 - Deploy: GitHub Actions (`.github/workflows/deploy.yml`) — push para `main` publica automaticamente
-- Navegação declarada em `mkdocs.yml` — ao criar novo módulo, adicionar as páginas na seção `nav:` correspondente
-- Ao adicionar novo módulo/arquivo ao nav, adicionar também em `mkdocs.yml` sob a trilha e módulo corretos
+- Testar local: `npm run build && npm run serve` → `http://localhost:3000/trilha-react-native`
+
+## Adicionando páginas ao site
+
+Ao criar qualquer novo arquivo `.md` em `docs/`, registrá-lo em `sidebars.js` sob a trilha e módulo corretos. O ID do documento é o `title` do frontmatter convertido para slug pelo Docusaurus — use o ID exato que o build reportar se houver erro.
+
+Estrutura do `sidebars.js`:
+```js
+trilhaNativo: [
+  { type: 'category', label: 'Fundamentos', items: ['trilha-nativo/modulo-fundamentos/slug'] },
+  { type: 'category', label: 'Recursos Nativos', items: ['trilha-nativo/modulo-recursos-nativos/slug'] },
+  // ...
+]
+```
 
 ## Vídeos
 
-Se existir um arquivo `.mp4` com o mesmo slug do tópico na mesma pasta, adicionar uma seção **"## Video Overview"** no arquivo `.md` correspondente, antes da seção de Resources (ou antes do "Next →" se não houver Resources). Usar sempre este bloco:
+Vídeos ficam em `static/assets/videos/`. Se existir um `.mp4` para o tópico, adicionar logo após o `# Título` do arquivo `.md`:
 
 ```html
 ## Video Overview
 
-<video width="100%" controls style="border-radius: 8px; margin: 16px 0;">
-  <source src="https://alimuramatheus.github.io/trilha-react-native/[caminho-relativo-do-arquivo.mp4]" type="video/mp4">
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/NOME-DO-ARQUIVO.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
 ```
 
-Todos os vídeos ficam em `assets/videos/`. O `[caminho-relativo-do-arquivo.mp4]` é sempre `assets/videos/nome-do-arquivo.mp4` (ex: `assets/videos/01-history-and-architecture.mp4`).
+A URL usa sempre `/trilha-react-native/assets/videos/nome.mp4` — funciona local (`npm run serve`) e em produção.
 
 ## Tecnologia de referência
 
