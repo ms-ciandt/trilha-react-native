@@ -1,3 +1,7 @@
+---
+title: Performance React Native
+---
+
 # Tópico — Performance React Native (Trilha 1: Devs Nativos)
 
 ## Objetivo do tópico
@@ -9,6 +13,15 @@ Ao final, o dev deve conseguir:
 - Minimizar re-renders desnecessários usando memoização e separação de responsabilidades
 - Usar ferramentas como Flipper e o perf monitor do RN
 - Relacionar sintomas de performance em RN com seus equivalentes em Android/iOS
+
+---
+
+### Video Demonstration
+
+<video width="100%" max-width="800px" controls style="border-radius: 8px; margin: 16px 0;">
+  <source src="https://alimuramatheus.github.io/trilha-react-native/assets/videos/React_Native_Performance_-_nativo.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 ---
 
