@@ -47,7 +47,7 @@ Ao final, o dev deve conseguir:
 
 Exemplo de tela de login com validação simples:
 
-{% raw %}
+
 ```tsx
 // src/features/auth/screens/LoginScreen.tsx
 import React, { useState } from 'react';
@@ -78,11 +78,11 @@ export function LoginScreen() {
   );
 }
 ```
-{% endraw %}
+
 
 Teste da tela:
 
-{% raw %}
+
 ```tsx
 // src/features/auth/screens/LoginScreen.test.tsx
 import React from 'react';
@@ -99,13 +99,13 @@ test('mostra mensagem de erro para email inválido', () => {
   expect(getByTestId('error-text').props.children).toBe('Email inválido');
 });
 ```
-{% endraw %}
+
 
 ---
 
 ## Testando lógica (hooks, helpers)
 
-{% raw %}
+
 ```tsx
 // src/features/auth/hooks/usePasswordStrength.ts
 export function getPasswordStrength(password: string): 'weak' | 'medium' | 'strong' {
@@ -114,9 +114,9 @@ export function getPasswordStrength(password: string): 'weak' | 'medium' | 'stro
   return 'strong';
 }
 ```
-{% endraw %}
 
-{% raw %}
+
+
 ```tsx
 // src/features/auth/hooks/usePasswordStrength.test.ts
 import { getPasswordStrength } from './usePasswordStrength';
@@ -135,7 +135,7 @@ describe('getPasswordStrength', () => {
   });
 });
 ```
-{% endraw %}
+
 
 ---
 

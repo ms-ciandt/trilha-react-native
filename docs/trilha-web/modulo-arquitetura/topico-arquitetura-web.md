@@ -66,7 +66,7 @@ src/
 ### Hooks de domínio (paralelo com React web)
 
 ```tsx
-{% raw %}
+
 // features/feed/hooks/useFeed.ts
 import { useEffect, useState } from 'react';
 import { fetchFeed } from '../api/feedApi';
@@ -83,13 +83,13 @@ export function useFeed() {
 
   return { items, loading };
 }
-{% endraw %}
+
 ```
 
 Uso em tela:
 
 ```tsx
-{% raw %}
+
 // features/feed/screens/FeedScreen.tsx
 import React from 'react';
 import { View, ActivityIndicator } from 'react-native';
@@ -107,7 +107,7 @@ export function FeedScreen() {
     </View>
   );
 }
-{% endraw %}
+
 ```
 
 ---
