@@ -52,6 +52,30 @@ const sidebars = {
         'trilha-nativo/modulo-performance/topico-performance-rn-nativos',
       ],
     },
+    {
+      type: 'category',
+      label: 'Testes',
+      collapsed: false,
+      items: [
+        'trilha-nativo/modulo-testes/topico-testes-nativos',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'CI/CD',
+      collapsed: false,
+      items: [
+        'trilha-nativo/modulo-cicd/topico-ci-cd-nativos',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Arquitetura',
+      collapsed: false,
+      items: [
+        'trilha-nativo/modulo-arquitetura/topico-arquitetura-nativos',
+      ],
+    },
   ],
 
   trilhaWeb: [
@@ -76,8 +100,40 @@ const sidebars = {
       label: 'Recursos Nativos',
       collapsed: false,
       items: [
-        'trilha-web/modulo-recursos-nativos/recursos-nativos',
+        'trilha-web/modulo-recursos-nativos/utilizando-recursos-nativos',
         'trilha-web/modulo-recursos-nativos/topico-integracao-nativa-web',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Performance',
+      collapsed: false,
+      items: [
+        'trilha-web/modulo-performance/topico-performance-mobile-web',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Testes',
+      collapsed: false,
+      items: [
+        'trilha-web/modulo-testes/topico-testes-web',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'CI/CD',
+      collapsed: false,
+      items: [
+        'trilha-web/modulo-cicd/topico-ci-cd-web',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Arquitetura',
+      collapsed: false,
+      items: [
+        'trilha-web/modulo-arquitetura/topico-arquitetura-web',
       ],
     },
   ],

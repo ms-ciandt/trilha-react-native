@@ -1,3 +1,7 @@
+---
+title: CI/CD
+---
+
 # Tópico — CI/CD (Trilha 1: Devs Nativos)
 
 ## Objetivo do tópico

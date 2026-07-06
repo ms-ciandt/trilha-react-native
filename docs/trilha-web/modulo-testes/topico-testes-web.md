@@ -1,3 +1,7 @@
+---
+title: Testes
+---
+
 # Tópico — Testes (Trilha Web) 
 
 ### Objetivo do tópico
@@ -8,6 +12,15 @@ Ao final, o dev deve conseguir:
 - Escrever testes de componentes RN com `@testing-library/react-native`
 - Escrever testes de hooks e lógica com Jest
 - Entender o papel de Detox para E2E (mesmo que não implemente tudo neste tópico)
+
+---
+
+### Video Demonstration
+
+<video width="100%" max-width="800px" controls style="border-radius: 8px; margin: 16px 0;">
+  <source src="https://alimuramatheus.github.io/trilha-react-native/assets/videos/Web_to_RN_Testing_-_web.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 ---
 

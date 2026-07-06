@@ -1,3 +1,7 @@
+---
+title: Performance Mobile
+---
+
 # Tópico — Performance Mobile (Trilha Web) 
 
 ### Objetivo do tópico
@@ -9,6 +13,15 @@ Ao final, o dev deve conseguir:
 - Reduzir re-renders desnecessários com `React.memo`, `useCallback`, `useMemo`
 - Perceber diferenças entre performance web e mobile (hardware, toques, animações)
 - Usar perf monitor e Flipper para inspecionar FPS e uso de recursos
+
+---
+
+### Video Demonstration
+
+<video width="100%" max-width="800px" controls style="border-radius: 8px; margin: 16px 0;">
+  <source src="https://alimuramatheus.github.io/trilha-react-native/assets/videos/Mobile_Performance_-_web.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 ---
 

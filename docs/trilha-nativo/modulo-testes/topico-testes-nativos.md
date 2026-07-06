@@ -1,3 +1,7 @@
+---
+title: Testes
+---
+
 # Tópico — Testes (Trilha 1: Devs Nativos)
 
 ## Objetivo do tópico
@@ -8,6 +12,15 @@ Ao final, o dev deve conseguir:
 - Escrever testes de componentes com `@testing-library/react-native`
 - Entender o papel de testes E2E com Detox e como se comparam a Espresso/XCUITest
 - Integrar a suíte de testes ao pipeline de CI
+
+---
+
+### Video Demonstration
+
+<video width="100%" max-width="800px" controls style="border-radius: 8px; margin: 16px 0;">
+  <source src="https://alimuramatheus.github.io/trilha-react-native/assets/videos/Native_to_RN_Testing_-_nativo.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 ---
 
