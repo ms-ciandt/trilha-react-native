@@ -61,6 +61,11 @@ cd ios && pod install
 
 ## Stack Navigator
 
+O Stack Navigator é o equivalente direto ao Back Stack do Android e ao `UINavigationController` do iOS. Ele gerencia uma pilha de telas: `navigate` empilha uma nova tela (como `startActivity` ou `pushViewController`), e `goBack` remove a tela do topo, voltando para a anterior.
+
+A diferença mais importante em relação ao nativo é que telas anteriores na pilha **não são destruídas** — elas ficam montadas em memória no estado em que estavam. Não existe equivalente exato ao `onResume`/`viewWillAppear` no ciclo de vida padrão do React; para esse comportamento, você precisa usar `useFocusEffect`.
+
+O `RootStackParamList` com TypeScript é o equivalente tipado ao bundle de Intent ou ao dicionário de parâmetros de segue — a diferença é que aqui o tipo é verificado em tempo de compilação.
 
 ```tsx
 import { createStackNavigator } from '@react-navigation/stack';
@@ -99,6 +104,9 @@ const { productId } = route.params;
 
 ## Tab Navigator
 
+O Tab Navigator é o equivalente ao `BottomNavigationView` do Android Material ou ao `UITabBarController` do iOS. Cada aba mantém seu próprio estado de navegação independente — se o usuário entrou fundo em um stack dentro da aba A e depois foi para a aba B, ao voltar para a aba A o stack estará onde foi deixado.
+
+A opção `lazy: true` controla se as telas das abas são renderizadas na inicialização ou apenas quando a aba é visitada pela primeira vez. No desenvolvimento com muitas abas, deixar como `lazy` reduz o custo de inicialização.
 
 ```tsx
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -120,6 +128,8 @@ function AppTabs() {
 
 ## Drawer Navigator
 
+O Drawer Navigator implementa o menu lateral deslizante — equivalente ao `DrawerLayout` do Android. O gesto de swipe para abrir/fechar é tratado automaticamente pelo `react-native-gesture-handler`, sem necessidade de configuração adicional. O Drawer é tipicamente usado como camada mais externa da hierarquia, envolvendo os demais navigators.
+
 ```tsx
 import { createDrawerNavigator } from '@react-navigation/drawer';
 
@@ -138,6 +148,12 @@ function AppDrawer() {
 ---
 
 ## Aninhamento: Drawer > Tab > Stack (padrão mais comum em apps)
+
+Navigators são apenas componentes React — qualquer `Screen` pode receber outro Navigator como seu `component`. Isso permite criar hierarquias de navegação compostas que refletem a estrutura do app.
+
+A hierarquia Drawer > Tab > Stack é a mais comum em apps de produção porque reflete níveis distintos de organização: o Drawer acessa seções do app, as Tabs organizam as telas principais de cada seção, e o Stack gerencia profundidade dentro de cada aba. Cada nível de navegação é isolado — o back stack de uma aba não interfere com outra.
+
+No desenvolvimento nativo, essa composição seria implementada com múltiplos controllers aninhados manualmente; aqui ela é declarativa e cada navigator cuida do seu próprio estado.
 
 ```tsx
 function App() {
@@ -173,6 +189,9 @@ function HomeStack() {
 
 ## Fluxo de autenticação condicional
 
+No desenvolvimento nativo, alternar entre o fluxo de autenticação e o app principal normalmente envolve trocar a `rootViewController` (iOS) ou iniciar uma nova Activity como root (Android). No React Navigation, o padrão é declarativo: você simplesmente não declara as screens autenticadas enquanto o usuário não está logado.
+
+Quando `isAuthenticated` muda, o React Navigation detecta que o conjunto de screens disponíveis mudou e faz a transição automaticamente — sem chamadas imperativas de navegação. O estado de autenticação direciona a navegação, não o contrário.
 
 ```tsx
 function App() {
@@ -199,6 +218,10 @@ function App() {
 
 ## Deep Linking
 
+Deep linking no React Navigation equivale à combinação de **App Links** (Android) e **Universal Links** (iOS) que você configuraria no projeto nativo — com a diferença de que o mapeamento de URL para tela é feito no JavaScript, não no manifest ou Info.plist.
+
+O prefixo `myapp://` usa custom schemes, que funcionam apenas se o app estiver instalado. O prefixo `https://myapp.com` usa universal/app links — requer configuração adicional no servidor (arquivo `.well-known/assetlinks.json` no Android, `apple-app-site-association` no iOS), mas oferece fallback para o browser quando o app não está instalado.
+
 ```tsx
 const linking = {
   prefixes: ['myapp://', 'https://myapp.com'],
@@ -223,9 +246,11 @@ const linking = {
 
 ## Dicas de performance
 
-- `lazy={true}` nos Tab navigators — evita renderizar telas que nunca foram acessadas
-- `detachInactiveScreens={true}` no Stack — libera memória de telas inativas (comportamento próximo ao Android)
-- `react-native-screens` já ativo por padrão nas versões recentes — usa `UIViewController`/`Fragment` nativo
+O React Navigation, por padrão, gerencia as telas em memória de forma mais agressiva do que o nativo — todas as telas do stack ficam montadas. Algumas opções mitigam isso:
+
+- `lazy={true}` nos Tab navigators — evita renderizar telas que nunca foram acessadas; equivalente ao comportamento padrão de `ViewPager` com off-screen page limit = 0
+- `detachInactiveScreens={true}` no Stack — remove telas inativas do layout (mas mantém o estado React), liberando memória de renderização; comportamento próximo ao `onStop` no Android
+- `react-native-screens` já ativo por padrão nas versões recentes — essa biblioteca faz com que cada Screen seja renderizada como um `UIViewController` (iOS) ou `Fragment` (Android) real, em vez de uma View comum; isso é o que permite que as animações de transição sejam nativas e que o sistema operacional gerencie a memória de forma mais eficiente
 
 ---
 

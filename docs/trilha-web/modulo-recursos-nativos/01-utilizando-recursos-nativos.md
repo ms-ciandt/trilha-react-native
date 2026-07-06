@@ -39,7 +39,11 @@ Ao final, o dev deve conseguir:
 
 ## O modelo de permissões no mobile
 
-No browser, você pede permissão e o usuário aceita ou nega. No mobile, é mais complexo:
+No browser, o modelo é binário: o usuário aceita ou rejeita no diálogo do navegador, e você reage a isso. No mobile, o modelo é mais restritivo e tem estados adicionais que mudam o comportamento do app.
+
+A diferença mais importante é o estado `BLOCKED`: no iOS, o sistema exibe o diálogo de permissão **uma única vez** — se o usuário negar, o OS nunca mais mostra esse diálogo. O app não pode forçar uma nova exibição; só pode redirecionar para as Configurações do sistema. No Android, o comportamento variou entre versões: a partir do Android 11, o sistema também pode bloquear permissões automaticamente se o app não for usado por um tempo.
+
+Outro estado sem equivalente no browser é o `LIMITED`, introduzido no iOS 14 para a biblioteca de fotos: o usuário pode escolher quais fotos específicas o app pode acessar, em vez de dar acesso total ao rolo. Seu app precisa tratar esse estado de forma diferente de `GRANTED`.
 
 ```
 Permissão não verificada
@@ -54,6 +58,8 @@ Permissão não verificada
 │ UNAVAILABLE      │ → recurso não existe no dispositivo
 └──────────────────┘
 ```
+
+A razão de sempre chamar `check()` antes de `request()` é precisa: se o status já é `BLOCKED`, chamar `request()` não faz nada — nenhum diálogo aparece, nenhum erro é lançado. Sem o check, o botão da sua UI parece quebrado para o usuário.
 
 > **Estado BLOCKED é irreversível pelo app** — você só pode redirecionar o usuário para as Configurações do sistema. É o equivalente a "permissão permanentemente negada" e requer atenção especial no UX.
 
@@ -133,6 +139,14 @@ const granted = await requestPermission(
 
 ## 2. Câmera com expo-camera
 
+### Por que não funciona igual ao browser
+
+No browser, `getUserMedia()` retorna um `MediaStream` que você conecta a um elemento `<video>` no DOM. Tudo é web API, não há hardware direto.
+
+No mobile, não existe DOM. A câmera é hardware acessado via APIs nativas de baixo nível: `Camera2`/`CameraX` no Android e `AVFoundation` no iOS. `expo-camera` encapsula esse acesso nativo em um componente React — `<CameraView>` — que renderiza o preview da câmera como uma View nativa na tela, não um elemento HTML.
+
+O ref funciona como ferramenta de acesso imperativo à câmera: `cameraRef.current?.takePictureAsync()` dispara o shutter no hardware e retorna um objeto com a URI do arquivo salvo localmente. Essa URI é um caminho no filesystem do dispositivo (ex: `file:///var/mobile/...`), não uma URL de rede.
+
 ```bash
 npx expo install expo-camera
 ```
@@ -165,7 +179,6 @@ export function CameraScreen() {
     setPhotoUri(photo?.uri ?? null);
   }
 
-{% raw %}
   if (photoUri) {
     return (
       <View style={styles.container}>
@@ -174,7 +187,6 @@ export function CameraScreen() {
       </View>
     );
   }
-{% endraw %}
 
   return (
     <CameraView ref={cameraRef} style={styles.camera} facing="back">
@@ -196,6 +208,14 @@ const styles = StyleSheet.create({
 ---
 
 ## 3. Geolocalização com expo-location
+
+### Por que não funciona igual ao browser
+
+`navigator.geolocation.getCurrentPosition()` existe no browser e funciona via Web API — o navegador abstrai a fonte de localização (GPS, Wi-Fi, IP). No React Native, não existe `window.navigator` — o runtime é Hermes (JS engine), não um browser.
+
+A localização mobile é mais poderosa do que no browser e por isso mais regulada. No browser, o usuário aceita ou nega no nível da aba. No mobile, existe a distinção entre **foreground** (localização enquanto o app está visível) e **background** (localização quando o app está em segundo plano ou fechado). Background location requer permissão separada nas duas plataformas, justificativa para as stores e tem impacto direto na bateria — você só deve solicitar se o app genuinamente precisar (apps de delivery, fitness, rastreamento).
+
+O parâmetro `accuracy` determina qual fonte de hardware é usada. `High` ativa o GPS, que é preciso mas consome bateria. `Balanced` usa a fusão de GPS + Wi-Fi + rede celular (FusedLocationProvider no Android), que equilibra precisão e consumo. Para apps que só precisam saber a cidade ou bairro do usuário, `Low` é suficiente e muito mais eficiente.
 
 ```bash
 npx expo install expo-location
@@ -245,6 +265,22 @@ async function watchLocation(onUpdate: (coords: { lat: number; lng: number }) =>
 ---
 
 ## 4. Notificações Push com expo-notifications
+
+### Por que é tão diferente do browser
+
+A Web Notification API usa Service Workers — scripts que o browser mantém rodando em background para receber mensagens via Push API. No mobile não existe esse conceito: quem mantém a conexão aberta e entrega as notificações é o **sistema operacional**, não o app.
+
+O fluxo real de uma notificação push no mobile é:
+
+```
+Seu backend → FCM (Android) / APNs (iOS) → SO → app
+```
+
+O dispositivo abre uma conexão persistente com os servidores do Google (FCM) ou da Apple (APNs). Quando seu backend quer notificar o usuário, ele não manda direto para o dispositivo — ele faz um request autenticado para o FCM ou APNs, que entrega ao dispositivo pela conexão que já está aberta. Isso significa que o app pode estar fechado: a notificação chega via SO, não via JavaScript.
+
+O `expoPushToken` retornado por `getExpoPushTokenAsync()` é um identificador que o Expo usa como intermediário. O Expo tem seus próprios servidores que recebem seu request e repassam para o FCM ou APNs correto, evitando que você precise configurar credenciais separadas para iOS e Android. Em produção com alto volume, equipes costumam migrar para envio direto ao FCM/APNs para ter controle total.
+
+O `setNotificationHandler` controla o que acontece quando uma notificação chega enquanto o app está em **foreground**. Sem ele, notificações recebidas com o app aberto são silenciosas. O comportamento em background e com o app fechado é controlado pelo sistema operacional.
 
 ```bash
 npx expo install expo-notifications expo-device
@@ -309,13 +345,17 @@ export function usePushNotifications() {
 
 ## Como encontrar libs no ecossistema Expo
 
+No browser, você busca `npm install <pacote>` e geralmente o pacote roda. No React Native, muitas libs têm código nativo (Java/Kotlin para Android, Objective-C/Swift para iOS) que precisa ser compilado junto com o app. Isso muda a dinâmica de escolha de dependência.
+
 Quando você precisa de um recurso nativo, siga essa ordem:
 
-1. **[docs.expo.dev](https://docs.expo.dev)** — Se existe uma lib `expo-*`, use ela
-2. **[reactnative.directory](https://reactnative.directory)** — Diretório de libs da comunidade com filtros por plataforma e manutenção
-3. **npm** com filtro `react-native-*`
+1. **[docs.expo.dev](https://docs.expo.dev)** — Se existe uma lib `expo-*`, ela é a primeira opção. Libs do Expo são testadas em conjunto com a versão do Expo SDK que você usa, têm manutenção garantida pelo time do Expo e funcionam com Expo Go durante o desenvolvimento sem precisar de build nativo.
+2. **[reactnative.directory](https://reactnative.directory)** — Diretório da comunidade com filtros por plataforma, suporte a New Architecture e data de última atualização. Prefira libs marcadas como compatíveis com New Architecture.
+3. **npm** com filtro `react-native-*` como último recurso.
 
-> **Dica:** prefira libs do ecossistema Expo quando possível — elas são testadas com as versões mais recentes do RN e têm suporte ao Expo Go para desenvolvimento rápido.
+A compatibilidade com **New Architecture** (JSI + TurboModules) é um critério importante: libs que ainda usam o modelo antigo de bridge podem ter problemas de performance ou deprecação futura. O React Native Directory indica isso explicitamente.
+
+> Sempre verifique a data do último commit e o número de issues abertas antes de adotar uma lib de terceiro em produção.
 
 ---
 
