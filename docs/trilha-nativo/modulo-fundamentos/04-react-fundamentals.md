@@ -4,6 +4,13 @@ title: "Module 2: React Fundamentals for Native Developers"
 
 # Module 2: React Fundamentals for Native Developers
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/04-react-fundamentals-nativo.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 > React is a UI library with one core idea: **your UI is a function of your state**. If you've worked with modern Android (Jetpack Compose) or iOS (SwiftUI), this will click immediately.
 
 ## The Declarative Paradigm

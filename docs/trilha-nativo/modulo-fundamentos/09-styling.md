@@ -4,6 +4,13 @@ title: Styling in React Native
 
 # Styling in React Native
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/09-styling-nativo.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 > React Native uses JavaScript objects for styling — no CSS files, no class names. But the properties are familiar if you know CSS or Android XML.
 
 ## How Styling Works

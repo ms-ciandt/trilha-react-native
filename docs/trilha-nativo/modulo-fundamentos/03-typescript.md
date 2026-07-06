@@ -4,6 +4,13 @@ title: TypeScript for Native Developers
 
 # TypeScript for Native Developers
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/03-typescript-nativo.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 > TypeScript is JavaScript with a type system bolted on. If you like Kotlin's or Swift's type systems, you'll feel at home here — with a few quirks.
 
 ## Setting Up: Strict Mode
