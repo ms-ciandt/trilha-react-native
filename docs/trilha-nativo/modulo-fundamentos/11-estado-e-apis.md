@@ -99,6 +99,31 @@ const { user, logout } = useAuthStore();
 
 **Zustand** é a opção mais leve (2KB, sem providers obrigatórios) e adequada para a maioria dos apps. **Redux Toolkit** faz mais sentido em times grandes que precisam de rastreabilidade total de mudanças e ferramentas de debug avançadas.
 
+Exemplo real com Zustand:
+
+```tsx
+import { create } from 'zustand';
+
+type AuthState = {
+  token: string | null;
+  user: User | null;
+  setAuth: (token: string, user: User) => void;
+  logout: () => void;
+};
+
+export const useAuthStore = create<AuthState>((set) => ({
+  token: null,
+  user: null,
+  setAuth: (token, user) => set({ token, user }),
+  logout: () => set({ token: null, user: null }),
+}));
+
+// Em qualquer componente — sem Provider, sem prop drilling
+const { user, logout } = useAuthStore();
+```
+
+A função `set` substitui parcialmente o estado (merge automático), equivalente ao `copy()` do Kotlin ou ao `struct` mutável do Swift — você nunca muta o objeto diretamente.
+
 ---
 
 ## Persistência local: storage chave-valor
@@ -124,6 +149,48 @@ O store de estado global (Zustand, Redux) pode usar esse storage como backend de
 
 ---
 
+## Camada de serviços: funções de fetch puras
+
+Antes de conectar ao TanStack Query, é preciso ter uma função que faz o fetch. Ela fica em `services/` — sem lógica React, sem hooks, apenas chamadas HTTP e tratamento de erro. Isso torna a função testável de forma isolada, exatamente como um método de repositório no nativo.
+
+```tsx
+// services/products.ts
+export type Product = { id: string; name: string; price: number };
+
+export async function fetchProducts(): Promise<Product[]> {
+  const response = await fetch('https://api.example.com/products', {
+    headers: { Authorization: `Bearer ${storage.getString('token')}` },
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}`);
+  }
+
+  return response.json();
+}
+
+export async function createProduct(data: Omit<Product, 'id'>): Promise<Product> {
+  const response = await fetch('https://api.example.com/products', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${storage.getString('token')}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}`);
+  }
+
+  return response.json();
+}
+```
+
+O `throw new Error` quando `response.ok` é `false` é importante: `fetch` não lança exceção em erros HTTP (4xx, 5xx) — só lança em falha de rede. Sem esse check, um 401 ou 500 chegaria ao componente como sucesso.
+
+---
+
 ## Busca de dados: cache e estados automáticos
 
 No nativo, o padrão Repository + `Retrofit`/`URLSession` resolve o fetch mas deixa para você gerenciar: loading state, error state, cache, retry, invalidação. No React Native, uma camada de dados como **TanStack Query** centraliza tudo isso.
@@ -131,10 +198,9 @@ No nativo, o padrão Repository + `Retrofit`/`URLSession` resolve o fetch mas de
 O conceito central é: **a query é reativa**. Você descreve o que quer buscar e a biblioteca cuida do ciclo de vida.
 
 ```tsx
-// Descreva o que quer — a biblioteca cuida do resto
 const { data, isLoading, error } = useQuery({
   queryKey: ['products'],          // chave de cache — igual ao cache key de Retrofit
-  queryFn: fetchProducts,          // função que faz o fetch
+  queryFn: fetchProducts,          // função definida em services/
   staleTime: 5 * 60 * 1000,       // por quanto tempo o cache é considerado fresco
 });
 ```
@@ -158,6 +224,46 @@ useFocusEffect(
   useCallback(() => { query.refetch(); }, [])
 );
 ```
+
+---
+
+## Mutations: escrita no servidor
+
+`useQuery` cobre leituras. Para POST, PUT e DELETE — qualquer operação que escreve no servidor — o equivalente é `useMutation`. O padrão `onSuccess` + `invalidateQueries` é o mais importante: ele descarta o cache da lista após uma criação ou edição, forçando um refetch e mantendo a UI sincronizada com o servidor.
+
+```tsx
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { createProduct } from '../services/products';
+
+function NewProductScreen() {
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: createProduct,
+    onSuccess: () => {
+      // Invalida o cache de 'products' — próxima leitura vai buscar do servidor
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+    },
+    onError: (error) => {
+      console.error('Falha ao criar produto:', error.message);
+    },
+  });
+
+  function handleSubmit(data: { name: string; price: number }) {
+    mutation.mutate(data);
+  }
+
+  return (
+    <>
+      {mutation.isPending && <ActivityIndicator />}
+      {mutation.isError && <Text>Erro: {mutation.error.message}</Text>}
+      <Button title="Salvar" onPress={() => handleSubmit({ name: 'Novo', price: 99 })} />
+    </>
+  );
+}
+```
+
+`mutation.isPending` enquanto a requisição está em voo é o equivalente ao `isLoading` do `useQuery` — use-o para desabilitar o botão e evitar submissões duplas, exatamente como você faria com um `ProgressDialog` no Android.
 
 ---
 

@@ -74,6 +74,64 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 ---
 
+## Estado global com Zustand
+
+Para client state que precisa ser compartilhado entre telas sem prop drilling, Zustand é a opção mais direta — a mesma que você usaria na web. A API é idêntica: sem Provider, sem boilerplate.
+
+```bash
+npm install zustand
+```
+
+```tsx
+import { create } from 'zustand';
+
+type CartStore = {
+  items: CartItem[];
+  addItem: (item: CartItem) => void;
+  clearCart: () => void;
+};
+
+export const useCartStore = create<CartStore>((set) => ({
+  items: [],
+  addItem: (item) => set((state) => ({ items: [...state.items, item] })),
+  clearCart: () => set({ items: [] }),
+}));
+```
+
+```tsx
+// Em qualquer componente, em qualquer tela — sem Provider
+const { items, addItem } = useCartStore();
+```
+
+Para persistir o store entre restarts do app, use o middleware `persist` com MMKV como storage:
+
+```tsx
+import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
+import { MMKV } from 'react-native-mmkv';
+
+const mmkv = new MMKV();
+
+const mmkvStorage = {
+  getItem: (key: string) => mmkv.getString(key) ?? null,
+  setItem: (key: string, value: string) => mmkv.set(key, value),
+  removeItem: (key: string) => mmkv.delete(key),
+};
+
+export const useCartStore = create<CartStore>()(
+  persist(
+    (set) => ({
+      items: [],
+      addItem: (item) => set((state) => ({ items: [...state.items, item] })),
+      clearCart: () => set({ items: [] }),
+    }),
+    { name: 'cart', storage: createJSONStorage(() => mmkvStorage) }
+  )
+);
+```
+
+---
+
 ## Persistência local: sem localStorage
 
 No browser, `localStorage` é uma API do DOM — não existe no mobile. O equivalente é um storage nativo do dispositivo, acessado por uma lib JavaScript.
@@ -93,6 +151,8 @@ const token = storage.getString('token'); // síncrono — sem await
 Isso simplifica muito o código que precisa ler dados no momento da inicialização ou dentro de funções não-assíncronas.
 
 O store global (Zustand, Redux) pode usar esse storage como backend de persistência, fazendo com que o estado sobreviva a restarts do app — o equivalente ao `redux-persist` da web, mas com storage nativo.
+
+> **AsyncStorage vs MMKV:** você vai encontrar `@react-native-async-storage/async-storage` em muitos tutoriais e libs da comunidade — é a opção padrão mais antiga, com API assíncrona (baseada em Promises). MMKV é mais rápido e síncrono, sendo a escolha recomendada para projetos novos. Ao integrar libs de terceiros (ex: alguns clientes Apollo, libs de autenticação), verifique qual storage elas esperam receber.
 
 ---
 
@@ -121,6 +181,45 @@ AppState.addEventListener('change', (status) => {
   focusManager.setFocused(status === 'active');
 });
 ```
+
+---
+
+## Mutations: escrevendo dados e invalidando cache
+
+`useQuery` lida com leitura; `useMutation` lida com escrita (POST, PATCH, DELETE). O padrão é o mesmo da web — a diferença relevante no mobile é que, após uma mutation bem-sucedida, você invalida a query correspondente para forçar o refetch e manter a tela sincronizada.
+
+```tsx
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+function useCreateProduct() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (newProduct: NewProduct) =>
+      fetch('/api/products', {
+        method: 'POST',
+        body: JSON.stringify(newProduct),
+      }).then((r) => r.json()),
+
+    onSuccess: () => {
+      // Invalida o cache da lista — próximo foco da tela busca dados atualizados
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+    },
+  });
+}
+```
+
+```tsx
+// No componente
+const { mutate, isPending } = useCreateProduct();
+
+<Button
+  title={isPending ? 'Salvando...' : 'Salvar'}
+  onPress={() => mutate({ name: 'Tênis', price: 299 })}
+/>
+```
+
+O fluxo `mutate → onSuccess → invalidateQueries` é o padrão mais comum em produção: garante que a lista sempre reflita o estado do servidor após qualquer escrita, sem acrobacia de estado local.
 
 ---
 

@@ -66,6 +66,10 @@ cd ios && pod install
 
 ## Stack Navigator (equivalente ao histórico de navegação)
 
+O Stack Navigator funciona como uma pilha de cartas: cada nova tela é colocada no topo, e voltar remove a tela do topo. A diferença crítica em relação ao browser history é que as telas anteriores **ficam montadas na memória** — elas não são destruídas nem recriadas como numa SPA. Isso tem consequências diretas: `useEffect` com `[]` não re-executa quando você navega de volta para uma tela já montada.
+
+O `NavigationContainer` é o ponto de controle central da navegação. Deve existir apenas um no app, na raiz, e mantém todo o estado de navegação em memória. Sem ele, nenhum navigator funciona.
+
 ```tsx
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -106,6 +110,10 @@ const { productId, productName } = route.params;
 
 ## Tab Navigator (sem equivalente direto no React Router)
 
+No React Router não existe um componente equivalente ao Tab Navigator — abas no mobile têm comportamento diferente de abas no browser. No mobile, as abas são persistentes e cada uma mantém seu próprio estado de navegação independente. Quando você muda de aba e volta, a aba anterior está exatamente onde você a deixou, incluindo seu histórico de stack interno.
+
+A opção `lazy: true` é importante para apps com muitas abas: sem ela, todas as telas são renderizadas na inicialização, mesmo que o usuário nunca as visite.
+
 ```tsx
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
@@ -133,6 +141,10 @@ function AppTabs() {
 
 ## Drawer Navigator (menu lateral)
 
+O Drawer Navigator implementa o menu lateral deslizante — aquele que abre com um swipe da esquerda ou ao tocar no ícone de hambúrguer. No contexto web, o mais próximo seria um componente de sidebar, mas no mobile o Drawer tem comportamento nativo esperado pelos usuários: responde a gestos, tem animação de deslizamento e fecha ao tocar fora da área.
+
+Diferente do Stack e do Tab, o Drawer é mais frequentemente usado como camada externa da hierarquia de navegação, envolvendo os demais navigators.
+
 ```tsx
 import { createDrawerNavigator } from '@react-navigation/drawer';
 
@@ -151,6 +163,10 @@ function AppDrawer() {
 ---
 
 ## Aninhamento: padrão mais comum (Drawer > Tab > Stack)
+
+Navigators podem ser aninhados porque cada Navigator é simplesmente um componente React — qualquer `Screen` pode ter como `component` um outro Navigator. Esse padrão é a estrutura de navegação mais comum em apps de produção.
+
+A hierarquia Drawer > Tab > Stack segue a lógica de "amplitude primeiro, profundidade depois": o Drawer oferece acesso a seções distintas do app, as Tabs organizam as telas principais de cada seção, e o Stack gerencia a navegação em profundidade dentro de cada aba. Cada nível é independente — o stack de uma aba não interfere com o stack de outra.
 
 ```tsx
 // App.tsx
@@ -196,8 +212,9 @@ function HomeStack() {
 
 ## Fluxo de autenticação (equivalente a rotas protegidas)
 
-No React Router, você usaria `<PrivateRoute>`. No React Navigation, o padrão é condicional:
+No React Router, você usaria `<PrivateRoute>`. No React Navigation, o padrão é diferente: em vez de interceptar a rota, você simplesmente não declara as screens autenticadas quando o usuário não está logado.
 
+O mecanismo funciona porque o React Navigation monitora as mudanças na árvore de Screens. Quando `isAuthenticated` muda de `false` para `true`, o navigator percebe que o conjunto de screens declaradas mudou e faz a transição automaticamente para o novo estado. Você não precisa chamar `navigate` em nenhum lugar — o estado de autenticação direciona a navegação de forma declarativa, igual ao React Router, mas sem `<PrivateRoute>`.
 
 ```tsx
 // Sem wrappers — apenas renderização condicional de screens
@@ -222,6 +239,10 @@ function RootNavigator() {
 ---
 
 ## Deep Linking (equivalente às rotas da URL)
+
+Deep linking é o mecanismo que permite que uma URL externa abra uma tela específica do app — equivalente ao que uma URL faz no browser. No mobile existem dois contextos: **custom schemes** (`myapp://`) funcionam apenas em apps instalados, enquanto **universal links** (`https://myapp.com`) permitem que o mesmo link abra o app se estiver instalado ou o site no browser caso contrário.
+
+O objeto de configuração `linking` mapeia URLs para screens da mesma forma que rotas de URL são mapeadas para componentes no React Router. O React Navigation intercepta os links antes do app inicializar e navega diretamente para a screen correspondente.
 
 ```tsx
 const linking = {
@@ -255,6 +276,10 @@ const linking = {
 ---
 
 ## Expo Router: alternativa file-based (para quem vem do Next.js)
+
+Expo Router é uma camada sobre o React Navigation que adota a convenção de file-based routing popularizada pelo Next.js: a estrutura de pastas define as rotas, sem necessidade de configuração explícita. Cada arquivo dentro de `app/` vira uma rota automaticamente.
+
+A convenção de pastas entre parênteses `(tabs)` cria grupos de rotas sem adicionar segmentos à URL — o mesmo conceito dos Route Groups do Next.js. Arquivos com `[id]` definem parâmetros dinâmicos.
 
 Se o time usa Expo e tem familiaridade com Next.js/file-based routing:
 
