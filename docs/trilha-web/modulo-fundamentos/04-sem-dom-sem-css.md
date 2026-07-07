@@ -4,6 +4,13 @@ title: No DOM, No CSS — What That Actually Means
 
 # No DOM, No CSS — What That Actually Means
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/04-sem-dom.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 > This is the hardest mindset shift for web developers. Let's make it concrete.
 
 ## No `document`, No `window`
