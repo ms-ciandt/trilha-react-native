@@ -135,3 +135,11 @@ export function FeedScreen() {
 - Blog: *Feature-based Folder Structure in React Native*
 - Guia: *React Native Architecture for React Developers*
 - Vídeo: *Structuring React Native Apps — From Web to Mobile*
+
+---
+
+## Feedback
+
+Você chegou ao fim da Trilha Web. Adoraríamos saber o que você achou. Preencha o formulário no seu idioma preferido:
+
+[Responder Formulário](https://forms.gle/zbUJR2jJMYcu4yfHA)

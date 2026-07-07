@@ -169,3 +169,11 @@ export function RootNavigator() {
 - *React Native Architecture for Scale* — guide to structuring large apps.
 - *Feature-based Folder Structure in React Native* — focus on modularization by feature.
 - *Clean Architecture in Mobile Apps — Mapping to React Native* — maps MVVM/Clean to RN.
+
+---
+
+## Feedback
+
+You've reached the end of the Native Track. We'd love to hear what you thought. Fill out the form in your preferred language:
+
+[Give Feedback](https://forms.gle/75pKeXQxkSZogzxv5)

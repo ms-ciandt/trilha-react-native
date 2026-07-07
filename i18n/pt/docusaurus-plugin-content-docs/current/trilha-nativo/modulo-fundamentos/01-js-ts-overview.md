@@ -4,6 +4,7 @@ title: "Módulo 1: JS/TS para Devs Nativos"
 
 # Módulo 1: JS/TS para Devs Nativos
 
+
 ## Video Overview
 
 <video width="100%" controls style="border-radius: 8px; margin: 16px 0;">
