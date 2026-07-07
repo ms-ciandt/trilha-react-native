@@ -4,6 +4,13 @@ title: State & Hooks in Depth
 
 # State & Hooks in Depth
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/06-state-nativo.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 > Hooks are how React function components manage state, side effects, performance, and shared logic. They replace class lifecycle methods and ViewModels.
 
 ## Rules of Hooks

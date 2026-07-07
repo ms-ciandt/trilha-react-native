@@ -4,6 +4,13 @@ title: "Module 3: React Native Core Components"
 
 # Module 3: React Native Core Components
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/07-rn-core-nativo.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 > React Native ships with a set of built-in components that map directly to native platform views. There is no HTML here — every component renders actual native UI.
 
 ## The Fundamental Mapping

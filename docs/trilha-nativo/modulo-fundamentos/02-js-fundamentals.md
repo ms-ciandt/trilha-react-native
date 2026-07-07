@@ -4,6 +4,13 @@ title: JavaScript Fundamentals for Native Developers
 
 # JavaScript Fundamentals for Native Developers
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/02-fundamentals-js-nativo.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 > A focused tour of JS — told from the perspective of someone who already writes Kotlin or Swift.
 
 ## Variables: `const`, `let`, never `var`
