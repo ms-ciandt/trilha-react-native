@@ -1,41 +1,50 @@
 ---
-title: Integração Nativa Avançada
+title: Advanced Native Integration
 ---
 
-# Tópico — Integração Nativa Avançada (Trilha 1: Devs Nativos)
+# Topic — Advanced Native Integration (Track 1: Native Devs)
 
-## Objetivo do tópico
+## Topic Goal
 
-Ao final, o dev deve conseguir:
-- Entender o modelo de **Native Modules** e **Native UI Components** no React Native
-- Criar e registrar um Native Module simples em Android e/ou iOS
-- Expor uma view nativa como componente React via `requireNativeComponent`
-- Emitir eventos do nativo para o JavaScript (bridge de eventos)
-- Integrar SDKs nativos existentes em um projeto brownfield com RN
-- Comparar esse modelo com o que já faz hoje em Android/iOS
+By the end, you should be able to:
+- Understand the **Native Modules** and **Native UI Components** model in React Native
+- Create and register a simple Native Module on Android and/or iOS
+- Expose a native view as a React component via `requireNativeComponent`
+- Emit events from native to JavaScript (event bridge)
+- Integrate existing native SDKs into a brownfield project with RN
+- Compare this model with what you already do today on Android/iOS
 
 ---
 
-## Mapeamento: Android/iOS → React Native
+### Video Demonstration
 
-| Nativo                           | React Native                          | Observação |
+<video width="100%" max-width="800px" controls style="border-radius: 8px; margin: 16px 0;">
+  <source src="https://alimuramatheus.github.io/trilha-react-native/assets/videos/Advanced_Native_Integration_-_nativo.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+---
+
+## Mapping: Android/iOS → React Native
+
+| Native                           | React Native                          | Note |
 |----------------------------------|----------------------------------------|------------|
-| Activity / ViewController        | Host da árvore RN                     | RN roda dentro de uma Activity/VC existente em brownfield |
-| Service / SDK nativo             | **Native Module**                     | Métodos expostos via `NativeModules` |
-| View / UIView custom             | **Native UI Component**               | Usado em JSX: `<MyNativeView />` |
-| Callbacks / Delegates            | Event Emitter (`DeviceEventEmitter`)  | Eventos do nativo → JS |
-| Threads / background tasks       | Threads internas do módulo nativo     | Evitar trabalho pesado na main/UI thread |
-| Gradle / Xcodeproj / Pods        | Autolinking / manual linking          | RN descobre módulos via autolinking ou registro explícito |
+| Activity / ViewController        | Host of the RN tree                   | RN runs inside an existing Activity/VC in brownfield |
+| Service / native SDK             | **Native Module**                     | Methods exposed via `NativeModules` |
+| View / custom UIView             | **Native UI Component**               | Used in JSX: `<MyNativeView />` |
+| Callbacks / Delegates            | Event Emitter (`DeviceEventEmitter`)  | Events from native → JS |
+| Threads / background tasks       | Internal threads of the native module | Avoid heavy work on the main/UI thread |
+| Gradle / Xcodeproj / Pods        | Autolinking / manual linking          | RN discovers modules via autolinking or explicit registration |
 
 ---
 
-## Conceito central: Native Modules
+## Core concept: Native Modules
 
-Um **Native Module** é uma classe nativa registrada no RN que expõe funções chamáveis pelo JS. Conceitualmente é um *SDK interno* acessível pela camada RN.
+A **Native Module** is a native class registered in RN that exposes functions callable from JS. Conceptually it is an *internal SDK* accessible from the RN layer.
 
-### Android — exemplo (Kotlin)
+### Android — example (Kotlin)
 
-{% raw %}
+
 ```kotlin
 // android/app/src/main/java/com/myapp/MyDeviceInfoModule.kt
 package com.myapp
@@ -57,9 +66,9 @@ class MyDeviceInfoModule(reactContext: ReactApplicationContext) :
   }
 }
 ```
-{% endraw %}
 
-{% raw %}
+
+
 ```kotlin
 // android/app/src/main/java/com/myapp/MyDeviceInfoPackage.kt
 package com.myapp
@@ -77,11 +86,11 @@ class MyDeviceInfoPackage : ReactPackage {
     emptyList()
 }
 ```
-{% endraw %}
 
-Registro no `MainApplication`:
 
-{% raw %}
+Registration in `MainApplication`:
+
+
 ```kotlin
 override fun getPackages(): MutableList<ReactPackage> {
   return mutableListOf(
@@ -90,11 +99,11 @@ override fun getPackages(): MutableList<ReactPackage> {
   )
 }
 ```
-{% endraw %}
 
-Uso em TypeScript:
 
-{% raw %}
+Usage in TypeScript:
+
+
 ```tsx
 // src/native/MyDeviceInfo.ts
 import { NativeModules } from 'react-native';
@@ -105,11 +114,11 @@ export async function getDeviceName(): Promise<string> {
   return MyDeviceInfo.getDeviceName();
 }
 ```
-{% endraw %}
 
-{% raw %}
+
+
 ```tsx
-// Exemplo de consumo em uma tela RN
+// Example of consumption in an RN screen
 import { useEffect, useState } from 'react';
 import { View, Text } from 'react-native';
 import { getDeviceName } from '../native/MyDeviceInfo';
@@ -128,11 +137,11 @@ export function DeviceInfoScreen() {
   );
 }
 ```
-{% endraw %}
 
-### iOS — exemplo (Swift + Obj-C)
 
-{% raw %}
+### iOS — example (Swift + Obj-C)
+
+
 ```swift
 // ios/MyDeviceInfoModule.swift
 import Foundation
@@ -148,9 +157,9 @@ class MyDeviceInfo: NSObject {
   }
 }
 ```
-{% endraw %}
 
-{% raw %}
+
+
 ```objc
 // ios/MyDeviceInfoModule.m
 #import <React/RCTBridgeModule.h>
@@ -160,19 +169,19 @@ RCT_EXTERN_METHOD(getDeviceName:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 @end
 ```
-{% endraw %}
 
-O consumo em TS é idêntico ao Android.
+
+The consumption in TS is identical to Android.
 
 ---
 
-## Conceito central: Native UI Components
+## Core concept: Native UI Components
 
-Um **Native UI Component** expõe uma `View`/`UIView` customizada para ser usada como componente React.
+A **Native UI Component** exposes a custom `View`/`UIView` to be used as a React component.
 
-### Android — View custom exposta em JSX
+### Android — custom View exposed in JSX
 
-{% raw %}
+
 ```kotlin
 // android/app/src/main/java/com/myapp/MyColoredView.kt
 package com.myapp
@@ -191,9 +200,9 @@ class MyColoredView(context: ThemedReactContext) : View(context) {
   }
 }
 ```
-{% endraw %}
 
-{% raw %}
+
+
 ```kotlin
 // android/app/src/main/java/com/myapp/MyColoredViewManager.kt
 package com.myapp
@@ -217,11 +226,11 @@ class MyColoredViewManager : SimpleViewManager<MyColoredView>() {
   }
 }
 ```
-{% endraw %}
 
-Registro no `ReactPackage` e uso em TS:
 
-{% raw %}
+Registration in `ReactPackage` and usage in TS:
+
+
 ```tsx
 // src/native/MyColoredView.tsx
 import { requireNativeComponent } from 'react-native';
@@ -233,11 +242,11 @@ export type MyColoredViewProps = {
 
 export const MyColoredView = requireNativeComponent<MyColoredViewProps>('MyColoredView');
 ```
-{% endraw %}
 
-{% raw %}
+
+
 ```tsx
-// Exemplo de uso em uma tela
+// Example of usage in a screen
 import { View } from 'react-native';
 import { MyColoredView } from '../native/MyColoredView';
 
@@ -249,15 +258,15 @@ export function ColoredBoxScreen() {
   );
 }
 ```
-{% endraw %}
+
 
 ---
 
-## Bridge de eventos: nativo → JS
+## Event bridge: native → JS
 
-Exemplo simplificado de evento de bateria no Android.
+Simplified example of a battery event on Android.
 
-{% raw %}
+
 ```kotlin
 // android/app/src/main/java/com/myapp/BatteryModule.kt
 package com.myapp
@@ -302,11 +311,11 @@ class BatteryModule(private val context: ReactApplicationContext) :
   }
 }
 ```
-{% endraw %}
 
-Consumo em RN:
 
-{% raw %}
+Consumption in RN:
+
+
 ```tsx
 // src/hooks/useBatteryLevel.ts
 import { useEffect, useState } from 'react';
@@ -333,81 +342,51 @@ export function useBatteryLevel() {
   return level;
 }
 ```
-{% endraw %}
+
 
 ---
 
-## Integração brownfield
+## Brownfield integration
 
-Em apps brownfield, o RN é hospedado dentro de uma Activity/VC existente. O `NavigationContainer` e a árvore RN gerenciam apenas o trecho em RN — o ciclo de vida da Activity/VC continua nativo.
+In brownfield apps, RN is hosted inside an existing Activity/VC. The `NavigationContainer` and the RN tree manage only the RN section — the Activity/VC lifecycle remains native.
 
-Boas práticas:
-- Manter o código de bridge (modules, managers) em um namespace claro (`com.myapp.rnbridge`).
-- Documentar quais módulos nativos estão expostos ao RN e quais telas RN existem.
-- Evitar expor diretamente todos os SDKs nativos; criar uma camada de serviço específica para RN.
+Best practices:
+- Keep bridge code (modules, managers) in a clear namespace (`com.myapp.rnbridge`).
+- Document which native modules are exposed to RN and which RN screens exist.
+- Avoid directly exposing all native SDKs; create a dedicated service layer for RN.
 
 ---
 
-## Exercício prático
+## Practical exercise
 
-Construa uma feature RN que consuma código nativo:
+Build an RN feature that consumes native code:
 
-1. Crie um Native Module em Android e iOS com:
+1. Create a Native Module on Android and iOS with:
    - `getAppVersion()`
-   - `getBatteryLevel()` (Android; em iOS retorne `"N/A"`).
-2. Exponha as funções para o JS e tipa-as em TypeScript.
-3. Crie uma tela RN `SystemInfoScreen` que:
-   - Mostra a versão do app.
-   - Mostra o nível de bateria e atualiza em tempo real via evento.
-4. Documente em um `README`:
-   - Onde está o módulo nativo.
-   - Como ele é registrado no RN.
-   - Como é consumido pela camada JS.
+   - `getBatteryLevel()` (Android; on iOS return `"N/A"`).
+2. Expose the functions to JS and type them in TypeScript.
+3. Create an RN screen `SystemInfoScreen` that:
+   - Shows the app version.
+   - Shows the battery level and updates in real time via event.
+4. Document in a `README`:
+   - Where the native module is located.
+   - How it is registered in RN.
+   - How it is consumed by the JS layer.
 
 ---
 
-## Materiais de estudo
+## Study Materials
 
-### Documentação oficial
+### Official Documentation
 - [Native Modules — Android](https://reactnative.dev/docs/native-modules-android)
 - [Native Modules — iOS](https://reactnative.dev/docs/native-modules-ios)
 - [Native UI Components — Android](https://reactnative.dev/docs/native-components-android)
 - [Native UI Components — iOS](https://reactnative.dev/docs/native-components-ios)
 
-### Artigos
-- *React Native Bridge Architecture Explained* — overview de como o JS conversa com código nativo.
-- *Building Custom Native Modules in React Native (2025)* — guia passo a passo para Android e iOS.
+### Articles
+- *React Native Bridge Architecture Explained* — overview of how JS communicates with native code.
+- *Building Custom Native Modules in React Native (2025)* — step-by-step guide for Android and iOS.
 
-### Vídeos
+---
 
-#### React Native Native Modules — Android & iOS (30 min)
-
-<details>
-<summary>Descrição do conteúdo</summary>
-
-O vídeo apresenta o conceito de Native Modules passo a passo, começando por uma visão geral da arquitetura do RN (JS thread, bridge e camada nativa) e, em seguida, mostrando como criar um módulo simples em Android (Kotlin) e iOS (Swift). O foco é exatamente o cenário de devs nativos que querem expor funcionalidades já existentes para a camada RN sem reescrever tudo em JavaScript.
-
-São abordados:
-- Estrutura mínima de um módulo (`getName`, métodos anotados com `@ReactMethod` / `@objc`).
-- Registro do módulo via `ReactPackage` (Android) e via macros Obj-C (iOS).
-- Uso de `Promise` para operações assíncronas.
-- Boas práticas de namespacing e organização dos arquivos.
-- Integração em um app brownfield com uma Activity/VC já existente.
-
-</details>
-
-#### React Native Native UI Components — Expondo Views Nativas para JSX (25 min)
-
-<details>
-<summary>Descrição do conteúdo</summary>
-
-Este vídeo demonstra como transformar uma `View`/`UIView` custom, usada hoje apenas em telas nativas, em um componente React reutilizável dentro da parte RN do app. A abordagem é análoga à criação de views custom em Android e iOS, mas com uma camada adicional de *bridge* que permite controlar props e eventos a partir do JavaScript.
-
-Tópicos abordados:
-- Criação de `ViewManager` (Android) com propriedades (`@ReactProp`).
-- Registro do manager no `ReactPackage`.
-- Exposição via `requireNativeComponent` em JS.
-- Estratégias de versionamento quando a API da view nativa muda.
-- Considerações de performance (ciclos de layout, drawing e animações).
-
-</details>
+Next → **[React Native Performance](../modulo-performance/topico-performance-rn-nativos)**

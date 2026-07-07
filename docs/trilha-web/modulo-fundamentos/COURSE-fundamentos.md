@@ -31,7 +31,7 @@ When you write React Native, your JS runs in **Hermes** (a mobile JS engine) wit
 
 Most of your JavaScript knowledge transfers directly:
 
-{% raw %}
+
 ```typescript
 // ✅ All of this works the same in React Native
 
@@ -57,7 +57,7 @@ type Status = 'loading' | 'success' | 'error';
 // All React hooks
 useState, useEffect, useRef, useMemo, useCallback, useContext, useReducer
 ```
-{% endraw %}
+
 
 ---
 
@@ -65,7 +65,7 @@ useState, useEffect, useRef, useMemo, useCallback, useContext, useReducer
 
 ### Storage
 
-{% raw %}
+
 ```typescript
 // Web
 localStorage.setItem('token', value);
@@ -82,11 +82,11 @@ const storage = new MMKV();
 storage.set('token', value);
 const token = storage.getString('token');
 ```
-{% endraw %}
+
 
 ### Platform Detection
 
-{% raw %}
+
 ```typescript
 // Web
 if (navigator.userAgent.includes('Mobile')) { ... }
@@ -97,11 +97,11 @@ if (Platform.OS === 'ios') { ... }
 if (Platform.OS === 'android') { ... }
 Platform.select({ ios: '#f2f2f7', android: '#ffffff', default: '#fff' });
 ```
-{% endraw %}
+
 
 ### Linking & Deep Links
 
-{% raw %}
+
 ```typescript
 // Web
 window.open('https://example.com');
@@ -113,11 +113,11 @@ await Linking.openURL('https://example.com');
 await Linking.openURL('mailto:hello@example.com');
 await Linking.openURL('tel:+15555555');
 ```
-{% endraw %}
+
 
 ### Clipboard
 
-{% raw %}
+
 ```typescript
 // Web
 navigator.clipboard.writeText('hello');
@@ -126,7 +126,7 @@ navigator.clipboard.writeText('hello');
 import * as Clipboard from 'expo-clipboard';
 await Clipboard.setStringAsync('hello');
 ```
-{% endraw %}
+
 
 ---
 
@@ -135,7 +135,7 @@ await Clipboard.setStringAsync('hello');
 ### 1. Safe Areas
 Mobile screens have notches, dynamic islands, and home indicators. Content can be hidden behind them.
 
-{% raw %}
+
 ```tsx
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -148,12 +148,12 @@ function HomeScreen() {
     );
 }
 ```
-{% endraw %}
+
 
 ### 2. Keyboard Avoidance
 The keyboard pushes up from the bottom and can cover input fields.
 
-{% raw %}
+
 ```tsx
 import { KeyboardAvoidingView, Platform } from 'react-native';
 
@@ -172,12 +172,12 @@ function LoginForm() {
     );
 }
 ```
-{% endraw %}
+
 
 ### 3. Gesture Handling
 Mobile apps respond to swipes, pinches, and long presses — not just taps:
 
-{% raw %}
+
 ```tsx
 import { useSharedValue, useAnimatedStyle, withSpring, runOnJS } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
@@ -213,12 +213,12 @@ function SwipeCard() {
     );
 }
 ```
-{% endraw %}
+
 
 ### 4. Status Bar
 The thin bar at the top of the screen with time and battery:
 
-{% raw %}
+
 ```tsx
 import { StatusBar } from 'expo-status-bar';
 
@@ -231,7 +231,7 @@ function App() {
     );
 }
 ```
-{% endraw %}
+
 
 ---
 
@@ -239,7 +239,7 @@ function App() {
 
 Expo projects come with TypeScript pre-configured. Key things to know:
 
-{% raw %}
+
 ```json
 // tsconfig.json — what Expo generates
 {
@@ -249,7 +249,7 @@ Expo projects come with TypeScript pre-configured. Key things to know:
   }
 }
 ```
-{% endraw %}
+
 
 The `expo/tsconfig.base` already configures path aliases, module resolution for React Native, and JSX settings. You don't need to configure these manually.
 
@@ -278,7 +278,7 @@ Next → **[TypeScript for Web Devs](./typescript-for-web-devs)**
 
 ### Style Types
 
-{% raw %}
+
 ```typescript
 import { ViewStyle, TextStyle, ImageStyle, StyleProp } from 'react-native';
 
@@ -305,11 +305,11 @@ interface ButtonProps {
     labelStyle?: StyleProp<TextStyle>;
 }
 ```
-{% endraw %}
+
 
 ### Component Ref Types
 
-{% raw %}
+
 ```typescript
 import { useRef } from 'react';
 import { TextInput, ScrollView, FlatList } from 'react-native';
@@ -323,11 +323,11 @@ inputRef.current?.focus();
 scrollRef.current?.scrollTo({ y: 0, animated: true });
 listRef.current?.scrollToIndex({ index: 0 });
 ```
-{% endraw %}
+
 
 ### Event Types
 
-{% raw %}
+
 ```typescript
 import {
     NativeSyntheticEvent,
@@ -352,7 +352,7 @@ function handlePress(event: GestureResponderEvent) {
     console.log('pressed at:', event.nativeEvent.locationX, event.nativeEvent.locationY);
 }
 ```
-{% endraw %}
+
 
 ---
 
@@ -360,7 +360,7 @@ function handlePress(event: GestureResponderEvent) {
 
 React Navigation uses a typed param list to make navigation type-safe:
 
-{% raw %}
+
 ```typescript
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
@@ -391,13 +391,13 @@ export default function ProfileScreen() {
     );
 }
 ```
-{% endraw %}
+
 
 ---
 
 ## Typing AsyncStorage & Async Operations
 
-{% raw %}
+
 ```typescript
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -420,7 +420,7 @@ async function loadSession(): Promise<UserSession | null> {
     return JSON.parse(raw) as UserSession;
 }
 ```
-{% endraw %}
+
 
 ---
 
@@ -428,7 +428,7 @@ async function loadSession(): Promise<UserSession | null> {
 
 ### Typing Component Variants
 
-{% raw %}
+
 ```typescript
 type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'ghost';
 type ButtonSize = 'sm' | 'md' | 'lg';
@@ -443,11 +443,11 @@ interface ButtonProps {
     leftIcon?: React.ReactNode;
 }
 ```
-{% endraw %}
+
 
 ### Discriminated Unions for API State
 
-{% raw %}
+
 ```typescript
 type AsyncState<T> =
     | { status: 'idle' }
@@ -461,7 +461,7 @@ function useAsyncState<T>() {
     return state;
 }
 ```
-{% endraw %}
+
 
 ---
 
@@ -503,7 +503,7 @@ Next → **[Web vs React Native](./web-vs-rn)**
 
 This is the most immediate change. Every HTML element has an RN equivalent:
 
-{% raw %}
+
 ```tsx
 // Web React
 function WebCard() {
@@ -519,9 +519,9 @@ function WebCard() {
     );
 }
 ```
-{% endraw %}
 
-{% raw %}
+
+
 ```tsx
 // React Native — same structure, native components
 import { View, Text, Image, Pressable, StyleSheet } from 'react-native';
@@ -541,7 +541,7 @@ function NativeCard() {
     );
 }
 ```
-{% endraw %}
+
 
 The tree structure is identical — only the primitives change.
 
@@ -549,7 +549,7 @@ The tree structure is identical — only the primitives change.
 
 ## Styling: CSS → StyleSheet
 
-{% raw %}
+
 ```css
 /* styles.css */
 .button {
@@ -562,15 +562,15 @@ The tree structure is identical — only the primitives change.
     cursor: pointer;
 }
 ```
-{% endraw %}
 
-{% raw %}
+
+
 ```tsx
 <button className="button">Click me</button>
 ```
-{% endraw %}
 
-{% raw %}
+
+
 ```tsx
 // React Native (StyleSheet)
 const styles = StyleSheet.create({
@@ -592,7 +592,7 @@ const styles = StyleSheet.create({
     <Text style={styles.buttonText}>Click me</Text>
 </Pressable>
 ```
-{% endraw %}
+
 
 Key difference: **Text styling properties live on `<Text>`, not on container `<View>`**. There is no CSS inheritance in RN — `color` on a parent `View` does not apply to child `Text` elements.
 
@@ -602,7 +602,7 @@ Key difference: **Text styling properties live on `<Text>`, not on container `<V
 
 This trips up every web developer:
 
-{% raw %}
+
 ```tsx
 // Web — color inherits through the tree
 <div style={{ color: 'red' }}>
@@ -619,7 +619,7 @@ This trips up every web developer:
     This is red <Text style={{ fontWeight: 'bold' }}>and this is bold red</Text>
 </Text>
 ```
-{% endraw %}
+
 
 ---
 
@@ -632,7 +632,7 @@ You cannot use raw CSS files, CSS Modules, or the web version of `styled-compone
 
 The official approach is still `StyleSheet.create`. All three options exist in production apps. In this course:
 
-{% raw %}
+
 ```tsx
 // ❌ Does not work in React Native
 <View className="flex-1 bg-white p-4" />        // No Tailwind
@@ -646,13 +646,13 @@ The official approach is still `StyleSheet.create`. All three options exist in p
 // This DOES work if you install NativeWind:
 <View className="flex-1 bg-white p-4" />  // with NativeWind installed
 ```
-{% endraw %}
+
 
 ---
 
 ## Navigation: URLs → Stacks
 
-{% raw %}
+
 ```tsx
 // Web (React Router / Next.js)
 import { Link, useNavigate } from 'react-router-dom';
@@ -668,9 +668,9 @@ function NavExample() {
     );
 }
 ```
-{% endraw %}
 
-{% raw %}
+
+
 ```tsx
 // React Native with React Navigation (stack-based)
 import { useNavigation } from '@react-navigation/native';
@@ -686,7 +686,7 @@ function NavExample() {
     );
 }
 ```
-{% endraw %}
+
 
 React Navigation uses a **stack model** — screens are pushed and popped like a call stack, matching native iOS/Android navigation behavior. If you prefer file-based routing (closer to Next.js), **Expo Router** offers that mental model but is tied to the Expo toolchain — research it separately.
 
@@ -694,7 +694,7 @@ React Navigation uses a **stack model** — screens are pushed and popped like a
 
 ## Events: onClick → onPress
 
-{% raw %}
+
 ```tsx
 // Web
 <button onClick={handleClick}>Click</button>
@@ -706,13 +706,13 @@ React Navigation uses a **stack model** — screens are pushed and popped like a
 <TextInput onChangeText={setText} /> // onChange → onChangeText (gives you the string directly)
 // No form elements — just group inputs manually
 ```
-{% endraw %}
+
 
 ---
 
 ## Lists: map() → FlatList
 
-{% raw %}
+
 ```tsx
 // Web — rendering a list with .map()
 {users.map(user => (
@@ -721,9 +721,9 @@ React Navigation uses a **stack model** — screens are pushed and popped like a
     </div>
 ))}
 ```
-{% endraw %}
 
-{% raw %}
+
+
 ```tsx
 // React Native — for short lists, .map() inside ScrollView is fine
 <ScrollView>
@@ -745,7 +745,7 @@ React Navigation uses a **stack model** — screens are pushed and popped like a
     )}
 />
 ```
-{% endraw %}
+
 
 ---
 
@@ -772,7 +772,7 @@ Next → **[No DOM, No CSS — Styling in Depth](./no-dom-no-css)**
 
 These browser globals simply don't exist in React Native:
 
-{% raw %}
+
 ```typescript
 // ❌ None of this exists in React Native
 document.getElementById('app');
@@ -785,9 +785,9 @@ window.location.href;
 navigator.geolocation;    // ← removed from RN core in 0.60 — use expo-location
 navigator.clipboard;      // ← not available — use expo-clipboard
 ```
-{% endraw %}
 
-{% raw %}
+
+
 ```typescript
 // ✅ React Native equivalents
 // Get element ref → useRef()
@@ -798,7 +798,7 @@ navigator.clipboard;      // ← not available — use expo-clipboard
 // Geolocation → expo-location
 // Clipboard → expo-clipboard
 ```
-{% endraw %}
+
 
 ---
 
@@ -806,7 +806,7 @@ navigator.clipboard;      // ← not available — use expo-clipboard
 
 You cannot modify the native view tree imperatively the way you can with the DOM.
 
-{% raw %}
+
 ```typescript
 // ❌ Web — direct DOM manipulation
 document.getElementById('title').innerHTML = '<strong>New Title</strong>';
@@ -821,7 +821,7 @@ const [isActive, setIsActive] = useState(false);
     {title}
 </Text>
 ```
-{% endraw %}
+
 
 This is actually the same constraint that React itself imposes on web. If you've been using React correctly (no `document.querySelector` in useEffect), you're already used to this.
 
@@ -829,7 +829,7 @@ This is actually the same constraint that React itself imposes on web. If you've
 
 ## No CSS Selectors, No Cascade
 
-{% raw %}
+
 ```css
 /* ❌ None of this works in React Native */
 .card > .title { font-size: 18px; }
@@ -839,9 +839,9 @@ This is actually the same constraint that React itself imposes on web. If you've
 * { box-sizing: border-box; }
 :root { --primary: #0064d2; }
 ```
-{% endraw %}
 
-{% raw %}
+
+
 ```typescript
 // ✅ React Native — no selectors, no cascade, no hover, no media queries
 // You express all of this in JS
@@ -863,7 +863,7 @@ const isTablet = width >= 768;
 import { colors } from './theme';
 <View style={{ backgroundColor: colors.primary }} />
 ```
-{% endraw %}
+
 
 ---
 
@@ -909,7 +909,7 @@ React Native has a simplified layout model:
 
 On web, sticky positioning keeps a header visible during scroll. In RN, you handle this differently:
 
-{% raw %}
+
 ```tsx
 // Web: CSS position: sticky
 <div style={{ position: 'sticky', top: 0 }}>Sticky header</div>
@@ -922,7 +922,7 @@ On web, sticky positioning keeps a header visible during scroll. In RN, you hand
     ListHeaderComponent={<StickyHeader />}
 />
 ```
-{% endraw %}
+
 
 ---
 
@@ -985,7 +985,7 @@ Next → **[Native Components for Web Devs](./native-components)**
 
 ## `<View>` — Think `<div>` but Flexbox-First
 
-{% raw %}
+
 ```tsx
 // Web div
 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -999,7 +999,7 @@ Next → **[Native Components for Web Devs](./native-components)**
     <View><Text>Item 2</Text></View>
 </View>
 ```
-{% endraw %}
+
 
 ---
 
@@ -1007,7 +1007,7 @@ Next → **[Native Components for Web Devs](./native-components)**
 
 The biggest change: you cannot render text outside of a `<Text>` component.
 
-{% raw %}
+
 ```tsx
 // ❌ Text outside Text — CRASH
 <View>
@@ -1027,13 +1027,13 @@ The biggest change: you cannot render text outside of a `<Text>` component.
     <Text style={{ fontStyle: 'italic', color: '#0064d2' }}>italic blue</Text>
 </Text>
 ```
-{% endraw %}
+
 
 ---
 
 ## `<TextInput>` — The Input Element
 
-{% raw %}
+
 ```tsx
 // Web
 <input
@@ -1053,11 +1053,11 @@ The biggest change: you cannot render text outside of a `<Text>` component.
     autoCorrect={false}
 />
 ```
-{% endraw %}
+
 
 ### Common `TextInput` Props
 
-{% raw %}
+
 ```tsx
 <TextInput
     // Content
@@ -1088,7 +1088,7 @@ The biggest change: you cannot render text outside of a `<Text>` component.
     style={styles.input}
 />
 ```
-{% endraw %}
+
 
 ---
 
@@ -1096,7 +1096,7 @@ The biggest change: you cannot render text outside of a `<Text>` component.
 
 On the web, almost any element can have an `onClick`. In RN, you wrap things in `<Pressable>`:
 
-{% raw %}
+
 ```tsx
 // Web — click on anything
 <div onClick={handleClick}>Clickable div</div>
@@ -1123,7 +1123,7 @@ On the web, almost any element can have an `onClick`. In RN, you wrap things in 
     <Text style={styles.buttonText}>Press Me</Text>
 </Pressable>
 ```
-{% endraw %}
+
 
 ---
 
@@ -1131,7 +1131,7 @@ On the web, almost any element can have an `onClick`. In RN, you wrap things in 
 
 For long lists, `FlatList` is essential — it only renders what's visible on screen:
 
-{% raw %}
+
 ```tsx
 // Web — render all items (fine for short lists)
 {items.map(item => <ItemCard key={item.id} item={item} />)}
@@ -1156,13 +1156,13 @@ For long lists, `FlatList` is essential — it only renders what's visible on sc
     onEndReachedThreshold={0.3}
 />
 ```
-{% endraw %}
+
 
 ---
 
 ## `<Switch>` — Toggle
 
-{% raw %}
+
 ```tsx
 import { Switch } from 'react-native';
 
@@ -1175,7 +1175,7 @@ const [isEnabled, setIsEnabled] = useState(false);
     thumbColor={isEnabled ? '#ffffff' : '#f4f3f4'}
 />
 ```
-{% endraw %}
+
 
 ---
 
@@ -1215,7 +1215,7 @@ Next → **[Styling & Flexbox for Web Devs](./styling-and-flexbox)**
 
 ### Property Names — camelCase
 
-{% raw %}
+
 ```css
 /* CSS */
 background-color: #fff;
@@ -1223,9 +1223,9 @@ font-size: 16px;
 border-radius: 8px;
 padding-horizontal: 16px;  /* doesn't exist in CSS */
 ```
-{% endraw %}
 
-{% raw %}
+
+
 ```typescript
 // React Native StyleSheet
 backgroundColor: '#fff',   // camelCase, no hyphens
@@ -1233,11 +1233,11 @@ fontSize: 16,              // no 'px' unit — numbers are device-independent pi
 borderRadius: 8,
 paddingHorizontal: 16,     // RN shorthand (= paddingLeft + paddingRight)
 ```
-{% endraw %}
+
 
 ### No Units
 
-{% raw %}
+
 ```typescript
 // All values are unitless numbers = density-independent pixels
 // Equivalent to CSS px on 1x screens; scales automatically on 2x/3x screens
@@ -1247,11 +1247,11 @@ borderRadius: 8,    // NOT '8px'
 width: 200,         // fixed width in dp
 width: '100%',      // percentage strings ARE supported for some properties
 ```
-{% endraw %}
+
 
 ### Flexbox Default is Column
 
-{% raw %}
+
 ```typescript
 // CSS Flexbox default:    flexDirection: 'row'
 // React Native default:   flexDirection: 'column'
@@ -1259,13 +1259,13 @@ width: '100%',      // percentage strings ARE supported for some properties
 // To get a horizontal row in RN (like a horizontal flex div):
 <View style={{ flexDirection: 'row' }}>
 ```
-{% endraw %}
+
 
 ---
 
 ## Flexbox Cheat Sheet (RN-Specific)
 
-{% raw %}
+
 ```typescript
 // Container properties
 flexDirection: 'column' | 'row' | 'column-reverse' | 'row-reverse'
@@ -1284,7 +1284,7 @@ flexShrink: 1        // how much to shrink
 flexBasis: 'auto' | 100  // initial size before grow/shrink
 alignSelf: 'auto' | 'flex-start' | 'flex-end' | 'center' | 'stretch'
 ```
-{% endraw %}
+
 
 ---
 
@@ -1292,25 +1292,25 @@ alignSelf: 'auto' | 'flex-start' | 'flex-end' | 'center' | 'stretch'
 
 ### 1. Fill the Screen
 
-{% raw %}
+
 ```tsx
 // Make a component fill all available space (like height: 100vh in CSS)
 <View style={{ flex: 1 }}>
     {/* fills the screen */}
 </View>
 ```
-{% endraw %}
+
 
 ### 2. Center Content
 
-{% raw %}
+
 ```tsx
 // Center horizontally and vertically (like CSS flexbox centering)
 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
     <Text>Centered!</Text>
 </View>
 ```
-{% endraw %}
+
 
 ---
 
@@ -1326,7 +1326,7 @@ The same Flexbox model you already know from web CSS works in RN:
 
 CSS `box-shadow` splits into two in RN — and they behave very differently per platform:
 
-{% raw %}
+
 ```typescript
 const styles = StyleSheet.create({
     card: {
@@ -1343,7 +1343,7 @@ const styles = StyleSheet.create({
     },
 });
 ```
-{% endraw %}
+
 
 :::note Android shadow limitation
 To get a custom-colored shadow on Android, use a solid-color View as a backdrop or the community library `react-native-shadow-2`.
@@ -1355,7 +1355,7 @@ To get a custom-colored shadow on Android, use a solid-color View as a backdrop 
 
 Same as CSS transforms, but written as an array of objects inside the style prop:
 
-{% raw %}
+
 ```tsx
 // CSS: transform: translateX(10px) rotate(45deg) scale(1.2);
 
@@ -1368,13 +1368,13 @@ Same as CSS transforms, but written as an array of objects inside the style prop
     ],
 }} />
 ```
-{% endraw %}
+
 
 ---
 
 ## Responsive Design Without Media Queries
 
-{% raw %}
+
 ```tsx
 import { useWindowDimensions } from 'react-native';
 
@@ -1402,7 +1402,7 @@ function ResponsiveLayout() {
     );
 }
 ```
-{% endraw %}
+
 
 ---
 
@@ -1415,21 +1415,21 @@ The install command alone won't work — styles will appear to compile but never
 :::
 
 **1. Install packages**
-{% raw %}
+
 ```bash
 npx expo install nativewind tailwindcss
 ```
-{% endraw %}
+
 
 **2. Initialize Tailwind**
-{% raw %}
+
 ```bash
 npx tailwindcss init
 ```
-{% endraw %}
+
 
 **3. Configure `tailwind.config.js`**
-{% raw %}
+
 ```js
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -1439,19 +1439,19 @@ module.exports = {
   plugins: [],
 };
 ```
-{% endraw %}
+
 
 **4. Create `global.css`**
-{% raw %}
+
 ```css
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 ```
-{% endraw %}
+
 
 **5. Update `babel.config.js`**
-{% raw %}
+
 ```js
 module.exports = function (api) {
     api.cache(true);
@@ -1461,10 +1461,10 @@ module.exports = function (api) {
     };
 };
 ```
-{% endraw %}
+
 
 **6. Update `metro.config.js`**
-{% raw %}
+
 ```js
 const { getDefaultConfig } = require('expo/metro-config');
 const { withNativeWind } = require('nativewind/metro');
@@ -1472,25 +1472,25 @@ const { withNativeWind } = require('nativewind/metro');
 const config = getDefaultConfig(__dirname);
 module.exports = withNativeWind(config, { input: './global.css' });
 ```
-{% endraw %}
+
 
 **7. Import `global.css` in your root `_layout.tsx`**
-{% raw %}
+
 ```tsx
 import '../global.css';
 ```
-{% endraw %}
+
 
 Now the Tailwind classes work:
 
-{% raw %}
+
 ```tsx
 <View className="flex-1 bg-white p-4">
     <Text className="text-lg font-bold text-gray-900">Title</Text>
     <Text className="text-sm text-gray-500 mt-1">Subtitle</Text>
 </View>
 ```
-{% endraw %}
+
 
 :::note NativeWind is not required
 The official approach is `StyleSheet.create`. NativeWind compiles Tailwind classes to RN styles at build time. Full setup docs: [nativewind.dev/getting-started/expo-router](https://www.nativewind.dev/getting-started/expo-router)
@@ -1531,7 +1531,7 @@ Next → **[Lists & Navigation](./lists-and-navigation)**
 
 ### `FlatList` — The Workhorse
 
-{% raw %}
+
 ```tsx
 interface Product {
     id: string;
@@ -1582,11 +1582,11 @@ function ProductList({ products }: { products: Product[] }) {
     );
 }
 ```
-{% endraw %}
+
 
 ### Grid with `numColumns`
 
-{% raw %}
+
 ```tsx
 // Like CSS grid with equal columns
 <FlatList
@@ -1603,11 +1603,11 @@ function ProductList({ products }: { products: Product[] }) {
     )}
 />
 ```
-{% endraw %}
+
 
 ### `SectionList` — Grouped Content
 
-{% raw %}
+
 ```tsx
 interface Section {
     title: string;
@@ -1632,7 +1632,7 @@ const sections: Section[] = [
     stickySectionHeadersEnabled={true}  // sticky like iOS section headers
 />
 ```
-{% endraw %}
+
 
 ---
 
@@ -1649,7 +1649,7 @@ npm install react-native-screens react-native-safe-area-context
 
 ### Setting Up the Navigator
 
-{% raw %}
+
 ```tsx
 // App.tsx
 import { NavigationContainer } from '@react-navigation/native';
@@ -1675,11 +1675,11 @@ export default function App() {
     );
 }
 ```
-{% endraw %}
+
 
 ### Navigating Between Screens
 
-{% raw %}
+
 ```tsx
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -1707,11 +1707,11 @@ function HomeScreen() {
     );
 }
 ```
-{% endraw %}
+
 
 ### Reading Route Params
 
-{% raw %}
+
 ```tsx
 import { useRoute, RouteProp } from '@react-navigation/native';
 
@@ -1724,11 +1724,11 @@ function ProfileScreen() {
     return <Text>User: {userId}</Text>;
 }
 ```
-{% endraw %}
+
 
 ### Tab Navigation
 
-{% raw %}
+
 ```tsx
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
@@ -1745,7 +1745,7 @@ function MainTabs() {
     );
 }
 ```
-{% endraw %}
+
 
 ---
 

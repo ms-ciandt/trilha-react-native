@@ -4,6 +4,13 @@ title: Styling & Flexbox for Web Developers
 
 # Styling & Flexbox for Web Developers
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/06-estilos-fl.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 > Your CSS knowledge transfers directly to React Native's Flexbox. The main differences are default values and the absence of web-only properties.
 
 ## What Changes from CSS
@@ -268,4 +275,4 @@ The official approach is `StyleSheet.create`. NativeWind compiles Tailwind class
 
 ---
 
-Next → **[Lists & Navigation](./lists-and-navigation)**
+Next → **[Lists & Navigation](./listas-navegacao)**

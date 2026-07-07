@@ -18,8 +18,12 @@ const config = {
   },
 
   i18n: {
-    defaultLocale: 'pt',
-    locales: ['pt'],
+    defaultLocale: 'en',
+    locales: ['en', 'pt'],
+    localeConfigs: {
+      en: { label: 'English' },
+      pt: { label: 'Português' },
+    },
   },
 
   presets: [
@@ -63,6 +67,10 @@ const config = {
             sidebarId: 'trilhaWeb',
             position: 'left',
             label: 'Trilha Web',
+          },
+          {
+            type: 'localeDropdown',
+            position: 'right',
           },
           {
             href: 'https://github.com/AlimuraMatheus/trilha-react-native',

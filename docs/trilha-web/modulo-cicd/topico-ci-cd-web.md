@@ -1,37 +1,50 @@
-# Tópico — CI/CD (Trilha Web)
+---
+title: CI/CD
+---
 
-### Objetivo do tópico
+# Topic — CI/CD (Web Track)
 
-Ao final, o dev deve conseguir:
+### Topic Goal
 
-- Explicar que em RN há:
-  - Build do bundle JS.
-  - Build do app nativo (Android/iOS).
-- Configurar uma pipeline simples em CI (por exemplo GitHub Actions) que:
-  - Roda lint.
-  - Roda testes.
-  - Faz build Android.
-- Interpretar falhas de build Android provenientes de `./gradlew`.
+By the end, you should be able to:
+
+- Explain that in RN there are:
+  - A JS bundle build.
+  - A native app build (Android/iOS).
+- Configure a simple CI pipeline (e.g. GitHub Actions) that:
+  - Runs lint.
+  - Runs tests.
+  - Builds Android.
+- Interpret Android build failures coming from `./gradlew`.
 
 ---
 
-### Fluxo típico: de CI web para CI RN
+### Video Demonstration
 
-Na web:
+<video width="100%" max-width="800px" controls style="border-radius: 8px; margin: 16px 0;">
+  <source src="https://alimuramatheus.github.io/trilha-react-native/assets/videos/Web_to_RN_CI_CD_Pipelines_-_web.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+---
+
+### Typical Flow: from Web CI to RN CI
+
+On the web:
 
 - `npm ci`
 - `npm run lint`
 - `npm test`
 - `npm run build`
 
-Em RN (Android):
+In RN (Android):
 
 - `npm ci`
 - `npm run lint`
 - `npm test`
 - `cd android && ./gradlew assembleRelease`
 
-Exemplo GitHub Actions:
+GitHub Actions example:
 
 ```yaml
 name: React Native CI (Web Dev Edition)
@@ -74,23 +87,27 @@ jobs:
 
 ---
 
-### Exercício prático
+### Hands-on Exercise
 
-1. Pegue um workflow de CI que você já usa em projeto web:
+1. Take a CI workflow you already use in a web project:
    - Checkout.
    - Setup Node.
    - `npm ci`, lint, tests.
-2. Adapte para RN:
-   - Adicionando etapa de build Android.
-   - Upload de artefato APK.
-3. Documente para o time:
-   - Onde encontrar o APK gerado.
-   - Como interpretar erros de build (log do Gradle).
+2. Adapt it for RN:
+   - Adding an Android build step.
+   - Uploading an APK artifact.
+3. Document for the team:
+   - Where to find the generated APK.
+   - How to interpret build errors (Gradle log).
 
 ---
 
-### Materiais de estudo
+### Study Materials
 
 - Blog: *GitHub Actions for React Native*
-- Guia: *From React Web CI to React Native CI*
+- Guide: *From React Web CI to React Native CI*
 - Docs: Gradle, Android build basics
+
+---
+
+Next → **[Architecture](../modulo-arquitetura/topico-arquitetura-web)**

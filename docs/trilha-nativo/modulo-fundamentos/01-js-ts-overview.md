@@ -18,7 +18,7 @@ title: "Module 1: JS/TS for Native Developers"
 | Lesson | What You'll Learn |
 |--------|------------------|
 | [JS Fundamentals](./js-fundamentals) | Variables, functions, closures, async/await, modules — with Kotlin/Swift parallels |
-| [TypeScript for Native Devs](./typescript-for-native-devs) | Type system, interfaces, generics — mapped from Kotlin/Swift types |
+| [TypeScript for Native Devs](./typescript) | Type system, interfaces, generics — mapped from Kotlin/Swift types |
 
 ## The Mental Shift
 

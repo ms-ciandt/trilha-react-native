@@ -4,6 +4,13 @@ title: Web vs React Native — Key Differences
 
 # Web vs React Native — Key Differences
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/03-web-vs-rn.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 > The most important mental model shift for React web developers moving to React Native.
 
 ## The Fundamental Difference
@@ -257,4 +264,4 @@ React Navigation uses a **stack model** — screens are pushed and popped like a
 
 ---
 
-Next → **[No DOM, No CSS — Styling in Depth](./no-dom-no-css)**
+Next → **[No DOM, No CSS — Styling in Depth](./sem-dom-sem-css)**

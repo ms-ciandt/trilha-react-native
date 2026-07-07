@@ -1,33 +1,46 @@
-# Tópico — CI/CD (Trilha 1: Devs Nativos)
+---
+title: CI/CD
+---
 
-## Objetivo do tópico
+# Topic — CI/CD (Track 1: Native Devs)
 
-Ao final, o dev deve conseguir:
-- Entender como o RN entra no pipeline de build Android/iOS
-- Configurar uma pipeline simples com:
-  - Instalação de dependências JS (`npm ci`/`yarn install`)
-  - Lint + testes
-  - Build Android (`./gradlew assembleRelease`)
-  - Build iOS (`xcodebuild` ou Fastlane)
-- Gerar artefatos (APK/IPA) e disponibilizá-los para o time
-- Comparar com o fluxo já utilizado em apps nativos puros
+## Topic Goal
+
+By the end, you should be able to:
+- Understand how RN fits into the Android/iOS build pipeline
+- Configure a simple pipeline with:
+  - JS dependency installation (`npm ci`/`yarn install`)
+  - Lint + tests
+  - Android build (`./gradlew assembleRelease`)
+  - iOS build (`xcodebuild` or Fastlane)
+- Generate artifacts (APK/IPA) and make them available to the team
+- Compare with the flow already used in pure native apps
 
 ---
 
-## Mapeamento: Android/iOS → React Native
+### Video Demonstration
 
-| Nativo                         | React Native / CI                      | Observação |
-|--------------------------------|----------------------------------------|------------|
-| Build Gradle (APK/AAB)        | `./gradlew assembleRelease`            | Igual ao nativo, com bundle RN incluído |
-| Xcode build (IPA)             | `xcodebuild` / Fastlane                | Mesma pipeline de iOS, RN é só mais um target |
-| Lint (Ktlint, SwiftLint)      | ESLint para JS/TS                      | Roda em paralelo aos linters nativos |
-| Testes unitários JUnit/XCTest | Jest                                   | Complementar aos testes nativos |
+<video width="100%" max-width="800px" controls style="border-radius: 8px; margin: 16px 0;">
+  <source src="https://alimuramatheus.github.io/trilha-react-native/assets/videos/React_Native_CI_CD__The_Pipeline_Delta.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 ---
 
-## Fluxo típico de CI para RN
+## Mapping: Android/iOS → React Native
 
-### Android (GitHub Actions, exemplo)
+| Native                         | React Native / CI                      | Note |
+|--------------------------------|----------------------------------------|------|
+| Build Gradle (APK/AAB)        | `./gradlew assembleRelease`            | Same as native, with RN bundle included |
+| Xcode build (IPA)             | `xcodebuild` / Fastlane                | Same iOS pipeline, RN is just another target |
+| Lint (Ktlint, SwiftLint)      | ESLint for JS/TS                       | Runs in parallel with native linters |
+| Unit tests JUnit/XCTest       | Jest                                   | Complementary to native tests |
+
+---
+
+## Typical CI flow for RN
+
+### Android (GitHub Actions, example)
 
 ```yaml
 name: React Native CI
@@ -100,52 +113,39 @@ jobs:
 
 ---
 
-## Pontos de atenção
+## Points to watch out for
 
-- **Cache de dependências JS**: usar cache de `node_modules` ou do `npm ci` para acelerar builds.
-- **Pods iOS**: caching de `Pods/` (quando possível) ou de `Podfile.lock` para reduzir tempo de `pod install`.
-- **Ambiente de build**: garantir que variáveis de ambiente de RN, Android e iOS estejam configuradas (JAVA_HOME, ANDROID_HOME, etc.).
-- **Bundle JS**: o bundle JS é gerado automaticamente como parte do build nativo; não é necessário passo separado em CI para a maioria dos casos.
-
----
-
-## Exercício prático
-
-1. Crie um workflow de CI para Android que:
-   - Executa lint (`npm run lint`).
-   - Executa testes (`npm test`).
-   - Gera um APK release (`./gradlew assembleRelease`).
-2. Configure o workflow para publicar o APK como artefato.
-3. Documente para o time em um `CI-CD.md`:
-   - Como o pipeline funciona.
-   - Onde encontrar os artefatos.
-   - Quais checks são obrigatórios antes de merge (lint/test/build).
+- **JS dependency cache**: use `node_modules` or `npm ci` cache to speed up builds.
+- **iOS Pods**: caching `Pods/` (when possible) or `Podfile.lock` to reduce `pod install` time.
+- **Build environment**: ensure RN, Android, and iOS environment variables are configured (JAVA_HOME, ANDROID_HOME, etc.).
+- **JS bundle**: the JS bundle is generated automatically as part of the native build; a separate CI step is not needed in most cases.
 
 ---
 
-## Materiais de estudo
+## Practical Exercise
 
-### Documentação & guias
-- GitHub Actions — documentação oficial.
-- Fastlane — guia de automação para Android/iOS.
+1. Create a CI workflow for Android that:
+   - Runs lint (`npm run lint`).
+   - Runs tests (`npm test`).
+   - Generates a release APK (`./gradlew assembleRelease`).
+2. Configure the workflow to publish the APK as an artifact.
+3. Document for the team in a `CI-CD.md`:
+   - How the pipeline works.
+   - Where to find the artifacts.
+   - Which checks are required before merge (lint/test/build).
 
-### Artigos
-- *React Native CI/CD Best Practices* — visão geral de pipelines para RN.
-- *Automating Android & iOS Builds for React Native Apps* — foco em deployment.
+---
 
-### Vídeos
+## Study Materials
 
-#### CI/CD for React Native Apps (40 min)
+### Documentation & Guides
+- GitHub Actions — official documentation.
+- Fastlane — automation guide for Android/iOS.
 
-<details>
-<summary>Descrição do conteúdo</summary>
+### Articles
+- *React Native CI/CD Best Practices* — overview of pipelines for RN.
+- *Automating Android & iOS Builds for React Native Apps* — focus on deployment.
 
-O vídeo mostra, passo a passo, como montar um pipeline de CI/CD completo para um app RN, incluindo etapas de lint, testes, build e distribuição. A ênfase é em projetos que já possuem pipelines nativos e precisam apenas encaixar o RN nesse fluxo.
+---
 
-Tópicos:
-- Estrutura básica de workflows no GitHub Actions.
-- Integração com Fastlane para distribuição em TestFlight/Play Store.
-- Gestão de certificados e keystores.
-- Estratégias de versionamento e incrementos de build number.
-
-</details>
+Next → **[Architecture](../modulo-arquitetura/topico-arquitetura-nativos)**

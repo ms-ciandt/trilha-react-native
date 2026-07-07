@@ -57,25 +57,25 @@ Here's a quick feel for the three languages side by side:
 
 **Defining a function:**
 
-{% raw %}
+
 ```kotlin
 // Kotlin
 fun greet(name: String): String {
     return "Hello, $name!"
 }
 ```
-{% endraw %}
 
-{% raw %}
+
+
 ```swift
 // Swift
 func greet(name: String) -> String {
     return "Hello, \(name)!"
 }
 ```
-{% endraw %}
 
-{% raw %}
+
+
 ```typescript
 // TypeScript
 function greet(name: string): string {
@@ -84,7 +84,7 @@ function greet(name: string): string {
 // or as an arrow function:
 const greet = (name: string): string => `Hello, ${name}!`;
 ```
-{% endraw %}
+
 
 ## Video Overview
 
@@ -106,14 +106,14 @@ const greet = (name: string): string => `Hello, ${name}!`;
 
 ## Variables: `const`, `let`, never `var`
 
-{% raw %}
+
 ```typescript
 const name = "Alice";       // Kotlin: val name = "Alice"  — immutable binding
 let count = 0;              // Kotlin: var count = 0        — mutable binding
 count = 1;                  // OK
 // name = "Bob";            // Error — const cannot be reassigned
 ```
-{% endraw %}
+
 
 :::caution Always use const by default
 Use `const` for everything. Switch to `let` only when you need to reassign. Never use `var` — it has function-scoped hoisting that causes subtle bugs.
@@ -125,7 +125,7 @@ Use `const` for everything. Switch to `let` only when you need to reassign. Neve
 
 JavaScript is dynamically typed. TypeScript adds a compile-time type layer:
 
-{% raw %}
+
 ```typescript
 // Plain JS — no type checking
 let x = 5;
@@ -138,25 +138,25 @@ let y = 5;       // TypeScript infers: number
 // TypeScript — explicit annotation
 let z: number = 5;
 ```
-{% endraw %}
+
 
 **Kotlin/Swift comparison:**
 
-{% raw %}
+
 ```kotlin
 // Kotlin
 var x: Int = 5
 // x = "hello" // compile error
 ```
-{% endraw %}
 
-{% raw %}
+
+
 ```swift
 // Swift
 var x: Int = 5
 // x = "hello" // compile error
 ```
-{% endraw %}
+
 
 TypeScript with `strict: true` is comparably safe.
 
@@ -164,7 +164,7 @@ TypeScript with `strict: true` is comparably safe.
 
 ## Functions: Three Forms
 
-{% raw %}
+
 ```typescript
 // 1. Function declaration (hoisted — available before its line)
 function add(a: number, b: number): number {
@@ -185,10 +185,10 @@ const greet = (name: string): string => {
     return message;
 };
 ```
-{% endraw %}
+
 
 **Kotlin comparison:**
-{% raw %}
+
 ```kotlin
 // Regular function
 fun add(a: Int, b: Int): Int = a + b
@@ -196,10 +196,10 @@ fun add(a: Int, b: Int): Int = a + b
 // Lambda
 val multiply: (Int, Int) -> Int = { a, b -> a * b }
 ```
-{% endraw %}
+
 
 **Swift comparison:**
-{% raw %}
+
 ```swift
 // Regular function
 func add(a: Int, b: Int) -> Int { a + b }
@@ -207,7 +207,7 @@ func add(a: Int, b: Int) -> Int { a + b }
 // Closure
 let multiply: (Int, Int) -> Int = { a, b in a * b }
 ```
-{% endraw %}
+
 
 ---
 
@@ -215,7 +215,7 @@ let multiply: (Int, Int) -> Int = { a, b in a * b }
 
 Swift has proper named parameters. Kotlin has data class destructuring. JavaScript/TypeScript has **destructuring**:
 
-{% raw %}
+
 ```typescript
 // Object destructuring
 const user = { name: "Alice", age: 30, city: "NYC" };
@@ -241,10 +241,10 @@ const [first, second, ...rest] = [1, 2, 3, 4, 5];
 console.log(first);  // 1
 console.log(rest);   // [3, 4, 5]
 ```
-{% endraw %}
+
 
 **Swift comparison:**
-{% raw %}
+
 ```swift
 // Named parameters
 func createUser(name: String, age: Int) -> String {
@@ -252,13 +252,13 @@ func createUser(name: String, age: Int) -> String {
 }
 createUser(name: "Bob", age: 25)
 ```
-{% endraw %}
+
 
 ---
 
 ## Spread Operator & Rest Parameters
 
-{% raw %}
+
 ```typescript
 // Spread: expand an array or object
 const arr1 = [1, 2, 3];
@@ -275,7 +275,7 @@ function sum(...numbers: number[]): number {
 }
 sum(1, 2, 3, 4); // 10
 ```
-{% endraw %}
+
 
 ---
 
@@ -283,7 +283,7 @@ sum(1, 2, 3, 4); // 10
 
 These are the workhorses of React rendering. You'll use them constantly.
 
-{% raw %}
+
 ```typescript
 const numbers = [1, 2, 3, 4, 5];
 
@@ -301,17 +301,17 @@ const result = numbers
     .filter(n => n > 2)
     .map(n => n * 10);  // [30, 40, 50]
 ```
-{% endraw %}
+
 
 **Kotlin comparison:**
-{% raw %}
+
 ```kotlin
 val numbers = listOf(1, 2, 3, 4, 5)
 val doubled = numbers.map { it * 2 }
 val evens = numbers.filter { it % 2 == 0 }
 val total = numbers.fold(0) { acc, n -> acc + n }
 ```
-{% endraw %}
+
 
 ---
 
@@ -319,7 +319,7 @@ val total = numbers.fold(0) { acc, n -> acc + n }
 
 Before `async/await` there were Promises. You'll see them constantly in library code and RN APIs, so you need to recognize them even if you prefer `async/await`.
 
-{% raw %}
+
 ```typescript
 // A Promise represents a value that will arrive in the future
 const promise: Promise<User> = fetchUser('123');
@@ -346,7 +346,7 @@ function delay(ms: number): Promise<void> {
 }
 await delay(1000); // wait 1 second
 ```
-{% endraw %}
+
 
 `async/await` is syntax sugar over Promises — the two are interchangeable. Most modern code uses `async/await` but you must recognise `.then()` chains in library source and documentation.
 
@@ -354,7 +354,7 @@ await delay(1000); // wait 1 second
 
 ## Async/Await — The JS Equivalent of Kotlin Coroutines
 
-{% raw %}
+
 ```typescript
 // A function that returns a Promise (like Kotlin's suspend fun)
 async function fetchUser(id: string): Promise<User> {
@@ -373,10 +373,10 @@ async function loadProfile() {
     }
 }
 ```
-{% endraw %}
+
 
 **Kotlin coroutines comparison:**
-{% raw %}
+
 ```kotlin
 // Kotlin
 suspend fun fetchUser(id: String): User {
@@ -393,7 +393,7 @@ suspend fun loadProfile() {
     }
 }
 ```
-{% endraw %}
+
 
 The mental model is identical — `async/await` in JS is directly analogous to `suspend fun` in Kotlin.
 
@@ -405,7 +405,7 @@ This is the biggest mental-model shift from native development:
 
 **JavaScript in React Native runs on a single thread.** There is no `Dispatchers.IO`, no `DispatchQueue.global()`, no background thread pool you can spin up from JS.
 
-{% raw %}
+
 ```typescript
 // This blocks the JS thread — animations stutter, touches drop
 function processLargeDataset(data: number[]) {
@@ -425,7 +425,7 @@ async function processInChunks(data: number[]) {
     return results;
 }
 ```
-{% endraw %}
+
 
 | Native | React Native JS |
 |--------|----------------|
@@ -444,7 +444,7 @@ async function processInChunks(data: number[]) {
 
 Unlike Android's class path system or Swift's module system, JavaScript uses **ES modules**:
 
-{% raw %}
+
 ```typescript
 // math.ts — named exports
 export const PI = 3.14159;
@@ -454,9 +454,9 @@ export function multiply(a: number, b: number) { return a * b; }
 // Default export (one per file)
 export default function subtract(a: number, b: number) { return a - b; }
 ```
-{% endraw %}
 
-{% raw %}
+
+
 ```typescript
 // app.ts — importing
 import subtract from './math';           // default import
@@ -464,7 +464,7 @@ import { add, PI } from './math';        // named imports
 import { multiply as mult } from './math'; // rename on import
 import * as MathUtils from './math';     // import everything as namespace
 ```
-{% endraw %}
+
 
 ---
 
@@ -472,7 +472,7 @@ import * as MathUtils from './math';     // import everything as namespace
 
 Closures are functions that "remember" the variables from the scope where they were created. This is fundamental to React hooks.
 
-{% raw %}
+
 ```typescript
 function makeCounter(start: number) {
     let count = start; // this variable is "closed over"
@@ -490,11 +490,11 @@ counter.increment(); // 12
 counter.decrement(); // 11
 counter.value();     // 11
 ```
-{% endraw %}
+
 
 In React Native, you'll see closures in event handlers constantly:
 
-{% raw %}
+
 ```tsx
 function MyButton() {
     const [count, setCount] = useState(0);
@@ -507,7 +507,7 @@ function MyButton() {
     return <Button onPress={handlePress} title={`Pressed ${count} times`} />;
 }
 ```
-{% endraw %}
+
 
 ---
 
@@ -553,7 +553,7 @@ Next → **[TypeScript for Native Developers](./typescript-for-native-devs)**
 
 Always enable strict mode. It makes TypeScript behave closer to Kotlin/Swift:
 
-{% raw %}
+
 ```json
 // tsconfig.json
 {
@@ -564,7 +564,7 @@ Always enable strict mode. It makes TypeScript behave closer to Kotlin/Swift:
   }
 }
 ```
-{% endraw %}
+
 
 Expo and React Native projects generate this for you by default.
 
@@ -572,7 +572,7 @@ Expo and React Native projects generate this for you by default.
 
 ## Primitive Types
 
-{% raw %}
+
 ```typescript
 const name: string = "Alice";
 const age: number = 30;          // no Int/Float/Double split — all numbers are `number`
@@ -582,7 +582,7 @@ const notSet: undefined = undefined;
 const id: bigint = 9007199254740991n;
 const sym: symbol = Symbol("id");
 ```
-{% endraw %}
+
 
 **Kotlin comparison:**
 
@@ -602,7 +602,7 @@ const sym: symbol = Symbol("id");
 
 TypeScript has two ways to define shapes: `interface` and `type`. Use `interface` for objects that might be extended; `type` for unions and utility types.
 
-{% raw %}
+
 ```typescript
 // Interface — like a Kotlin interface or data class shape
 interface User {
@@ -621,10 +621,10 @@ type AdminUser = User & {
     permissions: string[];
 };
 ```
-{% endraw %}
+
 
 **Kotlin data class comparison:**
-{% raw %}
+
 ```kotlin
 data class User(
     val id: String,
@@ -633,10 +633,10 @@ data class User(
     val age: Int? = null    // optional
 )
 ```
-{% endraw %}
+
 
 **Swift struct comparison:**
-{% raw %}
+
 ```swift
 struct User {
     let id: String
@@ -645,7 +645,7 @@ struct User {
     var age: Int?
 }
 ```
-{% endraw %}
+
 
 ---
 
@@ -653,7 +653,7 @@ struct User {
 
 TypeScript's **discriminated unions** are the equivalent of Kotlin sealed classes or Swift enums with associated values:
 
-{% raw %}
+
 ```typescript
 // TypeScript discriminated union
 type NetworkState =
@@ -672,10 +672,10 @@ function renderState(state: NetworkState) {
     }
 }
 ```
-{% endraw %}
+
 
 **Kotlin sealed class comparison:**
-{% raw %}
+
 ```kotlin
 sealed class NetworkState {
     object Loading : NetworkState()
@@ -689,7 +689,7 @@ fun renderState(state: NetworkState) = when (state) {
     is NetworkState.Error -> "Error: ${state.message}"
 }
 ```
-{% endraw %}
+
 
 This pattern is used constantly in React Native for loading states, API responses, and navigation parameters.
 
@@ -697,7 +697,7 @@ This pattern is used constantly in React Native for loading states, API response
 
 ## Generics
 
-{% raw %}
+
 ```typescript
 // Generic function — like Kotlin's <T> generics
 function first<T>(arr: T[]): T | undefined {
@@ -717,10 +717,10 @@ interface ApiResponse<T> {
 type UserResponse = ApiResponse<User>;
 type UserListResponse = ApiResponse<User[]>;
 ```
-{% endraw %}
+
 
 **Kotlin comparison:**
-{% raw %}
+
 ```kotlin
 fun <T> first(list: List<T>): T? = list.firstOrNull()
 
@@ -730,7 +730,7 @@ data class ApiResponse<T>(
     val message: String
 )
 ```
-{% endraw %}
+
 
 ---
 
@@ -738,7 +738,7 @@ data class ApiResponse<T>(
 
 TypeScript with `strictNullChecks` requires you to handle null explicitly — like Kotlin's nullable types:
 
-{% raw %}
+
 ```typescript
 // Without strict: both null and undefined are assignable to any type (dangerous)
 // With strict: you must declare nullability
@@ -760,17 +760,17 @@ const displayName = user?.name ?? "Anonymous";
 // Non-null assertion — like Kotlin's !!  (use sparingly!)
 const forcedName = user!.name; // throws at runtime if user is null
 ```
-{% endraw %}
+
 
 **Kotlin comparison:**
-{% raw %}
+
 ```kotlin
 var maybeName: String? = null
 val email = user?.email
 val displayName = user?.name ?: "Anonymous"
 val forcedName = user!!.name  // throws KotlinNullPointerException if null
 ```
-{% endraw %}
+
 
 The patterns are near-identical.
 
@@ -780,7 +780,7 @@ The patterns are near-identical.
 
 TypeScript has built-in utility types that you'll use constantly in React Native:
 
-{% raw %}
+
 ```typescript
 interface User {
     id: string;
@@ -811,13 +811,13 @@ type ImmutableUser = Readonly<User>;
 type UserMap = Record<string, User>;
 // { [key: string]: User }
 ```
-{% endraw %}
+
 
 ---
 
 ## Type Guards (Runtime Type Narrowing)
 
-{% raw %}
+
 ```typescript
 // typeof guard
 function processInput(input: string | number) {
@@ -842,7 +842,7 @@ function isUser(obj: unknown): obj is User {
            'name' in obj;
 }
 ```
-{% endraw %}
+
 
 ---
 
@@ -850,7 +850,7 @@ function isUser(obj: unknown): obj is User {
 
 TypeScript has `enum` but the community prefers **union types** (they're simpler and don't generate extra runtime code):
 
-{% raw %}
+
 ```typescript
 // Avoid: TypeScript enum
 enum Direction { Up, Down, Left, Right }
@@ -867,13 +867,13 @@ const Direction = {
 } as const;
 type Direction = typeof Direction[keyof typeof Direction];
 ```
-{% endraw %}
+
 
 ---
 
 ## React Native Type Annotations in Practice
 
-{% raw %}
+
 ```typescript
 import { StyleSheet, ViewStyle, TextStyle } from 'react-native';
 
@@ -901,7 +901,7 @@ const styles = StyleSheet.create({
     } satisfies ViewStyle,   // `satisfies` checks without widening the type
 });
 ```
-{% endraw %}
+
 
 ---
 
@@ -951,7 +951,7 @@ Next → **[React Fundamentals](./react-fundamentals)**
 ## The Declarative Paradigm
 
 **Imperative (Android View system / UIKit):**
-{% raw %}
+
 ```kotlin
 // You tell the system HOW to change the UI step by step
 val button = findViewById<Button>(R.id.myButton)
@@ -959,19 +959,19 @@ button.text = "Loading..."
 button.isEnabled = false
 spinner.visibility = View.VISIBLE
 ```
-{% endraw %}
 
-{% raw %}
+
+
 ```swift
 // UIKit
 button.setTitle("Loading...", for: .normal)
 button.isEnabled = false
 spinner.startAnimating()
 ```
-{% endraw %}
+
 
 **Declarative (Compose / SwiftUI / React):**
-{% raw %}
+
 ```kotlin
 // Compose — UI is a function of state
 @Composable
@@ -983,9 +983,9 @@ fun MyButton(isLoading: Boolean) {
     }
 }
 ```
-{% endraw %}
 
-{% raw %}
+
+
 ```tsx
 // React — same idea, different syntax
 function MyButton({ isLoading }: { isLoading: boolean }) {
@@ -995,7 +995,7 @@ function MyButton({ isLoading }: { isLoading: boolean }) {
     return <Button onPress={() => {}} title="Submit" />;
 }
 ```
-{% endraw %}
+
 
 The mental model: **describe what the UI should look like for a given state, not how to transition to it.** React figures out the diff and updates only what changed — exactly like Compose's recomposition or SwiftUI's view diffing.
 
@@ -1005,7 +1005,7 @@ The mental model: **describe what the UI should look like for a given state, not
 
 A React component is a function that takes **props** and returns **JSX**:
 
-{% raw %}
+
 ```tsx
 // The simplest possible component
 function Greeting() {
@@ -1031,10 +1031,10 @@ function Greeting({ name, age }: GreetingProps) {
 <Greeting name="Alice" age={30} />
 <Greeting name="Bob" />
 ```
-{% endraw %}
+
 
 **Compose comparison:**
-{% raw %}
+
 ```kotlin
 @Composable
 fun Greeting(name: String, age: Int? = null) {
@@ -1044,7 +1044,7 @@ fun Greeting(name: String, age: Int? = null) {
     }
 }
 ```
-{% endraw %}
+
 
 Components can be nested, composed, and reused — just like Composables.
 
@@ -1054,7 +1054,7 @@ Components can be nested, composed, and reused — just like Composables.
 
 JSX looks like HTML/XML but it's **JavaScript syntax sugar** that compiles to function calls:
 
-{% raw %}
+
 ```tsx
 // JSX (what you write)
 const element = <Text style={{ color: 'red' }}>Hello</Text>;
@@ -1062,11 +1062,11 @@ const element = <Text style={{ color: 'red' }}>Hello</Text>;
 // What it compiles to (what you DON'T write)
 const element = React.createElement(Text, { style: { color: 'red' } }, "Hello");
 ```
-{% endraw %}
+
 
 ### JSX Rules
 
-{% raw %}
+
 ```tsx
 // 1. Must return ONE root element (wrap in View or <> fragments)
 function BadComponent() {
@@ -1099,7 +1099,7 @@ const name = "Alice";
 {isLoggedIn && <ProfileScreen />}
 {isLoggedIn ? <ProfileScreen /> : <LoginScreen />}
 ```
-{% endraw %}
+
 
 ---
 
@@ -1107,7 +1107,7 @@ const name = "Alice";
 
 Props are the component's interface — like constructor parameters in a Compose `@Composable` or a SwiftUI `View`.
 
-{% raw %}
+
 ```tsx
 interface CardProps {
     title: string;
@@ -1131,7 +1131,7 @@ function Card({ title, subtitle, onPress, children }: CardProps) {
     <Text>This is child content</Text>
 </Card>
 ```
-{% endraw %}
+
 
 **Props are read-only.** A component can never modify its own props — only the parent can change what it passes down.
 
@@ -1141,7 +1141,7 @@ function Card({ title, subtitle, onPress, children }: CardProps) {
 
 State is data that, when changed, causes the component to re-render. Think of it like `mutableStateOf` in Compose or `@State` in SwiftUI.
 
-{% raw %}
+
 ```tsx
 import { useState } from 'react';
 
@@ -1159,10 +1159,10 @@ function Counter() {
     );
 }
 ```
-{% endraw %}
+
 
 **Compose comparison:**
-{% raw %}
+
 ```kotlin
 @Composable
 fun Counter() {
@@ -1175,10 +1175,10 @@ fun Counter() {
     }
 }
 ```
-{% endraw %}
+
 
 **SwiftUI comparison:**
-{% raw %}
+
 ```swift
 struct Counter: View {
     @State private var count = 0
@@ -1192,13 +1192,13 @@ struct Counter: View {
     }
 }
 ```
-{% endraw %}
+
 
 The mental model is identical across all three — a reactive value that triggers re-render on change.
 
 ### Updating State Correctly
 
-{% raw %}
+
 ```tsx
 // WRONG — mutating state directly (doesn't trigger re-render)
 const [items, setItems] = useState(['a', 'b', 'c']);
@@ -1213,7 +1213,7 @@ setItems(items.map(i => i === 'a' ? 'A' : i)); // Update item
 const [user, setUser] = useState({ name: 'Alice', age: 30 });
 setUser({ ...user, age: 31 }); // Update one field — spread creates new object
 ```
-{% endraw %}
+
 
 This immutable update pattern is fundamental to React's change detection.
 
@@ -1223,7 +1223,7 @@ This immutable update pattern is fundamental to React's change detection.
 
 `useEffect` handles side effects — like `LaunchedEffect` in Compose, `onAppear` in SwiftUI, or `onCreate`/`viewDidLoad` in traditional native.
 
-{% raw %}
+
 ```tsx
 import { useState, useEffect } from 'react';
 
@@ -1255,17 +1255,17 @@ function UserProfile({ userId }: { userId: string }) {
     return <Text>{user.name}</Text>;
 }
 ```
-{% endraw %}
+
 
 ### `useEffect` Dependency Array
 
-{% raw %}
+
 ```tsx
 useEffect(() => { /* runs after EVERY render */ });
 useEffect(() => { /* runs ONCE on mount */ }, []);
 useEffect(() => { /* runs when dep1 or dep2 changes */ }, [dep1, dep2]);
 ```
-{% endraw %}
+
 
 | Native Equivalent | useEffect Pattern |
 |-------------------|-------------------|
@@ -1278,13 +1278,13 @@ useEffect(() => { /* runs when dep1 or dep2 changes */ }, [dep1, dep2]);
 
 ## The Component Lifecycle at a Glance
 
-{% raw %}
+
 ```
 Mount:   render → paint to screen → useEffect([], run once)
 Update:  state/prop changes → re-render → paint → useEffect([deps], if deps changed)
 Unmount: cleanup from useEffect → component removed
 ```
-{% endraw %}
+
 
 :::info useEffect runs after paint
 Unlike `viewDidLoad` (iOS) or `onCreate` (Android) which run before the view is visible, `useEffect` fires **after** the screen has already painted. This is usually what you want (data fetches, subscriptions). For layout measurements that must happen synchronously before paint, use `useLayoutEffect` — the React Native equivalent of `viewDidLayoutSubviews`.
@@ -1296,7 +1296,7 @@ Unlike `viewDidLoad` (iOS) or `onCreate` (Android) which run before the view is 
 
 When two sibling components need to share state, move it to their common parent:
 
-{% raw %}
+
 ```tsx
 // Parent owns the state
 function App() {
@@ -1310,7 +1310,7 @@ function App() {
     );
 }
 ```
-{% endraw %}
+
 
 This is analogous to a ViewModel in Android MVVM that both an Activity and a Fragment observe, or a Combine publisher that multiple SwiftUI views subscribe to.
 
@@ -1339,7 +1339,7 @@ Next → **[Components & Props in Depth](./components-and-props)**
 
 React's power comes from composing small, focused components. Each component does one thing well.
 
-{% raw %}
+
 ```tsx
 // Small, focused components
 function Avatar({ uri, size = 40 }: { uri: string; size?: number }) {
@@ -1370,7 +1370,7 @@ function UserCard({ user }: { user: User }) {
     );
 }
 ```
-{% endraw %}
+
 
 ---
 
@@ -1378,7 +1378,7 @@ function UserCard({ user }: { user: User }) {
 
 The `children` prop lets you build container/wrapper components — like Compose's `content: @Composable () -> Unit` slot:
 
-{% raw %}
+
 ```tsx
 interface SectionProps {
     title: string;
@@ -1400,7 +1400,7 @@ function Section({ title, children }: SectionProps) {
     <ActivityItem text="Posted a comment" />
 </Section>
 ```
-{% endraw %}
+
 
 ---
 
@@ -1408,7 +1408,7 @@ function Section({ title, children }: SectionProps) {
 
 When you need to pass data through many levels of components, **Context** avoids the "prop drilling" problem — like a Compose `CompositionLocal` or a SwiftUI `@EnvironmentObject`:
 
-{% raw %}
+
 ```tsx
 import { createContext, useContext, useState } from 'react';
 
@@ -1447,7 +1447,7 @@ function ThemedButton() {
     );
 }
 ```
-{% endraw %}
+
 
 ---
 
@@ -1455,7 +1455,7 @@ function ThemedButton() {
 
 Instead of `RecyclerView` (Android) or `UITableView/UICollectionView` (iOS), React Native uses `FlatList`:
 
-{% raw %}
+
 ```tsx
 interface Item { id: string; title: string; }
 
@@ -1484,7 +1484,7 @@ function MyList() {
     );
 }
 ```
-{% endraw %}
+
 
 `FlatList` is lazy — like `RecyclerView`, it only renders items visible on screen.
 
@@ -1492,7 +1492,7 @@ function MyList() {
 
 ## Conditional Rendering Patterns
 
-{% raw %}
+
 ```tsx
 // Pattern 1: Early return (cleanest for loading/error states)
 function UserScreen({ userId }: { userId: string }) {
@@ -1526,7 +1526,7 @@ function StatusBadge({ status }: { status: 'pending' | 'active' | 'closed' }) {
     );
 }
 ```
-{% endraw %}
+
 
 ---
 
@@ -1534,7 +1534,7 @@ function StatusBadge({ status }: { status: 'pending' | 'active' | 'closed' }) {
 
 When rendering arrays, React needs a stable `key` to track which items changed:
 
-{% raw %}
+
 ```tsx
 // BAD — using array index as key (causes bugs when list reorders)
 {users.map((user, index) => <UserRow key={index} user={user} />)}
@@ -1542,7 +1542,7 @@ When rendering arrays, React needs a stable `key` to track which items changed:
 // GOOD — use a stable unique identifier
 {users.map(user => <UserRow key={user.id} user={user} />)}
 ```
-{% endraw %}
+
 
 ---
 
@@ -1550,7 +1550,7 @@ When rendering arrays, React needs a stable `key` to track which items changed:
 
 By default, a child component re-renders whenever its parent re-renders — even if its own props haven't changed. `React.memo` wraps a component and skips the re-render when props are shallowly equal.
 
-{% raw %}
+
 ```tsx
 // Without memo — re-renders on every parent render, even if user is the same
 function UserRow({ user }: { user: User }) {
@@ -1562,11 +1562,11 @@ const UserRow = React.memo(function UserRow({ user }: { user: User }) {
     return <Text>{user.name}</Text>;
 });
 ```
-{% endraw %}
+
 
 `React.memo` pairs with `useCallback` — both are needed for a FlatList row to truly avoid unnecessary re-renders:
 
-{% raw %}
+
 ```tsx
 function UserList() {
     const [users, setUsers] = useState<User[]>([]);
@@ -1601,7 +1601,7 @@ const UserRow = React.memo(function UserRow({
     );
 });
 ```
-{% endraw %}
+
 
 **Kotlin/Compose parallel:** `React.memo` is analogous to Compose's stable parameter system — a composable with stable inputs skips recomposition when they haven't changed.
 
@@ -1646,7 +1646,7 @@ Before anything else — hooks have two hard rules:
 1. **Only call hooks at the top level** — not inside loops, conditions, or nested functions
 2. **Only call hooks from React components** (or other hooks)
 
-{% raw %}
+
 ```tsx
 // WRONG
 function MyComponent({ show }: { show: boolean }) {
@@ -1662,13 +1662,13 @@ function MyComponent({ show }: { show: boolean }) {
     return <Text>{value}</Text>;
 }
 ```
-{% endraw %}
+
 
 ---
 
 ## `useState` — Reactive State
 
-{% raw %}
+
 ```tsx
 // Simple value
 const [count, setCount] = useState(0);
@@ -1683,7 +1683,7 @@ const increment = () => setCount(prev => prev + 1);
 // Use the functional form when the new value depends on the old one
 // — avoids stale closure bugs in async code
 ```
-{% endraw %}
+
 
 ---
 
@@ -1691,7 +1691,7 @@ const increment = () => setCount(prev => prev + 1);
 
 Covered in React Fundamentals. Key patterns:
 
-{% raw %}
+
 ```tsx
 // Data fetching on mount
 useEffect(() => {
@@ -1709,7 +1709,7 @@ useEffect(() => {
     navigation.setOptions({ title: `Count: ${count}` });
 }, [count]);
 ```
-{% endraw %}
+
 
 ---
 
@@ -1717,7 +1717,7 @@ useEffect(() => {
 
 When state transitions get complex — multiple related values, state that depends on the previous state, or many different actions — `useReducer` is cleaner than several `useState` calls.
 
-{% raw %}
+
 ```tsx
 import { useReducer } from 'react';
 
@@ -1768,7 +1768,7 @@ function LoginScreen() {
     return <Button title="Login" onPress={() => handleLogin('a@b.com', 'pw')} />;
 }
 ```
-{% endraw %}
+
 
 **Native parallels:**
 
@@ -1789,7 +1789,7 @@ function LoginScreen() {
 
 `useRef` is like a mutable container that survives renders without triggering one. Think of it as an instance variable on a Compose `remember` — it persists across recompositions but changing it doesn't cause one.
 
-{% raw %}
+
 ```tsx
 import { useRef, useEffect } from 'react';
 import { TextInput } from 'react-native';
@@ -1817,7 +1817,7 @@ function SearchBar() {
     return <TextInput ref={inputRef} onChangeText={handleChange} />;
 }
 ```
-{% endraw %}
+
 
 ---
 
@@ -1825,7 +1825,7 @@ function SearchBar() {
 
 `useMemo` caches a computed value. Only recompute when dependencies change. Like Compose's `remember(key) { ... }`:
 
-{% raw %}
+
 ```tsx
 import { useMemo } from 'react';
 
@@ -1840,7 +1840,7 @@ function ProductList({ products, filterText }: Props) {
     return <FlatList data={filteredProducts} renderItem={...} />;
 }
 ```
-{% endraw %}
+
 
 Don't over-optimize with `useMemo` — only use it for genuinely expensive operations.
 
@@ -1850,7 +1850,7 @@ Don't over-optimize with `useMemo` — only use it for genuinely expensive opera
 
 `useCallback` memoizes a function. Prevents child components from re-rendering unnecessarily when a callback hasn't actually changed:
 
-{% raw %}
+
 ```tsx
 import { useCallback } from 'react';
 
@@ -1874,7 +1874,7 @@ function ParentList() {
     );
 }
 ```
-{% endraw %}
+
 
 ---
 
@@ -1882,7 +1882,7 @@ function ParentList() {
 
 You can extract stateful logic into your own hooks. Naming convention: **must start with `use`**.
 
-{% raw %}
+
 ```tsx
 // useLocalStorage-like hook for React Native (using AsyncStorage)
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -1918,7 +1918,7 @@ function SettingsScreen() {
     return <Switch value={isDark} onValueChange={setIsDark} />;
 }
 ```
-{% endraw %}
+
 
 Custom hooks are the equivalent of a Kotlin extension function on a ViewModel, or a SwiftUI view modifier — reusable logic that any component can plug in.
 
@@ -1998,7 +1998,7 @@ Next → **[React Native Core Components](./rn-core-components)**
 
 `View` is the fundamental building block. It renders as a `ViewGroup` on Android and `UIView` on iOS:
 
-{% raw %}
+
 ```tsx
 import { View, StyleSheet } from 'react-native';
 
@@ -2028,7 +2028,7 @@ const styles = StyleSheet.create({
     body: { padding: 16, paddingTop: 0 },
 });
 ```
-{% endraw %}
+
 
 ---
 
@@ -2036,7 +2036,7 @@ const styles = StyleSheet.create({
 
 Unlike web HTML where text can float freely, **in React Native all text must be inside `<Text>`**:
 
-{% raw %}
+
 ```tsx
 // ERROR: raw text outside Text
 <View>
@@ -2048,10 +2048,10 @@ Unlike web HTML where text can float freely, **in React Native all text must be 
     <Text>Hello World</Text>
 </View>
 ```
-{% endraw %}
+
 
 Text features:
-{% raw %}
+
 ```tsx
 <Text
     style={{ fontSize: 16, fontWeight: 'bold', color: '#333' }}
@@ -2068,13 +2068,13 @@ Text features:
     Normal text <Text style={{ fontWeight: 'bold' }}>bold part</Text> normal again
 </Text>
 ```
-{% endraw %}
+
 
 ---
 
 ## `<Image>` — Local and Remote Images
 
-{% raw %}
+
 ```tsx
 import { Image } from 'react-native';
 
@@ -2091,16 +2091,16 @@ import { Image } from 'react-native';
     style={{ width: 100, height: 40 }}
 />
 ```
-{% endraw %}
+
 
 :::tip Use Expo Image for production
 For better performance (caching, transitions, blur hash placeholders), use `expo-image`:
-{% raw %}
+
 ```tsx
 import { Image } from 'expo-image';
 <Image source="https://..." style={{ width: 200, height: 200 }} contentFit="cover" />
 ```
-{% endraw %}
+
 :::
 
 ---
@@ -2109,7 +2109,7 @@ import { Image } from 'expo-image';
 
 Like `EditText` (Android) or `UITextField`/`UITextView` (iOS):
 
-{% raw %}
+
 ```tsx
 import { useState } from 'react';
 import { TextInput, View } from 'react-native';
@@ -2140,7 +2140,7 @@ function LoginForm() {
     );
 }
 ```
-{% endraw %}
+
 
 ---
 
@@ -2148,7 +2148,7 @@ function LoginForm() {
 
 Prefer `Pressable` over `TouchableOpacity` for new code (it's the modern API):
 
-{% raw %}
+
 ```tsx
 import { Pressable } from 'react-native';
 
@@ -2167,7 +2167,7 @@ import { Pressable } from 'react-native';
     )}
 </Pressable>
 ```
-{% endraw %}
+
 
 ---
 
@@ -2175,7 +2175,7 @@ import { Pressable } from 'react-native';
 
 The equivalent of `RecyclerView` (Android) or `UITableView` (iOS) — only renders visible items:
 
-{% raw %}
+
 ```tsx
 import { FlatList } from 'react-native';
 
@@ -2211,7 +2211,7 @@ function PostFeed({ posts }: { posts: Post[] }) {
     );
 }
 ```
-{% endraw %}
+
 
 ---
 
@@ -2230,7 +2230,7 @@ function PostFeed({ posts }: { posts: Post[] }) {
 
 Essential for iPhone notches and Android nav bars:
 
-{% raw %}
+
 ```tsx
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -2242,7 +2242,7 @@ function Screen() {
     );
 }
 ```
-{% endraw %}
+
 
 :::tip Use react-native-safe-area-context
 The built-in `SafeAreaView` from React Native only works on iOS. Use the community `react-native-safe-area-context` package for consistent cross-platform behavior.
@@ -2252,7 +2252,7 @@ The built-in `SafeAreaView` from React Native only works on iOS. Use the communi
 
 ## `<Modal>` — Overlays
 
-{% raw %}
+
 ```tsx
 import { Modal } from 'react-native';
 
@@ -2275,7 +2275,7 @@ function ConfirmDialog({ visible, onConfirm, onCancel }: Props) {
     );
 }
 ```
-{% endraw %}
+
 
 ---
 
@@ -2283,7 +2283,7 @@ function ConfirmDialog({ visible, onConfirm, onCancel }: Props) {
 
 One of the most common first-day RN problems: the software keyboard slides up and covers a text input. `KeyboardAvoidingView` shifts the layout to keep inputs visible.
 
-{% raw %}
+
 ```tsx
 import { KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 
@@ -2302,7 +2302,7 @@ function LoginScreen() {
     );
 }
 ```
-{% endraw %}
+
 
 The `behavior` prop differs by platform — this is one of the clearest examples of RN's cross-platform reality:
 
@@ -2321,7 +2321,7 @@ If `KeyboardAvoidingView` still isn't enough, `react-native-keyboard-controller`
 
 ## `<ActivityIndicator>` — Loading Spinner
 
-{% raw %}
+
 ```tsx
 <ActivityIndicator
     size="large"          // "small" | "large" | number
@@ -2329,7 +2329,7 @@ If `KeyboardAvoidingView` still isn't enough, `react-native-keyboard-controller`
     animating={isLoading}  // show/hide without unmounting
 />
 ```
-{% endraw %}
+
 
 ---
 
@@ -2380,7 +2380,7 @@ The biggest gotcha: **`flexDirection` defaults to `column`** in RN. Content stac
 
 Think of every `View` as a **flex container**. The `style` prop is how you configure it.
 
-{% raw %}
+
 ```tsx
 // This is a vertical stack (column is default)
 <View style={{ flex: 1 }}>
@@ -2389,7 +2389,7 @@ Think of every `View` as a **flex container**. The `style` prop is how you confi
     <View style={{ height: 60, backgroundColor: 'blue' }} />
 </View>
 ```
-{% endraw %}
+
 
 ---
 
@@ -2397,7 +2397,7 @@ Think of every `View` as a **flex container**. The `style` prop is how you confi
 
 ### `flexDirection`
 
-{% raw %}
+
 ```tsx
 // Column (default) — children stack top to bottom
 <View style={{ flexDirection: 'column' }}>
@@ -2409,11 +2409,11 @@ Think of every `View` as a **flex container**. The `style` prop is how you confi
 <View style={{ flexDirection: 'column-reverse' }}>
 <View style={{ flexDirection: 'row-reverse' }}>
 ```
-{% endraw %}
+
 
 ### `justifyContent` — Main Axis Alignment
 
-{% raw %}
+
 ```tsx
 // Along flexDirection axis (vertical for column, horizontal for row)
 <View style={{ justifyContent: 'flex-start' }}>  {/* default */}
@@ -2423,11 +2423,11 @@ Think of every `View` as a **flex container**. The `style` prop is how you confi
 <View style={{ justifyContent: 'space-around' }}>
 <View style={{ justifyContent: 'space-evenly' }}>
 ```
-{% endraw %}
+
 
 ### `alignItems` — Cross Axis Alignment
 
-{% raw %}
+
 ```tsx
 // Perpendicular to flexDirection
 <View style={{ alignItems: 'flex-start' }}>
@@ -2436,30 +2436,30 @@ Think of every `View` as a **flex container**. The `style` prop is how you confi
 <View style={{ alignItems: 'stretch' }}>  {/* default */}
 <View style={{ alignItems: 'baseline' }}>
 ```
-{% endraw %}
+
 
 ### Center Something (The Classic)
 
-{% raw %}
+
 ```tsx
 // Center a child horizontally and vertically — the most common layout pattern
 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
     <Text>Centered Content</Text>
 </View>
 ```
-{% endraw %}
+
 
 **Kotlin/Android comparison:**
-{% raw %}
+
 ```xml
 <!-- ConstraintLayout or Gravity -->
 <FrameLayout android:layout_gravity="center" />
 <LinearLayout android:gravity="center" />
 ```
-{% endraw %}
+
 
 **SwiftUI comparison:**
-{% raw %}
+
 ```swift
 // Idiomatic SwiftUI centering
 ZStack {
@@ -2467,13 +2467,13 @@ ZStack {
 }
 .frame(maxWidth: .infinity, maxHeight: .infinity)
 ```
-{% endraw %}
+
 
 ---
 
 ## `flex` — Proportional Space
 
-{% raw %}
+
 ```tsx
 // flex: N — take N proportional shares of available space
 <View style={{ flexDirection: 'row', height: 100 }}>
@@ -2486,13 +2486,13 @@ ZStack {
     {/* This fills the entire screen */}
 </View>
 ```
-{% endraw %}
+
 
 ---
 
 ## Spacing: `margin` and `padding`
 
-{% raw %}
+
 ```tsx
 // Individual sides
 <View style={{
@@ -2510,7 +2510,7 @@ ZStack {
 // marginTop == android:layout_marginTop
 // paddingHorizontal has no direct Android XML equivalent (use paddingLeft+paddingRight)
 ```
-{% endraw %}
+
 
 ---
 
@@ -2518,7 +2518,7 @@ ZStack {
 
 For overlays, badges, and elements that float outside the normal flow:
 
-{% raw %}
+
 ```tsx
 // Parent needs position: 'relative' (the default)
 <View style={{ width: 60, height: 60 }}>
@@ -2535,13 +2535,13 @@ For overlays, badges, and elements that float outside the normal flow:
     }} />
 </View>
 ```
-{% endraw %}
+
 
 ---
 
 ## Responsive Sizing with `Dimensions`
 
-{% raw %}
+
 ```tsx
 import { Dimensions } from 'react-native';
 
@@ -2554,7 +2554,7 @@ const styles = StyleSheet.create({
     },
 });
 ```
-{% endraw %}
+
 
 :::caution Stale on orientation change
 `Dimensions.get('window')` captures the value once at module load. If the user rotates their device the value stays stale. Use `useWindowDimensions` instead for anything that should respond to rotation.
@@ -2562,7 +2562,7 @@ const styles = StyleSheet.create({
 
 For dynamic responsive layouts (handles rotation/orientation changes), use `useWindowDimensions`:
 
-{% raw %}
+
 ```tsx
 import { useWindowDimensions } from 'react-native';
 
@@ -2572,13 +2572,13 @@ function ResponsiveCard() {
     // ...
 }
 ```
-{% endraw %}
+
 
 ---
 
 ## `StyleSheet.create` vs Inline Styles
 
-{% raw %}
+
 ```tsx
 // Inline styles — convenient but slightly slower (no optimization)
 <View style={{ flex: 1, backgroundColor: 'red' }} />
@@ -2595,7 +2595,7 @@ const styles = StyleSheet.create({
 // Combining styles (like applying multiple Android XML attributes)
 <View style={[styles.container, styles.padded, { marginTop: 8 }]} />
 ```
-{% endraw %}
+
 
 ---
 
@@ -2603,7 +2603,7 @@ const styles = StyleSheet.create({
 
 Since React Native 0.71, you can use `gap`, `rowGap`, and `columnGap` instead of adding margin to every child:
 
-{% raw %}
+
 ```tsx
 // Before gap — manual margin on all-but-last child
 <View style={{ flexDirection: 'row' }}>
@@ -2624,7 +2624,7 @@ Since React Native 0.71, you can use `gap`, `rowGap`, and `columnGap` instead of
     {items.map(item => <Card key={item.id} />)}
 </View>
 ```
-{% endraw %}
+
 
 **SwiftUI parallel:** `spacing:` parameter on `HStack`/`VStack`. **Compose parallel:** `Arrangement.spacedBy(8.dp)`.
 
@@ -2640,7 +2640,7 @@ The best way to internalize Flexbox is through play. Since RN uses the same flex
 
 ## Common Layout Patterns
 
-{% raw %}
+
 ```tsx
 // Navigation bar with title and action button
 <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16 }}>
@@ -2669,7 +2669,7 @@ The best way to internalize Flexbox is through play. Since RN uses the same flex
     </View>
 </View>
 ```
-{% endraw %}
+
 
 ---
 
@@ -2695,7 +2695,7 @@ Next → **[Styling in React Native](./styling)**
 
 ## How Styling Works
 
-{% raw %}
+
 ```tsx
 // Every component accepts a `style` prop
 // Styles are plain JS objects (or arrays of objects)
@@ -2703,7 +2703,7 @@ Next → **[Styling in React Native](./styling)**
     <Text style={{ fontSize: 16, color: '#333' }}>Hello</Text>
 </View>
 ```
-{% endraw %}
+
 
 Property names are **camelCase** (like JavaScript, not kebab-case like CSS):
 
@@ -2721,7 +2721,7 @@ Property names are **camelCase** (like JavaScript, not kebab-case like CSS):
 
 The preferred way to define styles — provides type checking, optimization, and IDE autocomplete:
 
-{% raw %}
+
 ```tsx
 import { StyleSheet, View, Text } from 'react-native';
 
@@ -2760,13 +2760,13 @@ const styles = StyleSheet.create({
     },
 });
 ```
-{% endraw %}
+
 
 ---
 
 ## Dynamic Styles
 
-{% raw %}
+
 ```tsx
 // Conditional styles using arrays
 <View style={[
@@ -2790,13 +2790,13 @@ function getButtonStyle(variant: 'primary' | 'secondary', size: 'sm' | 'md' | 'l
     };
 }
 ```
-{% endraw %}
+
 
 ---
 
 ## Platform-Specific Styles
 
-{% raw %}
+
 ```tsx
 import { Platform, StyleSheet } from 'react-native';
 
@@ -2821,13 +2821,13 @@ const styles = StyleSheet.create({
     },
 });
 ```
-{% endraw %}
+
 
 ---
 
 ## Typography
 
-{% raw %}
+
 ```tsx
 const styles = StyleSheet.create({
     heading1: {
@@ -2854,10 +2854,10 @@ const styles = StyleSheet.create({
     },
 });
 ```
-{% endraw %}
+
 
 **Custom fonts** — load them at app startup:
-{% raw %}
+
 ```tsx
 // Using Expo Font
 import { useFonts, Inter_400Regular, Inter_700Bold } from '@expo-google-fonts/inter';
@@ -2868,7 +2868,7 @@ export default function App() {
     return <Navigation />;
 }
 ```
-{% endraw %}
+
 
 ---
 
@@ -2876,7 +2876,7 @@ export default function App() {
 
 RN supports the same color formats as CSS:
 
-{% raw %}
+
 ```tsx
 const colors = {
     hex: '#0064d2',
@@ -2888,11 +2888,11 @@ const colors = {
     transparent: 'transparent',
 };
 ```
-{% endraw %}
+
 
 Best practice: define a **theme constants file**:
 
-{% raw %}
+
 ```typescript
 // theme.ts
 export const colors = {
@@ -2917,13 +2917,13 @@ export const spacing = {
     xxl: 48,
 } as const;
 ```
-{% endraw %}
+
 
 ---
 
 ## Borders
 
-{% raw %}
+
 ```tsx
 const styles = StyleSheet.create({
     card: {
@@ -2943,13 +2943,13 @@ const styles = StyleSheet.create({
     },
 });
 ```
-{% endraw %}
+
 
 ---
 
 ## Transforms
 
-{% raw %}
+
 ```tsx
 <View style={{
     transform: [
@@ -2960,7 +2960,7 @@ const styles = StyleSheet.create({
     ],
 }} />
 ```
-{% endraw %}
+
 
 ---
 
@@ -2968,7 +2968,7 @@ const styles = StyleSheet.create({
 
 For dark mode / dynamic theming, combine a theme context with `StyleSheet`:
 
-{% raw %}
+
 ```tsx
 // hooks/useThemeStyles.ts
 import { useColorScheme } from 'react-native';
@@ -2991,7 +2991,7 @@ function MyScreen() {
     );
 }
 ```
-{% endraw %}
+
 
 ---
 

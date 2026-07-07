@@ -68,4 +68,4 @@ Every code example in this course can be run immediately in **[Expo Snack](https
 
 ## Next Step
 
-→ Start with **[History & Architecture](./history-and-architecture)** to understand *why* React Native is compelling in 2026, then pick your track.
+→ Start with **[History & Architecture](./introducao/history-and-architecture)** to understand *why* React Native is compelling in 2026, then pick your track.

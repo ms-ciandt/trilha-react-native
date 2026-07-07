@@ -1,49 +1,58 @@
 ---
-title: Integração Nativa
+title: Native Integration
 ---
 
-# Tópico — Noções de Integração Nativa (Trilha Web)
+# Topic — Introduction to Native Integration (Web Track)
 
-### Objetivo do tópico
+### Topic Goal
 
-Ao final, o dev deve conseguir:
+By the end, you should be able to:
 
-- Explicar em alto nível o que é um **Native Module** e um **Native UI Component**
-- Saber em quais casos precisa envolver o time nativo (SDKs proprietários, APIs específicas de sistema)
-- Consumir um módulo nativo existente via `NativeModules`
-- Ler e interpretar erros vindos da camada nativa (stacktrace no Android/iOS)
-- Ter vocabulário para discutir integrações com devs Android/iOS
+- Explain at a high level what a **Native Module** and a **Native UI Component** are
+- Know in which cases you need to involve the native team (proprietary SDKs, system-specific APIs)
+- Consume an existing native module via `NativeModules`
+- Read and interpret errors coming from the native layer (stacktrace on Android/iOS)
+- Have the vocabulary to discuss integrations with Android/iOS developers
 
 ---
 
-### Mapeamento: Web → React Native / Nativo
+### Video Demonstration
 
-| Conceito Web                  | React Native / Nativo               | Observação                                                                 |
+<video width="100%" max-width="800px" controls style="border-radius: 8px; margin: 16px 0;">
+  <source src="https://alimuramatheus.github.io/trilha-react-native/assets/videos/Native_Web_Integration_-_web.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+---
+
+### Mapping: Web → React Native / Native
+
+| Web Concept                   | React Native / Native               | Note                                                                       |
 |-------------------------------|-------------------------------------|----------------------------------------------------------------------------|
-| SDK JS (biblioteca npm)       | SDK nativo + bridge                 | Implementação em Kotlin/Swift exposta como funções JS                     |
-| Componentes React             | Native UI Components                | API de props/eventos é React; implementação e renderização são nativas   |
-| Eventos DOM                   | Eventos via bridge                  | Eventos gerados na camada nativa e recebidos no JS                        |
-| Build web (webpack, vite)     | Metro + build Android/iOS           | JS bundle + binários nativos (APK/IPA)                                   |
-| API de browser (localStorage) | APIs de plataforma (Android/iOS)    | RN acessa via módulos nativos ou libs que usam código nativo internamente |
+| JS SDK (npm library)          | Native SDK + bridge                 | Implementation in Kotlin/Swift exposed as JS functions                    |
+| React Components              | Native UI Components                | Props/events API is React; implementation and rendering are native        |
+| DOM Events                    | Events via bridge                   | Events generated in the native layer and received in JS                   |
+| Web build (webpack, vite)     | Metro + Android/iOS build           | JS bundle + native binaries (APK/IPA)                                    |
+| Browser API (localStorage)    | Platform APIs (Android/iOS)         | RN accesses via native modules or libs that use native code internally    |
 
 ---
 
-### Conceitos centrais
+### Core Concepts
 
-#### Native Modules (consumo do ponto de vista Web)
+#### Native Modules (consumption from the Web perspective)
 
-Um **Native Module** é visto em JS como um objeto em `NativeModules`:
+A **Native Module** is seen in JS as an object in `NativeModules`:
 
 ```tsx
 import { NativeModules } from 'react-native';
 
 const { AppEnv } = NativeModules;
 
-// AppEnv foi implementado em código nativo (Android/iOS).
-// Aqui você só consome seus métodos JS.
+// AppEnv was implemented in native code (Android/iOS).
+// Here you only consume its JS methods.
 ```
 
-Os métodos são assíncronos na maioria dos casos (Promise-based):
+Methods are asynchronous in most cases (Promise-based):
 
 ```tsx
 type Environment = 'dev' | 'staging' | 'prod';
@@ -57,16 +66,16 @@ async function getEnvironment(): Promise<Environment> {
 }
 ```
 
-Você não precisa saber Kotlin/Swift para isso — apenas:
-- Nome do módulo (`AppEnv`).
-- Métodos disponíveis (`getEnvironment`, `getBuildNumber`, etc.).
-- Tipos esperados de retorno (combinado com o time nativo).
+You do not need to know Kotlin/Swift for this — you just need:
+- The module name (`AppEnv`).
+- Available methods (`getEnvironment`, `getBuildNumber`, etc.).
+- Expected return types (agreed upon with the native team).
 
 ---
 
-#### Native UI Components (consumo do ponto de vista Web)
+#### Native UI Components (consumption from the Web perspective)
 
-Um **Native UI Component** é um componente React cuja implementação é nativa.
+A **Native UI Component** is a React component whose implementation is native.
 
 ```tsx
 import { requireNativeComponent } from 'react-native';
@@ -83,40 +92,40 @@ export function SalesChart() {
 }
 ```
 
-Você usa `<MyNativeChart />` como qualquer outro componente React.  
-A diferença está em:
+You use `<MyNativeChart />` like any other React component.  
+The difference is:
 
-- Quem implementa `MyNativeChart` é o time nativo (Android/iOS).
-- Problemas de layout/performance podem vir da implementação nativa.
-- Props e eventos disponíveis são definidos pela equipe nativa.
-
----
-
-### Erros vindos do nativo (stacktrace)
-
-Em RN, stacktraces podem vir da camada JS ou da camada nativa:
-
-- Erros JS: geralmente apontam para arquivos `.js/.tsx` no stack.
-- Erros nativos: podem aparecer com mensagens de Android (`java.lang...`) ou iOS (`-[UIView ...]` etc.)
-
-Seu papel como dev web:
-
-- Conseguir identificar quando o erro **não é** JS puro.
-- Ter info mínima para passar para o time nativo:
-  - Tela/fluxo onde aconteceu.
-  - Passos para reproduzir.
-  - Stacktrace completo (Android Logcat / Xcode console).
+- Who implements `MyNativeChart` is the native team (Android/iOS).
+- Layout/performance issues may come from the native implementation.
+- Available props and events are defined by the native team.
 
 ---
 
-### Exercício prático
+### Errors from Native (stacktrace)
 
-Construa um pequeno módulo de integração (do ponto de vista JS), assumindo que o time nativo já criou `NativeModules.AppEnv` com:
+In RN, stacktraces can come from the JS layer or the native layer:
+
+- JS errors: generally point to `.js/.tsx` files in the stack.
+- Native errors: may appear with Android messages (`java.lang...`) or iOS (`-[UIView ...]` etc.)
+
+Your role as a web developer:
+
+- Be able to identify when the error is **not** pure JS.
+- Have the minimum information to pass on to the native team:
+  - Screen/flow where it happened.
+  - Steps to reproduce.
+  - Full stacktrace (Android Logcat / Xcode console).
+
+---
+
+### Practical Exercise
+
+Build a small integration module (from the JS perspective), assuming the native team has already created `NativeModules.AppEnv` with:
 
 - `getEnvironment(): 'dev' | 'staging' | 'prod'`
 - `getBuildNumber(): string`
 
-1. Implemente um serviço JS:
+1. Implement a JS service:
 
    ```tsx
    import { NativeModules } from 'react-native';
@@ -137,16 +146,20 @@ Construa um pequeno módulo de integração (do ponto de vista JS), assumindo qu
    }
    ```
 
-2. Implemente um hook `useAppEnv()` que:
-   - Carrega essas informações na montagem.
-   - Exibe um banner diferente para `dev` vs `prod`.
+2. Implement a `useAppEnv()` hook that:
+   - Loads this information on mount.
+   - Displays a different banner for `dev` vs `prod`.
 
-3. Trate o caso de erro (módulo ausente ou falha de chamada) exibindo uma mensagem padrão em dev.
+3. Handle the error case (missing module or call failure) by displaying a default message in dev.
 
 ---
 
-### Materiais de estudo
+### Study Materials
 
 - [Native Modules Overview — React Native Docs](https://reactnative.dev/docs/native-modules-intro)
-- Artigo: *React Native for Web Developers — Understanding Native Integration*
-- Vídeo: *Native Modules for React Developers (Conceptual Overview)*
+- Article: *React Native for Web Developers — Understanding Native Integration*
+- Video: *Native Modules for React Developers (Conceptual Overview)*
+
+---
+
+Next → **[Mobile Performance](../modulo-performance/topico-performance-mobile-web)**

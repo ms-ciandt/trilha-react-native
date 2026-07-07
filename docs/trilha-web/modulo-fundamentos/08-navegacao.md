@@ -1,44 +1,53 @@
 ---
 id: navegacao-web
-title: "Navegação"
-sidebar_label: "Navegação"
+title: "Navigation"
+sidebar_label: "Navigation"
 sidebar_position: 8
 ---
 
-# Navegação
+# Navigation
 
 ---
 
-## Objetivo do tópico
+## Video Overview
 
-Ao final, o dev deve conseguir:
-- Entender as diferenças fundamentais entre React Router e React Navigation
-- Criar Stack, Tab e Drawer Navigators
-- Aninhar navigators de forma idiomática
-- Implementar fluxo de autenticação condicional
-- Navegar com parâmetros tipados
-- Configurar deep linking (equivalente às rotas da web)
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_web_08_navegacao_en.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 ---
 
-## Quebrando o paradigma: React Router vs React Navigation
+## Topic Goal
 
-| Conceito web | Equivalente mobile | Diferença importante |
-|-------------|-------------------|---------------------|
-| URL (`/products/42`) | Parâmetros de rota (`route.params`) | Não existe barra de endereço |
-| `<Link to="/home">` | `navigation.navigate('Home')` | Navegação é imperativa |
-| `history.push` / `history.back` | `navigation.push` / `navigation.goBack()` | Stack físico, não histórico de URL |
-| Rota ativa no browser | Stack de screens montadas | Screens anteriores permanecem **montadas** no Stack |
-| Sem "back físico" | Hardware back (Android) + Swipe-back (iOS) | Tratado automaticamente pelo Stack Navigator |
-| `useParams()` | `route.params` | Tipagem explícita necessária |
-| `<Routes>` no root | `NavigationContainer` no root | Único ponto de controle de navegação |
-| `<BrowserRouter>` | — | Não existe equivalente — não há DOM |
-
-> **Insight chave:** no mobile, telas empilhadas continuam **montadas e vivas** na memória. Isso afeta performance e o ciclo de vida dos hooks — `useEffect` com `[]` roda uma vez por montagem, não a cada "visita".
+By the end, you should be able to:
+- Understand the fundamental differences between React Router and React Navigation
+- Create Stack, Tab, and Drawer Navigators
+- Nest navigators in an idiomatic way
+- Implement a conditional authentication flow
+- Navigate with typed parameters
+- Configure deep linking (equivalent to web routes)
 
 ---
 
-## Instalação
+## Breaking the paradigm: React Router vs React Navigation
+
+| Web concept | Mobile equivalent | Key difference |
+|-------------|-------------------|----------------|
+| URL (`/products/42`) | Route parameters (`route.params`) | No address bar exists |
+| `<Link to="/home">` | `navigation.navigate('Home')` | Navigation is imperative |
+| `history.push` / `history.back` | `navigation.push` / `navigation.goBack()` | Physical stack, not URL history |
+| Active route in browser | Stack of mounted screens | Previous screens remain **mounted** in the Stack |
+| No "physical back" | Hardware back (Android) + Swipe-back (iOS) | Handled automatically by Stack Navigator |
+| `useParams()` | `route.params` | Explicit typing required |
+| `<Routes>` at root | `NavigationContainer` at root | Single navigation control point |
+| `<BrowserRouter>` | — | No equivalent — there is no DOM |
+
+> **Key insight:** on mobile, stacked screens remain **mounted and alive** in memory. This affects performance and the hook lifecycle — `useEffect` with `[]` runs once per mount, not on every "visit".
+
+---
+
+## Installation
 
 ```bash
 npm install @react-navigation/native react-native-screens react-native-safe-area-context
@@ -51,17 +60,21 @@ npm install @react-navigation/drawer
 cd ios && pod install
 ```
 
-> **Atenção:** adicione `import 'react-native-gesture-handler'` como **primeira linha** do `index.js`.
+> **Warning:** add `import 'react-native-gesture-handler'` as the **first line** of `index.js`.
 
 ---
 
-## Stack Navigator (equivalente ao histórico de navegação)
+## Stack Navigator (equivalent to navigation history)
+
+The Stack Navigator works like a deck of cards: each new screen is placed on top, and going back removes the top screen. The critical difference from browser history is that previous screens **remain mounted in memory** — they are not destroyed or recreated as in an SPA. This has direct consequences: `useEffect` with `[]` does not re-run when you navigate back to an already-mounted screen.
+
+The `NavigationContainer` is the central control point for navigation. There should be only one in the app, at the root, and it holds all navigation state in memory. Without it, no navigator works.
 
 ```tsx
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
-// Tipagem de parâmetros (substitui os params da URL)
+// Parameter typing (replaces URL params)
 type RootStackParamList = {
   Home: undefined;
   ProductDetails: { productId: string; productName: string };
@@ -86,16 +99,20 @@ function AppStack() {
 ```
 
 ```tsx
-// Navegando (equivalente ao navigate() do React Router)
-navigation.navigate('ProductDetails', { productId: '42', productName: 'Tênis' });
+// Navigating (equivalent to navigate() from React Router)
+navigation.navigate('ProductDetails', { productId: '42', productName: 'Sneakers' });
 
-// Recebendo parâmetros (equivalente ao useParams())
+// Receiving parameters (equivalent to useParams())
 const { productId, productName } = route.params;
 ```
 
 ---
 
-## Tab Navigator (sem equivalente direto no React Router)
+## Tab Navigator (no direct equivalent in React Router)
+
+In React Router there is no component equivalent to the Tab Navigator — tabs on mobile behave differently from browser tabs. On mobile, tabs are persistent and each one maintains its own independent navigation state. When you switch tabs and come back, the previous tab is exactly where you left it, including its internal stack history.
+
+The `lazy: true` option is important for apps with many tabs: without it, all screens are rendered on initialization, even if the user never visits them.
 
 ```tsx
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -106,7 +123,7 @@ function AppTabs() {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        lazy: true, // não renderiza tabs não visitadas
+        lazy: true, // does not render unvisited tabs
         tabBarIcon: ({ focused, color }) => {
           const icon = route.name === 'Home' ? '🏠' : '👤';
           return <Text>{icon}</Text>;
@@ -122,7 +139,11 @@ function AppTabs() {
 
 ---
 
-## Drawer Navigator (menu lateral)
+## Drawer Navigator (side menu)
+
+The Drawer Navigator implements the sliding side menu — the one that opens with a swipe from the left or by tapping the hamburger icon. In the web context, the closest equivalent would be a sidebar component, but on mobile the Drawer has native behavior expected by users: it responds to gestures, has a sliding animation, and closes when tapping outside the area.
+
+Unlike the Stack and the Tab, the Drawer is more often used as the outer layer of the navigation hierarchy, wrapping the other navigators.
 
 ```tsx
 import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -141,7 +162,11 @@ function AppDrawer() {
 
 ---
 
-## Aninhamento: padrão mais comum (Drawer > Tab > Stack)
+## Nesting: most common pattern (Drawer > Tab > Stack)
+
+Navigators can be nested because each Navigator is simply a React component — any `Screen` can have another Navigator as its `component`. This pattern is the most common navigation structure in production apps.
+
+The Drawer > Tab > Stack hierarchy follows the "breadth first, depth later" logic: the Drawer provides access to distinct sections of the app, the Tabs organize the main screens of each section, and the Stack manages in-depth navigation within each tab. Each level is independent — the stack of one tab does not interfere with the stack of another.
 
 ```tsx
 // App.tsx
@@ -185,13 +210,14 @@ function HomeStack() {
 
 ---
 
-## Fluxo de autenticação (equivalente a rotas protegidas)
+## Authentication flow (equivalent to protected routes)
 
-No React Router, você usaria `<PrivateRoute>`. No React Navigation, o padrão é condicional:
+In React Router, you would use `<PrivateRoute>`. In React Navigation, the pattern is different: instead of intercepting the route, you simply do not declare the authenticated screens when the user is not logged in.
 
+The mechanism works because React Navigation monitors changes in the Screens tree. When `isAuthenticated` changes from `false` to `true`, the navigator notices that the set of declared screens has changed and automatically transitions to the new state. You do not need to call `navigate` anywhere — the authentication state directs navigation declaratively, just like React Router, but without `<PrivateRoute>`.
 
 ```tsx
-// Sem wrappers — apenas renderização condicional de screens
+// No wrappers — just conditional screen rendering
 function RootNavigator() {
   const { isAuthenticated } = useAuthStore();
 
@@ -208,11 +234,15 @@ function RootNavigator() {
 ```
 
 
-> Quando `isAuthenticated` muda, React Navigation automaticamente substitui o stack — sem redirecionamentos manuais.
+> When `isAuthenticated` changes, React Navigation automatically replaces the stack — no manual redirects needed.
 
 ---
 
-## Deep Linking (equivalente às rotas da URL)
+## Deep Linking (equivalent to URL routes)
+
+Deep linking is the mechanism that allows an external URL to open a specific screen in the app — equivalent to what a URL does in the browser. On mobile there are two contexts: **custom schemes** (`myapp://`) only work in installed apps, while **universal links** (`https://myapp.com`) allow the same link to open the app if installed, or the website in the browser if not.
+
+The `linking` configuration object maps URLs to screens in the same way that URL routes are mapped to components in React Router. React Navigation intercepts links before the app initializes and navigates directly to the corresponding screen.
 
 ```tsx
 const linking = {
@@ -245,13 +275,17 @@ const linking = {
 
 ---
 
-## Expo Router: alternativa file-based (para quem vem do Next.js)
+## Expo Router: file-based alternative (for those coming from Next.js)
 
-Se o time usa Expo e tem familiaridade com Next.js/file-based routing:
+Expo Router is a layer on top of React Navigation that adopts the file-based routing convention popularized by Next.js: the folder structure defines the routes, with no explicit configuration needed. Each file inside `app/` automatically becomes a route.
+
+The convention of folders in parentheses `(tabs)` creates route groups without adding segments to the URL — the same concept as Route Groups in Next.js. Files with `[id]` define dynamic parameters.
+
+If the team uses Expo and is familiar with Next.js/file-based routing:
 
 ```
 app/
-├── index.tsx          → rota "/"
+├── index.tsx          → route "/"
 ├── (tabs)/
 │   ├── home.tsx       → /home
 │   └── profile.tsx    → /profile
@@ -259,50 +293,42 @@ app/
     └── [id].tsx       → /product/:id
 ```
 
-> Expo Router é construído sobre React Navigation — aprenda React Navigation primeiro para entender o que acontece "embaixo".
+> Expo Router is built on top of React Navigation — learn React Navigation first to understand what happens "under the hood".
 
 ---
 
-## Diferenças que pegam o dev web de surpresa
+## Differences that catch web developers off guard
 
-1. **Telas ficam montadas** — `useEffect(() => {}, [])` não roda quando você volta para a tela. Use `useFocusEffect` do React Navigation para isso.
-2. **Sem URL na barra** — debugar navegação é diferente; use React Navigation DevTools.
-3. **Hardware back (Android)** — o Stack Navigator trata automaticamente; personalize com `BackHandler` quando necessário.
-4. **Sem `history.replace` direto** — use `navigation.replace('Screen')` para substituir sem empilhar.
+1. **Screens remain mounted** — `useEffect(() => {}, [])` does not run when you go back to the screen. Use `useFocusEffect` from React Navigation for that.
+2. **No URL in the address bar** — debugging navigation is different; use React Navigation DevTools.
+3. **Hardware back (Android)** — the Stack Navigator handles it automatically; customize with `BackHandler` when needed.
+4. **No direct `history.replace`** — use `navigation.replace('Screen')` to replace without stacking.
 
 ```tsx
-// Detectar foco da tela (equivalente ao useEffect na montagem de rota no Router)
+// Detect screen focus (equivalent to useEffect on route mount in Router)
 import { useFocusEffect } from '@react-navigation/native';
 
 useFocusEffect(
   useCallback(() => {
-    fetchData(); // roda toda vez que a tela recebe foco
+    fetchData(); // runs every time the screen receives focus
   }, [])
 );
 ```
 
 ---
 
-## Exercício prático
+## Practical exercise
 
-1. Recrie a estrutura de navegação de um app que você já conhece (ex: Instagram) com Drawer + Tab + Stack
-2. Implemente um fluxo de autenticação com proteção condicional
-3. Configure deep linking para abrir uma tela de detalhes diretamente
-4. Use `useFocusEffect` para refazer uma busca ao voltar para a tela
+1. Recreate the navigation structure of an app you already know (e.g., Instagram) with Drawer + Tab + Stack
+2. Implement an authentication flow with conditional protection
+3. Configure deep linking to open a details screen directly
+4. Use `useFocusEffect` to redo a search when returning to the screen
 
 ---
 
-## Materiais de estudo
+## Study Materials
 
-### Vídeos
-
-#### Navigation in React Native — Stack, Drawer & Bottom Tab (20 min)
-[Assistir no YouTube](https://www.youtube.com/watch?v=pyWIzdYB2Xk)
-
-#### React Native Navigation: Stack + Tab + Drawer in One App (Guia 2025)
-[Assistir no YouTube](https://www.youtube.com/watch?v=C6UTib0dMJE)
-
-### Artigos e Docs
+### Articles & Docs
 - [React Navigation 7 vs Expo Router: Complete Comparison Guide 2025 — Viewlytics](https://viewlytics.ai/blog/react-navigation-7-vs-expo-router)
 - [Expo Router vs React Navigation: Which to Use in 2026? — DEV Community](https://dev.to/satyasootar/expo-router-vs-react-navigation-which-one-should-you-use-in-2026-40mm)
 - [Deep Links and Authentication in React Navigation 7 — Callstack Blog](https://www.callstack.com/blog/deep-links-with-authentication-in-react-navigation)
@@ -310,3 +336,7 @@ useFocusEffect(
 - [Mastering Expo Router — Protected Routes, Deep Linking & Theming](https://www.welcomedeveloper.com/posts/navigation-expo-router-part-3/)
 - [React Native Navigation Made Easy: 2025 Guide — CoderCrafter](https://codercrafter.in/blogs/react-native/react-native-navigation-made-easy-a-2025-guide-to-stack-tab-drawer)
 - [Your Complete Guide to React Native Navigation in 2025 — Peanut Square](https://www.peanutsquare.com/your-complete-guide-to-react-native-navigation-in-2025/)
+
+---
+
+Next → **[Global State & APIs](./estado-e-apis-web)**

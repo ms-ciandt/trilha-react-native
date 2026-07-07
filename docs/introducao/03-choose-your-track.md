@@ -52,5 +52,3 @@ React Native components work exactly like React components. Your hook knowledge,
 → **[Start Web Dev Track: Adapting JS for Mobile](../trilha-web/modulo-fundamentos/adaptando-js-ts)**
 
 ---
-
-

@@ -1,47 +1,60 @@
-# Tópico — Performance React Native (Trilha 1: Devs Nativos)
+---
+title: Performance React Native
+---
 
-## Objetivo do tópico
+# Topic — Performance React Native (Track 1: Native Devs)
 
-Ao final, o dev deve conseguir:
-- Entender o modelo de threads do RN (JS, UI e threads nativas auxiliares)
-- Identificar gargalos comuns em apps RN (listas grandes, re-render excessivo, bridges pesados)
-- Otimizar listas (`FlatList`, `SectionList`) para cenários de alto volume
-- Minimizar re-renders desnecessários usando memoização e separação de responsabilidades
-- Usar ferramentas como Flipper e o perf monitor do RN
-- Relacionar sintomas de performance em RN com seus equivalentes em Android/iOS
+## Topic Goal
+
+By the end, you should be able to:
+- Understand the RN thread model (JS, UI, and auxiliary native threads)
+- Identify common bottlenecks in RN apps (large lists, excessive re-renders, heavy bridges)
+- Optimize lists (`FlatList`, `SectionList`) for high-volume scenarios
+- Minimize unnecessary re-renders using memoization and separation of concerns
+- Use tools like Flipper and the RN perf monitor
+- Relate performance symptoms in RN to their equivalents in Android/iOS
 
 ---
 
-## Mapeamento: Android/iOS → React Native
+### Video Demonstration
 
-| Nativo                          | React Native                       | Observação |
-|---------------------------------|------------------------------------|------------|
-| Main/UI Thread                  | UI Thread RN                       | Renderização, layout, animações |
-| Worker Threads / background     | Threads internas de módulos nativos| I/O, operações pesadas |
-| Lógica de apresentação (Presenter/ViewModel)| JS Thread (React)         | Render, estado, lógica de UI |
-| RecyclerView com ViewHolder     | `FlatList` / `SectionList`         | Virtualização de listas |
-| Animações nativas (Animator, Core Animation) | `react-native-reanimated`, Gesture Handler | Animações baseadas em nativo |
+<video width="100%" max-width="800px" controls style="border-radius: 8px; margin: 16px 0;">
+  <source src="https://alimuramatheus.github.io/trilha-react-native/assets/videos/React_Native_Performance_-_nativo.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 ---
 
-## Modelo de threads
+## Mapping: Android/iOS → React Native
 
-- **JS Thread**: executa o código JavaScript/TypeScript (React, lógica de estado, efeitos).
-- **UI Thread**: responsável por desenhar a UI, coletar eventos de toque, executar animações nativas.
-- **Threads auxiliares**: usadas internamente por módulos nativos para I/O, rede, etc.
-
-Boas práticas:
-- Evitar operações síncronas pesadas na JS thread (loops grandes, parsing complexo).
-- Mover tarefas intensivas para módulos nativos ou para jobs assíncronos.
-- Garantir que animações críticas sejam dirigidas pela UI thread quando possível.
+| Native                          | React Native                       | Notes |
+|---------------------------------|------------------------------------|-------|
+| Main/UI Thread                  | UI Thread RN                       | Rendering, layout, animations |
+| Worker Threads / background     | Internal native module threads     | I/O, heavy operations |
+| Presentation logic (Presenter/ViewModel)| JS Thread (React)         | Render, state, UI logic |
+| RecyclerView with ViewHolder    | `FlatList` / `SectionList`         | List virtualization |
+| Native animations (Animator, Core Animation) | `react-native-reanimated`, Gesture Handler | Native-based animations |
 
 ---
 
-## Listas grandes com `FlatList`
+## Thread Model
 
-Assim como um `RecyclerView` mal configurado causa jank, uma `FlatList` sem otimização pode travar o scroll.
+- **JS Thread**: executes JavaScript/TypeScript code (React, state logic, effects).
+- **UI Thread**: responsible for drawing the UI, collecting touch events, executing native animations.
+- **Auxiliary threads**: used internally by native modules for I/O, networking, etc.
 
-Exemplo de lista performática:
+Best practices:
+- Avoid heavy synchronous operations on the JS thread (large loops, complex parsing).
+- Move intensive tasks to native modules or asynchronous jobs.
+- Ensure critical animations are driven by the UI thread whenever possible.
+
+---
+
+## Large Lists with `FlatList`
+
+Just as a poorly configured `RecyclerView` causes jank, an unoptimized `FlatList` can freeze scrolling.
+
+Example of a performant list:
 
 ```tsx
 import React, { useCallback } from 'react';
@@ -80,17 +93,17 @@ export function ProductList({ products }: { products: Product[] }) {
 }
 ```
 
-Pontos-chave:
-- `keyExtractor` estável e único (evita trabalho extra de reconciliação).
-- `getItemLayout` reduz cálculos de layout durante o scroll.
-- `windowSize` controla quantas telas de dados ficam montadas simultaneamente.
-- `removeClippedSubviews` ajuda em listas longas em Android.
+Key points:
+- Stable and unique `keyExtractor` (avoids extra reconciliation work).
+- `getItemLayout` reduces layout calculations during scrolling.
+- `windowSize` controls how many screens of data remain mounted simultaneously.
+- `removeClippedSubviews` helps with long lists on Android.
 
 ---
 
-## Minimizar re-renders
+## Minimizing Re-renders
 
-### Memoização de itens
+### Item Memoization
 
 ```tsx
 // ProductRow.tsx
@@ -112,73 +125,60 @@ export const ProductRow = React.memo(function ProductRow({ product }: Props) {
 });
 ```
 
-Boas práticas:
-- Evitar passar objetos e funções inline como props para itens.
-- Extrair lógica de filtro/ordenação para hooks, não para o componente de lista.
-- Usar `useCallback` e `useMemo` para funções e dados derivados usados em render.
+Best practices:
+- Avoid passing inline objects and functions as props to items.
+- Extract filter/sort logic into hooks, not into the list component.
+- Use `useCallback` and `useMemo` for functions and derived data used in render.
 
 ---
 
-## Bridges pesados e frequentes
+## Heavy and Frequent Bridges
 
-Comunicação intensa entre JS e nativo (ex.: dezenas de eventos por segundo) pode causar gargalo.
+Intense communication between JS and native (e.g., dozens of events per second) can cause bottlenecks.
 
-Mitigações:
-- Agrupar eventos (batching) quando possível.
-- Mover parte da lógica de controle para o lado nativo.
-- Usar libs que fazem animações *worklet-based* (`react-native-reanimated`) para evitar trafegar todos os frames pelo bridge.
-
----
-
-## Ferramentas de profiling
-
-- **Perf Monitor do RN**: mostra FPS na JS UI, útil para detectar jank.
-- **Flipper + plugin React Native**: inspeção de performance, logs, rede.
-- **Ferramentas nativas**:
-  - Android Profiler para CPU/Memória em código nativo.
-  - Instruments para detectar problemas em módulos nativos iOS.
+Mitigations:
+- Batch events when possible.
+- Move part of the control logic to the native side.
+- Use libraries that perform *worklet-based* animations (`react-native-reanimated`) to avoid transmitting all frames through the bridge.
 
 ---
 
-## Exercício prático
+## Profiling Tools
 
-Monte um cenário de lista grande e otimize:
+- **RN Perf Monitor**: shows FPS in JS UI, useful for detecting jank.
+- **Flipper + React Native plugin**: performance inspection, logs, networking.
+- **Native tools**:
+  - Android Profiler for CPU/Memory in native code.
+  - Instruments to detect issues in native iOS modules.
 
-1. Crie uma tela `BigProductListScreen` com 5.000 itens mockados.
-2. Implemente uma versão inicial sem otimizações (sem `memo`, sem `getItemLayout`).
-3. Use o perf monitor para medir:
-   - FPS médio durante scroll.
-   - Tempo de render inicial.
-4. Aplique otimizações:
-   - `React.memo` em `ProductRow`.
-   - `useCallback` em `renderItem`.
+---
+
+## Practical Exercise
+
+Build a large list scenario and optimize it:
+
+1. Create a `BigProductListScreen` with 5,000 mocked items.
+2. Implement an initial version without optimizations (no `memo`, no `getItemLayout`).
+3. Use the perf monitor to measure:
+   - Average FPS during scrolling.
+   - Initial render time.
+4. Apply optimizations:
+   - `React.memo` on `ProductRow`.
+   - `useCallback` on `renderItem`.
    - `getItemLayout`, `initialNumToRender`, `windowSize`, `removeClippedSubviews`.
-5. Compare antes/depois e documente os ganhos em um `PERFORMANCE.md`.
+5. Compare before/after and document the gains in a `PERFORMANCE.md`.
 
 ---
 
-## Materiais de estudo
+## Study Materials
 
-### Documentação oficial
+### Official Documentation
 - [Optimizing Performance](https://reactnative.dev/docs/optimizing-performance)
 
-### Artigos
-- *Improving FlatList Performance in React Native* — boas práticas para listas.
-- *React Native Performance Tuning for Production Apps* — visão mais ampla (bridge, animações, memória).
+### Articles
+- *Improving FlatList Performance in React Native* — best practices for lists.
+- *React Native Performance Tuning for Production Apps* — broader overview (bridge, animations, memory).
 
-### Vídeos
+---
 
-#### React Native Performance in Real Apps (35 min)
-
-<details>
-<summary>Descrição do conteúdo</summary>
-
-O vídeo aborda problemas reais de performance em aplicações RN em produção, mostrando sintomas como scroll travado, interações com atraso e animações engasgando. A partir de exemplos concretos, mapeia cada sintoma para uma causa provável (JS thread ocupada, lista não virtualizada, animação no lado errado do bridge).
-
-Tópicos:
-- Diferença entre o custo de render no JS e custo de desenho na UI thread.
-- Como medir FPS e capturar traces úteis.
-- Estratégias de otimização específicas para listas e animações.
-- Comparação com abordagens nativas (RecyclerView vs FlatList, Core Animation vs Reanimated).
-
-</details>
+Next → **[Tests](../modulo-testes/topico-testes-nativos)**

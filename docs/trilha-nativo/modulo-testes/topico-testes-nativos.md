@@ -1,40 +1,53 @@
-# Tópico — Testes (Trilha 1: Devs Nativos)
+---
+title: Testing
+---
 
-## Objetivo do tópico
+# Topic — Testing (Track 1: Native Devs)
 
-Ao final, o dev deve conseguir:
-- Configurar Jest em um projeto RN
-- Escrever testes de unidade para lógica (hooks, helpers, services)
-- Escrever testes de componentes com `@testing-library/react-native`
-- Entender o papel de testes E2E com Detox e como se comparam a Espresso/XCUITest
-- Integrar a suíte de testes ao pipeline de CI
+## Topic Goal
+
+By the end, you should be able to:
+- Configure Jest in a RN project
+- Write unit tests for logic (hooks, helpers, services)
+- Write component tests with `@testing-library/react-native`
+- Understand the role of E2E tests with Detox and how they compare to Espresso/XCUITest
+- Integrate the test suite into the CI pipeline
 
 ---
 
-## Mapeamento: Android/iOS → React Native
+### Video Demonstration
 
-| Nativo                      | React Native                            | Observação |
+<video width="100%" max-width="800px" controls style="border-radius: 8px; margin: 16px 0;">
+  <source src="https://alimuramatheus.github.io/trilha-react-native/assets/videos/Native_to_RN_Testing_-_nativo.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+---
+
+## Mapping: Android/iOS → React Native
+
+| Native                      | React Native                            | Note |
 |-----------------------------|------------------------------------------|------------|
 | JUnit / XCTest              | Jest                                     | Unit tests, mocks |
-| Espresso / XCUITest         | Detox                                    | E2E de UI móvel |
-| Testes de ViewModel / Presenter | Testes de hooks / stores            | Lógica de UI e estado |
-| Testes de Fragment/ViewController | Testes de screens/containers RN | Comportamento visual + fluxo |
+| Espresso / XCUITest         | Detox                                    | Mobile UI E2E |
+| ViewModel / Presenter tests | Hook / store tests            | UI logic and state |
+| Fragment/ViewController tests | RN screen/container tests | Visual behavior + flow |
 
 ---
 
-## Ferramentas principais
+## Main Tools
 
-- **Jest**: runner de testes, mocks, snapshots.
-- **@testing-library/react-native**: testes de componentes RN, focados em comportamento (não em implementação).
-- **Detox**: testes E2E (não detalhado em código aqui, mas apresentado conceitualmente).
+- **Jest**: test runner, mocks, snapshots.
+- **@testing-library/react-native**: RN component tests, focused on behavior (not implementation).
+- **Detox**: E2E tests (not detailed in code here, but presented conceptually).
 
 ---
 
-## Testando componentes com `@testing-library/react-native`
+## Testing Components with `@testing-library/react-native`
 
-Exemplo de tela de login com validação simples:
+Example of a login screen with simple validation:
 
-{% raw %}
+
 ```tsx
 // src/features/auth/screens/LoginScreen.tsx
 import React, { useState } from 'react';
@@ -46,10 +59,10 @@ export function LoginScreen() {
 
   const handleSubmit = () => {
     if (!email.includes('@')) {
-      setError('Email inválido');
+      setError('Invalid email');
       return;
     }
-    // chama API ou navega...
+    // call API or navigate...
   };
 
   return (
@@ -65,34 +78,34 @@ export function LoginScreen() {
   );
 }
 ```
-{% endraw %}
 
-Teste da tela:
 
-{% raw %}
+Screen test:
+
+
 ```tsx
 // src/features/auth/screens/LoginScreen.test.tsx
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
 import { LoginScreen } from './LoginScreen';
 
-test('mostra mensagem de erro para email inválido', () => {
+test('shows error message for invalid email', () => {
   const { getByTestId, getByText } = render(<LoginScreen />);
 
   const input = getByTestId('input-email');
-  fireEvent.changeText(input, 'sem-arroba');
+  fireEvent.changeText(input, 'no-at-sign');
   fireEvent.press(getByText('Login'));
 
-  expect(getByTestId('error-text').props.children).toBe('Email inválido');
+  expect(getByTestId('error-text').props.children).toBe('Invalid email');
 });
 ```
-{% endraw %}
+
 
 ---
 
-## Testando lógica (hooks, helpers)
+## Testing Logic (hooks, helpers)
 
-{% raw %}
+
 ```tsx
 // src/features/auth/hooks/usePasswordStrength.ts
 export function getPasswordStrength(password: string): 'weak' | 'medium' | 'strong' {
@@ -101,79 +114,66 @@ export function getPasswordStrength(password: string): 'weak' | 'medium' | 'stro
   return 'strong';
 }
 ```
-{% endraw %}
 
-{% raw %}
+
+
 ```tsx
 // src/features/auth/hooks/usePasswordStrength.test.ts
 import { getPasswordStrength } from './usePasswordStrength';
 
 describe('getPasswordStrength', () => {
-  it('retorna weak para senhas curtas', () => {
+  it('returns weak for short passwords', () => {
     expect(getPasswordStrength('123')).toBe('weak');
   });
 
-  it('retorna medium quando não há dígitos', () => {
+  it('returns medium when there are no digits', () => {
     expect(getPasswordStrength('abcdef')).toBe('medium');
   });
 
-  it('retorna strong quando é longa e tem dígitos', () => {
+  it('returns strong when long and has digits', () => {
     expect(getPasswordStrength('abc12345')).toBe('strong');
   });
 });
 ```
-{% endraw %}
+
 
 ---
 
-## Papel dos testes E2E (Detox)
+## The Role of E2E Tests (Detox)
 
-Detox ocupa o mesmo espaço conceitual de Espresso/XCUITest:
-- Roda o app em um device/emulador real.
-- Interage com elementos da UI por IDs/texto.
-- Valida fluxos completos (login, navegação, etc.).
+Detox occupies the same conceptual space as Espresso/XCUITest:
+- Runs the app on a real device/emulator.
+- Interacts with UI elements by IDs/text.
+- Validates complete flows (login, navigation, etc.).
 
-Recomendação neste tópico:
-- Introduzir o conceito.
-- Mostrar exemplos de comandos (instalação, run). 
-- Detalhar implementação em um tópico próprio de testes E2E (fora do escopo imediato).
-
----
-
-## Exercício prático
-
-1. Escolha uma tela com validação simples (ex.: formulário de login ou cadastro).
-2. Escreva testes cobrindo:
-   - Renderização inicial.
-   - Validação de campos (erro vs sucesso).
-   - Chamada de callback de submit (use `jest.fn()` para mockar).
-3. Execute a suíte de testes com `npm test` ou `yarn test`.
-4. Integre a execução de testes ao pipeline de CI (ver tópico de CI/CD).
+Recommendation for this topic:
+- Introduce the concept.
+- Show command examples (installation, run).
+- Detail implementation in a dedicated E2E testing topic (outside the immediate scope).
 
 ---
 
-## Materiais de estudo
+## Practical Exercise
 
-### Documentação oficial
+1. Choose a screen with simple validation (e.g.: login or registration form).
+2. Write tests covering:
+   - Initial rendering.
+   - Field validation (error vs success).
+   - Submit callback invocation (use `jest.fn()` to mock).
+3. Run the test suite with `npm test` or `yarn test`.
+4. Integrate test execution into the CI pipeline (see CI/CD topic).
+
+---
+
+## Study Materials
+
+### Official Documentation
 - [Testing Overview](https://reactnative.dev/docs/testing-overview)
 
-### Artigos
+### Articles
 - *Testing React Native Components with Testing Library*.
 - *From JUnit/XCTest to Jest: Mapping Mobile Test Practices to React Native*.
 
-### Vídeos
+---
 
-#### Unit & UI Testing in React Native (Jest + Testing Library) — 30 min
-
-<details>
-<summary>Descrição do conteúdo</summary>
-
-O vídeo apresenta de forma prática como configurar Jest em um projeto RN e como escrever testes de componentes com `@testing-library/react-native`. O foco é mostrar que o mindset de testes em RN é muito parecido com o de testes em apps nativos: isolar lógica, testar fluxos principais e garantir a robustez antes de subir para produção.
-
-Tópicos:
-- Configuração de Jest e mapeamento de módulos.
-- Uso de `testID` para localizar elementos em RN.
-- Boas práticas de testes voltados ao comportamento do usuário.
-- Introdução rápida ao Detox como ferramenta de E2E.
-
-</details>
+Next → **[CI/CD](../modulo-cicd/topico-ci-cd-nativos)**

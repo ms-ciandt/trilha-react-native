@@ -4,6 +4,13 @@ title: Layout & Flexbox in React Native
 
 # Layout & Flexbox in React Native
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/08-layout-flex-nativo.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 > React Native uses Flexbox for all layout — the same model as CSS Flexbox, with a few RN-specific defaults.
 
 ## Key Differences from Web CSS Flexbox

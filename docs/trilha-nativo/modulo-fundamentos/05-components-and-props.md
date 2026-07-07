@@ -4,6 +4,13 @@ title: Components & Props in Depth
 
 # Components & Props in Depth
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/05-components-props-nativo.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 ## Component Composition
 
 React's power comes from composing small, focused components. Each component does one thing well.
