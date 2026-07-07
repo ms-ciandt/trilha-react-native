@@ -5,7 +5,7 @@ const sidebars = {
   introducao: [
     {
       type: 'category',
-      label: 'Introdução',
+      label: 'Introduction',
       collapsed: false,
       items: [
         'introducao/intro',
@@ -19,7 +19,7 @@ const sidebars = {
   trilhaNativo: [
     {
       type: 'category',
-      label: 'Fundamentos',
+      label: 'Fundamentals',
       collapsed: false,
       items: [
         'trilha-nativo/modulo-fundamentos/js-ts-overview',
@@ -37,7 +37,7 @@ const sidebars = {
     },
     {
       type: 'category',
-      label: 'Recursos Nativos',
+      label: 'Native Resources',
       collapsed: false,
       items: [
         'trilha-nativo/modulo-recursos-nativos/utilizando-recursos-nativos',
@@ -54,7 +54,7 @@ const sidebars = {
     },
     {
       type: 'category',
-      label: 'Testes',
+      label: 'Testing',
       collapsed: false,
       items: [
         'trilha-nativo/modulo-testes/topico-testes-nativos',
@@ -70,7 +70,7 @@ const sidebars = {
     },
     {
       type: 'category',
-      label: 'Arquitetura',
+      label: 'Architecture',
       collapsed: false,
       items: [
         'trilha-nativo/modulo-arquitetura/topico-arquitetura-nativos',
@@ -81,7 +81,7 @@ const sidebars = {
   trilhaWeb: [
     {
       type: 'category',
-      label: 'Fundamentos',
+      label: 'Fundamentals',
       collapsed: false,
       items: [
         'trilha-web/modulo-fundamentos/adaptando-js-ts',
@@ -97,7 +97,7 @@ const sidebars = {
     },
     {
       type: 'category',
-      label: 'Recursos Nativos',
+      label: 'Native Resources',
       collapsed: false,
       items: [
         'trilha-web/modulo-recursos-nativos/utilizando-recursos-nativos',
@@ -114,7 +114,7 @@ const sidebars = {
     },
     {
       type: 'category',
-      label: 'Testes',
+      label: 'Testing',
       collapsed: false,
       items: [
         'trilha-web/modulo-testes/topico-testes-web',
@@ -130,7 +130,7 @@ const sidebars = {
     },
     {
       type: 'category',
-      label: 'Arquitetura',
+      label: 'Architecture',
       collapsed: false,
       items: [
         'trilha-web/modulo-arquitetura/topico-arquitetura-web',

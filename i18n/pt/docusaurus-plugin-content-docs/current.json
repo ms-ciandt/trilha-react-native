@@ -1,0 +1,54 @@
+{
+  "sidebar.introducao.category.Introduction": {
+    "message": "Introdução",
+    "description": "The label for the Introduction category in the sidebar"
+  },
+  "sidebar.trilhaNativo.category.Fundamentals": {
+    "message": "Fundamentos",
+    "description": "The label for the Fundamentals category in the Native Track sidebar"
+  },
+  "sidebar.trilhaNativo.category.Native Resources": {
+    "message": "Recursos Nativos",
+    "description": "The label for the Native Resources category in the Native Track sidebar"
+  },
+  "sidebar.trilhaNativo.category.Performance": {
+    "message": "Performance",
+    "description": "The label for the Performance category in the Native Track sidebar"
+  },
+  "sidebar.trilhaNativo.category.Testing": {
+    "message": "Testes",
+    "description": "The label for the Testing category in the Native Track sidebar"
+  },
+  "sidebar.trilhaNativo.category.CI/CD": {
+    "message": "CI/CD",
+    "description": "The label for the CI/CD category in the Native Track sidebar"
+  },
+  "sidebar.trilhaNativo.category.Architecture": {
+    "message": "Arquitetura",
+    "description": "The label for the Architecture category in the Native Track sidebar"
+  },
+  "sidebar.trilhaWeb.category.Fundamentals": {
+    "message": "Fundamentos",
+    "description": "The label for the Fundamentals category in the Web Track sidebar"
+  },
+  "sidebar.trilhaWeb.category.Native Resources": {
+    "message": "Recursos Nativos",
+    "description": "The label for the Native Resources category in the Web Track sidebar"
+  },
+  "sidebar.trilhaWeb.category.Performance": {
+    "message": "Performance",
+    "description": "The label for the Performance category in the Web Track sidebar"
+  },
+  "sidebar.trilhaWeb.category.Testing": {
+    "message": "Testes",
+    "description": "The label for the Testing category in the Web Track sidebar"
+  },
+  "sidebar.trilhaWeb.category.CI/CD": {
+    "message": "CI/CD",
+    "description": "The label for the CI/CD category in the Web Track sidebar"
+  },
+  "sidebar.trilhaWeb.category.Architecture": {
+    "message": "Arquitetura",
+    "description": "The label for the Architecture category in the Web Track sidebar"
+  }
+}
