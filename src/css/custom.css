@@ -192,3 +192,7 @@ video {
 .table-of-contents__link {
   font-size: 0.8125rem;
 }
+
+.table-of-contents {
+  padding-bottom: 80px !important;
+}
