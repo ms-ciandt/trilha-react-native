@@ -84,7 +84,7 @@ function AppStack() {
       <Stack.Screen
         name="Details"
         component={DetailsScreen}
-        options={{ title: 'Detalhes' }}
+        options={{ title: 'Details' }}
       />
     </Stack.Navigator>
   );
@@ -244,11 +244,11 @@ const linking = {
 
 ---
 
-## Ciclo de vida da tela: useFocusEffect
+## Screen lifecycle: useFocusEffect
 
-No nativo, o ciclo de vida de uma tela está amarrado à Activity/Fragment (`onResume`, `onPause`) ou ao ViewController (`viewWillAppear`, `viewWillDisappear`). No React Navigation, as telas **não são destruídas** ao sair delas — elas ficam montadas em memória — então o ciclo de vida do componente React não mapeia diretamente para "tela voltou a ser visível".
+In native development, a screen's lifecycle is tied to the Activity/Fragment (`onResume`, `onPause`) or ViewController (`viewWillAppear`, `viewWillDisappear`). In React Navigation, screens are **not destroyed** when you leave them — they stay mounted in memory — so the React component lifecycle does not map directly to "screen became visible again".
 
-O hook `useFocusEffect` resolve isso: ele roda quando a tela entra em foco e, opcionalmente, executa uma limpeza quando sai. É o substituto direto de `onResume`/`viewWillAppear`.
+The `useFocusEffect` hook solves this: it runs when the screen gains focus and, optionally, executes a cleanup when it loses focus. It is the direct replacement for `onResume`/`viewWillAppear`.
 
 ```tsx
 import { useFocusEffect } from '@react-navigation/native';
@@ -257,13 +257,13 @@ import { useCallback } from 'react';
 function OrdersScreen() {
   useFocusEffect(
     useCallback(() => {
-      // Equivalente a onResume (Android) ou viewWillAppear (iOS)
-      // Roda toda vez que a tela ganha foco
+      // Equivalent to onResume (Android) or viewWillAppear (iOS)
+      // Runs every time the screen gains focus
       fetchOrders();
 
       return () => {
-        // Equivalente a onPause (Android) ou viewWillDisappear (iOS)
-        // Roda quando a tela perde foco
+        // Equivalent to onPause (Android) or viewWillDisappear (iOS)
+        // Runs when the screen loses focus
         cancelPendingRequests();
       };
     }, [])
@@ -271,24 +271,24 @@ function OrdersScreen() {
 }
 ```
 
-O `useCallback` com array vazio é obrigatório: sem ele, o efeito re-registra a cada render, causando chamadas duplicadas.
+The `useCallback` with an empty array is required: without it, the effect re-registers on every render, causing duplicate calls.
 
-| Nativo | useFocusEffect |
+| Native | useFocusEffect |
 |--------|---------------|
-| `onResume` / `viewWillAppear` | corpo do callback |
-| `onPause` / `viewWillDisappear` | função retornada (cleanup) |
-| `onCreate` / `viewDidLoad` | `useEffect` com array vazio (roda uma vez) |
+| `onResume` / `viewWillAppear` | callback body |
+| `onPause` / `viewWillDisappear` | returned cleanup function |
+| `onCreate` / `viewDidLoad` | `useEffect` with empty array (runs once) |
 
 ---
 
-## Navegando de componentes aninhados: useNavigation
+## Navigating from nested components: useNavigation
 
-No nativo, o acesso ao controller de navegação é feito via referência direta (`self.navigationController`, `findNavController()`). No React Navigation, o hook `useNavigation` fornece o objeto de navegação para qualquer componente na árvore — sem precisar passar `navigation` como prop.
+In native development, you access the navigation controller via a direct reference (`self.navigationController`, `findNavController()`). In React Navigation, the `useNavigation` hook provides the navigation object to any component in the tree — without needing to pass `navigation` as a prop.
 
 ```tsx
 import { useNavigation } from '@react-navigation/native';
 
-// Componente genérico, não é uma Screen — não recebe navigation como prop
+// Generic component, not a Screen — does not receive navigation as a prop
 function ProductCard({ product }: { product: Product }) {
   const navigation = useNavigation();
 
@@ -300,7 +300,7 @@ function ProductCard({ product }: { product: Product }) {
 }
 ```
 
-Isso é equivalente a chamar `findNavController()` a partir de um View qualquer dentro de um Fragment no Android — sem precisar que o Fragment passe a referência manualmente pela hierarquia de views.
+This is equivalent to calling `findNavController()` from any View inside a Fragment on Android — without requiring the Fragment to manually pass the reference down through the view hierarchy.
 
 ---
 

@@ -59,59 +59,59 @@ const [state, dispatch] = useReducer(reducer, { status: 'idle', data: null });
 
 ---
 
-## Inicialização e efeitos colaterais: useEffect
+## Initialization and side effects: useEffect
 
-No nativo, o ciclo de vida da tela — `onCreate`, `viewDidLoad` — é onde você inicializa dados, configura observers e registra listeners. No React, essa responsabilidade fica no `useEffect`.
+In native development, the screen lifecycle — `onCreate`, `viewDidLoad` — is where you initialize data, configure observers, and register listeners. In React, that responsibility belongs to `useEffect`.
 
 ```tsx
 useEffect(() => {
-  // Roda após o primeiro render — equivalente a onCreate / viewDidLoad
+  // Runs after the first render — equivalent to onCreate / viewDidLoad
   fetchUserProfile();
 
   return () => {
-    // Cleanup — equivalente a onDestroy / deinit
-    // Use para cancelar subscriptions, remover listeners
+    // Cleanup — equivalent to onDestroy / deinit
+    // Use to cancel subscriptions, remove listeners
   };
-}, []); // array vazio = roda uma vez
+}, []); // empty array = runs once
 ```
 
-O segundo argumento é a lista de dependências. Isso não tem equivalente direto no nativo — é um conceito do React:
+The second argument is the dependency array. This has no direct equivalent in native — it is a React concept:
 
 ```tsx
 useEffect(() => {
-  // Roda toda vez que userId mudar
+  // Runs every time userId changes
   fetchUserProfile(userId);
 }, [userId]);
 ```
 
-A regra prática: `[]` para inicialização única, `[dep]` quando o efeito precisa reagir a uma mudança específica. Omitir o array faz o efeito rodar a cada render — quase nunca é o que você quer.
+The practical rule: `[]` for one-time initialization, `[dep]` when the effect needs to react to a specific change. Omitting the array makes the effect run on every render — almost never what you want.
 
 ---
 
-## O modelo reativo: estado muda, UI atualiza sozinha
+## The reactive model: state changes, UI updates automatically
 
-Esta é a mudança conceitual mais importante para devs nativos: **você nunca diz à UI para se atualizar**.
+This is the most important conceptual shift for native developers: **you never tell the UI to update**.
 
-No Android, após mudar dados em um adapter, você chama `notifyDataSetChanged()`. No iOS, você chama `tableView.reloadData()`. No React, isso não existe.
+On Android, after changing data in an adapter, you call `notifyDataSetChanged()`. On iOS, you call `tableView.reloadData()`. In React, neither of these exists.
 
-Quando você chama `setState` ou atualiza um store, o React recomputa automaticamente quais partes da UI dependem daquele estado e re-renderiza apenas elas.
+When you call `setState` or update a store, React automatically recomputes which parts of the UI depend on that state and re-renders only those parts.
 
 ```tsx
-// Nativo — imperativo: você controla QUANDO a UI atualiza
+// Native — imperative: you control WHEN the UI updates
 items.add(newItem)
 adapter.notifyItemInserted(items.size - 1)  // Android
 tableView.reloadData()                       // iOS
 
-// React — declarativo: a UI É uma função do estado
+// React — declarative: the UI IS a function of state
 const [items, setItems] = useState<Item[]>([]);
 
-// Você só muda o estado — o React cuida da UI
+// You only change the state — React handles the UI
 setItems(prev => [...prev, newItem]);
 ```
 
-A lista renderizada em JSX reflete sempre o estado atual. Não há chamada explícita de refresh — a declaração `<FlatList data={items} />` sempre mostra os `items` atuais porque ela re-renderiza quando `items` muda.
+The list rendered in JSX always reflects the current state. There is no explicit refresh call — the declaration `<FlatList data={items} />` always shows the current `items` because it re-renders whenever `items` changes.
 
-Essa inversão de controle é o núcleo do modelo React: em vez de coordenar UI e dados manualmente, você mantém o estado correto e deixa o framework sincronizar a UI.
+This inversion of control is the core of the React model: instead of manually coordinating UI and data, you keep the state correct and let the framework synchronize the UI.
 
 ---
 
