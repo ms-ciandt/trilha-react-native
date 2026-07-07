@@ -244,6 +244,66 @@ const linking = {
 
 ---
 
+## Ciclo de vida da tela: useFocusEffect
+
+No nativo, o ciclo de vida de uma tela está amarrado à Activity/Fragment (`onResume`, `onPause`) ou ao ViewController (`viewWillAppear`, `viewWillDisappear`). No React Navigation, as telas **não são destruídas** ao sair delas — elas ficam montadas em memória — então o ciclo de vida do componente React não mapeia diretamente para "tela voltou a ser visível".
+
+O hook `useFocusEffect` resolve isso: ele roda quando a tela entra em foco e, opcionalmente, executa uma limpeza quando sai. É o substituto direto de `onResume`/`viewWillAppear`.
+
+```tsx
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
+
+function OrdersScreen() {
+  useFocusEffect(
+    useCallback(() => {
+      // Equivalente a onResume (Android) ou viewWillAppear (iOS)
+      // Roda toda vez que a tela ganha foco
+      fetchOrders();
+
+      return () => {
+        // Equivalente a onPause (Android) ou viewWillDisappear (iOS)
+        // Roda quando a tela perde foco
+        cancelPendingRequests();
+      };
+    }, [])
+  );
+}
+```
+
+O `useCallback` com array vazio é obrigatório: sem ele, o efeito re-registra a cada render, causando chamadas duplicadas.
+
+| Nativo | useFocusEffect |
+|--------|---------------|
+| `onResume` / `viewWillAppear` | corpo do callback |
+| `onPause` / `viewWillDisappear` | função retornada (cleanup) |
+| `onCreate` / `viewDidLoad` | `useEffect` com array vazio (roda uma vez) |
+
+---
+
+## Navegando de componentes aninhados: useNavigation
+
+No nativo, o acesso ao controller de navegação é feito via referência direta (`self.navigationController`, `findNavController()`). No React Navigation, o hook `useNavigation` fornece o objeto de navegação para qualquer componente na árvore — sem precisar passar `navigation` como prop.
+
+```tsx
+import { useNavigation } from '@react-navigation/native';
+
+// Componente genérico, não é uma Screen — não recebe navigation como prop
+function ProductCard({ product }: { product: Product }) {
+  const navigation = useNavigation();
+
+  return (
+    <Pressable onPress={() => navigation.navigate('Details', { productId: product.id })}>
+      <Text>{product.name}</Text>
+    </Pressable>
+  );
+}
+```
+
+Isso é equivalente a chamar `findNavController()` a partir de um View qualquer dentro de um Fragment no Android — sem precisar que o Fragment passe a referência manualmente pela hierarquia de views.
+
+---
+
 ## Dicas de performance
 
 O React Navigation, por padrão, gerencia as telas em memória de forma mais agressiva do que o nativo — todas as telas do stack ficam montadas. Algumas opções mitigam isso:

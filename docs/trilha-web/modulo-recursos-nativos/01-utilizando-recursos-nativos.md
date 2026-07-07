@@ -9,6 +9,15 @@ sidebar_position: 1
 
 ---
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_web_01_utilizando_recursos_nativos_en.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+---
+
 ## Objetivo do tópico
 
 Ao final, o dev deve conseguir:

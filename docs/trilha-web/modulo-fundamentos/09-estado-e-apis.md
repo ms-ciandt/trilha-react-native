@@ -9,6 +9,15 @@ sidebar_position: 9
 
 ---
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_web_09_estado-e-api-en.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+---
+
 ## O que muda da web para o mobile
 
 A lógica de estado que você já conhece do React funciona em React Native — `useState`, `useReducer`, Context, stores globais são os mesmos. O que muda é o **ambiente** em que esse estado vive:

@@ -59,6 +59,62 @@ const [state, dispatch] = useReducer(reducer, { status: 'idle', data: null });
 
 ---
 
+## Inicialização e efeitos colaterais: useEffect
+
+No nativo, o ciclo de vida da tela — `onCreate`, `viewDidLoad` — é onde você inicializa dados, configura observers e registra listeners. No React, essa responsabilidade fica no `useEffect`.
+
+```tsx
+useEffect(() => {
+  // Roda após o primeiro render — equivalente a onCreate / viewDidLoad
+  fetchUserProfile();
+
+  return () => {
+    // Cleanup — equivalente a onDestroy / deinit
+    // Use para cancelar subscriptions, remover listeners
+  };
+}, []); // array vazio = roda uma vez
+```
+
+O segundo argumento é a lista de dependências. Isso não tem equivalente direto no nativo — é um conceito do React:
+
+```tsx
+useEffect(() => {
+  // Roda toda vez que userId mudar
+  fetchUserProfile(userId);
+}, [userId]);
+```
+
+A regra prática: `[]` para inicialização única, `[dep]` quando o efeito precisa reagir a uma mudança específica. Omitir o array faz o efeito rodar a cada render — quase nunca é o que você quer.
+
+---
+
+## O modelo reativo: estado muda, UI atualiza sozinha
+
+Esta é a mudança conceitual mais importante para devs nativos: **você nunca diz à UI para se atualizar**.
+
+No Android, após mudar dados em um adapter, você chama `notifyDataSetChanged()`. No iOS, você chama `tableView.reloadData()`. No React, isso não existe.
+
+Quando você chama `setState` ou atualiza um store, o React recomputa automaticamente quais partes da UI dependem daquele estado e re-renderiza apenas elas.
+
+```tsx
+// Nativo — imperativo: você controla QUANDO a UI atualiza
+items.add(newItem)
+adapter.notifyItemInserted(items.size - 1)  // Android
+tableView.reloadData()                       // iOS
+
+// React — declarativo: a UI É uma função do estado
+const [items, setItems] = useState<Item[]>([]);
+
+// Você só muda o estado — o React cuida da UI
+setItems(prev => [...prev, newItem]);
+```
+
+A lista renderizada em JSX reflete sempre o estado atual. Não há chamada explícita de refresh — a declaração `<FlatList data={items} />` sempre mostra os `items` atuais porque ela re-renderiza quando `items` muda.
+
+Essa inversão de controle é o núcleo do modelo React: em vez de coordenar UI e dados manualmente, você mantém o estado correto e deixa o framework sincronizar a UI.
+
+---
+
 ## Client state vs Server state
 
 Esta é a divisão de conceito mais importante no ecossistema React — e que não existe explicitamente no nativo:
