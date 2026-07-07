@@ -4,6 +4,13 @@ title: "Module 1: Adapting JS/TS for Mobile"
 
 # Module 1: Adapting JavaScript/TypeScript for Mobile
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/01-adaptando-js-ts.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 > You already know JavaScript and React. This module is about the mental model shift from building for browsers to building for mobile devices.
 
 ## The Environment Difference

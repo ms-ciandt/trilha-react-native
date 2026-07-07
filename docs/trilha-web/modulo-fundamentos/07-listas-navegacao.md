@@ -4,6 +4,13 @@ title: Lists & Navigation in React Native
 
 # Lists & Navigation in React Native
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/07-listas.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 > You've built lists with `.map()` and navigated with React Router. This module shows you RN's virtualized list APIs and how React Navigation handles screen transitions on mobile.
 
 ## Lists

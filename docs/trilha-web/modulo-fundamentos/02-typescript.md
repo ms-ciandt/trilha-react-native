@@ -4,6 +4,13 @@ title: TypeScript for Web Developers in React Native
 
 # TypeScript for Web Developers
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/02-ts-rn.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 > If you've used TypeScript on the web, you're mostly ready. This module covers the RN-specific types and patterns you'll encounter.
 
 ## React Native–Specific Types

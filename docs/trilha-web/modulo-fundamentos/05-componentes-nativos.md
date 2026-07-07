@@ -4,6 +4,13 @@ title: Native Components for Web Developers
 
 # Native Components for Web Developers
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/05-components.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 > You know React components. RN components work the same way — just different primitive names and a few mobile-specific behaviours.
 
 ## The Essential Swap
