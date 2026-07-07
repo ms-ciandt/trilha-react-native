@@ -1,40 +1,40 @@
 ---
-title: "Module 1: Adapting JS/TS for Mobile"
+title: "Módulo 1: Adaptando JS/TS para Mobile"
 ---
 
-# Module 1: Adapting JavaScript/TypeScript for Mobile
+# Módulo 1: Adaptando JavaScript/TypeScript para Mobile
 
-> You already know JavaScript and React. This module is about the mental model shift from building for browsers to building for mobile devices.
+> Você já conhece JavaScript e React. Este módulo é sobre a mudança de modelo mental de construir para browsers para construir para dispositivos móveis.
 
-## The Environment Difference
+## A Diferença de Ambiente
 
-When you write React for the web, your code runs in a browser with:
-- The DOM (`document`, `window`, `navigator`)
-- Full CSS (every property, every selector)
-- Network requests via `fetch` or `XMLHttpRequest`
+Quando você escreve React para a web, seu código roda em um browser com:
+- O DOM (`document`, `window`, `navigator`)
+- CSS completo (cada propriedade, cada seletor)
+- Requisições de rede via `fetch` ou `XMLHttpRequest`
 - `localStorage`, `sessionStorage`, cookies
-- A URL bar and routing via URL changes
+- Uma barra de URL e roteamento via mudanças de URL
 
-When you write React Native, your JS runs in **Hermes** (a mobile JS engine) with:
-- **No DOM** — no `document`, no `window`, no `innerHTML`
-- **No CSS** — only a subset of layout/style properties as JS objects
-- `fetch` still works (polyfilled)
-- **No `localStorage`** — use `AsyncStorage` or `MMKV`
-- **No URL routing** — navigation is stack/tab based
+Quando você escreve React Native, seu JS roda no **Hermes** (um motor JS mobile) com:
+- **Sem DOM** — sem `document`, sem `window`, sem `innerHTML`
+- **Sem CSS** — apenas um subconjunto de propriedades de layout/estilo como objetos JS
+- `fetch` ainda funciona (polyfillado)
+- **Sem `localStorage`** — use `AsyncStorage` ou `MMKV`
+- **Sem roteamento por URL** — a navegação é baseada em stack/tab
 
 ---
 
-## What Still Works (Unchanged)
+## O Que Ainda Funciona (Inalterado)
 
-Most of your JavaScript knowledge transfers directly:
+A maior parte do seu conhecimento JavaScript transfere diretamente:
 
 ```typescript
-//  All of this works the same in React Native
+//  Tudo isso funciona igual no React Native
 
-// Core JS
+// JS Core
 const arr = [1, 2, 3].map(n => n * 2);
 const { name, age } = user;
-const message = `Hello, ${name}!`;
+const message = `Olá, ${name}!`;
 
 // Async/await
 const data = await fetch('https://api.example.com/data');
@@ -43,20 +43,20 @@ const json = await data.json();
 // Promises
 Promise.all([fetchUsers(), fetchPosts()]).then(([users, posts]) => { ... });
 
-// Array methods
+// Métodos de array
 users.filter(u => u.active).sort((a, b) => a.name.localeCompare(b.name));
 
-// TypeScript types
+// Tipos TypeScript
 interface User { id: string; name: string; }
 type Status = 'loading' | 'success' | 'error';
 
-// All React hooks
+// Todos os hooks React
 useState, useEffect, useRef, useMemo, useCallback, useContext, useReducer
 ```
 
 ---
 
-## What Changes
+## O Que Muda
 
 ### Storage
 
@@ -65,19 +65,19 @@ useState, useEffect, useRef, useMemo, useCallback, useContext, useReducer
 localStorage.setItem('token', value);
 const token = localStorage.getItem('token');
 
-// React Native — AsyncStorage (async!)
+// React Native — AsyncStorage (assíncrono!)
 import AsyncStorage from '@react-native-async-storage/async-storage';
 await AsyncStorage.setItem('token', value);
 const token = await AsyncStorage.getItem('token');
 
-// React Native — MMKV (synchronous, much faster, recommended)
+// React Native — MMKV (síncrono, muito mais rápido, recomendado)
 import { MMKV } from 'react-native-mmkv';
 const storage = new MMKV();
 storage.set('token', value);
 const token = storage.getString('token');
 ```
 
-### Platform Detection
+### Detecção de Plataforma
 
 ```typescript
 // Web
@@ -117,26 +117,26 @@ await Clipboard.setStringAsync('hello');
 
 ---
 
-## Mobile-Specific Concepts You'll Need
+## Conceitos Mobile Específicos que Você Vai Precisar
 
 ### 1. Safe Areas
-Mobile screens have notches, dynamic islands, and home indicators. Content can be hidden behind them.
+Telas mobile têm notches, dynamic islands e home indicators. Conteúdo pode ficar escondido atrás deles.
 
 ```tsx
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-// Always wrap your screens in SafeAreaView
+// Sempre envolva suas telas em SafeAreaView
 function HomeScreen() {
     return (
         <SafeAreaView style={{ flex: 1 }}>
-            {/* Your content is safe here */}
+            {/* Seu conteúdo está seguro aqui */}
         </SafeAreaView>
     );
 }
 ```
 
 ### 2. Keyboard Avoidance
-The keyboard pushes up from the bottom and can cover input fields.
+O teclado sobe pela parte de baixo e pode cobrir campos de input.
 
 ```tsx
 import { KeyboardAvoidingView, Platform } from 'react-native';
@@ -146,19 +146,19 @@ function LoginForm() {
         <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : 'padding'}
             style={{ flex: 1 }}
-            // behavior="height" on Android compresses the container and routinely
-            // hides inputs. Use "padding" on both platforms, or set
-            // softwareKeyboardLayoutMode: "resize" in app.json and skip KAV on Android.
+            // behavior="height" no Android comprime o contêiner e frequentemente
+            // esconde inputs. Use "padding" em ambas as plataformas, ou configure
+            // softwareKeyboardLayoutMode: "resize" no app.json e pule o KAV no Android.
         >
             <TextInput placeholder="Email" />
-            <TextInput placeholder="Password" secureTextEntry />
+            <TextInput placeholder="Senha" secureTextEntry />
         </KeyboardAvoidingView>
     );
 }
 ```
 
 ### 3. Gesture Handling
-Mobile apps respond to swipes, pinches, and long presses — not just taps:
+Apps mobile respondem a swipes, pinches e long presses — não apenas taps:
 
 ```tsx
 import { useSharedValue, useAnimatedStyle, withSpring, runOnJS } from 'react-native-reanimated';
@@ -179,9 +179,9 @@ function SwipeCard() {
         })
         .onEnd(() => {
             translateX.value = withSpring(0);
-            // ️ Gesture callbacks run on the UI thread.
-            // To call React state setters, navigation, or any JS function,
-            // you must wrap it with runOnJS — otherwise you get a hard crash:
+            // ️ Callbacks de gesture rodam na UI thread.
+            // Para chamar setters de estado React, navegação ou qualquer função JS,
+            // você deve envolver com runOnJS — caso contrário ocorre um crash grave:
             // "Calling into JavaScript from native is only allowed via JSI bridge"
             runOnJS(setDismissed)(true);
         });
@@ -189,7 +189,7 @@ function SwipeCard() {
     return (
         <GestureDetector gesture={swipe}>
             <Animated.View style={animatedStyle}>
-                <Text>Swipe me</Text>
+                <Text>Deslize-me</Text>
             </Animated.View>
         </GestureDetector>
     );
@@ -197,7 +197,7 @@ function SwipeCard() {
 ```
 
 ### 4. Status Bar
-The thin bar at the top of the screen with time and battery:
+A barra fina no topo da tela com horário e bateria:
 
 ```tsx
 import { StatusBar } from 'expo-status-bar';
@@ -214,12 +214,12 @@ function App() {
 
 ---
 
-## The TypeScript Setup
+## A Configuração do TypeScript
 
-Expo projects come with TypeScript pre-configured. Key things to know:
+Projetos Expo vêm com TypeScript pré-configurado. Pontos importantes:
 
 ```json
-// tsconfig.json — what Expo generates
+// tsconfig.json — o que o Expo gera
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
@@ -228,18 +228,18 @@ Expo projects come with TypeScript pre-configured. Key things to know:
 }
 ```
 
-The `expo/tsconfig.base` already configures path aliases, module resolution for React Native, and JSX settings. You don't need to configure these manually.
+O `expo/tsconfig.base` já configura aliases de caminho, resolução de módulos para React Native e configurações de JSX. Você não precisa configurar isso manualmente.
 
 ---
 
-## Resources
+## Recursos
 
-| Resource | Type | Link |
+| Recurso | Tipo | Link |
 |---|---|---|
-| Expo Docs — Get Started | Official | [docs.expo.dev/get-started/introduction/](https://docs.expo.dev/get-started/introduction/) |
-| RN Environment Setup | Official Docs | [reactnative.dev/docs/environment-setup](https://reactnative.dev/docs/environment-setup) |
+| Expo Docs — Get Started | Oficial | [docs.expo.dev/get-started/introduction/](https://docs.expo.dev/get-started/introduction/) |
+| Configuração de Ambiente RN | Docs Oficiais | [reactnative.dev/docs/environment-setup](https://reactnative.dev/docs/environment-setup) |
 | react-native-safe-area-context | Community | [github.com/AppAndFlow/react-native-safe-area-context](https://github.com/AppAndFlow/react-native-safe-area-context) |
 
 ---
 
-Next → **[TypeScript for Web Devs](./typescript)**
+Próximo → **[TypeScript para Devs Web](./typescript)**

@@ -46,10 +46,10 @@ export function LoginScreen() {
 
   const handleSubmit = () => {
     if (!email.includes('@')) {
-      setError('Email inválido');
+      setError('Invalid email');
       return;
     }
-    // chama API...
+    // call API...
   };
 
   return (
@@ -73,14 +73,14 @@ import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
 import { LoginScreen } from './LoginScreen';
 
-it('exibe erro quando email é inválido', () => {
+it('shows error when email is invalid', () => {
   const { getByTestId, getByText } = render(<LoginScreen />);
 
   const input = getByTestId('input-email');
   fireEvent.changeText(input, 'invalid-email');
   fireEvent.press(getByText('Login'));
 
-  expect(getByTestId('error-text').props.children).toBe('Email inválido');
+  expect(getByTestId('error-text').props.children).toBe('Invalid email');
 });
 ```
 

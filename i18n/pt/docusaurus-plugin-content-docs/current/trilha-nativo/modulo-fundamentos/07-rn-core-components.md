@@ -1,14 +1,14 @@
 ---
-title: "Module 3: React Native Core Components"
+title: "Módulo 3: Componentes Core do React Native"
 ---
 
-# Module 3: React Native Core Components
+# Módulo 3: Componentes Core do React Native
 
-> React Native ships with a set of built-in components that map directly to native platform views. There is no HTML here — every component renders actual native UI.
+> O React Native vem com um conjunto de componentes nativos que mapeiam diretamente para views da plataforma. Não existe HTML aqui — cada componente renderiza UI nativa de verdade.
 
-## The Fundamental Mapping
+## O Mapeamento Fundamental
 
-| Web HTML | Android | iOS | React Native |
+| HTML Web | Android | iOS | React Native |
 |----------|---------|-----|--------------|
 | `<div>` | `ViewGroup` / `FrameLayout` | `UIView` | `<View>` |
 | `<p>`, `<span>`, `<h1>` | `TextView` | `UILabel` | `<Text>` |
@@ -21,9 +21,9 @@ title: "Module 3: React Native Core Components"
 
 ---
 
-## `<View>` — The Universal Container
+## `<View>` — O Contêiner Universal
 
-`View` is the fundamental building block. It renders as a `ViewGroup` on Android and `UIView` on iOS:
+`View` é o bloco de construção fundamental. Renderiza como `ViewGroup` no Android e `UIView` no iOS:
 
 ```tsx
 import { View, StyleSheet } from 'react-native';
@@ -32,10 +32,10 @@ function Card() {
     return (
         <View style={styles.card}>
             <View style={styles.header}>
-                {/* header content */}
+                {/* conteúdo do header */}
             </View>
             <View style={styles.body}>
-                {/* body content */}
+                {/* conteúdo do body */}
             </View>
         </View>
     );
@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
-        elevation: 3, // Android shadow
+        elevation: 3, // sombra Android
     },
     header: { padding: 16 },
     body: { padding: 16, paddingTop: 0 },
@@ -57,63 +57,63 @@ const styles = StyleSheet.create({
 
 ---
 
-## `<Text>` — All Text Must Be Wrapped
+## `<Text>` — Todo Texto Deve Ser Envolvido
 
-Unlike web HTML where text can float freely, **in React Native all text must be inside `<Text>`**:
+Ao contrário do HTML web onde texto pode flutuar livremente, **no React Native todo texto deve estar dentro de `<Text>`**:
 
 ```tsx
-// ERROR: raw text outside Text
+// ERRO: texto fora de Text
 <View>
-    Hello World  {/* This will crash */}
+    Olá Mundo  {/* Isso vai crashar */}
 </View>
 
-// CORRECT
+// CORRETO
 <View>
-    <Text>Hello World</Text>
+    <Text>Olá Mundo</Text>
 </View>
 ```
 
-Text features:
+Funcionalidades de Text:
 ```tsx
 <Text
     style={{ fontSize: 16, fontWeight: 'bold', color: '#333' }}
-    numberOfLines={2}           // Truncate after 2 lines (like ellipsize in Android)
+    numberOfLines={2}           // Trunca após 2 linhas (como ellipsize no Android)
     ellipsizeMode="tail"        // "tail" | "head" | "middle" | "clip"
-    selectable={true}           // Allow text selection
-    onPress={() => {}}          // Text can be tappable
+    selectable={true}           // Permite seleção de texto
+    onPress={() => {}}          // Texto pode ser clicável
 >
-    This is some long text that will be truncated after two lines.
+    Este é um texto longo que será truncado após duas linhas.
 </Text>
 
-{/* Nested Text — inline styling */}
+{/* Text aninhado — estilização inline */}
 <Text>
-    Normal text <Text style={{ fontWeight: 'bold' }}>bold part</Text> normal again
+    Texto normal <Text style={{ fontWeight: 'bold' }}>parte em negrito</Text> normal novamente
 </Text>
 ```
 
 ---
 
-## `<Image>` — Local and Remote Images
+## `<Image>` — Imagens Locais e Remotas
 
 ```tsx
 import { Image } from 'react-native';
 
-// Remote image
+// Imagem remota
 <Image
     source={{ uri: 'https://example.com/photo.jpg' }}
     style={{ width: 200, height: 200, borderRadius: 100 }}
     resizeMode="cover"  // "cover" | "contain" | "stretch" | "center"
 />
 
-// Local image (require resolves at build time — like drawable resources)
+// Imagem local (require resolve em tempo de build — como recursos drawable)
 <Image
     source={require('./assets/logo.png')}
     style={{ width: 100, height: 40 }}
 />
 ```
 
-:::tip Use Expo Image for production
-For better performance (caching, transitions, blur hash placeholders), use `expo-image`:
+:::tip Use Expo Image para produção
+Para melhor performance (cache, transições, placeholders blur hash), use `expo-image`:
 ```tsx
 import { Image } from 'expo-image';
 <Image source="https://..." style={{ width: 200, height: 200 }} contentFit="cover" />
@@ -122,9 +122,9 @@ import { Image } from 'expo-image';
 
 ---
 
-## `<TextInput>` — User Input
+## `<TextInput>` — Entrada do Usuário
 
-Like `EditText` (Android) or `UITextField`/`UITextView` (iOS):
+Como `EditText` (Android) ou `UITextField`/`UITextView` (iOS):
 
 ```tsx
 import { useState } from 'react';
@@ -140,17 +140,17 @@ function LoginForm() {
                 value={email}
                 onChangeText={setEmail}
                 placeholder="Email"
-                keyboardType="email-address"     // Shows email keyboard
+                keyboardType="email-address"     // Mostra teclado de email
                 autoCapitalize="none"
                 autoComplete="email"
             />
             <TextInput
                 value={password}
                 onChangeText={setPassword}
-                placeholder="Password"
-                secureTextEntry={true}            // Password field
-                returnKeyType="done"              // Keyboard return key label
-                onSubmitEditing={() => login()}   // Called when return key pressed
+                placeholder="Senha"
+                secureTextEntry={true}            // Campo de senha
+                returnKeyType="done"              // Label da tecla return do teclado
+                onSubmitEditing={() => login()}   // Chamado quando a tecla return é pressionada
             />
         </View>
     );
@@ -159,24 +159,24 @@ function LoginForm() {
 
 ---
 
-## `<Pressable>` — Tappable Areas
+## `<Pressable>` — Áreas Clicáveis
 
-Prefer `Pressable` over `TouchableOpacity` for new code (it's the modern API):
+Prefira `Pressable` em vez de `TouchableOpacity` para código novo (é a API moderna):
 
 ```tsx
 import { Pressable } from 'react-native';
 
 <Pressable
-    onPress={() => console.log('pressed')}
-    onLongPress={() => console.log('long press')}
+    onPress={() => console.log('pressionado')}
+    onLongPress={() => console.log('pressão longa')}
     style={({ pressed }) => [
         styles.button,
-        pressed && styles.buttonPressed, // visual feedback
+        pressed && styles.buttonPressed, // feedback visual
     ]}
 >
     {({ pressed }) => (
         <Text style={pressed ? styles.textPressed : styles.text}>
-            Press me
+            Pressione-me
         </Text>
     )}
 </Pressable>
@@ -184,9 +184,9 @@ import { Pressable } from 'react-native';
 
 ---
 
-## `<FlatList>` — Virtualized Lists
+## `<FlatList>` — Listas Virtualizadas
 
-The equivalent of `RecyclerView` (Android) or `UITableView` (iOS) — only renders visible items:
+O equivalente do `RecyclerView` (Android) ou `UITableView` (iOS) — renderiza apenas os itens visíveis:
 
 ```tsx
 import { FlatList } from 'react-native';
@@ -200,20 +200,20 @@ function PostFeed({ posts }: { posts: Post[] }) {
             keyExtractor={post => post.id}
             renderItem={({ item }) => <PostCard post={item} />}
 
-            // Performance props
+            // Props de performance
             initialNumToRender={10}
             maxToRenderPerBatch={5}
             windowSize={5}
 
-            // Pull-to-refresh (like SwipeRefreshLayout in Android)
+            // Pull-to-refresh (como SwipeRefreshLayout no Android)
             refreshing={isRefreshing}
             onRefresh={handleRefresh}
 
-            // Load more on scroll
+            // Carrega mais ao rolar
             onEndReached={loadMore}
-            onEndReachedThreshold={0.5} // trigger when 50% from bottom
+            onEndReachedThreshold={0.5} // aciona quando 50% do fim
 
-            // Empty state
+            // Estado vazio
             ListEmptyComponent={<EmptyFeed />}
 
             // Header / Footer
@@ -230,16 +230,16 @@ function PostFeed({ posts }: { posts: Post[] }) {
 
 | | `ScrollView` | `FlatList` |
 |---|---|---|
-| Renders all children | Yes (immediately) | No (lazy/virtualized) |
-| Good for | Short content, forms, detail screens | Long dynamic lists |
-| Performance with 1000+ items | Bad | Good |
-| Pull-to-refresh | Via `RefreshControl` | Built-in `refreshing` prop |
+| Renderiza todos os filhos | Sim (imediatamente) | Não (lazy/virtualizado) |
+| Bom para | Conteúdo curto, formulários, telas de detalhe | Listas longas e dinâmicas |
+| Performance com 1000+ itens | Ruim | Boa |
+| Pull-to-refresh | Via `RefreshControl` | Prop `refreshing` embutida |
 
 ---
 
-## `<SafeAreaView>` — Handling Notches and Home Indicators
+## `<SafeAreaView>` — Lidando com Notches e Home Indicators
 
-Essential for iPhone notches and Android nav bars:
+Essencial para notches do iPhone e barras de navegação do Android:
 
 ```tsx
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -247,14 +247,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 function Screen() {
     return (
         <SafeAreaView style={{ flex: 1 }}>
-            {/* Content is inset away from notch/home indicator */}
+            {/* Conteúdo está protegido do notch/home indicator */}
         </SafeAreaView>
     );
 }
 ```
 
 :::tip Use react-native-safe-area-context
-The built-in `SafeAreaView` from React Native only works on iOS. Use the community `react-native-safe-area-context` package for consistent cross-platform behavior.
+O `SafeAreaView` nativo do React Native funciona apenas no iOS. Use o pacote community `react-native-safe-area-context` para comportamento cross-platform consistente.
 :::
 
 ---
@@ -270,13 +270,13 @@ function ConfirmDialog({ visible, onConfirm, onCancel }: Props) {
             visible={visible}
             transparent={true}
             animationType="fade"    // "none" | "slide" | "fade"
-            onRequestClose={onCancel} // Android back button
+            onRequestClose={onCancel} // Botão voltar do Android
         >
             <View style={styles.backdrop}>
                 <View style={styles.dialog}>
-                    <Text>Are you sure?</Text>
-                    <Button title="Yes" onPress={onConfirm} />
-                    <Button title="No" onPress={onCancel} />
+                    <Text>Tem certeza?</Text>
+                    <Button title="Sim" onPress={onConfirm} />
+                    <Button title="Não" onPress={onCancel} />
                 </View>
             </View>
         </Modal>
@@ -286,9 +286,9 @@ function ConfirmDialog({ visible, onConfirm, onCancel }: Props) {
 
 ---
 
-## `<KeyboardAvoidingView>` — Prevent the Keyboard from Covering Inputs
+## `<KeyboardAvoidingView>` — Evitar que o Teclado Cubra Inputs
 
-One of the most common first-day RN problems: the software keyboard slides up and covers a text input. `KeyboardAvoidingView` shifts the layout to keep inputs visible.
+Um dos problemas mais comuns no primeiro dia com RN: o teclado sobe e cobre um campo de texto. `KeyboardAvoidingView` desloca o layout para manter os inputs visíveis.
 
 ```tsx
 import { KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
@@ -301,59 +301,59 @@ function LoginScreen() {
         >
             <ScrollView keyboardShouldPersistTaps="handled">
                 <TextInput placeholder="Email" keyboardType="email-address" />
-                <TextInput placeholder="Password" secureTextEntry />
-                <Button title="Login" onPress={handleLogin} />
+                <TextInput placeholder="Senha" secureTextEntry />
+                <Button title="Entrar" onPress={handleLogin} />
             </ScrollView>
         </KeyboardAvoidingView>
     );
 }
 ```
 
-The `behavior` prop differs by platform — this is one of the clearest examples of RN's cross-platform reality:
+A prop `behavior` difere por plataforma — este é um dos exemplos mais claros da realidade cross-platform do RN:
 
-| Platform | `behavior` | What it does |
+| Plataforma | `behavior` | O que faz |
 |----------|-----------|--------------|
-| iOS | `'padding'` | Adds padding below content to push it up |
-| Android | `'height'` | Reduces the view height to fit above keyboard |
+| iOS | `'padding'` | Adiciona padding abaixo do conteúdo para empurrá-lo para cima |
+| Android | `'height'` | Reduz a altura da view para caber acima do teclado |
 
-`keyboardShouldPersistTaps="handled"` on the `ScrollView` ensures tapping a button while the keyboard is open fires the button's `onPress` rather than just dismissing the keyboard.
+`keyboardShouldPersistTaps="handled"` no `ScrollView` garante que clicar em um botão enquanto o teclado está aberto acione o `onPress` do botão em vez de apenas fechar o teclado.
 
 :::tip
-If `KeyboardAvoidingView` still isn't enough, `react-native-keyboard-controller` gives you more control with smooth animations tied to the keyboard frame.
+Se `KeyboardAvoidingView` ainda não for suficiente, `react-native-keyboard-controller` oferece mais controle com animações suaves vinculadas ao frame do teclado.
 :::
 
 ---
 
-## `<ActivityIndicator>` — Loading Spinner
+## `<ActivityIndicator>` — Spinner de Carregamento
 
 ```tsx
 <ActivityIndicator
     size="large"          // "small" | "large" | number
     color="#0064d2"
-    animating={isLoading}  // show/hide without unmounting
+    animating={isLoading}  // mostrar/ocultar sem desmontar
 />
 ```
 
 ---
 
-## Exercises
+## Exercícios
 
-1. **Build a `UserCard`** that displays a remote avatar image, a name, and an optional "verified" badge. Use `<Image>`, `<Text>`, and `<View>`. Add a `<Pressable>` wrapper that logs the user's name when tapped.
+1. **Construa um `UserCard`** que exibe uma imagem de avatar remota, um nome e um badge opcional de "verificado". Use `<Image>`, `<Text>` e `<View>`. Adicione um wrapper `<Pressable>` que registra o nome do usuário quando pressionado.
 
-2. **Build a settings screen** with three `TextInput` fields (username, email, bio). Wire them all to state. Add a "Save" button that is disabled until all three fields are non-empty.
+2. **Construa uma tela de configurações** com três campos `TextInput` (nome de usuário, email, bio). Conecte todos ao estado. Adicione um botão "Salvar" que fica desabilitado até que os três campos estejam preenchidos.
 
-3. **Build a paginated list** using `FlatList` with `onEndReached`. Start with 10 items. Each time the user scrolls to the bottom, append 10 more. Show an `ActivityIndicator` in `ListFooterComponent` while loading.
+3. **Construa uma lista paginada** usando `FlatList` com `onEndReached`. Comece com 10 itens. Cada vez que o usuário rolar até o fim, adicione mais 10. Mostre um `ActivityIndicator` no `ListFooterComponent` enquanto carrega.
 
 ---
 
-## Resources
+## Recursos
 
-| Resource | Type | Link |
+| Recurso | Tipo | Link |
 |---|---|---|
-| RN Core Components | Official Docs | [reactnative.dev/docs/components-and-apis](https://reactnative.dev/docs/components-and-apis) |
-| expo-image | Expo Docs | [docs.expo.dev/versions/latest/sdk/image/](https://docs.expo.dev/versions/latest/sdk/image/) |
+| Componentes Core RN | Docs Oficiais | [reactnative.dev/docs/components-and-apis](https://reactnative.dev/docs/components-and-apis) |
+| expo-image | Docs Expo | [docs.expo.dev/versions/latest/sdk/image/](https://docs.expo.dev/versions/latest/sdk/image/) |
 | react-native-safe-area-context | Community | [github.com/AppAndFlow/react-native-safe-area-context](https://github.com/AppAndFlow/react-native-safe-area-context) |
 
 ---
 
-Next → **[Layout & Flexbox](./layout-and-flexbox)**
+Próximo → **[Layout & Flexbox](./layout-and-flexbox)**

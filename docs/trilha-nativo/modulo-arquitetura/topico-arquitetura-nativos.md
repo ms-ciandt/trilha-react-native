@@ -115,7 +115,7 @@ export function ProfileScreen() {
 
   return (
     <View>
-      <Text>Autenticado: {isAuthenticated ? 'Sim' : 'Não'}</Text>
+      <Text>Authenticated: {isAuthenticated ? 'Yes' : 'No'}</Text>
       <Button title="Logout" onPress={logout} />
     </View>
   );

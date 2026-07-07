@@ -61,9 +61,9 @@ setup_permissions([
 **Info.plist (iOS):**
 ```xml
 <key>NSCameraUsageDescription</key>
-<string>Este app precisa de acesso à câmera para tirar fotos.</string>
+<string>This app needs camera access to take photos.</string>
 <key>NSLocationWhenInUseUsageDescription</key>
-<string>Este app usa sua localização para mostrar pontos próximos.</string>
+<string>This app uses your location to show nearby points of interest.</string>
 ```
 
 **AndroidManifest.xml:**
@@ -258,7 +258,7 @@ import { MMKV } from 'react-native-mmkv';
 
 const storage = new MMKV({
   id: 'user-storage',
-  encryptionKey: 'minha-chave-secreta', // AES-128
+  encryptionKey: 'my-secret-key', // AES-128
 });
 
 // Synchronous operations

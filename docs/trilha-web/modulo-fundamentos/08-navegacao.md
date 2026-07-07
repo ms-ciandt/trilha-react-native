@@ -100,7 +100,7 @@ function AppStack() {
 
 ```tsx
 // Navigating (equivalent to navigate() from React Router)
-navigation.navigate('ProductDetails', { productId: '42', productName: 'Tênis' });
+navigation.navigate('ProductDetails', { productId: '42', productName: 'Sneakers' });
 
 // Receiving parameters (equivalent to useParams())
 const { productId, productName } = route.params;

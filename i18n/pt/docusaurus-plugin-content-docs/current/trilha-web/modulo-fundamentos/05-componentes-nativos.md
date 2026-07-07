@@ -1,41 +1,41 @@
 ---
-title: Native Components for Web Developers
+title: Componentes Nativos para Desenvolvedores Web
 ---
 
-# Native Components for Web Developers
+# Componentes Nativos para Desenvolvedores Web
 
-> You know React components. RN components work the same way — just different primitive names and a few mobile-specific behaviours.
+> Você conhece componentes React. Os componentes do RN funcionam do mesmo jeito — apenas nomes primitivos diferentes e alguns comportamentos específicos de mobile.
 
-## The Essential Swap
+## A Troca Essencial
 
-| Web | React Native | Notes |
+| Web | React Native | Notas |
 |-----|--------------|-------|
-| `<div>` | `<View>` | The container for everything |
-| `<span>`, `<p>`, `<h1>`–`<h6>` | `<Text>` | ALL text must be in `<Text>` |
-| `<img>` | `<Image>` | `source={{ uri }}` for remote, `require()` for local |
-| `<input type="text">` | `<TextInput>` | `onChangeText` gives you the string directly |
-| `<button>` | `<Pressable>` + `<Text>` | Or `<Button>` for a simple native button |
-| `<a>` | `<Pressable>` + `navigation.navigate()` | No `href` on arbitrary elements; links are imperative |
-| `<ul>` + infinite scroll | `<FlatList>` | Virtualized, handles large lists |
-| `<select>` | Community `<Picker>` or ActionSheet | No built-in dropdown |
-| `<textarea>` | `<TextInput multiline />` | Same component, different props |
-| `<form>` | None | Group `TextInput`s manually |
-| `<video>` | `expo-video` | Platform video player |
-| `<input type="checkbox">` | `<Switch>` (toggle) or community lib | |
+| `<div>` | `<View>` | O contêiner para tudo |
+| `<span>`, `<p>`, `<h1>`–`<h6>` | `<Text>` | TODO texto deve estar em `<Text>` |
+| `<img>` | `<Image>` | `source={{ uri }}` para remoto, `require()` para local |
+| `<input type="text">` | `<TextInput>` | `onChangeText` dá a string diretamente |
+| `<button>` | `<Pressable>` + `<Text>` | Ou `<Button>` para um botão nativo simples |
+| `<a>` | `<Pressable>` + `navigation.navigate()` | Sem `href` em elementos arbitrários; links são imperativos |
+| `<ul>` + scroll infinito | `<FlatList>` | Virtualizado, lida com listas grandes |
+| `<select>` | `<Picker>` community ou ActionSheet | Sem dropdown nativo |
+| `<textarea>` | `<TextInput multiline />` | Mesmo componente, props diferentes |
+| `<form>` | Nenhum | Agrupe `TextInput`s manualmente |
+| `<video>` | `expo-video` | Player de vídeo da plataforma |
+| `<input type="checkbox">` | `<Switch>` (toggle) ou lib community | |
 | `<progress>` | `<ProgressBar>` (community) | |
 
 ---
 
-## `<View>` — Think `<div>` but Flexbox-First
+## `<View>` — Pense em `<div>` mas Flexbox-First
 
 ```tsx
-// Web div
+// div Web
 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
     <div>Item 1</div>
     <div>Item 2</div>
 </div>
 
-// React Native View — flex column by default. gap, rowGap, columnGap all supported.
+// React Native View — flex column por padrão. gap, rowGap, columnGap todos suportados.
 <View style={{ gap: 8 }}>
     <View><Text>Item 1</Text></View>
     <View><Text>Item 2</Text></View>
@@ -44,33 +44,33 @@ title: Native Components for Web Developers
 
 ---
 
-## `<Text>` — All Text Lives Here
+## `<Text>` — Todo Texto Vive Aqui
 
-The biggest change: you cannot render text outside of a `<Text>` component.
+A maior mudança: você não pode renderizar texto fora de um componente `<Text>`.
 
 ```tsx
-//  Text outside Text — CRASH
+//  Texto fora de Text — CRASH
 <View>
-    Hello World
+    Olá Mundo
 </View>
 
 // 
 <View>
-    <Text>Hello World</Text>
+    <Text>Olá Mundo</Text>
 </View>
 
-// Inline styles via nested Text (no <strong>, <em>, <span>)
+// Estilos inline via Text aninhado (sem <strong>, <em>, <span>)
 <Text style={{ fontSize: 16 }}>
-    This is{' '}
-    <Text style={{ fontWeight: 'bold' }}>bold</Text>
-    {' '}and this is{' '}
-    <Text style={{ fontStyle: 'italic', color: '#0064d2' }}>italic blue</Text>
+    Isto é{' '}
+    <Text style={{ fontWeight: 'bold' }}>negrito</Text>
+    {' '}e isto é{' '}
+    <Text style={{ fontStyle: 'italic', color: '#0064d2' }}>itálico azul</Text>
 </Text>
 ```
 
 ---
 
-## `<TextInput>` — The Input Element
+## `<TextInput>` — O Elemento de Input
 
 ```tsx
 // Web
@@ -78,74 +78,74 @@ The biggest change: you cannot render text outside of a `<Text>` component.
     type="text"
     value={email}
     onChange={(e) => setEmail(e.target.value)}
-    placeholder="Enter email"
+    placeholder="Digite o email"
 />
 
-// React Native — onChangeText gives you the string directly (no e.target.value)
+// React Native — onChangeText dá a string diretamente (sem e.target.value)
 <TextInput
     value={email}
-    onChangeText={setEmail}          // string, not event
-    placeholder="Enter email"
+    onChangeText={setEmail}          // string, não evento
+    placeholder="Digite o email"
     keyboardType="email-address"
     autoCapitalize="none"
     autoCorrect={false}
 />
 ```
 
-### Common `TextInput` Props
+### Props Comuns do `TextInput`
 
 ```tsx
 <TextInput
-    // Content
+    // Conteúdo
     value={text}
     onChangeText={setText}
-    defaultValue="initial"         // uncontrolled (like input's defaultValue on web)
-    placeholder="Placeholder text"
+    defaultValue="inicial"          // não controlado (como defaultValue do input na web)
+    placeholder="Texto placeholder"
     placeholderTextColor="#9ca3af"
 
-    // Keyboard type
+    // Tipo de teclado
     keyboardType="default"         // "numeric" | "email-address" | "phone-pad" | "url"
     returnKeyType="next"           // "done" | "next" | "search" | "go"
-    secureTextEntry={true}         // Password field
+    secureTextEntry={true}         // Campo de senha
 
-    // Behavior
-    multiline={true}               // Textarea-like
-    numberOfLines={4}              // Height hint for multiline
+    // Comportamento
+    multiline={true}               // Similar a textarea
+    numberOfLines={4}              // Dica de altura para multiline
     autoFocus={true}
     autoCapitalize="sentences"     // "none" | "words" | "sentences" | "characters"
     autoCorrect={false}
 
-    // Events
-    onSubmitEditing={handleSubmit} // Return key pressed
+    // Eventos
+    onSubmitEditing={handleSubmit} // Tecla return pressionada
     onFocus={handleFocus}
     onBlur={handleBlur}
 
-    // Styling
+    // Estilização
     style={styles.input}
 />
 ```
 
 ---
 
-## `<Pressable>` — The Click Handler
+## `<Pressable>` — O Handler de Clique
 
-On the web, almost any element can have an `onClick`. In RN, you wrap things in `<Pressable>`:
+Na web, quase qualquer elemento pode ter um `onClick`. No RN, você envolve coisas em `<Pressable>`:
 
 ```tsx
-// Web — click on anything
-<div onClick={handleClick}>Clickable div</div>
-<span onClick={handleClick}>Clickable span</span>
+// Web — clique em qualquer coisa
+<div onClick={handleClick}>Div clicável</div>
+<span onClick={handleClick}>Span clicável</span>
 <img src={...} onClick={handleClick} />
 
-// React Native — wrap in Pressable
+// React Native — envolva em Pressable
 <Pressable onPress={handlePress}>
     <View style={styles.card}>
         <Image source={{ uri: imageUrl }} style={styles.image} />
-        <Text>Card title</Text>
+        <Text>Título do card</Text>
     </View>
 </Pressable>
 
-// Pressable with visual feedback (like :hover/:active in CSS)
+// Pressable com feedback visual (como :hover/:active no CSS)
 <Pressable
     onPress={handlePress}
     style={({ pressed }) => ({
@@ -154,36 +154,36 @@ On the web, almost any element can have an `onClick`. In RN, you wrap things in 
         transform: [{ scale: pressed ? 0.97 : 1 }],
     })}
 >
-    <Text style={styles.buttonText}>Press Me</Text>
+    <Text style={styles.buttonText}>Pressione-me</Text>
 </Pressable>
 ```
 
 ---
 
-## `<FlatList>` — The Virtualized List
+## `<FlatList>` — A Lista Virtualizada
 
-For long lists, `FlatList` is essential — it only renders what's visible on screen:
+Para listas longas, `FlatList` é essencial — renderiza apenas o que está visível na tela:
 
 ```tsx
-// Web — render all items (fine for short lists)
+// Web — renderiza todos os itens (ok para listas curtas)
 {items.map(item => <ItemCard key={item.id} item={item} />)}
 
-// React Native — FlatList for potentially long lists
+// React Native — FlatList para listas potencialmente longas
 <FlatList
     data={items}
     keyExtractor={item => item.id}
     renderItem={({ item }) => <ItemCard item={item} />}
 
-    // Grid layout (CSS grid equivalent)
+    // Layout em grade (equivalente ao CSS grid)
     numColumns={2}
-    columnWrapperStyle={{ gap: 8 }}  // gap between columns
-    contentContainerStyle={{ padding: 16, gap: 8 }} // gap between rows
+    columnWrapperStyle={{ gap: 8 }}  // gap entre colunas
+    contentContainerStyle={{ padding: 16, gap: 8 }} // gap entre linhas
 
     // Pull to refresh
     refreshing={isRefreshing}
     onRefresh={handleRefresh}
 
-    // Infinite scroll
+    // Scroll infinito
     onEndReached={loadMore}
     onEndReachedThreshold={0.3}
 />
@@ -208,9 +208,9 @@ const [isEnabled, setIsEnabled] = useState(false);
 
 ---
 
-## Exercises
+## Exercícios
 
-1. **Convert this web React component** to React Native:
+1. **Converta este componente React web** para React Native:
    ```tsx
    function UserCard({ user }: { user: User }) {
        return (
@@ -225,10 +225,10 @@ const [isEnabled, setIsEnabled] = useState(false);
    }
    ```
 
-2. **Build a search input** with a TextInput that debounces user input by 300ms before calling a `search(query)` function.
+2. **Construa um input de busca** com um TextInput que debounce o input do usuário em 300ms antes de chamar uma função `search(query)`.
 
-3. **Build a settings screen** with three toggle switches (Push Notifications, Dark Mode, Analytics), each persisting its state.
+3. **Construa uma tela de configurações** com três toggle switches (Notificações Push, Modo Escuro, Analytics), cada um persistindo seu estado.
 
 ---
 
-Next → **[Styling & Flexbox for Web Devs](./estilos-flexbox)**
+Próximo → **[Estilização & Flexbox para Devs Web](./estilos-flexbox)**

@@ -1,29 +1,29 @@
 ---
-title: State & Hooks in Depth
+title: Estado & Hooks em Profundidade
 ---
 
-# State & Hooks in Depth
+# Estado & Hooks em Profundidade
 
-> Hooks are how React function components manage state, side effects, performance, and shared logic. They replace class lifecycle methods and ViewModels.
+> Hooks são como componentes funcionais React gerenciam estado, efeitos colaterais, performance e lógica compartilhada. Eles substituem os métodos de ciclo de vida de classes e ViewModels.
 
-## Rules of Hooks
+## Regras dos Hooks
 
-Before anything else — hooks have two hard rules:
+Antes de tudo — hooks têm duas regras rígidas:
 
-1. **Only call hooks at the top level** — not inside loops, conditions, or nested functions
-2. **Only call hooks from React components** (or other hooks)
+1. **Chame hooks apenas no nível superior** — não dentro de loops, condicionais ou funções aninhadas
+2. **Chame hooks apenas de componentes React** (ou de outros hooks)
 
 ```tsx
-// WRONG
+// ERRADO
 function MyComponent({ show }: { show: boolean }) {
     if (show) {
-        const [value, setValue] = useState(0); // ERROR — conditional hook
+        const [value, setValue] = useState(0); // ERRO — hook condicional
     }
 }
 
-// CORRECT
+// CORRETO
 function MyComponent({ show }: { show: boolean }) {
-    const [value, setValue] = useState(0); // always at top level
+    const [value, setValue] = useState(0); // sempre no nível superior
     if (!show) return null;
     return <Text>{value}</Text>;
 }
@@ -31,57 +31,57 @@ function MyComponent({ show }: { show: boolean }) {
 
 ---
 
-## `useState` — Reactive State
+## `useState` — Estado Reativo
 
 ```tsx
-// Simple value
+// Valor simples
 const [count, setCount] = useState(0);
 
-// Object state
+// Estado como objeto
 const [form, setForm] = useState({ email: '', password: '' });
-// Update one field immutably
+// Atualiza um campo de forma imutável
 const updateEmail = (email: string) => setForm(prev => ({ ...prev, email }));
 
-// Functional update (when new state depends on previous)
+// Atualização funcional (quando o novo estado depende do anterior)
 const increment = () => setCount(prev => prev + 1);
-// Use the functional form when the new value depends on the old one
-// — avoids stale closure bugs in async code
+// Use a forma funcional quando o novo valor depende do antigo
+// — evita bugs de closure desatualizada em código assíncrono
 ```
 
 ---
 
-## `useEffect` — Side Effects
+## `useEffect` — Efeitos Colaterais
 
-Covered in React Fundamentals. Key patterns:
+Abordado em Fundamentos do React. Padrões principais:
 
 ```tsx
-// Data fetching on mount
+// Busca de dados na montagem
 useEffect(() => {
     fetchData().then(setData);
 }, []);
 
-// Subscription with cleanup
+// Subscription com limpeza
 useEffect(() => {
     const subscription = eventEmitter.addListener('event', handler);
-    return () => subscription.remove(); // cleanup on unmount
+    return () => subscription.remove(); // limpeza na desmontagem
 }, []);
 
-// Derived effect when a value changes (e.g. update navigation header title)
+// Efeito derivado quando um valor muda (ex.: atualizar título do header de navegação)
 useEffect(() => {
-    navigation.setOptions({ title: `Count: ${count}` });
+    navigation.setOptions({ title: `Contagem: ${count}` });
 }, [count]);
 ```
 
 ---
 
-## `useReducer` — Complex State Logic
+## `useReducer` — Lógica de Estado Complexa
 
-When state transitions get complex — multiple related values, state that depends on the previous state, or many different actions — `useReducer` is cleaner than several `useState` calls.
+Quando as transições de estado ficam complexas — múltiplos valores relacionados, estado que depende do anterior, ou muitas ações diferentes — `useReducer` é mais limpo do que vários `useState`.
 
 ```tsx
 import { useReducer } from 'react';
 
-// Define state shape and all possible actions
+// Define o formato do estado e todas as ações possíveis
 interface AuthState {
     status: 'idle' | 'loading' | 'success' | 'error';
     user: User | null;
@@ -94,7 +94,7 @@ type AuthAction =
     | { type: 'LOGIN_ERROR'; message: string }
     | { type: 'LOGOUT' };
 
-// Pure reducer function — same concept as in Android MVI or Redux
+// Função reducer pura — mesmo conceito do MVI do Android ou Redux
 function authReducer(state: AuthState, action: AuthAction): AuthState {
     switch (action.type) {
         case 'LOGIN_START':
@@ -129,43 +129,43 @@ function LoginScreen() {
 }
 ```
 
-**Native parallels:**
+**Paralelos nativos:**
 
-| Native | `useReducer` |
+| Nativo | `useReducer` |
 |--------|-------------|
 | Android MVI `reduce(state, intent)` | `authReducer(state, action)` |
-| Swift Composable Architecture `Reducer` | Same pattern, different naming |
-| Redux reducer | Identical concept |
+| Swift Composable Architecture `Reducer` | Mesmo padrão, nomenclatura diferente |
+| Redux reducer | Conceito idêntico |
 
 **`useState` vs `useReducer`:**
 
-- Use `useState` for independent simple values
-- Use `useReducer` when multiple state fields change together or transitions need to be explicit and testable
+- Use `useState` para valores simples independentes
+- Use `useReducer` quando múltiplos campos de estado mudam juntos ou quando as transições precisam ser explícitas e testáveis
 
 ---
 
-## `useRef` — Mutable Values Without Re-render
+## `useRef` — Valores Mutáveis Sem Re-renderização
 
-`useRef` is like a mutable container that survives renders without triggering one. Think of it as an instance variable on a Compose `remember` — it persists across recompositions but changing it doesn't cause one.
+`useRef` é como um contêiner mutável que sobrevive às renderizações sem acionar uma. Pense nele como uma variável de instância em um `remember` do Compose — persiste entre recomposições mas não causa uma ao mudar.
 
 ```tsx
 import { useRef, useEffect } from 'react';
 import { TextInput } from 'react-native';
 
 function SearchBar() {
-    // Ref to a DOM/native node — like findViewById in Android
+    // Ref para um nó DOM/nativo — como findViewById no Android
     const inputRef = useRef<TextInput>(null);
 
-    // Ref to a mutable value (like an instance variable)
+    // Ref para um valor mutável (como uma variável de instância)
     const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     useEffect(() => {
-        // Auto-focus on mount — like input.requestFocus() in Android
+        // Auto-focus na montagem — como input.requestFocus() no Android
         inputRef.current?.focus();
     }, []);
 
     const handleChange = (text: string) => {
-        // Debounce without triggering a re-render on each keystroke
+        // Debounce sem acionar re-renderização a cada tecla
         if (timerRef.current) clearTimeout(timerRef.current);
         timerRef.current = setTimeout(() => {
             performSearch(text);
@@ -178,15 +178,15 @@ function SearchBar() {
 
 ---
 
-## `useMemo` — Expensive Computations
+## `useMemo` — Computações Custosas
 
-`useMemo` caches a computed value. Only recompute when dependencies change. Like Compose's `remember(key) { ... }`:
+`useMemo` armazena em cache um valor computado. Recomputa apenas quando as dependências mudam. Como `remember(key) { ... }` do Compose:
 
 ```tsx
 import { useMemo } from 'react';
 
 function ProductList({ products, filterText }: Props) {
-    // Only recomputes when products or filterText changes
+    // Recomputa apenas quando products ou filterText muda
     const filteredProducts = useMemo(() => {
         return products
             .filter(p => p.name.toLowerCase().includes(filterText.toLowerCase()))
@@ -197,13 +197,13 @@ function ProductList({ products, filterText }: Props) {
 }
 ```
 
-Don't over-optimize with `useMemo` — only use it for genuinely expensive operations.
+Não otimize em excesso com `useMemo` — use apenas para operações genuinamente custosas.
 
 ---
 
-## `useCallback` — Stable Function References
+## `useCallback` — Referências de Função Estáveis
 
-`useCallback` memoizes a function. Prevents child components from re-rendering unnecessarily when a callback hasn't actually changed:
+`useCallback` memoiza uma função. Evita que componentes filhos re-renderizem desnecessariamente quando um callback não mudou de fato:
 
 ```tsx
 import { useCallback } from 'react';
@@ -211,11 +211,11 @@ import { useCallback } from 'react';
 function ParentList() {
     const [items, setItems] = useState(['a', 'b', 'c']);
 
-    // Without useCallback: new function reference on every render
-    // → FlatList's renderItem would re-render every row
+    // Sem useCallback: nova referência de função a cada render
+    // → renderItem da FlatList re-renderizaria cada linha
     const handleDelete = useCallback((id: string) => {
         setItems(prev => prev.filter(item => item !== id));
-    }, []); // empty deps — function never changes
+    }, []); // deps vazias — a função nunca muda
 
     return (
         <FlatList
@@ -231,12 +231,12 @@ function ParentList() {
 
 ---
 
-## Custom Hooks — Reusable Logic
+## Custom Hooks — Lógica Reutilizável
 
-You can extract stateful logic into your own hooks. Naming convention: **must start with `use`**.
+Você pode extrair lógica com estado em seus próprios hooks. Convenção de nomenclatura: **deve começar com `use`**.
 
 ```tsx
-// useLocalStorage-like hook for React Native (using AsyncStorage)
+// Hook parecido com useLocalStorage para React Native (usando AsyncStorage)
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useState, useEffect } from 'react';
 
@@ -249,7 +249,7 @@ function usePersistedState<T>(key: string, initialValue: T) {
                 try {
                     setValue(JSON.parse(stored));
                 } catch {
-                    // corrupted storage — discard and keep initialValue
+                    // storage corrompido — descarta e mantém valor inicial
                     AsyncStorage.removeItem(key);
                 }
             }
@@ -264,44 +264,44 @@ function usePersistedState<T>(key: string, initialValue: T) {
     return [value, setPersistedValue] as const;
 }
 
-// Usage — just like useState, but persisted across app restarts
+// Uso — igual ao useState, mas persistido entre reinicializações do app
 function SettingsScreen() {
     const [isDark, setIsDark] = usePersistedState('theme', false);
     return <Switch value={isDark} onValueChange={setIsDark} />;
 }
 ```
 
-Custom hooks are the equivalent of a Kotlin extension function on a ViewModel, or a SwiftUI view modifier — reusable logic that any component can plug in.
+Custom hooks são o equivalente a uma função de extensão Kotlin em um ViewModel, ou um view modifier do SwiftUI — lógica reutilizável que qualquer componente pode plugar.
 
 ---
 
-## Hook Comparison Table
+## Tabela Comparativa de Hooks
 
-| Hook | Native Equivalent | When to Use |
+| Hook | Equivalente Nativo | Quando Usar |
 |------|------------------|-------------|
-| `useState` | `mutableStateOf` / `@State` | Any reactive value |
-| `useEffect` | `LaunchedEffect` / `onAppear` + `onDisappear` | Side effects, subscriptions, data fetching |
-| `useRef` | Instance variable / `remember { ... }` without `State` | Mutable non-reactive values, native node refs |
-| `useMemo` | `remember(key) { ... }` | Expensive derived values |
-| `useCallback` | N/A (Compose uses stable lambdas) | Stable function references for child components |
-| `useContext` | `CompositionLocal` / `@EnvironmentObject` | Cross-tree data (theme, auth, locale) |
-| Custom hook | Extension on ViewModel / ViewModifier | Reusable stateful logic |
+| `useState` | `mutableStateOf` / `@State` | Qualquer valor reativo |
+| `useEffect` | `LaunchedEffect` / `onAppear` + `onDisappear` | Efeitos colaterais, subscriptions, busca de dados |
+| `useRef` | Variável de instância / `remember { ... }` sem `State` | Valores mutáveis não-reativos, refs de nós nativos |
+| `useMemo` | `remember(key) { ... }` | Valores derivados custosos |
+| `useCallback` | N/A (Compose usa lambdas estáveis) | Referências de função estáveis para componentes filhos |
+| `useContext` | `CompositionLocal` / `@EnvironmentObject` | Dados transversais (tema, auth, locale) |
+| Custom hook | Extensão em ViewModel / ViewModifier | Lógica com estado reutilizável |
 
 ---
 
-## Exercises
+## Exercícios
 
-1. **Build a `useDebounce` hook** that takes a value and a delay, and returns the debounced value (only updates after the delay passes without another change).
+1. **Construa um hook `useDebounce`** que recebe um valor e um delay, e retorna o valor com debounce (só atualiza após o delay passar sem outra mudança).
 
-2. **Build a `useFetch<T>` hook** that takes a URL and returns `{ data: T | null, loading: boolean, error: string | null }`.
+2. **Construa um hook `useFetch<T>`** que recebe uma URL e retorna `{ data: T | null, loading: boolean, error: string | null }`.
 
-3. **Identify the bug** in this code and fix it:
+3. **Identifique o bug** neste código e corrija:
    ```tsx
    function Timer() {
        const [seconds, setSeconds] = useState(0);
        useEffect(() => {
            const interval = setInterval(() => {
-               setSeconds(seconds + 1); // bug here
+               setSeconds(seconds + 1); // bug aqui
            }, 1000);
            return () => clearInterval(interval);
        }, []);
@@ -311,14 +311,14 @@ Custom hooks are the equivalent of a Kotlin extension function on a ViewModel, o
 
 ---
 
-## Resources
+## Recursos
 
-| Resource | Type | Link |
+| Recurso | Tipo | Link |
 |---|---|---|
-| react.dev — Hooks Reference | Official Docs | [react.dev/reference/react](https://react.dev/reference/react) |
-| react.dev — Escape Hatches (useRef, useEffect) | Official Docs | [react.dev/learn/escape-hatches](https://react.dev/learn/escape-hatches) |
+| react.dev — Referência de Hooks | Docs Oficiais | [react.dev/reference/react](https://react.dev/reference/react) |
+| react.dev — Escape Hatches (useRef, useEffect) | Docs Oficiais | [react.dev/learn/escape-hatches](https://react.dev/learn/escape-hatches) |
 | usehooks.com | Community Hooks | [usehooks.com](https://usehooks.com/) |
 
 ---
 
-Next → **[React Native Core Components](./rn-core-components)**
+Próximo → **[Componentes Core do React Native](./rn-core-components)**

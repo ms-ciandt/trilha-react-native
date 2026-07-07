@@ -1,23 +1,23 @@
 ---
-title: Lists & Navigation in React Native
+title: Listas & Navegação no React Native
 ---
 
-# Lists & Navigation in React Native
+# Listas & Navegação no React Native
 
-> You've built lists with `.map()` and navigated with React Router. This module shows you RN's virtualized list APIs and how React Navigation handles screen transitions on mobile.
+> Você já construiu listas com `.map()` e navegou com React Router. Este módulo mostra as APIs de listas virtualizadas do RN e como o React Navigation gerencia transições de tela no mobile.
 
-## Lists
+## Listas
 
-### When to Use What
+### Quando Usar o Quê
 
-| Situation | Use |
+| Situação | Use |
 |-----------|-----|
-| Short static list (< ~20 items) | `ScrollView` + `.map()` |
-| Long or dynamic list | `FlatList` |
-| Grouped list (like iOS settings) | `SectionList` |
-| Grid layout | `FlatList` with `numColumns` |
+| Lista estática curta (< ~20 itens) | `ScrollView` + `.map()` |
+| Lista longa ou dinâmica | `FlatList` |
+| Lista agrupada (como configurações do iOS) | `SectionList` |
+| Layout em grade | `FlatList` com `numColumns` |
 
-### `FlatList` — The Workhorse
+### `FlatList` — O Carro-chefe
 
 ```tsx
 interface Product {
@@ -35,13 +35,13 @@ function ProductList({ products }: { products: Product[] }) {
     return (
         <FlatList
             data={products}
-            keyExtractor={product => String(product.id)} // always coerce — String() handles number and string ids
+            keyExtractor={product => String(product.id)} // sempre converta — String() lida com ids numéricos e string
             renderItem={renderProduct}
 
             // Performance
-            // ️ removeClippedSubviews has documented content-missing bugs on Android
-            // (blank areas on scroll-back). Measure before enabling in production.
-            // Higher-impact: getItemLayout (fixed-height items) and windowSize (default 21, try 5–10).
+            // ️ removeClippedSubviews tem bugs documentados de conteúdo faltando no Android
+            // (áreas em branco ao rolar de volta). Meça antes de habilitar em produção.
+            // Maior impacto: getItemLayout (itens de altura fixa) e windowSize (padrão 21, tente 5–10).
             removeClippedSubviews={true}
             maxToRenderPerBatch={10}
             initialNumToRender={8}
@@ -50,19 +50,19 @@ function ProductList({ products }: { products: Product[] }) {
             contentContainerStyle={{ padding: 16, gap: 8 }}
             showsVerticalScrollIndicator={false}
 
-            // Empty state
+            // Estado vazio
             ListEmptyComponent={
                 <View style={{ alignItems: 'center', padding: 32 }}>
-                    <Text style={{ color: '#9ca3af' }}>No products found</Text>
+                    <Text style={{ color: '#9ca3af' }}>Nenhum produto encontrado</Text>
                 </View>
             }
 
-            // Load more
+            // Carregar mais
             onEndReached={loadMore}
             onEndReachedThreshold={0.5}
             ListFooterComponent={isLoading ? <ActivityIndicator /> : null}
 
-            // Refresh
+            // Atualizar
             refreshing={isRefreshing}
             onRefresh={handleRefresh}
         />
@@ -70,10 +70,10 @@ function ProductList({ products }: { products: Product[] }) {
 }
 ```
 
-### Grid with `numColumns`
+### Grade com `numColumns`
 
 ```tsx
-// Like CSS grid with equal columns
+// Como CSS grid com colunas iguais
 <FlatList
     data={images}
     keyExtractor={img => String(img.id)}
@@ -83,13 +83,13 @@ function ProductList({ products }: { products: Product[] }) {
     renderItem={({ item }) => (
         <Image
             source={{ uri: item.url }}
-            style={{ flex: 1, aspectRatio: 1 }}  // square cells
+            style={{ flex: 1, aspectRatio: 1 }}  // células quadradas
         />
     )}
 />
 ```
 
-### `SectionList` — Grouped Content
+### `SectionList` — Conteúdo Agrupado
 
 ```tsx
 interface Section {
@@ -98,9 +98,9 @@ interface Section {
 }
 
 const sections: Section[] = [
-    { title: 'Featured', data: featuredProducts },
-    { title: 'New Arrivals', data: newProducts },
-    { title: 'On Sale', data: saleProducts },
+    { title: 'Destaques', data: featuredProducts },
+    { title: 'Novidades', data: newProducts },
+    { title: 'Em Promoção', data: saleProducts },
 ];
 
 <SectionList
@@ -112,24 +112,24 @@ const sections: Section[] = [
             <Text style={styles.sectionTitle}>{section.title}</Text>
         </View>
     )}
-    stickySectionHeadersEnabled={true}  // sticky like iOS section headers
+    stickySectionHeadersEnabled={true}  // fixo como headers de seção do iOS
 />
 ```
 
 ---
 
-## Navigation with React Navigation
+## Navegação com React Navigation
 
-Mobile navigation is fundamentally different from the web. There's no URL bar — navigation is a **stack of screens pushed onto memory**, with native gestures (swipe back on iOS, Android back button) to pop them off.
+A navegação mobile é fundamentalmente diferente da web. Não existe barra de URL — a navegação é uma **pilha de telas empurradas para a memória**, com gestos nativos (swipe back no iOS, botão voltar do Android) para removê-las.
 
-**React Navigation** is the standard library for this. Install it in a React Native CLI project:
+O **React Navigation** é a biblioteca padrão para isso. Instale em um projeto React Native CLI:
 
 ```bash
 npm install @react-navigation/native @react-navigation/native-stack
 npm install react-native-screens react-native-safe-area-context
 ```
 
-### Setting Up the Navigator
+### Configurando o Navigator
 
 ```tsx
 // App.tsx
@@ -157,7 +157,7 @@ export default function App() {
 }
 ```
 
-### Navigating Between Screens
+### Navegando Entre Telas
 
 ```tsx
 import { useNavigation } from '@react-navigation/native';
@@ -170,24 +170,24 @@ function HomeScreen() {
 
     return (
         <View>
-            {/* Push a new screen */}
+            {/* Empurrar uma nova tela */}
             <Pressable onPress={() => navigation.navigate('Profile', { userId: '123' })}>
-                <Text>Go to Profile</Text>
+                <Text>Ir para Perfil</Text>
             </Pressable>
-            {/* Go back */}
+            {/* Voltar */}
             <Pressable onPress={() => navigation.goBack()}>
-                <Text>Back</Text>
+                <Text>Voltar</Text>
             </Pressable>
-            {/* Replace current screen (no back) */}
+            {/* Substituir tela atual (sem back) */}
             <Pressable onPress={() => navigation.replace('Home')}>
-                <Text>Reset</Text>
+                <Text>Resetar</Text>
             </Pressable>
         </View>
     );
 }
 ```
 
-### Reading Route Params
+### Lendo Parâmetros de Rota
 
 ```tsx
 import { useRoute, RouteProp } from '@react-navigation/native';
@@ -198,11 +198,11 @@ function ProfileScreen() {
     const route = useRoute<ProfileRouteProp>();
     const { userId } = route.params;
 
-    return <Text>User: {userId}</Text>;
+    return <Text>Usuário: {userId}</Text>;
 }
 ```
 
-### Tab Navigation
+### Navegação por Tabs
 
 ```tsx
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -223,45 +223,45 @@ function MainTabs() {
 
 ---
 
-## Web Routing vs Mobile Navigation
+## Roteamento Web vs Navegação Mobile
 
 | Web (React Router / Next.js) | React Native (React Navigation) |
 |------------------------------|---------------------------------|
-| URL-based, shareable links | Deep links supported, but optional |
-| Browser back button | Native back gesture (swipe left on iOS) |
-| `<Link to="...">` | `navigation.navigate('ScreenName')` |
+| Baseado em URL, links compartilháveis | Deep links suportados, mas opcionais |
+| Botão voltar do browser | Gesto voltar nativo (swipe esquerda no iOS) |
+| `<Link to="...">` | `navigation.navigate('NomeDaTela')` |
 | `useNavigate()` push/replace | `navigation.navigate()` / `navigation.replace()` |
-| Query strings `?key=val` | `route.params` object |
-| Modal via route | `presentation: 'modal'` in Stack.Screen |
-| 404 page | Catch-all screen in navigator |
+| Query strings `?key=val` | Objeto `route.params` |
+| Modal via rota | `presentation: 'modal'` no Stack.Screen |
+| Página 404 | Tela catch-all no navigator |
 
 ---
 
-> **About Expo Router**
+> **Sobre o Expo Router**
 >
-> If you use **Expo** (instead of React Native CLI), **Expo Router** offers file-based routing — closer to Next.js App Router in mental model. It's a valid alternative, but it's tied to the Expo toolchain. Research it separately at [docs.expo.dev/router/introduction/](https://docs.expo.dev/router/introduction/).
+> Se você usa o **Expo** (em vez do React Native CLI), o **Expo Router** oferece roteamento baseado em arquivos — mais próximo do App Router do Next.js em modelo mental. É uma alternativa válida, mas está vinculada ao toolchain do Expo. Pesquise separadamente em [docs.expo.dev/router/introduction/](https://docs.expo.dev/router/introduction/).
 
 ---
 
-## Resources
+## Recursos
 
-| Resource | Type | Link |
+| Recurso | Tipo | Link |
 |---|---|---|
-| React Navigation Getting Started | Official | [reactnavigation.org/docs/getting-started](https://reactnavigation.org/docs/getting-started) |
-| React Navigation — Stack Navigator | Official | [reactnavigation.org/docs/native-stack-navigator](https://reactnavigation.org/docs/native-stack-navigator) |
-| FlatList API | Official | [reactnative.dev/docs/flatlist](https://reactnative.dev/docs/flatlist) |
-| SectionList API | Official | [reactnative.dev/docs/sectionlist](https://reactnative.dev/docs/sectionlist) |
-| notJust.dev — Full Course (8hr) | Video | [youtube.com/@notjustdev](https://www.youtube.com/@notjustdev) |
+| Início Rápido React Navigation | Oficial | [reactnavigation.org/docs/getting-started](https://reactnavigation.org/docs/getting-started) |
+| React Navigation — Stack Navigator | Oficial | [reactnavigation.org/docs/native-stack-navigator](https://reactnavigation.org/docs/native-stack-navigator) |
+| API FlatList | Oficial | [reactnative.dev/docs/flatlist](https://reactnative.dev/docs/flatlist) |
+| API SectionList | Oficial | [reactnative.dev/docs/sectionlist](https://reactnative.dev/docs/sectionlist) |
+| notJust.dev — Curso Completo (8h) | Vídeo | [youtube.com/@notjustdev](https://www.youtube.com/@notjustdev) |
 
 ---
 
-Next → **[Navegação](./navegacao-web)**
+Próximo → **[Navegação](./navegacao-web)**
 
 ---
 
- **You've completed the Web Dev Track!**
+ **Você concluiu a Trilha Web!**
 
-You now have the foundations to build real React Native apps. Next steps:
-- Create your first Expo project: `npx create-expo-app@latest MyApp`
-- Try [Expo Snack](https://snack.expo.dev) for quick experiments
-- Watch [notJust.dev's free 8-hour course](https://www.youtube.com/@notjustdev) for a full project walkthrough
+Você agora tem os fundamentos para construir apps React Native reais. Próximos passos:
+- Crie seu primeiro projeto Expo: `npx create-expo-app@latest MyApp`
+- Experimente o [Expo Snack](https://snack.expo.dev) para experimentos rápidos
+- Assista ao [curso gratuito de 8 horas do notJust.dev](https://www.youtube.com/@notjustdev) para um walkthrough completo de projeto

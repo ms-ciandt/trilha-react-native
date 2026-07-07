@@ -1,19 +1,19 @@
 ---
-title: TypeScript for Web Developers in React Native
+title: TypeScript para Desenvolvedores Web no React Native
 ---
 
-# TypeScript for Web Developers
+# TypeScript para Desenvolvedores Web
 
-> If you've used TypeScript on the web, you're mostly ready. This module covers the RN-specific types and patterns you'll encounter.
+> Se você já usou TypeScript na web, você está praticamente pronto. Este módulo cobre os tipos e padrões específicos do RN que você vai encontrar.
 
-## React Native–Specific Types
+## Tipos Específicos do React Native
 
-### Style Types
+### Tipos de Estilo
 
 ```typescript
 import { ViewStyle, TextStyle, ImageStyle, StyleProp } from 'react-native';
 
-// Specific style types for each component category
+// Tipos de estilo específicos para cada categoria de componente
 const containerStyle: ViewStyle = {
     flex: 1,
     backgroundColor: '#fff',
@@ -30,14 +30,14 @@ const avatarStyle: ImageStyle = {
     borderRadius: 20,
 };
 
-// StyleProp<T> allows both a single style and an array of styles
+// StyleProp<T> aceita tanto um estilo único quanto um array de estilos
 interface ButtonProps {
-    style?: StyleProp<ViewStyle>;       // accepts style or [style1, style2]
+    style?: StyleProp<ViewStyle>;       // aceita style ou [style1, style2]
     labelStyle?: StyleProp<TextStyle>;
 }
 ```
 
-### Component Ref Types
+### Tipos de Ref de Componente
 
 ```typescript
 import { useRef } from 'react';
@@ -45,15 +45,15 @@ import { TextInput, ScrollView, FlatList } from 'react-native';
 
 const inputRef = useRef<TextInput>(null);
 const scrollRef = useRef<ScrollView>(null);
-const listRef = useRef<FlatList<unknown>>(null); // replace unknown with your item type, e.g. FlatList<Product>
+const listRef = useRef<FlatList<unknown>>(null); // substitua unknown pelo seu tipo de item, ex. FlatList<Product>
 
-// Use the ref
+// Use a ref
 inputRef.current?.focus();
 scrollRef.current?.scrollTo({ y: 0, animated: true });
 listRef.current?.scrollToIndex({ index: 0 });
 ```
 
-### Event Types
+### Tipos de Eventos
 
 ```typescript
 import {
@@ -63,42 +63,42 @@ import {
     GestureResponderEvent,
 } from 'react-native';
 
-// Scroll events
+// Eventos de scroll
 function handleScroll(event: NativeSyntheticEvent<NativeScrollEvent>) {
     const { contentOffset, contentSize } = event.nativeEvent;
     console.log('scrollY:', contentOffset.y);
 }
 
-// TextInput change
+// Mudança no TextInput
 function handleChange(event: NativeSyntheticEvent<TextInputChangeEventData>) {
     console.log(event.nativeEvent.text);
 }
 
-// Press event
+// Evento de pressão
 function handlePress(event: GestureResponderEvent) {
-    console.log('pressed at:', event.nativeEvent.locationX, event.nativeEvent.locationY);
+    console.log('pressionado em:', event.nativeEvent.locationX, event.nativeEvent.locationY);
 }
 ```
 
 ---
 
-## Typing Navigation (React Navigation)
+## Tipando a Navegação (React Navigation)
 
-React Navigation uses a typed param list to make navigation type-safe:
+O React Navigation usa uma lista de parâmetros tipada para tornar a navegação type-safe:
 
 ```typescript
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { View, Text, Button } from 'react-native';
 
-// Define the param list for the entire stack
+// Define a lista de parâmetros para toda a stack
 type RootStackParamList = {
-    Home: undefined;                    // no params
-    Profile: { userId: string };        // requires userId
-    Settings: { tab?: 'account' | 'privacy' };  // optional param
+    Home: undefined;                    // sem parâmetros
+    Profile: { userId: string };        // requer userId
+    Settings: { tab?: 'account' | 'privacy' };  // parâmetro opcional
 };
 
-// Typed navigation hook for the Profile screen
+// Hook de navegação tipado para a tela Profile
 type ProfileNavProp = NativeStackNavigationProp<RootStackParamList, 'Profile'>;
 type ProfileRouteProp = RouteProp<RootStackParamList, 'Profile'>;
 
@@ -106,12 +106,12 @@ export default function ProfileScreen() {
     const navigation = useNavigation<ProfileNavProp>();
     const route = useRoute<ProfileRouteProp>();
 
-    // route.params.userId is typed as `string` — no casting needed
+    // route.params.userId é tipado como `string` — sem casting necessário
     return (
         <View>
-            <Text>User ID: {route.params.userId}</Text>
-            <Button title="Go Back" onPress={() => navigation.goBack()} />
-            <Button title="Go Home" onPress={() => navigation.navigate('Home')} />
+            <Text>ID do Usuário: {route.params.userId}</Text>
+            <Button title="Voltar" onPress={() => navigation.goBack()} />
+            <Button title="Ir para Home" onPress={() => navigation.navigate('Home')} />
         </View>
     );
 }
@@ -119,7 +119,7 @@ export default function ProfileScreen() {
 
 ---
 
-## Typing AsyncStorage & Async Operations
+## Tipando AsyncStorage & Operações Assíncronas
 
 ```typescript
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -137,8 +137,8 @@ async function saveSession(session: UserSession): Promise<void> {
 async function loadSession(): Promise<UserSession | null> {
     const raw = await AsyncStorage.getItem('session');
     if (!raw) return null;
-    // ️ `as` is not runtime validation — a stale or schema-changed value passes
-    // TypeScript but can silently corrupt app state. In production, validate with
+    // ️ `as` não é validação em runtime — um valor obsoleto ou com schema alterado passa
+    // no TypeScript mas pode corromper silenciosamente o estado do app. Em produção, valide com
     // Zod: `const result = UserSessionSchema.safeParse(JSON.parse(raw))`
     return JSON.parse(raw) as UserSession;
 }
@@ -146,9 +146,9 @@ async function loadSession(): Promise<UserSession | null> {
 
 ---
 
-## Useful Patterns in RN TypeScript
+## Padrões Úteis no TypeScript do RN
 
-### Typing Component Variants
+### Tipando Variantes de Componente
 
 ```typescript
 type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'ghost';
@@ -165,7 +165,7 @@ interface ButtonProps {
 }
 ```
 
-### Discriminated Unions for API State
+### Discriminated Unions para Estado de API
 
 ```typescript
 type AsyncState<T> =
@@ -183,14 +183,14 @@ function useAsyncState<T>() {
 
 ---
 
-## Resources
+## Recursos
 
-| Resource | Type | Link |
+| Recurso | Tipo | Link |
 |---|---|---|
-| TypeScript Handbook | Official | [typescriptlang.org/docs/handbook/intro.html](https://www.typescriptlang.org/docs/handbook/intro.html) |
-| React Native TypeScript | Official | [reactnative.dev/docs/typescript](https://reactnative.dev/docs/typescript) |
-| Total TypeScript (free tutorials) | Community | [totaltypescript.com/tutorials](https://www.totaltypescript.com/tutorials) |
+| TypeScript Handbook | Oficial | [typescriptlang.org/docs/handbook/intro.html](https://www.typescriptlang.org/docs/handbook/intro.html) |
+| React Native TypeScript | Oficial | [reactnative.dev/docs/typescript](https://reactnative.dev/docs/typescript) |
+| Total TypeScript (tutoriais gratuitos) | Community | [totaltypescript.com/tutorials](https://www.totaltypescript.com/tutorials) |
 
 ---
 
-Next → **[Web vs React Native](./web-vs-rn)**
+Próximo → **[Web vs React Native](./web-vs-rn)**

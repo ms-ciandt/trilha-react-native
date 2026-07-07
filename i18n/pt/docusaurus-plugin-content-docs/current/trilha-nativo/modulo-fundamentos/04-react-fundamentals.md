@@ -1,67 +1,67 @@
 ---
-title: "Module 2: React Fundamentals for Native Developers"
+title: "Módulo 2: Fundamentos do React para Devs Nativos"
 ---
 
-# Module 2: React Fundamentals for Native Developers
+# Módulo 2: Fundamentos do React para Devs Nativos
 
-> React is a UI library with one core idea: **your UI is a function of your state**. If you've worked with modern Android (Jetpack Compose) or iOS (SwiftUI), this will click immediately.
+> O React é uma biblioteca de UI com uma ideia central: **sua interface é uma função do seu estado**. Se você já trabalhou com Android moderno (Jetpack Compose) ou iOS (SwiftUI), isso vai fazer sentido imediatamente.
 
-## The Declarative Paradigm
+## O Paradigma Declarativo
 
-**Imperative (Android View system / UIKit):**
+**Imperativo (sistema de Views do Android / UIKit):**
 ```kotlin
-// You tell the system HOW to change the UI step by step
+// Você diz ao sistema COMO mudar a UI passo a passo
 val button = findViewById<Button>(R.id.myButton)
-button.text = "Loading..."
+button.text = "Carregando..."
 button.isEnabled = false
 spinner.visibility = View.VISIBLE
 ```
 
 ```swift
 // UIKit
-button.setTitle("Loading...", for: .normal)
+button.setTitle("Carregando...", for: .normal)
 button.isEnabled = false
 spinner.startAnimating()
 ```
 
-**Declarative (Compose / SwiftUI / React):**
+**Declarativo (Compose / SwiftUI / React):**
 ```kotlin
-// Compose — UI is a function of state
+// Compose — UI é uma função do estado
 @Composable
 fun MyButton(isLoading: Boolean) {
     if (isLoading) {
         CircularProgressIndicator()
     } else {
-        Button(onClick = {}) { Text("Submit") }
+        Button(onClick = {}) { Text("Enviar") }
     }
 }
 ```
 
 ```tsx
-// React — same idea, different syntax
+// React — mesma ideia, sintaxe diferente
 function MyButton({ isLoading }: { isLoading: boolean }) {
     if (isLoading) {
         return <ActivityIndicator />;
     }
-    return <Button onPress={() => {}} title="Submit" />;
+    return <Button onPress={() => {}} title="Enviar" />;
 }
 ```
 
-The mental model: **describe what the UI should look like for a given state, not how to transition to it.** React figures out the diff and updates only what changed — exactly like Compose's recomposition or SwiftUI's view diffing.
+O modelo mental: **descreva como a UI deve parecer para um dado estado, não como transicionar para ele.** O React calcula o diff e atualiza apenas o que mudou — exatamente como a recomposição do Compose ou o diffing de views do SwiftUI.
 
 ---
 
-## Components: The Building Block
+## Componentes: O Bloco de Construção
 
-A React component is a function that takes **props** and returns **JSX**:
+Um componente React é uma função que recebe **props** e retorna **JSX**:
 
 ```tsx
-// The simplest possible component
+// O componente mais simples possível
 function Greeting() {
-    return <Text>Hello!</Text>;
+    return <Text>Olá!</Text>;
 }
 
-// With typed props
+// Com props tipadas
 interface GreetingProps {
     name: string;
     age?: number;
@@ -70,91 +70,91 @@ interface GreetingProps {
 function Greeting({ name, age }: GreetingProps) {
     return (
         <View>
-            <Text>Hello, {name}!</Text>
-            {age !== undefined && <Text>Age: {age}</Text>}
+            <Text>Olá, {name}!</Text>
+            {age !== undefined && <Text>Idade: {age}</Text>}
         </View>
     );
 }
 
-// Usage
+// Uso
 <Greeting name="Alice" age={30} />
 <Greeting name="Bob" />
 ```
 
-**Compose comparison:**
+**Comparação com Compose:**
 ```kotlin
 @Composable
 fun Greeting(name: String, age: Int? = null) {
     Column {
-        Text("Hello, $name!")
-        age?.let { Text("Age: $it") }
+        Text("Olá, $name!")
+        age?.let { Text("Idade: $it") }
     }
 }
 ```
 
-Components can be nested, composed, and reused — just like Composables.
+Componentes podem ser aninhados, compostos e reutilizados — assim como Composables.
 
 ---
 
-## JSX — Not HTML, Not XML
+## JSX — Não é HTML, Não é XML
 
-JSX looks like HTML/XML but it's **JavaScript syntax sugar** that compiles to function calls:
+JSX parece HTML/XML mas é **açúcar sintático do JavaScript** que compila para chamadas de função:
 
 ```tsx
-// JSX (what you write)
-const element = <Text style={{ color: 'red' }}>Hello</Text>;
+// JSX (o que você escreve)
+const element = <Text style={{ color: 'red' }}>Olá</Text>;
 
-// What it compiles to (what you DON'T write)
-const element = React.createElement(Text, { style: { color: 'red' } }, "Hello");
+// O que compila (o que você NÃO escreve)
+const element = React.createElement(Text, { style: { color: 'red' } }, "Olá");
 ```
 
-### JSX Rules
+### Regras do JSX
 
 ```tsx
-// 1. Must return ONE root element (wrap in View or <> fragments)
+// 1. Deve retornar UM elemento raiz (envolva em View ou fragments <>)
 function BadComponent() {
-    // return <Text>First</Text><Text>Second</Text>; // ERROR
+    // return <Text>Primeiro</Text><Text>Segundo</Text>; // ERRO
 }
 
 function GoodComponent() {
     return (
         <>
-            <Text>First</Text>
-            <Text>Second</Text>
+            <Text>Primeiro</Text>
+            <Text>Segundo</Text>
         </>
     );
 }
 
-// 2. All tags must be closed
-// <View>   — BAD
-// <View /> — GOOD (self-closing)
+// 2. Todas as tags devem ser fechadas
+// <View>   — RUIM
+// <View /> — BOM (auto-fechamento)
 
-// 3. className → style (in RN) / class → className (in React web)
-// <Text className="title">  — web React
+// 3. className → style (no RN) / class → className (no React web)
+// <Text className="title">  — React web
 // <Text style={styles.title}> — React Native
 
-// 4. JavaScript expressions go in { }
+// 4. Expressões JavaScript vão em { }
 const name = "Alice";
-<Text>Hello, {name}!</Text>
+<Text>Olá, {name}!</Text>
 <Text>2 + 2 = {2 + 2}</Text>
 
-// 5. Conditional rendering
+// 5. Renderização condicional
 {isLoggedIn && <ProfileScreen />}
 {isLoggedIn ? <ProfileScreen /> : <LoginScreen />}
 ```
 
 ---
 
-## Props: Component Inputs
+## Props: Entradas do Componente
 
-Props are the component's interface — like constructor parameters in a Compose `@Composable` or a SwiftUI `View`.
+Props são a interface do componente — como parâmetros do construtor em um `@Composable` do Compose ou uma `View` do SwiftUI.
 
 ```tsx
 interface CardProps {
     title: string;
-    subtitle?: string;         // optional
-    onPress: () => void;        // callback (like a lambda/closure)
-    children?: React.ReactNode; // nested content (like Compose's `content: @Composable`)
+    subtitle?: string;         // opcional
+    onPress: () => void;        // callback (como um lambda/closure)
+    children?: React.ReactNode; // conteúdo aninhado (como o slot `content: @Composable` do Compose)
 }
 
 function Card({ title, subtitle, onPress, children }: CardProps) {
@@ -167,93 +167,93 @@ function Card({ title, subtitle, onPress, children }: CardProps) {
     );
 }
 
-// Usage with children
-<Card title="My Card" onPress={() => console.log('pressed')}>
-    <Text>This is child content</Text>
+// Uso com children
+<Card title="Meu Card" onPress={() => console.log('pressionado')}>
+    <Text>Este é o conteúdo filho</Text>
 </Card>
 ```
 
-**Props are read-only.** A component can never modify its own props — only the parent can change what it passes down.
+**Props são somente leitura.** Um componente nunca pode modificar suas próprias props — somente o pai pode mudar o que passa para baixo.
 
 ---
 
-## State with `useState`
+## Estado com `useState`
 
-State is data that, when changed, causes the component to re-render. Think of it like `mutableStateOf` in Compose or `@State` in SwiftUI.
+Estado é dado que, quando alterado, causa a re-renderização do componente. Pense como `mutableStateOf` no Compose ou `@State` no SwiftUI.
 
 ```tsx
 import { useState } from 'react';
 
 function Counter() {
-    // [currentValue, setterFunction] = useState(initialValue)
+    // [valorAtual, funçãoSetter] = useState(valorInicial)
     const [count, setCount] = useState(0);
     const [name, setName] = useState('Alice');
 
     return (
         <View>
-            <Text>Count: {count}</Text>
-            <Button title="Increment" onPress={() => setCount(count + 1)} />
-            <Button title="Reset" onPress={() => setCount(0)} />
+            <Text>Contagem: {count}</Text>
+            <Button title="Incrementar" onPress={() => setCount(count + 1)} />
+            <Button title="Resetar" onPress={() => setCount(0)} />
         </View>
     );
 }
 ```
 
-**Compose comparison:**
+**Comparação com Compose:**
 ```kotlin
 @Composable
 fun Counter() {
     var count by remember { mutableStateOf(0) }
 
     Column {
-        Text("Count: $count")
-        Button(onClick = { count++ }) { Text("Increment") }
-        Button(onClick = { count = 0 }) { Text("Reset") }
+        Text("Contagem: $count")
+        Button(onClick = { count++ }) { Text("Incrementar") }
+        Button(onClick = { count = 0 }) { Text("Resetar") }
     }
 }
 ```
 
-**SwiftUI comparison:**
+**Comparação com SwiftUI:**
 ```swift
 struct Counter: View {
     @State private var count = 0
 
     var body: some View {
         VStack {
-            Text("Count: \(count)")
-            Button("Increment") { count += 1 }
-            Button("Reset") { count = 0 }
+            Text("Contagem: \(count)")
+            Button("Incrementar") { count += 1 }
+            Button("Resetar") { count = 0 }
         }
     }
 }
 ```
 
-The mental model is identical across all three — a reactive value that triggers re-render on change.
+O modelo mental é idêntico nas três — um valor reativo que aciona re-renderização ao mudar.
 
-### Updating State Correctly
+### Atualizando Estado Corretamente
 
 ```tsx
-// WRONG — mutating state directly (doesn't trigger re-render)
+// ERRADO — mutando o estado diretamente (não aciona re-renderização)
 const [items, setItems] = useState(['a', 'b', 'c']);
-items.push('d'); // BAD — React won't re-render
+items.push('d'); // RUIM — o React não vai re-renderizar
 
-// CORRECT — always create new values
-setItems([...items, 'd']);           // Add item
-setItems(items.filter(i => i !== 'b')); // Remove item
-setItems(items.map(i => i === 'a' ? 'A' : i)); // Update item
+// CORRETO — sempre crie novos valores
+setItems([...items, 'd']);           // Adicionar item
+setItems(items.filter(i => i !== 'b')); // Remover item
+setItems(items.map(i => i === 'a' ? 'A' : i)); // Atualizar item
 
-// For objects
+// Para objetos
 const [user, setUser] = useState({ name: 'Alice', age: 30 });
-setUser({ ...user, age: 31 }); // Update one field — spread creates new object
+setUser({ ...user, age: 31 }); // Atualiza um campo — spread cria novo objeto
 ```
 
-This immutable update pattern is fundamental to React's change detection.
+Esse padrão de atualização imutável é fundamental para a detecção de mudanças do React.
 
 ---
 
-## `useEffect` — Side Effects & Lifecycle
+## `useEffect` — Efeitos Colaterais e Ciclo de Vida
 
-`useEffect` handles side effects — like `LaunchedEffect` in Compose, `onAppear` in SwiftUI, or `onCreate`/`viewDidLoad` in traditional native.
+`useEffect` lida com efeitos colaterais — como `LaunchedEffect` no Compose, `onAppear` no SwiftUI, ou `onCreate`/`viewDidLoad` no nativo tradicional.
 
 ```tsx
 import { useState, useEffect } from 'react';
@@ -262,14 +262,14 @@ function UserProfile({ userId }: { userId: string }) {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
 
-    // Runs after every render where userId changed
+    // Executa após cada renderização em que userId mudou
     useEffect(() => {
         let cancelled = false;
 
         async function loadUser() {
             setLoading(true);
             const data = await fetchUser(userId);
-            if (!cancelled) {  // guard against stale updates
+            if (!cancelled) {  // proteção contra atualizações obsoletas
                 setUser(data);
                 setLoading(false);
             }
@@ -277,53 +277,53 @@ function UserProfile({ userId }: { userId: string }) {
 
         loadUser();
 
-        // Cleanup function — runs before the next effect or unmount
+        // Função de limpeza — executa antes do próximo efeito ou desmontagem
         return () => { cancelled = true; };
-    }, [userId]); // dependency array — re-run when userId changes
+    }, [userId]); // array de dependências — re-executa quando userId muda
 
     if (loading) return <ActivityIndicator />;
-    if (!user) return <Text>No user found</Text>;
+    if (!user) return <Text>Nenhum usuário encontrado</Text>;
     return <Text>{user.name}</Text>;
 }
 ```
 
-### `useEffect` Dependency Array
+### Array de Dependências do `useEffect`
 
 ```tsx
-useEffect(() => { /* runs after EVERY render */ });
-useEffect(() => { /* runs ONCE on mount */ }, []);
-useEffect(() => { /* runs when dep1 or dep2 changes */ }, [dep1, dep2]);
+useEffect(() => { /* executa após CADA renderização */ });
+useEffect(() => { /* executa UMA VEZ na montagem */ }, []);
+useEffect(() => { /* executa quando dep1 ou dep2 muda */ }, [dep1, dep2]);
 ```
 
-| Native Equivalent | useEffect Pattern |
+| Equivalente Nativo | Padrão useEffect |
 |-------------------|-------------------|
 | `onCreate` / `viewDidLoad` | `useEffect(() => {}, [])` |
-| `onDestroy` / `deinit` | return cleanup from `useEffect` |
-| `onResume` / `viewWillAppear` | Use `useFocusEffect` from React Navigation |
-| Observe a value change | `useEffect(() => {}, [theValue])` |
+| `onDestroy` / `deinit` | retorna limpeza do `useEffect` |
+| `onResume` / `viewWillAppear` | Use `useFocusEffect` do React Navigation |
+| Observar mudança de valor | `useEffect(() => {}, [oValor])` |
 
 ---
 
-## The Component Lifecycle at a Glance
+## O Ciclo de Vida do Componente em Resumo
 
 ```
-Mount:   render → paint to screen → useEffect([], run once)
-Update:  state/prop changes → re-render → paint → useEffect([deps], if deps changed)
-Unmount: cleanup from useEffect → component removed
+Montagem:    renderizar → pintar na tela → useEffect([], executa uma vez)
+Atualização: mudança de estado/prop → re-renderizar → pintar → useEffect([deps], se deps mudou)
+Desmontagem: limpeza do useEffect → componente removido
 ```
 
-:::info useEffect runs after paint
-Unlike `viewDidLoad` (iOS) or `onCreate` (Android) which run before the view is visible, `useEffect` fires **after** the screen has already painted. This is usually what you want (data fetches, subscriptions). For layout measurements that must happen synchronously before paint, use `useLayoutEffect` — the React Native equivalent of `viewDidLayoutSubviews`.
+:::info useEffect executa após a pintura
+Ao contrário do `viewDidLoad` (iOS) ou `onCreate` (Android) que executam antes da view ser visível, o `useEffect` dispara **depois** que a tela já foi pintada. Isso é geralmente o que você quer (busca de dados, subscriptions). Para medições de layout que devem acontecer sincronamente antes da pintura, use `useLayoutEffect` — o equivalente React Native do `viewDidLayoutSubviews`.
 :::
 
 ---
 
-## Lifting State Up
+## Lifting State Up (Elevando o Estado)
 
-When two sibling components need to share state, move it to their common parent:
+Quando dois componentes irmãos precisam compartilhar estado, mova-o para o pai comum:
 
 ```tsx
-// Parent owns the state
+// O pai possui o estado
 function App() {
     const [selectedId, setSelectedId] = useState<string | null>(null);
 
@@ -336,20 +336,20 @@ function App() {
 }
 ```
 
-This is analogous to a ViewModel in Android MVVM that both an Activity and a Fragment observe, or a Combine publisher that multiple SwiftUI views subscribe to.
+Isso é análogo a um ViewModel no Android MVVM que tanto uma Activity quanto um Fragment observam, ou a um publisher Combine que múltiplas views SwiftUI assinam.
 
 ---
 
-## Resources
+## Recursos
 
-| Resource | Type | Link |
+| Recurso | Tipo | Link |
 |---|---|---|
-| react.dev — Quick Start | Official Docs | [react.dev/learn](https://react.dev/learn) |
-| react.dev — Thinking in React | Official Docs | [react.dev/learn/thinking-in-react](https://react.dev/learn/thinking-in-react) |
-| react-tutorial.app | Interactive | [react-tutorial.app](https://react-tutorial.app/) |
-| Scrimba — Learn React | Interactive Course | [scrimba.com/learn/learnreact](https://scrimba.com/learn/learnreact) |
-| react.gg | Practice Problems | [react.gg](https://react.gg/) |
+| react.dev — Quick Start | Docs Oficiais | [react.dev/learn](https://react.dev/learn) |
+| react.dev — Thinking in React | Docs Oficiais | [react.dev/learn/thinking-in-react](https://react.dev/learn/thinking-in-react) |
+| react-tutorial.app | Interativo | [react-tutorial.app](https://react-tutorial.app/) |
+| Scrimba — Learn React | Curso Interativo | [scrimba.com/learn/learnreact](https://scrimba.com/learn/learnreact) |
+| react.gg | Exercícios Práticos | [react.gg](https://react.gg/) |
 
 ---
 
-Next → **[Components & Props in Depth](./components-and-props)**
+Próximo → **[Componentes & Props em Profundidade](./components-and-props)**

@@ -1,17 +1,17 @@
 ---
-title: No DOM, No CSS — What That Actually Means
+title: Sem DOM, Sem CSS — O Que Isso Significa na Prática
 ---
 
-# No DOM, No CSS — What That Actually Means
+# Sem DOM, Sem CSS — O Que Isso Significa na Prática
 
-> This is the hardest mindset shift for web developers. Let's make it concrete.
+> Esta é a mudança de mentalidade mais difícil para desenvolvedores web. Vamos tornar isso concreto.
 
-## No `document`, No `window`
+## Sem `document`, Sem `window`
 
-These browser globals simply don't exist in React Native:
+Esses globais do browser simplesmente não existem no React Native:
 
 ```typescript
-//  None of this exists in React Native
+//  Nada disso existe no React Native
 document.getElementById('app');
 document.querySelector('.button');
 document.createElement('div');
@@ -19,35 +19,35 @@ window.scrollTo(0, 0);
 window.innerWidth;
 window.addEventListener('resize', handler);
 window.location.href;
-navigator.geolocation;    // ← removed from RN core in 0.60 — use expo-location
-navigator.clipboard;      // ← not available — use expo-clipboard
+navigator.geolocation;    // ← removido do core do RN na 0.60 — use expo-location
+navigator.clipboard;      // ← não disponível — use expo-clipboard
 ```
 
 ```typescript
-//  React Native equivalents
-// Get element ref → useRef()
+//  Equivalentes no React Native
+// Obter ref de elemento → useRef()
 // Scroll → ref.current.scrollTo()
-// Screen dimensions → Dimensions.get('window') or useWindowDimensions()
-// Resize/orientation → useWindowDimensions() hook updates automatically
-// Navigation → React Navigation (or Expo Router if using Expo)
-// Geolocation → expo-location
+// Dimensões da tela → Dimensions.get('window') ou useWindowDimensions()
+// Resize/orientação → o hook useWindowDimensions() atualiza automaticamente
+// Navegação → React Navigation (ou Expo Router se usar Expo)
+// Geolocalização → expo-location
 // Clipboard → expo-clipboard
 ```
 
 ---
 
-## No `innerHTML`, No Direct DOM Manipulation
+## Sem `innerHTML`, Sem Manipulação Direta do DOM
 
-You cannot modify the native view tree imperatively the way you can with the DOM.
+Você não pode modificar a árvore de views nativas imperativamente como faz com o DOM.
 
 ```typescript
-//  Web — direct DOM manipulation
-document.getElementById('title').innerHTML = '<strong>New Title</strong>';
+//  Web — manipulação direta do DOM
+document.getElementById('title').innerHTML = '<strong>Novo Título</strong>';
 element.classList.add('active');
 element.style.backgroundColor = 'red';
 
-//  React Native — ALL changes go through state → re-render
-const [title, setTitle] = useState('Old Title');
+//  React Native — TODAS as mudanças passam pelo estado → re-renderização
+const [title, setTitle] = useState('Título Antigo');
 const [isActive, setIsActive] = useState(false);
 
 <Text style={[styles.title, isActive && styles.active]}>
@@ -55,14 +55,14 @@ const [isActive, setIsActive] = useState(false);
 </Text>
 ```
 
-This is actually the same constraint that React itself imposes on web. If you've been using React correctly (no `document.querySelector` in useEffect), you're already used to this.
+Esta é na verdade a mesma restrição que o próprio React impõe na web. Se você tem usado React corretamente (sem `document.querySelector` no useEffect), você já está acostumado com isso.
 
 ---
 
-## No CSS Selectors, No Cascade
+## Sem Seletores CSS, Sem Cascata
 
 ```css
-/*  None of this works in React Native */
+/*  Nada disso funciona no React Native */
 .card > .title { font-size: 18px; }
 .card:hover { background-color: #f5f5f5; }
 .button:focus { outline: 2px solid blue; }
@@ -72,113 +72,113 @@ This is actually the same constraint that React itself imposes on web. If you've
 ```
 
 ```typescript
-//  React Native — no selectors, no cascade, no hover, no media queries
-// You express all of this in JS
+//  React Native — sem seletores, sem cascata, sem hover, sem media queries
+// Você expressa tudo isso em JS
 
-// Parent-child relationship → props drilling or composition
+// Relação pai-filho → prop drilling ou composição
 <Card titleStyle={{ fontSize: 18 }}>...</Card>
 
-// Hover equivalent → Pressable state
+// Equivalente de hover → estado do Pressable
 <Pressable style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}>
 
-// Focus → managed internally by React Native
+// Focus → gerenciado internamente pelo React Native
 
-// Media queries → useWindowDimensions() hook
+// Media queries → hook useWindowDimensions()
 const { width } = useWindowDimensions();
 const isTablet = width >= 768;
 <View style={[styles.container, isTablet && styles.containerTablet]} />
 
-// CSS variables → JS constants file
+// Variáveis CSS → arquivo de constantes JS
 import { colors } from './theme';
 <View style={{ backgroundColor: colors.primary }} />
 ```
 
 ---
 
-## No `box-sizing`, No `display: block` vs `inline`
+## Sem `box-sizing`, Sem `display: block` vs `inline`
 
-React Native has a simplified layout model:
+O React Native tem um modelo de layout simplificado:
 
-- **Every component is a flex container by default** — no block vs inline vs inline-block distinction
-- **`box-sizing: border-box` is the default** — you don't need to set it
-- **`display: 'none'` works** — but behaves differently from conditional rendering:
+- **Todo componente é um flex container por padrão** — sem distinção de block vs inline vs inline-block
+- **`box-sizing: border-box` é o padrão** — você não precisa definir isso
+- **`display: 'none'` funciona** — mas se comporta diferente da renderização condicional:
 
   ```tsx
-  // display: 'none' — component stays mounted (state preserved), but hidden and takes no space
+  // display: 'none' — componente permanece montado (estado preservado), mas oculto e sem ocupar espaço
   <MyComponent style={{ display: isVisible ? 'flex' : 'none' }} />
 
-  // Conditional rendering — component fully unmounts (state lost, memory freed)
+  // Renderização condicional — componente é completamente desmontado (estado perdido, memória liberada)
   {isVisible && <MyComponent />}
   ```
-  Use `display: 'none'` when you need to preserve state while hiding (e.g. tab screens). Use conditional rendering when you want a clean unmount.
+  Use `display: 'none'` quando precisar preservar o estado ao ocultar (ex.: telas de tabs). Use renderização condicional quando quiser uma desmontagem limpa.
 
 ---
 
-## Layout Properties That Don't Exist in RN
+## Propriedades de Layout que Não Existem no RN
 
-| CSS Property | React Native Alternative |
+| Propriedade CSS | Alternativa React Native |
 |---|---|
-| `display: grid` | Use nested Flexbox |
+| `display: grid` | Use Flexbox aninhado |
 | `display: inline-flex` | Use `flexDirection: 'row'` |
 | `float: left/right` | Use `flexDirection: 'row'` |
-| `overflow: scroll` | Use `ScrollView` or `FlatList` |
-| `overflow: hidden` | `overflow: 'hidden'` works |
-| `z-index` | `zIndex` works |
-| `clip-path` | Not supported (use `overflow: 'hidden'` with `borderRadius`) |
-| `grid-template-columns` | Use `FlatList` with `numColumns` prop |
-| CSS `transition` | Use Reanimated or `Animated.spring/timing` |
-| CSS `animation` | Use Reanimated worklets |
-| `vh`, `vw` units | Use `Dimensions.get('window').height/width` |
-| `calc()` | Do the math in JavaScript |
-| `em`, `rem` units | Use raw numbers (device-independent pixels) |
+| `overflow: scroll` | Use `ScrollView` ou `FlatList` |
+| `overflow: hidden` | `overflow: 'hidden'` funciona |
+| `z-index` | `zIndex` funciona |
+| `clip-path` | Não suportado (use `overflow: 'hidden'` com `borderRadius`) |
+| `grid-template-columns` | Use `FlatList` com prop `numColumns` |
+| CSS `transition` | Use Reanimated ou `Animated.spring/timing` |
+| CSS `animation` | Use worklets do Reanimated |
+| Unidades `vh`, `vw` | Use `Dimensions.get('window').height/width` |
+| `calc()` | Faça o cálculo em JavaScript |
+| Unidades `em`, `rem` | Use números brutos (pixels independentes de dispositivo) |
 
 ---
 
-## No `position: sticky`
+## Sem `position: sticky`
 
-On web, sticky positioning keeps a header visible during scroll. In RN, you handle this differently:
+Na web, posicionamento sticky mantém um header visível durante o scroll. No RN, você lida com isso de forma diferente:
 
 ```tsx
 // Web: CSS position: sticky
-<div style={{ position: 'sticky', top: 0 }}>Sticky header</div>
+<div style={{ position: 'sticky', top: 0 }}>Header fixo</div>
 
-// React Native: stickyHeaderIndices on FlatList
+// React Native: stickyHeaderIndices no FlatList
 <FlatList
     data={items}
     renderItem={renderItem}
-    stickyHeaderIndices={[0]}  // the first item will be sticky
+    stickyHeaderIndices={[0]}  // o primeiro item ficará fixo
     ListHeaderComponent={<StickyHeader />}
 />
 ```
 
 ---
 
-## What You Do Get
+## O Que Você Tem
 
-RN does support a useful subset of layout and style:
+O RN suporta um subconjunto útil de layout e estilo:
 
-| Supported | Notes |
+| Suportado | Notas |
 |-----------|-------|
-| All Flexbox properties | Column-first by default |
-| `borderRadius`, `borderWidth`, `borderColor` | Works identically to CSS |
+| Todas as propriedades Flexbox | Coluna por padrão |
+| `borderRadius`, `borderWidth`, `borderColor` | Funciona idêntico ao CSS |
 | `backgroundColor`, `opacity` | — |
-| `overflow: 'hidden'` | Clips children |
-| `position: 'absolute'` / `'relative'` | No `fixed` or `sticky` |
+| `overflow: 'hidden'` | Recorta filhos |
+| `position: 'absolute'` / `'relative'` | Sem `fixed` ou `sticky` |
 | `zIndex` | — |
-| `transform` | Array syntax: `[{ translateX: 10 }, { rotate: '45deg' }]` |
-| `shadowColor`, `shadowOffset`, `shadowOpacity`, `shadowRadius` | **iOS only** — silently ignored on Android |
-| `elevation` | **Android only** shadow — grey, not customizable |
-| `fontSize`, `fontWeight`, `letterSpacing`, `lineHeight`, `textAlign`, `textDecorationLine` | On `<Text>` only, not `<View>` |
+| `transform` | Sintaxe de array: `[{ translateX: 10 }, { rotate: '45deg' }]` |
+| `shadowColor`, `shadowOffset`, `shadowOpacity`, `shadowRadius` | **Apenas iOS** — ignorado silenciosamente no Android |
+| `elevation` | Sombra **apenas Android** — cinza, não customizável |
+| `fontSize`, `fontWeight`, `letterSpacing`, `lineHeight`, `textAlign`, `textDecorationLine` | Apenas em `<Text>`, não em `<View>` |
 
 ---
 
-## Resources
+## Recursos
 
-| Resource | Type | Link |
+| Recurso | Tipo | Link |
 |---|---|---|
-| RN Style Properties Reference | Official | [reactnative.dev/docs/view-style-props](https://reactnative.dev/docs/view-style-props) |
-| Yoga Layout Engine | Reference | [yogalayout.dev](https://yogalayout.dev/) |
+| Referência de Propriedades de Estilo RN | Oficial | [reactnative.dev/docs/view-style-props](https://reactnative.dev/docs/view-style-props) |
+| Motor de Layout Yoga | Referência | [yogalayout.dev](https://yogalayout.dev/) |
 
 ---
 
-Next → **[Native Components for Web Devs](./componentes-nativos)**
+Próximo → **[Componentes Nativos para Devs Web](./componentes-nativos)**

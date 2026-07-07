@@ -1,15 +1,15 @@
 ---
-title: Components & Props in Depth
+title: Componentes & Props em Profundidade
 ---
 
-# Components & Props in Depth
+# Componentes & Props em Profundidade
 
-## Component Composition
+## Composição de Componentes
 
-React's power comes from composing small, focused components. Each component does one thing well.
+O poder do React vem da composição de componentes pequenos e focados. Cada componente faz uma coisa bem feita.
 
 ```tsx
-// Small, focused components
+// Componentes pequenos e focados
 function Avatar({ uri, size = 40 }: { uri: string; size?: number }) {
     return (
         <Image
@@ -23,12 +23,12 @@ function UserName({ name, isVerified }: { name: string; isVerified: boolean }) {
     return (
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
             <Text style={{ fontWeight: 'bold' }}>{name}</Text>
-            {isVerified && <Text></Text>}
+            {isVerified && <Text>Verificado</Text>}
         </View>
     );
 }
 
-// Composed into a larger component
+// Composto em um componente maior
 function UserCard({ user }: { user: User }) {
     return (
         <View style={styles.card}>
@@ -41,9 +41,9 @@ function UserCard({ user }: { user: User }) {
 
 ---
 
-## Children Props
+## Props Children
 
-The `children` prop lets you build container/wrapper components — like Compose's `content: @Composable () -> Unit` slot:
+A prop `children` permite construir componentes contêiner/wrapper — como o slot `content: @Composable () -> Unit` do Compose:
 
 ```tsx
 interface SectionProps {
@@ -60,10 +60,10 @@ function Section({ title, children }: SectionProps) {
     );
 }
 
-// Usage
-<Section title="Recent Activity">
-    <ActivityItem text="Liked a photo" />
-    <ActivityItem text="Posted a comment" />
+// Uso
+<Section title="Atividade Recente">
+    <ActivityItem text="Curtiu uma foto" />
+    <ActivityItem text="Postou um comentário" />
 </Section>
 ```
 
@@ -71,19 +71,19 @@ function Section({ title, children }: SectionProps) {
 
 ## Prop Drilling vs Context
 
-When you need to pass data through many levels of components, **Context** avoids the "prop drilling" problem — like a Compose `CompositionLocal` or a SwiftUI `@EnvironmentObject`:
+Quando você precisa passar dados por muitos níveis de componentes, o **Context** evita o problema de "prop drilling" — como um `CompositionLocal` no Compose ou um `@EnvironmentObject` no SwiftUI:
 
 ```tsx
 import { createContext, useContext, useState } from 'react';
 
-// 1. Create context
+// 1. Cria o context
 interface ThemeContextType {
     isDark: boolean;
     toggle: () => void;
 }
 const ThemeContext = createContext<ThemeContextType | null>(null);
 
-// 2. Provide it at the top of your tree
+// 2. Fornece no topo da árvore
 function App() {
     const [isDark, setIsDark] = useState(false);
 
@@ -96,17 +96,17 @@ function App() {
     );
 }
 
-// 3. Consume anywhere in the tree — no prop passing needed
+// 3. Consome em qualquer lugar da árvore — sem passar props
 function ThemedButton() {
     const theme = useContext(ThemeContext);
-    if (!theme) throw new Error('ThemedButton must be inside ThemeContext.Provider');
+    if (!theme) throw new Error('ThemedButton deve estar dentro de ThemeContext.Provider');
 
     return (
         <Pressable
             onPress={theme.toggle}
             style={{ backgroundColor: theme.isDark ? '#333' : '#fff' }}
         >
-            <Text>Toggle Theme</Text>
+            <Text>Alternar Tema</Text>
         </Pressable>
     );
 }
@@ -114,17 +114,17 @@ function ThemedButton() {
 
 ---
 
-## Rendering Lists
+## Renderizando Listas
 
-Instead of `RecyclerView` (Android) or `UITableView/UICollectionView` (iOS), React Native uses `FlatList`:
+Em vez de `RecyclerView` (Android) ou `UITableView/UICollectionView` (iOS), o React Native usa `FlatList`:
 
 ```tsx
 interface Item { id: string; title: string; }
 
 const DATA: Item[] = [
-    { id: '1', title: 'First Item' },
-    { id: '2', title: 'Second Item' },
-    { id: '3', title: 'Third Item' },
+    { id: '1', title: 'Primeiro Item' },
+    { id: '2', title: 'Segundo Item' },
+    { id: '3', title: 'Terceiro Item' },
 ];
 
 function ItemRow({ item }: { item: Item }) {
@@ -147,14 +147,14 @@ function MyList() {
 }
 ```
 
-`FlatList` is lazy — like `RecyclerView`, it only renders items visible on screen.
+`FlatList` é lazy — como o `RecyclerView`, renderiza apenas os itens visíveis na tela.
 
 ---
 
-## Conditional Rendering Patterns
+## Padrões de Renderização Condicional
 
 ```tsx
-// Pattern 1: Early return (cleanest for loading/error states)
+// Padrão 1: Retorno antecipado (mais limpo para estados de loading/erro)
 function UserScreen({ userId }: { userId: string }) {
     const { user, loading, error } = useUser(userId);
 
@@ -165,18 +165,18 @@ function UserScreen({ userId }: { userId: string }) {
     return <UserProfile user={user} />;
 }
 
-// Pattern 2: Ternary (for inline two-branch)
+// Padrão 2: Ternário (para dois branches inline)
 <Text>{isOnline ? ' Online' : ' Offline'}</Text>
 
-// Pattern 3: && (for optional content)
+// Padrão 3: && (para conteúdo opcional)
 {errorMessage && <Text style={styles.error}>{errorMessage}</Text>}
 
-// Pattern 4: Switch (for multiple mutually exclusive states)
+// Padrão 4: Switch (para múltiplos estados mutuamente exclusivos)
 function StatusBadge({ status }: { status: 'pending' | 'active' | 'closed' }) {
     const config = {
-        pending: { color: '#f59e0b', label: 'Pending' },
-        active:  { color: '#10b981', label: 'Active' },
-        closed:  { color: '#6b7280', label: 'Closed' },
+        pending: { color: '#f59e0b', label: 'Pendente' },
+        active:  { color: '#10b981', label: 'Ativo' },
+        closed:  { color: '#6b7280', label: 'Encerrado' },
     }[status];
 
     return (
@@ -189,43 +189,43 @@ function StatusBadge({ status }: { status: 'pending' | 'active' | 'closed' }) {
 
 ---
 
-## Key Prop for Lists
+## Prop Key em Listas
 
-When rendering arrays, React needs a stable `key` to track which items changed:
+Ao renderizar arrays, o React precisa de uma `key` estável para rastrear quais itens mudaram:
 
 ```tsx
-// BAD — using array index as key (causes bugs when list reorders)
+// RUIM — usar índice do array como key (causa bugs quando a lista é reordenada)
 {users.map((user, index) => <UserRow key={index} user={user} />)}
 
-// GOOD — use a stable unique identifier
+// BOM — use um identificador único e estável
 {users.map(user => <UserRow key={user.id} user={user} />)}
 ```
 
 ---
 
-## `React.memo` — Preventing Unnecessary Re-renders
+## `React.memo` — Prevenindo Re-renderizações Desnecessárias
 
-By default, a child component re-renders whenever its parent re-renders — even if its own props haven't changed. `React.memo` wraps a component and skips the re-render when props are shallowly equal.
+Por padrão, um componente filho re-renderiza sempre que o pai re-renderiza — mesmo que suas próprias props não tenham mudado. `React.memo` envolve um componente e pula a re-renderização quando as props são superficialmente iguais.
 
 ```tsx
-// Without memo — re-renders on every parent render, even if user is the same
+// Sem memo — re-renderiza a cada render do pai, mesmo que user seja o mesmo
 function UserRow({ user }: { user: User }) {
     return <Text>{user.name}</Text>;
 }
 
-// With memo — skips re-render when user reference hasn't changed
+// Com memo — pula a re-renderização quando a referência de user não mudou
 const UserRow = React.memo(function UserRow({ user }: { user: User }) {
     return <Text>{user.name}</Text>;
 });
 ```
 
-`React.memo` pairs with `useCallback` — both are needed for a FlatList row to truly avoid unnecessary re-renders:
+`React.memo` funciona em conjunto com `useCallback` — ambos são necessários para uma linha de FlatList realmente evitar re-renderizações desnecessárias:
 
 ```tsx
 function UserList() {
     const [users, setUsers] = useState<User[]>([]);
 
-    // stable function reference across parent renders
+    // referência de função estável entre renders do pai
     const handlePress = useCallback((id: string) => {
         router.push(`/user/${id}`);
     }, []);
@@ -256,21 +256,21 @@ const UserRow = React.memo(function UserRow({
 });
 ```
 
-**Kotlin/Compose parallel:** `React.memo` is analogous to Compose's stable parameter system — a composable with stable inputs skips recomposition when they haven't changed.
+**Paralelo Kotlin/Compose:** `React.memo` é análogo ao sistema de parâmetros estáveis do Compose — um composable com entradas estáveis pula a recomposição quando elas não mudaram.
 
-:::caution Don't over-apply memo
-Profile before you memoize. For cheap components or short lists the memo comparison overhead can exceed the render cost it avoids.
+:::caution Não aplique memo em excesso
+Faça profiling antes de memoizar. Para componentes simples ou listas curtas, o overhead da comparação do memo pode superar o custo de renderização que ele evita.
 :::
 
 ---
 
-## Exercises
+## Exercícios
 
-1. **Build a `TagList` component** that takes `tags: string[]` and renders each as a colored pill badge. Make the color configurable via props.
+1. **Construa um componente `TagList`** que recebe `tags: string[]` e renderiza cada uma como um badge colorido em forma de pílula. Torne a cor configurável via props.
 
-2. **Convert this imperative Android code** to a declarative React Native component:
+2. **Converta este código imperativo Android** para um componente React Native declarativo:
    ```kotlin
-   // Android: show/hide a "Pro" badge based on user tier
+   // Android: mostrar/ocultar um badge "Pro" com base no tier do usuário
    if (user.tier == "pro") {
        proBadge.visibility = View.VISIBLE
        proBadge.text = "PRO"
@@ -279,8 +279,8 @@ Profile before you memoize. For cheap components or short lists the memo compari
    }
    ```
 
-3. **Build a `Section` wrapper** (as shown above) and use it to group a list of items under a title, with a "See all" button that triggers a callback.
+3. **Construa um wrapper `Section`** (como mostrado acima) e use-o para agrupar uma lista de itens sob um título, com um botão "Ver todos" que aciona um callback.
 
 ---
 
-Next → **[State & Hooks in Depth](./state-and-hooks)**
+Próximo → **[Estado & Hooks em Profundidade](./state-and-hooks)**

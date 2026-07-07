@@ -1,61 +1,61 @@
 ---
-title: Layout & Flexbox in React Native
+title: Layout & Flexbox no React Native
 ---
 
-# Layout & Flexbox in React Native
+# Layout & Flexbox no React Native
 
-> React Native uses Flexbox for all layout — the same model as CSS Flexbox, with a few RN-specific defaults.
+> O React Native usa Flexbox para todo layout — o mesmo modelo do CSS Flexbox, com alguns padrões específicos do RN.
 
-## Key Differences from Web CSS Flexbox
+## Diferenças Principais em Relação ao CSS Flexbox
 
-| Property | Web CSS default | React Native default |
+| Propriedade | Padrão CSS Web | Padrão React Native |
 |----------|----------------|---------------------|
 | `flexDirection` | `row` | **`column`** |
 | `alignContent` | `stretch` | `flex-start` |
-| Units | `px`, `%`, `em`, etc. | **Unitless numbers** (density-independent pixels) |
-| `flex` shorthand | `flex: 1 1 auto` | **`flex: N` only** (grows/shrinks equally) |
+| Unidades | `px`, `%`, `em`, etc. | **Números sem unidade** (pixels independentes de densidade) |
+| Atalho `flex` | `flex: 1 1 auto` | **`flex: N` apenas** (cresce/encolhe igualmente) |
 | Position | `static` | `relative` |
 
-The biggest gotcha: **`flexDirection` defaults to `column`** in RN. Content stacks vertically by default.
+O maior pulo do gato: **`flexDirection` tem padrão `column`** no RN. O conteúdo empilha verticalmente por padrão.
 
 ---
 
-## The Mental Model
+## O Modelo Mental
 
-Think of every `View` as a **flex container**. The `style` prop is how you configure it.
+Pense em cada `View` como um **flex container**. A prop `style` é como você o configura.
 
 ```tsx
-// This is a vertical stack (column is default)
+// Esta é uma pilha vertical (column é o padrão)
 <View style={{ flex: 1 }}>
     <View style={{ height: 60, backgroundColor: 'red' }} />
-    <View style={{ flex: 1, backgroundColor: 'green' }} />  {/* takes remaining space */}
+    <View style={{ flex: 1, backgroundColor: 'green' }} />  {/* ocupa o espaço restante */}
     <View style={{ height: 60, backgroundColor: 'blue' }} />
 </View>
 ```
 
 ---
 
-## Core Flexbox Properties
+## Propriedades Core do Flexbox
 
 ### `flexDirection`
 
 ```tsx
-// Column (default) — children stack top to bottom
+// Column (padrão) — filhos empilham de cima para baixo
 <View style={{ flexDirection: 'column' }}>
 
-// Row — children sit left to right
+// Row — filhos ficam da esquerda para a direita
 <View style={{ flexDirection: 'row' }}>
 
-// Reverse variants
+// Variantes reversas
 <View style={{ flexDirection: 'column-reverse' }}>
 <View style={{ flexDirection: 'row-reverse' }}>
 ```
 
-### `justifyContent` — Main Axis Alignment
+### `justifyContent` — Alinhamento no Eixo Principal
 
 ```tsx
-// Along flexDirection axis (vertical for column, horizontal for row)
-<View style={{ justifyContent: 'flex-start' }}>  {/* default */}
+// Ao longo do eixo flexDirection (vertical para column, horizontal para row)
+<View style={{ justifyContent: 'flex-start' }}>  {/* padrão */}
 <View style={{ justifyContent: 'flex-end' }}>
 <View style={{ justifyContent: 'center' }}>
 <View style={{ justifyContent: 'space-between' }}>
@@ -63,92 +63,92 @@ Think of every `View` as a **flex container**. The `style` prop is how you confi
 <View style={{ justifyContent: 'space-evenly' }}>
 ```
 
-### `alignItems` — Cross Axis Alignment
+### `alignItems` — Alinhamento no Eixo Cruzado
 
 ```tsx
-// Perpendicular to flexDirection
+// Perpendicular ao flexDirection
 <View style={{ alignItems: 'flex-start' }}>
 <View style={{ alignItems: 'flex-end' }}>
 <View style={{ alignItems: 'center' }}>
-<View style={{ alignItems: 'stretch' }}>  {/* default */}
+<View style={{ alignItems: 'stretch' }}>  {/* padrão */}
 <View style={{ alignItems: 'baseline' }}>
 ```
 
-### Center Something (The Classic)
+### Centralizar Algo (O Clássico)
 
 ```tsx
-// Center a child horizontally and vertically — the most common layout pattern
+// Centraliza um filho horizontal e verticalmente — o padrão de layout mais comum
 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-    <Text>Centered Content</Text>
+    <Text>Conteúdo Centralizado</Text>
 </View>
 ```
 
-**Kotlin/Android comparison:**
+**Comparação Kotlin/Android:**
 ```xml
-<!-- ConstraintLayout or Gravity -->
+<!-- ConstraintLayout ou Gravity -->
 <FrameLayout android:layout_gravity="center" />
 <LinearLayout android:gravity="center" />
 ```
 
-**SwiftUI comparison:**
+**Comparação SwiftUI:**
 ```swift
-// Idiomatic SwiftUI centering
+// Centralização idiomática no SwiftUI
 ZStack {
-    Text("Centered")
+    Text("Centralizado")
 }
 .frame(maxWidth: .infinity, maxHeight: .infinity)
 ```
 
 ---
 
-## `flex` — Proportional Space
+## `flex` — Espaço Proporcional
 
 ```tsx
-// flex: N — take N proportional shares of available space
+// flex: N — ocupa N partes proporcionais do espaço disponível
 <View style={{ flexDirection: 'row', height: 100 }}>
     <View style={{ flex: 1, backgroundColor: 'red' }} />   {/* 1/3 */}
     <View style={{ flex: 2, backgroundColor: 'green' }} /> {/* 2/3 */}
 </View>
 
-// flex: 1 on a child of a Screen — fill all available space
+// flex: 1 em filho de uma Tela — preenche todo o espaço disponível
 <View style={{ flex: 1 }}>
-    {/* This fills the entire screen */}
+    {/* Preenche a tela inteira */}
 </View>
 ```
 
 ---
 
-## Spacing: `margin` and `padding`
+## Espaçamento: `margin` e `padding`
 
 ```tsx
-// Individual sides
+// Lados individuais
 <View style={{
     marginTop: 16,
     marginBottom: 8,
     marginLeft: 12,
     marginRight: 12,
-    paddingHorizontal: 16,  // shorthand for paddingLeft + paddingRight
-    paddingVertical: 8,     // shorthand for paddingTop + paddingBottom
-    padding: 16,            // all sides
+    paddingHorizontal: 16,  // atalho para paddingLeft + paddingRight
+    paddingVertical: 8,     // atalho para paddingTop + paddingBottom
+    padding: 16,            // todos os lados
     margin: 8,
 }} />
 
-// The RN naming is the same as Android's XML attributes
+// A nomenclatura do RN é a mesma dos atributos XML do Android
 // marginTop == android:layout_marginTop
-// paddingHorizontal has no direct Android XML equivalent (use paddingLeft+paddingRight)
+// paddingHorizontal não tem equivalente direto no XML Android (use paddingLeft+paddingRight)
 ```
 
 ---
 
 ## `position: 'absolute'`
 
-For overlays, badges, and elements that float outside the normal flow:
+Para overlays, badges e elementos que flutuam fora do fluxo normal:
 
 ```tsx
-// Parent needs position: 'relative' (the default)
+// O pai precisa de position: 'relative' (o padrão)
 <View style={{ width: 60, height: 60 }}>
     <Image source={{ uri: avatarUrl }} style={{ width: 60, height: 60, borderRadius: 30 }} />
-    {/* Badge in top-right corner */}
+    {/* Badge no canto superior direito */}
     <View style={{
         position: 'absolute',
         top: 0,
@@ -163,7 +163,7 @@ For overlays, badges, and elements that float outside the normal flow:
 
 ---
 
-## Responsive Sizing with `Dimensions`
+## Dimensionamento Responsivo com `Dimensions`
 
 ```tsx
 import { Dimensions } from 'react-native';
@@ -178,31 +178,31 @@ const styles = StyleSheet.create({
 });
 ```
 
-:::caution Stale on orientation change
-`Dimensions.get('window')` captures the value once at module load. If the user rotates their device the value stays stale. Use `useWindowDimensions` instead for anything that should respond to rotation.
+:::caution Fica desatualizado na mudança de orientação
+`Dimensions.get('window')` captura o valor uma vez na carga do módulo. Se o usuário rotacionar o dispositivo, o valor fica obsoleto. Use `useWindowDimensions` para qualquer coisa que deva responder à rotação.
 :::
 
-For dynamic responsive layouts (handles rotation/orientation changes), use `useWindowDimensions`:
+Para layouts responsivos dinâmicos (responde à mudança de rotação/orientação), use `useWindowDimensions`:
 
 ```tsx
 import { useWindowDimensions } from 'react-native';
 
 function ResponsiveCard() {
     const { width } = useWindowDimensions();
-    const columns = width > 600 ? 3 : 2; // tablet vs phone layout
+    const columns = width > 600 ? 3 : 2; // layout tablet vs celular
     // ...
 }
 ```
 
 ---
 
-## `StyleSheet.create` vs Inline Styles
+## `StyleSheet.create` vs Estilos Inline
 
 ```tsx
-// Inline styles — convenient but slightly slower (no optimization)
+// Estilos inline — convenientes mas levemente mais lentos (sem otimização)
 <View style={{ flex: 1, backgroundColor: 'red' }} />
 
-// StyleSheet.create — preferred (validated, optimized, autocomplete)
+// StyleSheet.create — preferido (validado, otimizado, autocomplete)
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -211,91 +211,91 @@ const styles = StyleSheet.create({
 });
 <View style={styles.container} />
 
-// Combining styles (like applying multiple Android XML attributes)
+// Combinando estilos (como aplicar múltiplos atributos XML do Android)
 <View style={[styles.container, styles.padded, { marginTop: 8 }]} />
 ```
 
 ---
 
-## `gap` — Spacing Between Children
+## `gap` — Espaçamento Entre Filhos
 
-Since React Native 0.71, you can use `gap`, `rowGap`, and `columnGap` instead of adding margin to every child:
+Desde o React Native 0.71, você pode usar `gap`, `rowGap` e `columnGap` em vez de adicionar margin a cada filho:
 
 ```tsx
-// Before gap — manual margin on all-but-last child
+// Antes do gap — margin manual em todos os filhos exceto o último
 <View style={{ flexDirection: 'row' }}>
     <View style={{ marginRight: 8 }} />
     <View style={{ marginRight: 8 }} />
-    <View /> {/* no margin on last */}
+    <View /> {/* sem margin no último */}
 </View>
 
-// After gap — clean and correct
+// Com gap — limpo e correto
 <View style={{ flexDirection: 'row', gap: 8 }}>
     <View />
     <View />
     <View />
 </View>
 
-// rowGap / columnGap for grid-like layouts
+// rowGap / columnGap para layouts em grade
 <View style={{ flexDirection: 'row', flexWrap: 'wrap', rowGap: 12, columnGap: 8 }}>
     {items.map(item => <Card key={item.id} />)}
 </View>
 ```
 
-**SwiftUI parallel:** `spacing:` parameter on `HStack`/`VStack`. **Compose parallel:** `Arrangement.spacedBy(8.dp)`.
+**Paralelo SwiftUI:** parâmetro `spacing:` no `HStack`/`VStack`. **Paralelo Compose:** `Arrangement.spacedBy(8.dp)`.
 
 ---
 
-## Practice: Flexbox Froggy
+## Prática: Flexbox Froggy
 
-The best way to internalize Flexbox is through play. Since RN uses the same flexbox model as CSS:
+A melhor forma de internalizar o Flexbox é brincando. Como o RN usa o mesmo modelo flexbox do CSS:
 
- **[Play Flexbox Froggy](https://flexboxfroggy.com/)** — 24 levels that teach every flexbox property through an interactive game.
+ **[Jogar Flexbox Froggy](https://flexboxfroggy.com/)** — 24 níveis que ensinam cada propriedade flexbox através de um jogo interativo.
 
 ---
 
-## Common Layout Patterns
+## Padrões de Layout Comuns
 
 ```tsx
-// Navigation bar with title and action button
+// Barra de navegação com título e botão de ação
 <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16 }}>
-    <Text style={{ flex: 1, fontSize: 18, fontWeight: 'bold' }}>Title</Text>
+    <Text style={{ flex: 1, fontSize: 18, fontWeight: 'bold' }}>Título</Text>
     <Pressable onPress={handleAction}>
-        <Text>Action</Text>
+        <Text>Ação</Text>
     </Pressable>
 </View>
 
-// Card with image on left, text on right
+// Card com imagem à esquerda, texto à direita
 <View style={{ flexDirection: 'row', padding: 12 }}>
     <Image style={{ width: 60, height: 60 }} source={{ uri: '...' }} />
     <View style={{ flex: 1, marginLeft: 12 }}>
-        <Text style={{ fontWeight: 'bold' }}>Title</Text>
-        <Text numberOfLines={2}>Description...</Text>
+        <Text style={{ fontWeight: 'bold' }}>Título</Text>
+        <Text numberOfLines={2}>Descrição...</Text>
     </View>
 </View>
 
-// Bottom-pinned button (common screen pattern)
+// Botão fixado na parte inferior (padrão comum de tela)
 <View style={{ flex: 1 }}>
     <ScrollView style={{ flex: 1 }}>
-        {/* scrollable content */}
+        {/* conteúdo rolável */}
     </ScrollView>
     <View style={{ padding: 16 }}>
-        <Button title="Continue" onPress={handleContinue} />
+        <Button title="Continuar" onPress={handleContinue} />
     </View>
 </View>
 ```
 
 ---
 
-## Resources
+## Recursos
 
-| Resource | Type | Link |
+| Recurso | Tipo | Link |
 |---|---|---|
-| Flexbox Froggy | Interactive Game | [flexboxfroggy.com](https://flexboxfroggy.com/) |
-| RN Layout with Flexbox | Official Docs | [reactnative.dev/docs/flexbox](https://reactnative.dev/docs/flexbox) |
-| RN Layout Props | Official Docs | [reactnative.dev/docs/layout-props](https://reactnative.dev/docs/layout-props) |
-| Yoga (the layout engine RN uses) | Reference | [yogalayout.dev](https://yogalayout.dev/) |
+| Flexbox Froggy | Jogo Interativo | [flexboxfroggy.com](https://flexboxfroggy.com/) |
+| Layout RN com Flexbox | Docs Oficiais | [reactnative.dev/docs/flexbox](https://reactnative.dev/docs/flexbox) |
+| Props de Layout RN | Docs Oficiais | [reactnative.dev/docs/layout-props](https://reactnative.dev/docs/layout-props) |
+| Yoga (o motor de layout que o RN usa) | Referência | [yogalayout.dev](https://yogalayout.dev/) |
 
 ---
 
-Next → **[Styling in React Native](./styling)**
+Próximo → **[Estilização no React Native](./styling)**

@@ -59,10 +59,10 @@ export function LoginScreen() {
 
   const handleSubmit = () => {
     if (!email.includes('@')) {
-      setError('Email inválido');
+      setError('Invalid email');
       return;
     }
-    // chama API ou navega...
+    // call API or navigate...
   };
 
   return (
@@ -89,14 +89,14 @@ import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
 import { LoginScreen } from './LoginScreen';
 
-test('mostra mensagem de erro para email inválido', () => {
+test('shows error message for invalid email', () => {
   const { getByTestId, getByText } = render(<LoginScreen />);
 
   const input = getByTestId('input-email');
-  fireEvent.changeText(input, 'sem-arroba');
+  fireEvent.changeText(input, 'no-at-sign');
   fireEvent.press(getByText('Login'));
 
-  expect(getByTestId('error-text').props.children).toBe('Email inválido');
+  expect(getByTestId('error-text').props.children).toBe('Invalid email');
 });
 ```
 
@@ -122,15 +122,15 @@ export function getPasswordStrength(password: string): 'weak' | 'medium' | 'stro
 import { getPasswordStrength } from './usePasswordStrength';
 
 describe('getPasswordStrength', () => {
-  it('retorna weak para senhas curtas', () => {
+  it('returns weak for short passwords', () => {
     expect(getPasswordStrength('123')).toBe('weak');
   });
 
-  it('retorna medium quando não há dígitos', () => {
+  it('returns medium when there are no digits', () => {
     expect(getPasswordStrength('abcdef')).toBe('medium');
   });
 
-  it('retorna strong quando é longa e tem dígitos', () => {
+  it('returns strong when long and has digits', () => {
     expect(getPasswordStrength('abc12345')).toBe('strong');
   });
 });

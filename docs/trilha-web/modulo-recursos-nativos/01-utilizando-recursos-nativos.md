@@ -89,9 +89,9 @@ setup_permissions(['Camera', 'LocationWhenInUse', 'PhotoLibrary'])
 **Info.plist (iOS):**
 ```xml
 <key>NSCameraUsageDescription</key>
-<string>Usamos a câmera para você tirar fotos do produto.</string>
+<string>We use the camera so you can take product photos.</string>
 <key>NSLocationWhenInUseUsageDescription</key>
-<string>Usamos sua localização para mostrar lojas próximas.</string>
+<string>We use your location to show nearby stores.</string>
 ```
 
 **AndroidManifest.xml:**
@@ -122,11 +122,11 @@ export async function requestPermission(
 
   if (currentStatus === RESULTS.BLOCKED) {
     Alert.alert(
-      `Permissão para ${featureName} bloqueada`,
-      `Você bloqueou o acesso. Habilite nas configurações do dispositivo.`,
+      `${featureName} permission blocked`,
+      `You blocked this access. Enable it in your device settings.`,
       [
-        { text: 'Cancelar', style: 'cancel' },
-        { text: 'Abrir Configurações', onPress: openSettings },
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Open Settings', onPress: openSettings },
       ]
     );
     return false;
@@ -140,7 +140,7 @@ export async function requestPermission(
 const granted = await requestPermission(
   PERMISSIONS.IOS.CAMERA,
   PERMISSIONS.ANDROID.CAMERA,
-  'câmera'
+  'camera'
 );
 ```
 
@@ -175,7 +175,7 @@ export function CameraScreen() {
   if (!permission.granted) {
     return (
       <View style={styles.container}>
-        <Button title="Permitir acesso à câmera" onPress={requestPermission} />
+        <Button title="Allow camera access" onPress={requestPermission} />
       </View>
     );
   }
@@ -192,7 +192,7 @@ export function CameraScreen() {
     return (
       <View style={styles.container}>
         <Image source={{ uri: photoUri }} style={styles.preview} />
-        <Button title="Tirar outra" onPress={() => setPhotoUri(null)} />
+        <Button title="Take another" onPress={() => setPhotoUri(null)} />
       </View>
     );
   }
@@ -200,7 +200,7 @@ export function CameraScreen() {
   return (
     <CameraView ref={cameraRef} style={styles.camera} facing="back">
       <View style={styles.buttonContainer}>
-        <Button title="Fotografar" onPress={takePicture} />
+        <Button title="Take photo" onPress={takePicture} />
       </View>
     </CameraView>
   );
@@ -238,7 +238,7 @@ async function getLocation() {
   const { status } = await Location.requestForegroundPermissionsAsync();
   
   if (status !== 'granted') {
-    alert('Permissão de localização negada');
+    alert('Location permission denied');
     return;
   }
 
@@ -311,7 +311,7 @@ Notifications.setNotificationHandler({
 
 async function registerForPushNotifications(): Promise<string | null> {
   if (!Device.isDevice) {
-    console.log('Notificações push não funcionam no simulador');
+    console.log('Push notifications do not work on the simulator');
     return null;
   }
 
@@ -339,7 +339,7 @@ export function usePushNotifications() {
     // Listener for notifications received while the app is open
     notificationListener.current = Notifications.addNotificationReceivedListener(
       (notification) => {
-        console.log('Notificação recebida:', notification);
+        console.log('Notification received:', notification);
       }
     );
 

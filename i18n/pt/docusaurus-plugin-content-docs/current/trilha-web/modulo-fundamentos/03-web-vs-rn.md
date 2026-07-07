@@ -1,32 +1,32 @@
 ---
-title: Web vs React Native — Key Differences
+title: Web vs React Native — Diferenças Principais
 ---
 
-# Web vs React Native — Key Differences
+# Web vs React Native — Diferenças Principais
 
-> The most important mental model shift for React web developers moving to React Native.
+> A mudança de modelo mental mais importante para desenvolvedores React web migrando para o React Native.
 
-## The Fundamental Difference
+## A Diferença Fundamental
 
 | | React (Web) | React Native |
 |---|---|---|
-| Renders to | DOM — HTML elements | Native views — UIKit / Android Views |
-| Styling | CSS files, CSS-in-JS, Tailwind | JavaScript style objects |
-| Layout | CSS Flexbox + Grid + Block + Inline | Flexbox only (column-first) |
-| Routing | URL-based (React Router, Next.js) | Stack/Tab navigation |
-| Fonts | Any web font, Google Fonts CDN | System fonts + loaded custom fonts |
-| Scrolling | Browser handles it | `ScrollView` or `FlatList` |
-| Animations | CSS animations / Web Animations API | Reanimated, Animated API |
-| Deployment | Static hosting, CDN | App Store, Play Store |
+| Renderiza para | DOM — elementos HTML | Views nativas — UIKit / Android Views |
+| Estilização | Arquivos CSS, CSS-in-JS, Tailwind | Objetos de estilo JavaScript |
+| Layout | CSS Flexbox + Grid + Block + Inline | Apenas Flexbox (coluna por padrão) |
+| Roteamento | Baseado em URL (React Router, Next.js) | Navegação Stack/Tab |
+| Fontes | Qualquer fonte web, Google Fonts CDN | Fontes do sistema + fontes customizadas carregadas |
+| Scroll | O browser gerencia | `ScrollView` ou `FlatList` |
+| Animações | Animações CSS / Web Animations API | Reanimated, Animated API |
+| Deploy | Hospedagem estática, CDN | App Store, Play Store |
 
 ---
 
-## Components: HTML → React Native
+## Componentes: HTML → React Native
 
-This is the most immediate change. Every HTML element has an RN equivalent:
+Esta é a mudança mais imediata. Cada elemento HTML tem um equivalente no RN:
 
 ```tsx
-// Web React
+// React Web
 function WebCard() {
     return (
         <div className="card">
@@ -34,7 +34,7 @@ function WebCard() {
             <div className="content">
                 <h2 className="name">{user.name}</h2>
                 <p className="bio">{user.bio}</p>
-                <button onClick={handleFollow}>Follow</button>
+                <button onClick={handleFollow}>Seguir</button>
             </div>
         </div>
     );
@@ -42,7 +42,7 @@ function WebCard() {
 ```
 
 ```tsx
-// React Native — same structure, native components
+// React Native — mesma estrutura, componentes nativos
 import { View, Text, Image, Pressable, StyleSheet } from 'react-native';
 
 function NativeCard() {
@@ -53,7 +53,7 @@ function NativeCard() {
                 <Text style={styles.name}>{user.name}</Text>
                 <Text style={styles.bio}>{user.bio}</Text>
                 <Pressable onPress={handleFollow} style={styles.button}>
-                    <Text style={styles.buttonText}>Follow</Text>
+                    <Text style={styles.buttonText}>Seguir</Text>
                 </Pressable>
             </View>
         </View>
@@ -61,11 +61,11 @@ function NativeCard() {
 }
 ```
 
-The tree structure is identical — only the primitives change.
+A estrutura da árvore é idêntica — apenas os primitivos mudam.
 
 ---
 
-## Styling: CSS → StyleSheet
+## Estilização: CSS → StyleSheet
 
 ```css
 /* styles.css */
@@ -81,7 +81,7 @@ The tree structure is identical — only the primitives change.
 ```
 
 ```tsx
-<button className="button">Click me</button>
+<button className="button">Clique aqui</button>
 ```
 
 ```tsx
@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         paddingHorizontal: 16,
         borderRadius: 8,
-        // No fontSize/fontWeight on View — those go on Text
+        // Sem fontSize/fontWeight em View — esses vão em Text
     },
     buttonText: {
         fontSize: 14,
@@ -102,63 +102,63 @@ const styles = StyleSheet.create({
 });
 
 <Pressable style={styles.button}>
-    <Text style={styles.buttonText}>Click me</Text>
+    <Text style={styles.buttonText}>Clique aqui</Text>
 </Pressable>
 ```
 
-Key difference: **Text styling properties live on `<Text>`, not on container `<View>`**. There is no CSS inheritance in RN — `color` on a parent `View` does not apply to child `Text` elements.
+Diferença chave: **propriedades de estilo de texto ficam em `<Text>`, não no contêiner `<View>`**. Não existe herança de CSS no RN — `color` em um `View` pai não se aplica aos elementos `Text` filhos.
 
 ---
 
-## No CSS Inheritance
+## Sem Herança de CSS
 
-This trips up every web developer:
+Isso pega todo desenvolvedor web:
 
 ```tsx
-// Web — color inherits through the tree
+// Web — cor herda pela árvore
 <div style={{ color: 'red' }}>
-    <span>This is red</span>  {/* inherits from parent */}
+    <span>Isso é vermelho</span>  {/* herda do pai */}
 </div>
 
-// React Native — NO inheritance (except nested Text inside Text)
-<View style={{ color: 'red' }}>   {/* THIS DOES NOTHING */}
-    <Text>This is NOT red</Text>   {/* must set color on Text directly */}
+// React Native — SEM herança (exceto Text aninhado em Text)
+<View style={{ color: 'red' }}>   {/* ISSO NÃO FAZ NADA */}
+    <Text>Isso NÃO é vermelho</Text>   {/* precisa definir color no Text diretamente */}
 </View>
 
-// The only exception: nested Text inherits from parent Text
+// A única exceção: Text aninhado herda do Text pai
 <Text style={{ color: 'red' }}>
-    This is red <Text style={{ fontWeight: 'bold' }}>and this is bold red</Text>
+    Isso é vermelho <Text style={{ fontWeight: 'bold' }}>e isso é negrito vermelho</Text>
 </Text>
 ```
 
 ---
 
-## No `className`, No CSS Files
+## Sem `className`, Sem Arquivos CSS
 
-You cannot use raw CSS files, CSS Modules, or the web version of `styled-components`. However, two popular alternatives are fully supported:
+Você não pode usar arquivos CSS brutos, CSS Modules ou a versão web do `styled-components`. No entanto, duas alternativas populares são totalmente suportadas:
 
-- **NativeWind** — Tailwind utility classes compiled to StyleSheet (covered in Module 6)
-- **styled-components/native** — template literal styles via `import styled from 'styled-components/native'`
+- **NativeWind** — classes utilitárias Tailwind compiladas para StyleSheet (abordado no Módulo 6)
+- **styled-components/native** — estilos via template literal com `import styled from 'styled-components/native'`
 
-The official approach is still `StyleSheet.create`. All three options exist in production apps. In this course:
+A abordagem oficial ainda é `StyleSheet.create`. As três opções existem em apps de produção. Neste curso:
 
 ```tsx
-//  Does not work in React Native
-<View className="flex-1 bg-white p-4" />        // No Tailwind
-<View style="background-color: white; padding: 16px" /> // No CSS strings
+//  Não funciona no React Native
+<View className="flex-1 bg-white p-4" />        // Sem Tailwind
+<View style="background-color: white; padding: 16px" /> // Sem strings CSS
 
-//  Works in React Native
+//  Funciona no React Native
 <View style={{ flex: 1, backgroundColor: 'white', padding: 16 }} />
 <View style={styles.container} />
 
-// NativeWind — Tailwind for React Native (uses the same utility classes)
-// This DOES work if you install NativeWind:
-<View className="flex-1 bg-white p-4" />  // with NativeWind installed
+// NativeWind — Tailwind para React Native (usa as mesmas classes utilitárias)
+// FUNCIONA se você instalar o NativeWind:
+<View className="flex-1 bg-white p-4" />  // com NativeWind instalado
 ```
 
 ---
 
-## Navigation: URLs → Stacks
+## Navegação: URLs → Stacks
 
 ```tsx
 // Web (React Router / Next.js)
@@ -168,54 +168,54 @@ function NavExample() {
     const navigate = useNavigate();
     return (
         <>
-            <Link to="/profile">Go to Profile</Link>
+            <Link to="/profile">Ir para Perfil</Link>
             <button onClick={() => navigate('/home')}>Home</button>
-            <button onClick={() => navigate(-1)}>Back</button>
+            <button onClick={() => navigate(-1)}>Voltar</button>
         </>
     );
 }
 ```
 
 ```tsx
-// React Native with React Navigation (stack-based)
+// React Native com React Navigation (baseado em stack)
 import { useNavigation } from '@react-navigation/native';
 
 function NavExample() {
     const navigation = useNavigation();
     return (
         <>
-            <Pressable onPress={() => navigation.navigate('Profile')}><Text>Go to Profile</Text></Pressable>
+            <Pressable onPress={() => navigation.navigate('Profile')}><Text>Ir para Perfil</Text></Pressable>
             <Pressable onPress={() => navigation.navigate('Home')}><Text>Home</Text></Pressable>
-            <Pressable onPress={() => navigation.goBack()}><Text>Back</Text></Pressable>
+            <Pressable onPress={() => navigation.goBack()}><Text>Voltar</Text></Pressable>
         </>
     );
 }
 ```
 
-React Navigation uses a **stack model** — screens are pushed and popped like a call stack, matching native iOS/Android navigation behavior. If you prefer file-based routing (closer to Next.js), **Expo Router** offers that mental model but is tied to the Expo toolchain — research it separately.
+O React Navigation usa um **modelo de stack** — telas são empurradas e removidas como uma pilha de chamadas, correspondendo ao comportamento de navegação nativo do iOS/Android. Se você preferir roteamento baseado em arquivos (mais próximo do Next.js), o **Expo Router** oferece esse modelo mental mas está vinculado ao toolchain do Expo — pesquise separadamente.
 
 ---
 
-## Events: onClick → onPress
+## Eventos: onClick → onPress
 
 ```tsx
 // Web
-<button onClick={handleClick}>Click</button>
+<button onClick={handleClick}>Clique</button>
 <input onChange={handleChange} />
 <form onSubmit={handleSubmit}>
 
 // React Native
 <Pressable onPress={handlePress}>  // onClick → onPress
-<TextInput onChangeText={setText} /> // onChange → onChangeText (gives you the string directly)
-// No form elements — just group inputs manually
+<TextInput onChangeText={setText} /> // onChange → onChangeText (dá a string diretamente)
+// Sem elementos form — apenas agrupe os inputs manualmente
 ```
 
 ---
 
-## Lists: map() → FlatList
+## Listas: map() → FlatList
 
 ```tsx
-// Web — rendering a list with .map()
+// Web — renderizando uma lista com .map()
 {users.map(user => (
     <div key={user.id} className="user-card">
         <span>{user.name}</span>
@@ -224,7 +224,7 @@ React Navigation uses a **stack model** — screens are pushed and popped like a
 ```
 
 ```tsx
-// React Native — for short lists, .map() inside ScrollView is fine
+// React Native — para listas curtas, .map() dentro de ScrollView está ok
 <ScrollView>
     {users.map(user => (
         <View key={user.id} style={styles.userCard}>
@@ -233,7 +233,7 @@ React Navigation uses a **stack model** — screens are pushed and popped like a
     ))}
 </ScrollView>
 
-// For long lists — use FlatList (virtualized, like a React web virtual list)
+// Para listas longas — use FlatList (virtualizada, como uma lista virtual do React web)
 <FlatList
     data={users}
     keyExtractor={user => user.id}
@@ -247,14 +247,14 @@ React Navigation uses a **stack model** — screens are pushed and popped like a
 
 ---
 
-## Resources
+## Recursos
 
-| Resource | Type | Link |
+| Recurso | Tipo | Link |
 |---|---|---|
-| RN Intro for React Web Devs | Official Docs | [reactnative.dev/docs/intro-react](https://reactnative.dev/docs/intro-react) |
-| React Navigation | Official | [reactnavigation.org/docs/getting-started](https://reactnavigation.org/docs/getting-started) |
-| NativeWind (Tailwind for RN) | Community | [nativewind.dev](https://www.nativewind.dev/) |
+| Intro ao RN para Devs React Web | Docs Oficiais | [reactnative.dev/docs/intro-react](https://reactnative.dev/docs/intro-react) |
+| React Navigation | Oficial | [reactnavigation.org/docs/getting-started](https://reactnavigation.org/docs/getting-started) |
+| NativeWind (Tailwind para RN) | Community | [nativewind.dev](https://www.nativewind.dev/) |
 
 ---
 
-Next → **[No DOM, No CSS — Styling in Depth](./sem-dom-sem-css)**
+Próximo → **[Sem DOM, Sem CSS — Estilização em Profundidade](./sem-dom-sem-css)**

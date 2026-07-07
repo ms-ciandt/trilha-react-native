@@ -1,143 +1,143 @@
 ---
-title: Styling & Flexbox for Web Developers
+title: Estilização & Flexbox para Desenvolvedores Web
 ---
 
-# Styling & Flexbox for Web Developers
+# Estilização & Flexbox para Desenvolvedores Web
 
-> Your CSS knowledge transfers directly to React Native's Flexbox. The main differences are default values and the absence of web-only properties.
+> Seu conhecimento de CSS se transfere diretamente para o Flexbox do React Native. As principais diferenças são os valores padrão e a ausência de propriedades exclusivas da web.
 
-## What Changes from CSS
+## O Que Muda em Relação ao CSS
 
-### Property Names — camelCase
+### Nomes de Propriedades — camelCase
 
 ```css
 /* CSS */
 background-color: #fff;
 font-size: 16px;
 border-radius: 8px;
-padding-horizontal: 16px;  /* doesn't exist in CSS */
+padding-horizontal: 16px;  /* não existe no CSS */
 ```
 
 ```typescript
 // React Native StyleSheet
-backgroundColor: '#fff',   // camelCase, no hyphens
-fontSize: 16,              // no 'px' unit — numbers are device-independent pixels
+backgroundColor: '#fff',   // camelCase, sem hífens
+fontSize: 16,              // sem unidade 'px' — números são pixels independentes de densidade
 borderRadius: 8,
-paddingHorizontal: 16,     // RN shorthand (= paddingLeft + paddingRight)
+paddingHorizontal: 16,     // atalho do RN (= paddingLeft + paddingRight)
 ```
 
-### No Units
+### Sem Unidades
 
 ```typescript
-// All values are unitless numbers = density-independent pixels
-// Equivalent to CSS px on 1x screens; scales automatically on 2x/3x screens
-fontSize: 16,       // NOT '16px', NOT '1rem'
-padding: 16,        // NOT '16px'
-borderRadius: 8,    // NOT '8px'
-width: 200,         // fixed width in dp
-width: '100%',      // percentage strings ARE supported for some properties
+// Todos os valores são números sem unidade = pixels independentes de densidade
+// Equivalente a px CSS em telas 1x; escala automaticamente em telas 2x/3x
+fontSize: 16,       // NÃO '16px', NÃO '1rem'
+padding: 16,        // NÃO '16px'
+borderRadius: 8,    // NÃO '8px'
+width: 200,         // largura fixa em dp
+width: '100%',      // strings de porcentagem SÃO suportadas para algumas propriedades
 ```
 
-### Flexbox Default is Column
+### Flexbox tem Padrão Column
 
 ```typescript
-// CSS Flexbox default:    flexDirection: 'row'
-// React Native default:   flexDirection: 'column'
+// Padrão CSS Flexbox:    flexDirection: 'row'
+// Padrão React Native:   flexDirection: 'column'
 
-// To get a horizontal row in RN (like a horizontal flex div):
+// Para obter uma linha horizontal no RN (como um flex div horizontal):
 <View style={{ flexDirection: 'row' }}>
 ```
 
 ---
 
-## Flexbox Cheat Sheet (RN-Specific)
+## Guia Rápido do Flexbox (Específico do RN)
 
 ```typescript
-// Container properties
+// Propriedades do contêiner
 flexDirection: 'column' | 'row' | 'column-reverse' | 'row-reverse'
 justifyContent: 'flex-start' | 'flex-end' | 'center' | 'space-between' | 'space-around' | 'space-evenly'
 alignItems: 'flex-start' | 'flex-end' | 'center' | 'stretch' | 'baseline'
 alignContent: 'flex-start' | 'flex-end' | 'center' | 'stretch' | 'space-between' | 'space-around'
 flexWrap: 'nowrap' | 'wrap' | 'wrap-reverse'
-gap: 8               // RN 0.71+ — gap between items (like CSS gap)
+gap: 8               // RN 0.71+ — gap entre itens (como o CSS gap)
 rowGap: 8
 columnGap: 8
 
-// Child properties
-flex: 1              // grow and fill available space (simplified vs CSS flex shorthand)
-flexGrow: 1          // how much to grow
-flexShrink: 1        // how much to shrink
-flexBasis: 'auto' | 100  // initial size before grow/shrink
+// Propriedades dos filhos
+flex: 1              // cresce e preenche o espaço disponível (simplificado vs CSS flex shorthand)
+flexGrow: 1          // quanto crescer
+flexShrink: 1        // quanto encolher
+flexBasis: 'auto' | 100  // tamanho inicial antes de crescer/encolher
 alignSelf: 'auto' | 'flex-start' | 'flex-end' | 'center' | 'stretch'
 ```
 
 ---
 
-## The Two Most Common Patterns
+## Os Dois Padrões Mais Comuns
 
-### 1. Fill the Screen
+### 1. Preencher a Tela
 
 ```tsx
-// Make a component fill all available space (like height: 100vh in CSS)
+// Faz um componente preencher todo o espaço disponível (como height: 100vh no CSS)
 <View style={{ flex: 1 }}>
-    {/* fills the screen */}
+    {/* preenche a tela */}
 </View>
 ```
 
-### 2. Center Content
+### 2. Centralizar Conteúdo
 
 ```tsx
-// Center horizontally and vertically (like CSS flexbox centering)
+// Centraliza horizontal e verticalmente (como centralização flexbox no CSS)
 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-    <Text>Centered!</Text>
+    <Text>Centralizado!</Text>
 </View>
 ```
 
 ---
 
-## Interactive Practice
+## Prática Interativa
 
-The same Flexbox model you already know from web CSS works in RN:
+O mesmo modelo Flexbox que você já conhece do CSS web funciona no RN:
 
- **[Play Flexbox Froggy](https://flexboxfroggy.com/)** — 24 interactive levels. Every concept you learn here applies directly in RN.
+ **[Jogar Flexbox Froggy](https://flexboxfroggy.com/)** — 24 níveis interativos. Cada conceito que você aprender aqui se aplica diretamente no RN.
 
 ---
 
-## Shadow and Elevation
+## Sombra e Elevação
 
-CSS `box-shadow` splits into two in RN — and they behave very differently per platform:
+O `box-shadow` do CSS se divide em dois no RN — e eles se comportam de forma muito diferente por plataforma:
 
 ```typescript
 const styles = StyleSheet.create({
     card: {
-        // iOS shadow — all four properties are required together
+        // Sombra iOS — todas as quatro propriedades são necessárias juntas
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
 
-        // Android shadow — elevation only. The four iOS properties above are
-        // silently ignored on Android. Android shadow color cannot be customized
-        // via core StyleSheet (always renders as system grey).
+        // Sombra Android — apenas elevation. As quatro propriedades iOS acima são
+        // silenciosamente ignoradas no Android. A cor da sombra no Android não pode ser
+        // customizada via StyleSheet (sempre renderiza como cinza do sistema).
         elevation: 3,
     },
 });
 ```
 
-:::note Android shadow limitation
-To get a custom-colored shadow on Android, use a solid-color View as a backdrop or the community library `react-native-shadow-2`.
+:::note Limitação de sombra no Android
+Para obter uma sombra com cor customizada no Android, use uma View de cor sólida como fundo ou a biblioteca community `react-native-shadow-2`.
 :::
 
 ---
 
 ## Transforms
 
-Same as CSS transforms, but written as an array of objects inside the style prop:
+Mesmo que as transforms do CSS, mas escritas como um array de objetos dentro da prop de estilo:
 
 ```tsx
 // CSS: transform: translateX(10px) rotate(45deg) scale(1.2);
 
-// React Native — array of single-key objects:
+// React Native — array de objetos com chave única:
 <View style={{
     transform: [
         { translateX: 10 },
@@ -149,7 +149,7 @@ Same as CSS transforms, but written as an array of objects inside the style prop
 
 ---
 
-## Responsive Design Without Media Queries
+## Design Responsivo Sem Media Queries
 
 ```tsx
 import { useWindowDimensions } from 'react-native';
@@ -157,7 +157,7 @@ import { useWindowDimensions } from 'react-native';
 function ResponsiveLayout() {
     const { width } = useWindowDimensions();
 
-    // Breakpoints in JS
+    // Breakpoints em JS
     const isTablet = width >= 768;
     const isLargeTablet = width >= 1024;
 
@@ -181,25 +181,25 @@ function ResponsiveLayout() {
 
 ---
 
-## NativeWind — Tailwind in React Native
+## NativeWind — Tailwind no React Native
 
-If you live in Tailwind on the web, **NativeWind** brings the same utility classes to RN:
+Se você vive no Tailwind na web, o **NativeWind** traz as mesmas classes utilitárias para o RN:
 
-:::warning NativeWind v4 requires several config steps
-The install command alone won't work — styles will appear to compile but never apply (silent failure).
+:::warning NativeWind v4 requer várias etapas de configuração
+O comando de instalação sozinho não funciona — os estilos parecerão compilar mas nunca serão aplicados (falha silenciosa).
 :::
 
-**1. Install packages**
+**1. Instalar pacotes**
 ```bash
 npx expo install nativewind tailwindcss
 ```
 
-**2. Initialize Tailwind**
+**2. Inicializar o Tailwind**
 ```bash
 npx tailwindcss init
 ```
 
-**3. Configure `tailwind.config.js`**
+**3. Configurar `tailwind.config.js`**
 ```js
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -210,14 +210,14 @@ module.exports = {
 };
 ```
 
-**4. Create `global.css`**
+**4. Criar `global.css`**
 ```css
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 ```
 
-**5. Update `babel.config.js`**
+**5. Atualizar `babel.config.js`**
 ```js
 module.exports = function (api) {
     api.cache(true);
@@ -228,7 +228,7 @@ module.exports = function (api) {
 };
 ```
 
-**6. Update `metro.config.js`**
+**6. Atualizar `metro.config.js`**
 ```js
 const { getDefaultConfig } = require('expo/metro-config');
 const { withNativeWind } = require('nativewind/metro');
@@ -237,35 +237,35 @@ const config = getDefaultConfig(__dirname);
 module.exports = withNativeWind(config, { input: './global.css' });
 ```
 
-**7. Import `global.css` in your root `_layout.tsx`**
+**7. Importar `global.css` no `_layout.tsx` raiz**
 ```tsx
 import '../global.css';
 ```
 
-Now the Tailwind classes work:
+Agora as classes Tailwind funcionam:
 
 ```tsx
 <View className="flex-1 bg-white p-4">
-    <Text className="text-lg font-bold text-gray-900">Title</Text>
-    <Text className="text-sm text-gray-500 mt-1">Subtitle</Text>
+    <Text className="text-lg font-bold text-gray-900">Título</Text>
+    <Text className="text-sm text-gray-500 mt-1">Subtítulo</Text>
 </View>
 ```
 
-:::note NativeWind is not required
-The official approach is `StyleSheet.create`. NativeWind compiles Tailwind classes to RN styles at build time. Full setup docs: [nativewind.dev/getting-started/expo-router](https://www.nativewind.dev/getting-started/expo-router)
+:::note NativeWind não é obrigatório
+A abordagem oficial é `StyleSheet.create`. O NativeWind compila classes Tailwind para estilos RN em tempo de build. Docs completos de configuração: [nativewind.dev/getting-started/expo-router](https://www.nativewind.dev/getting-started/expo-router)
 :::
 
 ---
 
-## Resources
+## Recursos
 
-| Resource | Type | Link |
+| Recurso | Tipo | Link |
 |---|---|---|
-| Flexbox Froggy | Interactive Game | [flexboxfroggy.com](https://flexboxfroggy.com/) |
-| RN Flexbox Docs | Official | [reactnative.dev/docs/flexbox](https://reactnative.dev/docs/flexbox) |
+| Flexbox Froggy | Jogo Interativo | [flexboxfroggy.com](https://flexboxfroggy.com/) |
+| Docs Flexbox RN | Oficial | [reactnative.dev/docs/flexbox](https://reactnative.dev/docs/flexbox) |
 | NativeWind | Community | [nativewind.dev](https://www.nativewind.dev/) |
-| Yoga Layout | Reference | [yogalayout.dev](https://yogalayout.dev/) |
+| Yoga Layout | Referência | [yogalayout.dev](https://yogalayout.dev/) |
 
 ---
 
-Next → **[Lists & Navigation](./listas-navegacao)**
+Próximo → **[Listas & Navegação](./listas-navegacao)**
