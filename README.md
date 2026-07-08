@@ -1,170 +1,128 @@
-# Trilhas de Aprendizado em React Native
+# React Native Trail
 
-Conteúdo educacional organizado em duas trilhas por background do aluno, dividido em módulos progressivos.
+A free, open-source course for developers who already know how to build software — either on mobile (Android/iOS) or on the web (React) — and want to master React Native with the New Architecture.
 
----
-
-## Trilhas específicas por background
-
-### 1. Para Devs Nativos (Android/iOS)
-
-| Tópico | Módulo |
-|--------|--------|
-| JS/TS – dominar a linguagem | Fundamentos |
-| Fundamentos React | Fundamentos |
-| Fundamentos RN – core components, layout, flexbox | Fundamentos |
-| Navegação | Fundamentos |
-| Estado e API | Fundamentos |
-| Acesso a recursos nativos | Recursos Nativos |
-| Integração nativa avançada | Recursos Nativos |
-| Performance RN | Performance |
-| Testes | Testes |
-| CI/CD | CI/CD |
-| Arquitetura | Arquitetura |
-
-### 2. Para Devs Web (React)
-
-| Tópico | Módulo |
-|--------|--------|
-| Ajuste de JS/TS para mobile | Fundamentos |
-| Diferenças web vs RN | Fundamentos |
-| Fundamentos RN – componentes nativos, estilos, listas | Fundamentos |
-| Navegação – Stack/Tab/Drawer | Fundamentos |
-| Estado global + APIs | Fundamentos |
-| Recursos nativos – permissões, câmera, storage | Recursos Nativos |
-| Noções de integração nativa | Recursos Nativos |
-| Performance mobile | Performance |
-| Testes | Testes |
-| CI/CD | CI/CD |
-| Arquitetura | Arquitetura |
+**Live site:** [alimuramatheus.github.io/trilha-react-native](https://alimuramatheus.github.io/trilha-react-native)
 
 ---
 
-## Estrutura do repositório
+## Two Tracks, One Destination
+
+| Track | For |
+|-------|-----|
+| **Native Dev Track** | Android (Kotlin) / iOS (Swift) developers |
+| **Web Dev Track** | React / JavaScript web developers |
+
+Both tracks cover the same React Native skill set — they just approach it from your existing strengths.
+
+---
+
+## Course Modules
+
+| Module | Native Track | Web Track |
+|--------|-------------|-----------|
+| Fundamentals | ✅ Done | ✅ Done |
+| Native Resources | ✅ Done | ✅ Done |
+| Performance | ✅ Done | ✅ Done |
+| Testing | ✅ Done | ✅ Done |
+| CI/CD | ✅ Done | ✅ Done |
+| Architecture | ✅ Done | ✅ Done |
+
+---
+
+## Built AI-First
+
+This course was created with an AI-first workflow. Every explanation, code example, analogy, and narrative section was authored using AI tools — not as a shortcut, but as a deliberate choice to move fast and maintain consistency across two parallel tracks and dozens of topics.
+
+Tools used: **NotebookLM**, **Claude**, etc.
+
+All content was reviewed and validated by the contributors.
+
+---
+
+## Contributors
+
+| | GitHub |
+|---|---|
+| Matheus Sales | [@AlimuraMatheus](https://github.com/AlimuraMatheus) |
+| Gabriel Bonin | [@gbonin-ciandt](https://github.com/gbonin-ciandt) |
+| Erick Sugahara | [@erickSuh](https://github.com/erickSuh) |
+
+---
+
+## Repository Structure
 
 ```
 trilha-react-native/
-├── README.md
-├── CLAUDE.md                        ← contexto geral para o Claude
-├── introducao/                      ← módulo zero, comum às duas trilhas
-│   ├── CLAUDE.md
-│   ├── 00-welcome.md
-│   ├── 01-history-and-architecture.md
-│   ├── 02-new-architecture.md
-│   └── 03-choose-your-track.md
-│
-├── trilha-nativo/                   ← para devs Android (Kotlin) / iOS (Swift)
-│   ├── modulo-fundamentos/          ← CONCLUÍDO
-│   │   ├── CLAUDE.md
-│   │   ├── COURSE-fundamentos.md
-│   │   ├── 01-js-ts-overview.md
-│   │   ├── 02-js-fundamentals.md
-│   │   ├── 03-typescript.md
-│   │   ├── 04-react-fundamentals.md
-│   │   ├── 05-components-and-props.md
-│   │   ├── 06-state-and-hooks.md
-│   │   ├── 07-rn-core-components.md
-│   │   ├── 08-layout-and-flexbox.md
-│   │   ├── 09-styling.md
-│   │   ├── 10-navegacao.md
-│   │   └── 11-estado-e-apis.md
-│   ├── modulo-recursos-nativos/     ← EM ANDAMENTO
-│   │   └── 06-recursos-nativos.md
-│   ├── modulo-performance/          ← a criar
-│   ├── modulo-testes/               ← a criar
-│   ├── modulo-cicd/                 ← a criar
-│   └── modulo-arquitetura/          ← a criar
-│
-└── trilha-web/                      ← para devs React web
-    ├── modulo-fundamentos/          ← CONCLUÍDO
-    │   ├── CLAUDE.md
-    │   ├── COURSE-fundamentos.md
-    │   ├── 01-adaptando-js-ts.md
-    │   ├── 02-typescript.md
-    │   ├── 03-web-vs-rn.md
-    │   ├── 04-sem-dom-sem-css.md
-    │   ├── 05-componentes-nativos.md
-    │   ├── 06-estilos-flexbox.md
-    │   ├── 07-listas-navegacao.md
-    │   ├── 08-navegacao.md
-    │   └── 09-estado-e-apis.md
-    ├── modulo-recursos-nativos/     ← EM ANDAMENTO
-    │   └── 06-recursos-nativos.md
-    ├── modulo-performance/          ← a criar
-    ├── modulo-testes/               ← a criar
-    ├── modulo-cicd/                 ← a criar
-    └── modulo-arquitetura/          ← a criar
+├── docs/
+│   ├── introducao/                  ← module zero, common to both tracks
+│   ├── trilha-nativo/               ← for Android (Kotlin) / iOS (Swift) devs
+│   │   ├── modulo-fundamentos/
+│   │   ├── modulo-recursos-nativos/
+│   │   ├── modulo-performance/
+│   │   ├── modulo-testes/
+│   │   ├── modulo-cicd/
+│   │   └── modulo-arquitetura/
+│   └── trilha-web/                  ← for React web devs
+│       ├── modulo-fundamentos/
+│       ├── modulo-recursos-nativos/
+│       ├── modulo-performance/
+│       ├── modulo-testes/
+│       ├── modulo-cicd/
+│       └── modulo-arquitetura/
+├── static/assets/videos/            ← mp4 video files
+├── src/
+│   ├── pages/                       ← custom pages (About)
+│   └── css/
+├── docusaurus.config.js
+└── sidebars.js
 ```
 
 ---
 
-## Como contribuir com novos módulos
+## Contributing
 
-### Regras de arquitetura
+### Branch rules
 
-**1. Um módulo = uma pasta**
-
-Cada módulo vive em sua própria pasta. Não misture conteúdo de módulos diferentes.
-
-**2. Nomenclatura dos arquivos**
-
-Arquivos individuais seguem o padrão `NN-slug-do-tema.md`:
-
-```
-01-navegacao-stack.md
-02-navegacao-tabs.md
-03-navegacao-drawer.md
-```
-
-**3. Arquivo consolidado obrigatório**
-
-Cada pasta de módulo deve ter um `COURSE-[nome-modulo].md` com todo o conteúdo concatenado em ordem, sem frontmatter, com `---` separando cada seção.
-
-**4. Frontmatter nos arquivos individuais**
-
-```markdown
----
-id: nome-do-arquivo
-title: Título Completo do Documento
-sidebar_label: Título Curto
-sidebar_position: 1
----
-```
-
-**5. Padrão de conteúdo**
-
-- `trilha-nativo`: comparações Kotlin/Swift → JS/TS → React Native
-- `trilha-web`: comparações HTML/CSS/React web → React Native
-- Tabelas de mapeamento quando aplicável
-- Exercícios práticos ao final
-- Links para docs oficiais: [reactnative.dev](https://reactnative.dev), [expo.dev](https://docs.expo.dev), [react.dev](https://react.dev)
-- Foco no React Native New Architecture (0.76+, Expo SDK 56)
-
-**6. CLAUDE.md em cada módulo**
-
-Toda pasta de módulo deve ter um `CLAUDE.md` com público-alvo, o que cobre, o que não repetir do módulo anterior e referências internas.
-
----
-
-## Usando o Claude para criar novos módulos
-
-Use o comando `/novo-modulo` dentro do Claude Code em qualquer pasta do projeto. O Claude vai perguntar a trilha e os tópicos e criar todos os arquivos seguindo o padrão correto.
+Never commit directly to `main`. Always create a branch and open a PR:
 
 ```bash
-cd trilha-react-native
-claude
-# depois digite: /novo-modulo
+git checkout -b content/my-topic
+# make changes
+git push origin content/my-topic
+# open a PR on GitHub
 ```
+
+Suggested branch format: `content/<slug>` for content, `fix/<slug>` for fixes.
+
+### File conventions
+
+- Individual files: `NN-slug.md` with `title` frontmatter only
+- Each module folder has a `COURSE-[module].md` consolidating all content (not published to the site)
+- Each folder has its own `CLAUDE.md` with local context (not published to the site)
+- No emojis in content files
+- `trilha-nativo`: Kotlin/Swift analogies; `trilha-web`: HTML/CSS/React web analogies
+
+### Running locally
+
+```bash
+npm install
+npm run start        # dev server at localhost:3000/trilha-react-native
+npm run build        # production build
+npm run serve        # preview production build
+```
+
+### Adding a new page
+
+1. Create the `.md` file under `docs/`
+2. Register it in `sidebars.js` under the correct track and module
+3. If a video exists, add it with the `## Video Overview` pattern (see any existing topic file)
 
 ---
 
-## Status atual
+## Tech Stack
 
-| Módulo | Trilha Nativo | Trilha Web |
-|--------|--------------|------------|
-| Fundamentos | ✅ Concluído | ✅ Concluído |
-| Recursos Nativos | 🔄 Em andamento | 🔄 Em andamento |
-| Performance | 🔲 A criar | 🔲 A criar |
-| Testes | 🔲 A criar | 🔲 A criar |
-| CI/CD | 🔲 A criar | 🔲 A criar |
-| Arquitetura | 🔲 A criar | 🔲 A criar |
+- [Docusaurus 3](https://docusaurus.io) — static site generator
+- [React Navigation](https://reactnavigation.org) — referenced throughout
+- React Native 0.76+ (New Architecture by default)
+- Expo SDK 56

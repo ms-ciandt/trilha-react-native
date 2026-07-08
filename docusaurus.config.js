@@ -69,6 +69,11 @@ const config = {
             label: 'Trilha Web',
           },
           {
+            to: '/about',
+            label: 'About',
+            position: 'right',
+          },
+          {
             type: 'localeDropdown',
             position: 'right',
           },

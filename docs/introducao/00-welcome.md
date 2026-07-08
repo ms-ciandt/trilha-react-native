@@ -66,6 +66,25 @@ Each module contains:
 Every code example in this course can be run immediately in **[Expo Snack](https://snack.expo.dev)** — no setup required. Just paste the code and hit Run.
 :::
 
+## Contributors
+
+<div style="display:flex; flex-wrap:wrap; gap:24px; margin-top:16px;">
+  <a href="https://github.com/AlimuraMatheus" target="_blank" rel="noopener noreferrer" style="display:flex; flex-direction:column; align-items:center; gap:8px; text-decoration:none; color:inherit;">
+    <img src="https://github.com/AlimuraMatheus.png?size=80" alt="Matheus Sales" style="width:72px; height:72px; border-radius:50%; object-fit:cover;" />
+    <span style="font-size:13px;">Matheus Sales</span>
+  </a>
+  <a href="https://github.com/gbonin-ciandt" target="_blank" rel="noopener noreferrer" style="display:flex; flex-direction:column; align-items:center; gap:8px; text-decoration:none; color:inherit;">
+    <img src="https://github.com/gbonin-ciandt.png?size=80" alt="gbonin-ciandt" style="width:72px; height:72px; border-radius:50%; object-fit:cover;" />
+    <span style="font-size:13px;">Gabriel Bonin</span>
+  </a>
+  <a href="https://github.com/erickSuh" target="_blank" rel="noopener noreferrer" style="display:flex; flex-direction:column; align-items:center; gap:8px; text-decoration:none; color:inherit;">
+    <img src="https://github.com/erickSuh.png?size=80" alt="Erick Sugahara" style="width:72px; height:72px; border-radius:50%; object-fit:cover;" />
+    <span style="font-size:13px;">Erick Sugahara</span>
+  </a>
+</div>
+
+---
+
 ## Next Step
 
 → Start with **[History & Architecture](./introducao/history-and-architecture)** to understand *why* React Native is compelling in 2026, then pick your track.
