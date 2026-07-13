@@ -7,7 +7,7 @@ title: Mobile Performance
 ## Video Overview
 
 <video width="100%" controls style="border-radius: 8px; margin: 16px 0;">
-  <source src="/trilha-react-native/assets/videos/Mobile_Performance_-_web.mp4" type="video/mp4">
+  <source src="/trilha-react-native/assets/videos/Master_React_Native_List_Performance_-_Web.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
 

@@ -7,7 +7,7 @@ title: CI/CD
 ## Video Overview
 
 <video width="100%" controls style="border-radius: 8px; margin: 16px 0;">
-  <source src="/trilha-react-native/assets/videos/Web_to_RN_CI_CD_Pipelines_-_web.mp4" type="video/mp4">
+  <source src="/trilha-react-native/assets/videos/CI_CD_for_React_Native_-_web.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
 

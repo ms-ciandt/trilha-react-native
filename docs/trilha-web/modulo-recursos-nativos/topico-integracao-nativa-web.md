@@ -7,7 +7,7 @@ title: Native Integration
 ## Video Overview
 
 <video width="100%" controls style="border-radius: 8px; margin: 16px 0;">
-  <source src="/trilha-react-native/assets/videos/Native_Web_Integration_-_web.mp4" type="video/mp4">
+  <source src="/trilha-react-native/assets/videos/React_native_native_modules-_web.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
 
