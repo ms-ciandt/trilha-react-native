@@ -1,17 +1,54 @@
 ---
-title: JavaScript Fundamentals for Native Developers
+title: JavaScript for Native Developers
 ---
 
-# JavaScript Fundamentals for Native Developers
+# JavaScript for Native Developers
 
 ## Video Overview
 
-<video width="100%" controls>
-  <source src="/trilha-react-native/assets/videos/02-fundamentals-js-nativo.mp4" type="video/mp4">
+<video width="100%" controls style="border-radius: 8px; margin: 16px 0;">
+  <source src="/trilha-react-native/assets/videos/01-javascript-nativo.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
 
-> A focused tour of JS — told from the perspective of someone who already writes Kotlin or Swift.
+> You already know how to write software. This module maps JavaScript onto your existing mental model — from a Kotlin or Swift perspective.
+
+## The Mental Shift
+
+Coming from Kotlin or Swift, JavaScript will feel familiar in some ways and strange in others.
+
+### What Transfers Directly
+
+| Kotlin / Swift Concept | JavaScript Equivalent |
+|------------------------|----------------------|
+| `val` / `let` (immutable) | `const` |
+| `var` (mutable) | `let` |
+| Lambdas / closures | Arrow functions `() => {}` |
+| String interpolation | Template literals `` `Hello ${name}` `` |
+| Named parameters (Swift) | Destructuring `{ name, age }` |
+| Null safety (`?.`, `!!`) | Optional chaining `?.`, nullish coalescing `??` |
+| `suspend fun` / `async` | `async/await` |
+| Coroutines / Combine | Promises + async/await |
+| List comprehension | `.map()`, `.filter()`, `.reduce()` |
+| Sealed classes | TypeScript discriminated unions |
+| Data classes | TypeScript interfaces / type aliases |
+
+### What's Different
+
+| Android/iOS | JavaScript |
+|-------------|------------|
+| Statically typed | Dynamically typed (TypeScript adds static types on top) |
+| Compiled to native bytecode | Interpreted (or AOT-compiled by Hermes) |
+| Strict null safety at compile time | Runtime null by default (TypeScript makes it strict) |
+| Classes with proper OOP | Prototype-based; classes are syntax sugar |
+| Package manager (Gradle/SPM) | npm / yarn / pnpm |
+| Single entry point (main/AppDelegate) | Module system — every file can be imported |
+
+:::info TypeScript is your friend
+If Kotlin's type system appeals to you, you'll appreciate TypeScript. Enable **strict mode** (`"strict": true` in `tsconfig.json`) and TypeScript becomes genuinely comparable to Kotlin's type safety.
+:::
+
+---
 
 ## Variables: `const`, `let`, never `var`
 

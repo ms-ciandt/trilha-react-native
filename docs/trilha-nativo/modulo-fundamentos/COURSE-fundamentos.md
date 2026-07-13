@@ -944,7 +944,7 @@ Next → **[React Fundamentals](./react-fundamentals)**
 
 ---
 
-# Module 2: React Fundamentals for Native Developers
+# React Fundamentals for Native Developers
 
 > React is a UI library with one core idea: **your UI is a function of your state**. If you've worked with modern Android (Jetpack Compose) or iOS (SwiftUI), this will click immediately.
 

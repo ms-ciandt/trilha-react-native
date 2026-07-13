@@ -1,8 +1,8 @@
 ---
-title: "Module 1: Adapting JS/TS for Mobile"
+title: "Adapting JS/TS for Mobile"
 ---
 
-# Module 1: Adapting JavaScript/TypeScript for Mobile
+# Adapting JavaScript/TypeScript for Mobile
 
 ## Video Overview
 

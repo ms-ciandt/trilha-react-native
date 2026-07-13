@@ -22,8 +22,7 @@ const sidebars = {
       label: 'Fundamentals',
       collapsed: false,
       items: [
-        'trilha-nativo/modulo-fundamentos/js-ts-overview',
-        'trilha-nativo/modulo-fundamentos/js-fundamentals',
+        'trilha-nativo/modulo-fundamentos/javascript-for-native-developers',
         'trilha-nativo/modulo-fundamentos/typescript',
         'trilha-nativo/modulo-fundamentos/react-fundamentals',
         'trilha-nativo/modulo-fundamentos/components-and-props',

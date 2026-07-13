@@ -1,8 +1,8 @@
 ---
-title: "Module 2: React Fundamentals for Native Developers"
+title: "React Fundamentals for Native Developers"
 ---
 
-# Module 2: React Fundamentals for Native Developers
+# React Fundamentals for Native Developers
 
 ## Video Overview
 

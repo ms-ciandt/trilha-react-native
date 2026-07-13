@@ -10,9 +10,8 @@ CONCLUÍDO.
 
 ## O que este módulo cobre
 
-1. `01-js-ts-overview.md` — visão geral JS/TS para devs nativos, tabela Kotlin/Swift→JS
-2. `02-js-fundamentals.md` — const/let, destructuring, spread, map/filter/reduce, async/await, módulos, closures
-3. `03-typescript.md` — strict mode, primitivos, interfaces, discriminated unions, generics, null safety, utility types
+1. `01-javascript-for-native-developers.md` — mental shift Kotlin/Swift→JS, const/let, destructuring, spread, map/filter/reduce, async/await, thread model, módulos, closures
+2. `02-typescript.md` — strict mode, primitivos, interfaces, discriminated unions, generics, null safety, utility types
 4. `04-react-fundamentals.md` — declarativo vs imperativo (Compose/SwiftUI), useState, useEffect, JSX, lifting state
 5. `05-components-and-props.md` — composição, children, Context, FlatList, conditional rendering, key prop
 6. `06-state-and-hooks.md` — regras dos hooks, useRef, useMemo, useCallback, custom hooks

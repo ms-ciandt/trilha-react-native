@@ -5,7 +5,7 @@
 
 ---
 
-# Module 1: Adapting JavaScript/TypeScript for Mobile
+# Adapting JavaScript/TypeScript for Mobile
 
 > You already know JavaScript and React. This module is about the mental model shift from building for browsers to building for mobile devices.
 
