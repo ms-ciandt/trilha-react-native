@@ -7,7 +7,7 @@ title: Lists & Navigation in React Native
 ## Video Overview
 
 <video width="100%" controls>
-  <source src="/trilha-react-native/assets/videos/07-listas.mp4" type="video/mp4">
+  <source src="/trilha-react-native/assets/videos/trilha_web/fund_07_listas_navegacao.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
 

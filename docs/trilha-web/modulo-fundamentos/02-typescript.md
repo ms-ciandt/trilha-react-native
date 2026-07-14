@@ -7,7 +7,7 @@ title: TypeScript for Web Developers in React Native
 ## Video Overview
 
 <video width="100%" controls>
-  <source src="/trilha-react-native/assets/videos/02-ts-rn.mp4" type="video/mp4">
+  <source src="/trilha-react-native/assets/videos/trilha_web/fund_02_typescript.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
 

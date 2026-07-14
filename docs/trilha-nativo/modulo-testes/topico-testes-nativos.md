@@ -7,7 +7,7 @@ title: Testing
 ## Video Overview
 
 <video width="100%" controls style="border-radius: 8px; margin: 16px 0;">
-  <source src="/trilha-react-native/assets/videos/Testing_to_React_N.mp4" type="video/mp4">
+  <source src="/trilha-react-native/assets/videos/trilha_nativo/test_01_testes.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
 

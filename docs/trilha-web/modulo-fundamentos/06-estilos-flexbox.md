@@ -7,7 +7,7 @@ title: Styling & Flexbox for Web Developers
 ## Video Overview
 
 <video width="100%" controls>
-  <source src="/trilha-react-native/assets/videos/06-estilos-fl.mp4" type="video/mp4">
+  <source src="/trilha-react-native/assets/videos/trilha_web/fund_06_estilos_flexbox.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
 

@@ -46,16 +46,77 @@
   padding: 0 1.5rem;
   font-size: 0.875rem;
   font-weight: 500;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
+.navbar__brand {
+  align-items: center;
+}
+
+.navbar__logo {
+  display: flex;
+  align-items: center;
+}
+
+/* Gradient title */
 .navbar__title {
-  font-weight: 700;
-  font-size: 1rem;
-  letter-spacing: -0.01em;
+  font-weight: 800;
+  font-size: 1.05rem;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+[data-theme='dark'] .navbar__title {
+  background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .navbar__link {
   font-weight: 500;
+}
+
+/* Trilha Nativo — amber pill (3rd child: brand + Introdução + Trilha Nativo) */
+.navbar__items--left > :nth-child(3) .navbar__link,
+.navbar__items--left > :nth-child(3).navbar__link {
+  background: #d97706;
+  color: #fff !important;
+  border-radius: 999px;
+  padding: 0.25rem 0.875rem;
+  font-weight: 600;
+  transition: box-shadow 0.2s ease, transform 0.2s ease, background 0.2s ease;
+}
+
+.navbar__items--left > :nth-child(3) .navbar__link:hover,
+.navbar__items--left > :nth-child(3).navbar__link:hover {
+  background: #b45309;
+  box-shadow: 0 4px 14px rgba(217, 119, 6, 0.45);
+  transform: translateY(-1px);
+  text-decoration: none;
+}
+
+/* Trilha Web — emerald pill (4th child) */
+.navbar__items--left > :nth-child(4) .navbar__link,
+.navbar__items--left > :nth-child(4).navbar__link {
+  background: #059669;
+  color: #fff !important;
+  border-radius: 999px;
+  padding: 0.25rem 0.875rem;
+  font-weight: 600;
+  transition: box-shadow 0.2s ease, transform 0.2s ease, background 0.2s ease;
+}
+
+.navbar__items--left > :nth-child(4) .navbar__link:hover,
+.navbar__items--left > :nth-child(4).navbar__link:hover {
+  background: #047857;
+  box-shadow: 0 4px 14px rgba(5, 150, 105, 0.45);
+  transform: translateY(-1px);
+  text-decoration: none;
 }
 
 /* ─── Sidebar ────────────────────────────────────────────────────────── */

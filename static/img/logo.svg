@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 80">
+  <defs>
+    <filter id="shadow" x="-15%" y="-20%" width="130%" height="150%">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#00000066"/>
+    </filter>
+    <radialGradient id="grad" cx="40%" cy="28%" r="70%">
+      <stop offset="0%" stop-color="#2d3f6b"/>
+      <stop offset="100%" stop-color="#0d1526"/>
+    </radialGradient>
+    <linearGradient id="shine" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.2"/>
+      <stop offset="55%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Shadow layer for 3D depth -->
+  <ellipse cx="50" cy="43" rx="44" ry="34" fill="#080e1c" filter="url(#shadow)"/>
+
+  <!-- Main badge body -->
+  <ellipse cx="50" cy="40" rx="44" ry="34" fill="url(#grad)"/>
+
+  <!-- Shine highlight -->
+  <ellipse cx="50" cy="40" rx="44" ry="34" fill="url(#shine)"/>
+
+  <!-- Outer border -->
+  <ellipse cx="50" cy="40" rx="44" ry="34" fill="none" stroke="#61dafb" stroke-width="1.5" stroke-opacity="0.85"/>
+
+  <!-- Inner rim -->
+  <ellipse cx="50" cy="40" rx="41" ry="31" fill="none" stroke="#ffffff" stroke-width="0.5" stroke-opacity="0.08"/>
+
+  <!-- React atom -->
+  <g transform="translate(50, 40) scale(0.28)">
+    <ellipse rx="80" ry="25" fill="none" stroke="#61dafb" stroke-width="8"/>
+    <ellipse rx="80" ry="25" fill="none" stroke="#61dafb" stroke-width="8" transform="rotate(60)"/>
+    <ellipse rx="80" ry="25" fill="none" stroke="#61dafb" stroke-width="8" transform="rotate(120)"/>
+    <circle r="16" fill="#61dafb"/>
+  </g>
+</svg>
