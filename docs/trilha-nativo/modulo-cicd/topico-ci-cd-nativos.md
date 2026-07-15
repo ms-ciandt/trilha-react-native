@@ -7,7 +7,7 @@ title: CI/CD
 ## Video Overview
 
 <video width="100%" controls style="border-radius: 8px; margin: 16px 0;">
-  <source src="/trilha-react-native/assets/videos/React_Native_CI_CD__The_Pipeline_Delta.mp4" type="video/mp4">
+  <source src="/trilha-react-native/assets/videos/trilha_nativo/cicd_01_ci_cd.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
 

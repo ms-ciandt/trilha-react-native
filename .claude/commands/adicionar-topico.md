@@ -16,7 +16,7 @@ Se o usuário não passou um caminho, pergunte:
 2. **Trilha**: `trilha-nativo` ou `trilha-web`
 3. **Módulo**: `modulo-fundamentos`, `modulo-recursos-nativos`, `modulo-performance`, `modulo-testes`, `modulo-cicd` ou `modulo-arquitetura`
 4. **Título**: nome curto (ex: "Câmera e Galeria")
-5. **Vídeo**: nome do `.mp4` em `static/assets/videos/` — ou "não tem"
+5. **Vídeo**: nome do `.mp4` já na subpasta correta de `static/assets/videos/` (ex: `trilha_nativo/fund_11_meu_topico.mp4`) — ou "não tem"
 
 ---
 
@@ -48,16 +48,25 @@ title: Título Do Tópico
 Use o título do H1 como valor de `title` se não houver frontmatter.
 
 ### Vídeo
-- Se existir um `.mp4` em `static/assets/videos/` com nome que remeta ao tópico, adicionar o bloco logo após o `# Título`:
+
+Os vídeos ficam em subpastas de `static/assets/videos/`:
+- `introducao/` → vídeos da introdução
+- `trilha_nativo/` → trilha nativo (prefixos: `fund_`, `rec_`, `perf_`, `test_`, `cicd_`, `arq_`)
+- `trilha_web/` → trilha web (mesmos prefixos)
+- `trilha_masterclass/` → reservado
+
+Convenção de nome: `<prefixo-modulo>_<NN>_<slug>.mp4` (ex: `fund_11_camera.mp4`)
+
+Se existir um `.mp4` na subpasta correta, adicionar o bloco logo após o `# Título`:
 ```html
 ## Video Overview
 
 <video width="100%" controls>
-  <source src="/trilha-react-native/assets/videos/NOME.mp4" type="video/mp4">
+  <source src="/trilha-react-native/assets/videos/trilha_nativo/fund_11_meu_topico.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
 ```
-- Se o arquivo já tiver um bloco `<video>` com URL `https://` ou `http://`, corrigir para `/trilha-react-native/assets/videos/NOME.mp4`.
+- Se o arquivo já tiver um bloco `<video>` com URL `https://` ou `http://`, corrigir para o caminho `/trilha-react-native/assets/videos/<subpasta>/nome.mp4`.
 - Se o bloco de vídeo estiver no meio do arquivo (não logo após o H1), movê-lo para o topo.
 
 ### Conteúdo

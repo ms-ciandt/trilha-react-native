@@ -7,7 +7,7 @@ title: Native Components for Web Developers
 ## Video Overview
 
 <video width="100%" controls>
-  <source src="/trilha-react-native/assets/videos/05-components.mp4" type="video/mp4">
+  <source src="/trilha-react-native/assets/videos/trilha_web/fund_05_componentes_nativos.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
 

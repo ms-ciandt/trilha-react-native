@@ -49,6 +49,11 @@ const config = {
     ({
       navbar: {
         title: 'Trilha React Native',
+        logo: {
+          alt: 'Trilha React Native',
+          src: 'img/logo.svg',
+          style: { height: '38px', width: 'auto' },
+        },
         items: [
           {
             type: 'docSidebar',
@@ -84,10 +89,7 @@ const config = {
           },
         ],
       },
-      footer: {
-        style: 'dark',
-        copyright: `Trilha React Native — Conteúdo educacional open source`,
-      },
+      footer: { style: 'dark' },
       prism: {
         theme: require('prism-react-renderer').themes.github,
         darkTheme: require('prism-react-renderer').themes.dracula,

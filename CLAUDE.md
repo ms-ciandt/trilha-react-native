@@ -82,18 +82,36 @@ trilhaNativo: [
 
 ## Vídeos
 
-Vídeos ficam em `static/assets/videos/`. Se existir um `.mp4` para o tópico, adicionar logo após o `# Título` do arquivo `.md`:
+Vídeos ficam em `static/assets/videos/`, organizados por trilha:
+
+```
+static/assets/videos/
+  introducao/          ← vídeos dos arquivos em docs/introducao/
+  trilha_nativo/       ← vídeos da trilha nativo (fund_, rec_, perf_, test_, cicd_, arq_)
+  trilha_web/          ← vídeos da trilha web (mesmo prefixo)
+  trilha_masterclass/  ← reservado
+```
+
+Convenção de nomes: `<prefixo-modulo>_<NN>_<slug>.mp4`
+- `fund_` = modulo-fundamentos
+- `rec_`  = modulo-recursos-nativos
+- `perf_` = modulo-performance
+- `test_` = modulo-testes
+- `cicd_` = modulo-cicd
+- `arq_`  = modulo-arquitetura
+
+Se existir um `.mp4` para o tópico, adicionar logo após o `# Título` do arquivo `.md`:
 
 ```html
 ## Video Overview
 
 <video width="100%" controls>
-  <source src="/trilha-react-native/assets/videos/NOME-DO-ARQUIVO.mp4" type="video/mp4">
+  <source src="/trilha-react-native/assets/videos/trilha_nativo/fund_01_javascript.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
 ```
 
-A URL usa sempre `/trilha-react-native/assets/videos/nome.mp4` — funciona local (`npm run serve`) e em produção.
+A URL usa sempre `/trilha-react-native/assets/videos/<subpasta>/nome.mp4` — funciona local (`npm run serve`) e em produção.
 
 ## Tecnologia de referência
 
