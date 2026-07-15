@@ -50,5 +50,37 @@
   "sidebar.trilhaWeb.category.Architecture": {
     "message": "Arquitetura",
     "description": "The label for the Architecture category in the Web Track sidebar"
+  },
+  "sidebar.trilhaMasterclass.category.Module 00 — Overview": {
+    "message": "Módulo 00 — Visão Geral",
+    "description": "The label for Module 00 in the Masterclass sidebar"
+  },
+  "sidebar.trilhaMasterclass.category.Module 01 — Brownfield Integration": {
+    "message": "Módulo 01 — Integração Brownfield",
+    "description": "The label for Module 01 in the Masterclass sidebar"
+  },
+  "sidebar.trilhaMasterclass.category.Module 02 — TurboModules": {
+    "message": "Módulo 02 — TurboModules",
+    "description": "The label for Module 02 in the Masterclass sidebar"
+  },
+  "sidebar.trilhaMasterclass.category.Module 03 — Fabric & JSI": {
+    "message": "Módulo 03 — Fabric & JSI",
+    "description": "The label for Module 03 in the Masterclass sidebar"
+  },
+  "sidebar.trilhaMasterclass.category.Module 04 — Performance, Bundle & CI/CD": {
+    "message": "Módulo 04 — Performance, Bundle & CI/CD",
+    "description": "The label for Module 04 in the Masterclass sidebar"
+  },
+  "sidebar.trilhaMasterclass.category.Module 05 — RN Version Updates": {
+    "message": "Módulo 05 — Atualizações de Versão do RN",
+    "description": "The label for Module 05 in the Masterclass sidebar"
+  },
+  "sidebar.trilhaMasterclass.category.Process — Upgrade Strategy": {
+    "message": "Processo — Estratégia de Upgrade",
+    "description": "The label for the Upgrade Strategy subcategory in Module 05"
+  },
+  "sidebar.trilhaMasterclass.category.Dependencies — Patches and Environment": {
+    "message": "Dependências — Patches e Ambiente",
+    "description": "The label for the Dependencies subcategory in Module 05"
   }
 }

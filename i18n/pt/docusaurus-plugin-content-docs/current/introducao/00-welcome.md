@@ -1,6 +1,5 @@
 ---
 id: intro
-slug: /
 title: Bem-vindo à Trilha React Native
 ---
 
@@ -87,4 +86,4 @@ Todos os exemplos de código neste curso podem ser executados imediatamente no *
 
 ## Próximo Passo
 
-→ Comece com **[História & Arquitetura](./introducao/history-and-architecture)** para entender *por que* o React Native é relevante em 2026, depois escolha sua trilha.
+→ Comece com **[História & Arquitetura](./history-and-architecture)** para entender *por que* o React Native é relevante em 2026, depois escolha sua trilha.

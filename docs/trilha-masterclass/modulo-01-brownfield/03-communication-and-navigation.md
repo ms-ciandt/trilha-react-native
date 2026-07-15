@@ -1,0 +1,527 @@
+---
+title: Communication & Navigation
+---
+
+## 6. Communication: Native ↔ RN
+
+There are five distinct channels. Use the right tool for each job.
+
+### Channel 1: Initial props (native → RN, one-way, at mount time)
+
+Pass data when creating the surface. Immutable after mount.
+
+```kotlin
+// Android
+val props = Bundle().apply {
+    putString("userId", session.userId)
+    putString("theme", appTheme.name)
+    putInt("cartCount", cart.size)
+}
+val surface = reactHost.createSurface(activity, "HomeTab", props)
+```
+
+```swift
+// iOS
+let surface = RCTFabricSurface(
+    surfacePresenter: host.surfacePresenter,
+    moduleName: "HomeTab",
+    initialProperties: [
+        "userId": session.userId,
+        "theme": appTheme.rawValue,
+        "cartCount": cart.count,
+    ]
+)
+```
+
+### Channel 2: Native Modules / TurboModules (JS → Native, request/response)
+
+The JS layer calls native synchronously (JSI) or asynchronously. The standard direction is JS → Native.
+
+```typescript
+// JS side: typed wrapper
+import { TurboModuleRegistry } from 'react-native';
+import type { TurboModule } from 'react-native';
+
+export interface Spec extends TurboModule {
+  getUserProfile(userId: string): Promise<UserProfile>;
+  clearCache(): void;
+}
+
+export default TurboModuleRegistry.getEnforcing<Spec>('UserModule');
+```
+
+```kotlin
+// Android: TurboModule implementation
+class UserModule(reactContext: ReactApplicationContext) :
+    NativeBrownfieldUserModuleSpec(reactContext) {
+
+    override fun getName() = NAME
+
+    override fun getUserProfile(userId: String, promise: Promise) {
+        // Bridge to your existing service
+        UserRepository.get(userId)
+            .observe(ProcessLifecycleOwner.get()) { profile ->
+                promise.resolve(Arguments.makeNativeMap(mapOf(
+                    "id" to profile.id,
+                    "name" to profile.displayName,
+                    "avatarUrl" to profile.avatarUrl,
+                )))
+            }
+    }
+
+    override fun clearCache() {
+        UserRepository.clearCache()
+    }
+
+    companion object {
+        const val NAME = "UserModule"
+    }
+}
+```
+
+### Channel 3: Event Emitter (Native → JS, push events)
+
+Native pushes events without waiting for a JS call. Use for asynchronous system events.
+
+```kotlin
+// Android: push event from any thread
+class NetworkModule(private val reactContext: ReactApplicationContext) :
+    NativeEventEmitter(reactContext) {
+
+    fun sendConnectivityChange(isConnected: Boolean) {
+        val event = Arguments.createMap().apply {
+            putBoolean("isConnected", isConnected)
+            putString("type", if (isConnected) "wifi" else "none")
+        }
+        reactContext
+            .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+            .emit("NetworkStatusChanged", event)
+    }
+}
+```
+
+```swift
+// iOS: push event from any thread
+func sendConnectivityChange(isConnected: Bool) {
+    bridge?.eventDispatcher().sendDeviceEvent(
+        withName: "NetworkStatusChanged",
+        body: [
+            "isConnected": isConnected,
+            "type": isConnected ? "wifi" : "none",
+        ]
+    )
+}
+```
+
+```typescript
+// JS: subscribe
+import { NativeEventEmitter, NativeModules } from 'react-native';
+
+const emitter = new NativeEventEmitter(NativeModules.NetworkModule);
+
+function useNetworkStatus() {
+    const [connected, setConnected] = useState(true);
+
+    useEffect(() => {
+        const sub = emitter.addListener('NetworkStatusChanged', (event) => {
+            setConnected(event.isConnected);
+        });
+        return () => sub.remove();
+    }, []);
+
+    return connected;
+}
+```
+
+### Channel 4: Updating props after mount (Native → RN)
+
+To update an already-mounted surface's props, you must go through the surface API — you cannot call a React setState from native.
+
+```kotlin
+// Android
+surface.updateProps(Bundle().apply {
+    putInt("cartCount", newCount)
+})
+```
+
+```swift
+// iOS
+surface.updateProperties(["cartCount": newCount])
+```
+
+On the JS side, the new props arrive as an ordinary re-render — the component sees updated `props.cartCount`.
+
+### Channel 5: Calling RN methods from Native (Native → JS, imperative)
+
+Rarely needed but sometimes unavoidable — e.g., native wants to trigger a JS animation or clear a form.
+
+```kotlin
+// Android: call a JS function by name via AppRegistry
+reactHost.jsCallInvoker?.invokeAsync {
+    reactContext
+        .getJSModule(RCTEventEmitter::class.java)
+        // or via DeviceEventEmitter on the JS side
+}
+```
+
+A cleaner pattern: expose a native module that the JS side registers a callback on at mount time, then native calls the callback when needed.
+
+```typescript
+// JS: register a "command receiver"
+useEffect(() => {
+    const sub = DeviceEventEmitter.addListener('ClearFormCommand', () => {
+        formRef.current?.reset();
+    });
+    return () => sub.remove();
+}, []);
+```
+
+```kotlin
+// Native: fire the command
+reactContext
+    .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+    .emit("ClearFormCommand", null)
+```
+
+---
+
+## 7. State and Session Sharing
+
+Shared state is the hardest brownfield problem. There is no global memory shared between the native heap and the JS heap — you must serialize.
+
+### Architecture: single source of truth
+
+Decide where truth lives **before** you write code. The two viable options:
+
+```
+Option A — Native is the source of truth
+  Native ──writes──► SharedStorage ──reads──► JS
+  JS ──calls TurboModule──► Native service ──writes──► SharedStorage
+
+Option B — JS is the source of truth
+  JS ──writes──► SharedStorage ──reads──► Native
+  Native ──calls back to JS via EventEmitter──► JS updates SharedStorage
+```
+
+Avoid bidirectional writes — you will create race conditions.
+
+### MMKV — fastest shared key-value store
+
+[MMKV](https://github.com/mrousavy/react-native-mmkv) uses the same native MMKV library on both layers, so native and JS share the same file (with cross-process safety).
+
+```kotlin
+// Android native — write from Kotlin
+import com.tencent.mmkv.MMKV
+
+val mmkv = MMKV.defaultMMKV()
+mmkv.encode("session_token", authManager.currentToken)
+mmkv.encode("user_id", session.userId)
+```
+
+```typescript
+// JS — read immediately, zero serialization overhead
+import { MMKV } from 'react-native-mmkv';
+
+const storage = new MMKV();
+const token = storage.getString('session_token');  // same value
+const userId = storage.getString('user_id');
+```
+
+The MMKV instance can be configured with a shared app group on iOS (for extension sharing) and a dedicated process mode on Android.
+
+### AsyncStorage 3.0 — native access API
+
+AsyncStorage 3.0 exposes a native-side `StorageRegistry` API:
+
+```kotlin
+// Android — write to AsyncStorage from Kotlin
+import com.reactnativecommunity.asyncstorage.StorageRegistry
+
+StorageRegistry.getStorage(reactContext).set(
+    key = "lastSyncTime",
+    value = System.currentTimeMillis().toString()
+)
+```
+
+```swift
+// iOS — write from Swift
+import RNCAsyncStorage
+
+RNCAsyncStorage.shared().setObject(
+    Date().ISO8601Format(),
+    forKey: "lastSyncTime"
+)
+```
+
+[Official brownfield guide — AsyncStorage 3.0](https://react-native-async-storage.github.io/3.0/integrations/brownfield/)
+
+### Session bootstrap pattern
+
+Pass the session token as an initial prop, then keep it in sync via events:
+
+```kotlin
+// On login — create surface with session context
+val surface = reactHost.createSurface(
+    activity = this,
+    moduleName = "HomeTab",
+    initialProps = Bundle().apply {
+        putString("sessionToken", auth.token)
+        putString("userId", auth.userId)
+        putLong("sessionExpiry", auth.expiryMs)
+    }
+)
+
+// On token refresh — notify JS
+reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+    .emit("SessionRefreshed", Arguments.createMap().apply {
+        putString("newToken", newToken)
+        putLong("expiresAt", newExpiry)
+    })
+```
+
+```typescript
+// JS: consume session from props + listen for refreshes
+export default function HomeTab({ sessionToken, userId }: SessionProps) {
+    const [token, setToken] = useState(sessionToken);
+
+    useEffect(() => {
+        const sub = DeviceEventEmitter.addListener('SessionRefreshed', (e) => {
+            setToken(e.newToken);
+            httpClient.updateAuthHeader(e.newToken);
+        });
+        return () => sub.remove();
+    }, []);
+
+    // ...
+}
+```
+
+---
+
+## 8. Hybrid Navigation: Native ↔ RN
+
+Navigation is the most complex part of brownfield because two navigation systems must appear to the user as one.
+
+### The two mental models
+
+**Native-first:** the native navigation stack is the single source of truth. An RN screen is just another item on the stack — the native `NavController` / `UINavigationController` owns back behavior, transitions, and the back button.
+
+**JS-first:** `NavigationContainer` is at the root, and native screens are opened via a TurboModule call that pushes a native `UIViewController` / `Fragment`. This is only viable if RN owns the app's root, which is rare in true brownfield.
+
+For genuine brownfield, **native-first is the correct model**.
+
+### Android: pushing RN Fragment onto the native NavController
+
+```kotlin
+// Anywhere in your native navigation graph
+fun navigateToRNCheckout(navController: NavController, orderId: String) {
+    navController.navigate(
+        R.id.action_productDetail_to_rnCheckout,
+        Bundle().apply { putString("orderId", orderId) }
+    )
+}
+```
+
+In the navigation graph XML:
+
+```xml
+<!-- res/navigation/main_graph.xml -->
+<fragment
+    android:id="@+id/rnCheckoutFragment"
+    android:name="com.myapp.CheckoutRNFragment"
+    android:label="Checkout" />
+
+<action
+    android:id="@+id/action_productDetail_to_rnCheckout"
+    app:destination="@id/rnCheckoutFragment"
+    app:enterAnim="@anim/slide_in_right"
+    app:exitAnim="@anim/slide_out_left" />
+```
+
+The system back button and Android gesture navigation automatically pop the Fragment — no extra code needed.
+
+### iOS: pushing RN ViewController onto UINavigationController
+
+```swift
+// From any UIViewController in your existing flow
+func navigateToRNCheckout(orderId: String) {
+    let vc = CheckoutRNViewController()
+    vc.orderId = orderId
+    vc.title = "Checkout"
+    navigationController?.pushViewController(vc, animated: true)
+}
+```
+
+The swipe-back gesture works automatically because `UINavigationController` owns the gesture. The RN surface does not intercept it.
+
+### Navigating from RN back to native
+
+This requires a TurboModule that calls native navigation imperatively.
+
+```typescript
+// src/modules/NativeNavigation.ts
+import { TurboModuleRegistry } from 'react-native';
+import type { TurboModule } from 'react-native';
+
+export interface Spec extends TurboModule {
+    goBack(): void;
+    navigateTo(screenName: string, params: Object): void;
+    openNativeModal(modalId: string): void;
+}
+
+export default TurboModuleRegistry.getEnforcing<Spec>('NativeNavigation');
+```
+
+```kotlin
+// Android implementation
+class NativeNavigationModule(
+    private val reactContext: ReactApplicationContext,
+    private val navigationRouter: NativeNavigationRouter, // your app's nav abstraction
+) : NativeNativeNavigationSpec(reactContext) {
+
+    override fun getName() = NAME
+
+    override fun goBack() {
+        UiThreadUtil.runOnUiThread {
+            navigationRouter.goBack()
+        }
+    }
+
+    override fun navigateTo(screenName: String, params: ReadableMap) {
+        UiThreadUtil.runOnUiThread {
+            navigationRouter.navigate(screenName, params.toBundle())
+        }
+    }
+
+    override fun openNativeModal(modalId: String) {
+        UiThreadUtil.runOnUiThread {
+            navigationRouter.openModal(modalId)
+        }
+    }
+
+    companion object { const val NAME = "NativeNavigation" }
+}
+```
+
+```swift
+// iOS implementation
+@objc(NativeNavigation)
+final class NativeNavigationModule: NSObject, RCTBridgeModule {
+
+    static func moduleName() -> String { "NativeNavigation" }
+
+    // Must run on main thread — all UI work
+    static func requiresMainQueueSetup() -> Bool { true }
+
+    @objc func goBack() {
+        DispatchQueue.main.async {
+            AppNavigationRouter.shared.goBack()
+        }
+    }
+
+    @objc func navigateTo(_ screenName: String, params: NSDictionary) {
+        DispatchQueue.main.async {
+            AppNavigationRouter.shared.navigate(to: screenName, params: params as? [String: Any] ?? [:])
+        }
+    }
+}
+```
+
+Usage from the RN side:
+
+```typescript
+import NativeNavigation from '../modules/NativeNavigation';
+
+function CheckoutScreen() {
+    const handleSuccess = useCallback(() => {
+        // Navigate to a native confirmation screen
+        NativeNavigation.navigateTo('OrderConfirmation', { orderId });
+    }, [orderId]);
+
+    const handleClose = useCallback(() => {
+        NativeNavigation.goBack();
+    }, []);
+
+    return (
+        <View style={styles.container}>
+            <CheckoutForm onSuccess={handleSuccess} onCancel={handleClose} />
+        </View>
+    );
+}
+```
+
+### Handling deep links
+
+Deep links arriving on the native layer that should open an RN screen:
+
+```kotlin
+// Android: in your Activity that handles deep links
+override fun onNewIntent(intent: Intent?) {
+    super.onNewIntent(intent)
+    val uri = intent?.data ?: return
+
+    when {
+        uri.path?.startsWith("/checkout") == true -> {
+            val orderId = uri.getQueryParameter("orderId") ?: return
+            navigateToRNCheckout(orderId)
+        }
+        else -> nativeRouter.handleDeepLink(uri)
+    }
+}
+```
+
+For Callstack's typed contract approach, see [@callstack/brownfield-navigation](https://www.callstack.com/blog/handling-navigation-in-react-native-brownfield-apps).
+
+---
+
+## Study Materials
+
+### Official Documentation
+
+| Resource | Description |
+|---|---|
+| [Integration with Existing Apps](https://reactnative.dev/docs/integration-with-existing-apps) | Official step-by-step for Android + iOS |
+| [Communication — iOS](https://reactnative.dev/docs/communication-ios) | Passing props, calling native, sending events (iOS) |
+| [Communication — Android](https://reactnative.dev/docs/communication-android) | Same for Android |
+| [TurboModules Introduction](https://reactnative.dev/docs/turbo-native-modules-introduction) | New Architecture native modules with Codegen |
+
+### Libraries
+
+| Library | Purpose | Link |
+|---|---|---|
+| `react-native-brownfield` | Singleton host + multi-surface helpers | [GitHub](https://github.com/callstack/react-native-brownfield) |
+| `react-native-sandbox` | Isolated JS runtimes per surface | [GitHub](https://github.com/callstackincubator/react-native-sandbox) |
+| `react-native-mmkv` | Shared key-value store, native + JS | [GitHub](https://github.com/mrousavy/react-native-mmkv) |
+| `@callstack/brownfield-navigation` | Typed native↔RN navigation contract | [Blog post](https://www.callstack.com/blog/handling-navigation-in-react-native-brownfield-apps) |
+
+### Deep Dives — Blogs and Talks
+
+| Resource | Author | What you will learn |
+|---|---|---|
+| [Add RN to Signal iOS](https://swmansion.com/blog/add-react-native-to-the-signal-open-source-app-part-1-ios-ffb61819031e/) | Software Mansion | RCTHost setup, UINavigationController integration, real app-scale decisions |
+| [Add RN to Signal Android](https://blog.swmansion.com/add-react-native-to-the-signal-open-source-app-part-2-android-803c1b726582) | Software Mansion | ReactHost, Fragment back-stack, lifecycle forwarding |
+| [iOS Brownfield the Easy Way](https://www.callstack.com/blog/ios-brownfield-app-with-react-native-in-an-easy-way) | Callstack | `react-native-brownfield` iOS API, New Architecture migration path |
+| [Android Brownfield the Easy Way](https://www.callstack.com/blog/android-brownfield-app-with-react-native-in-an-easy-way) | Callstack | `ReactInstanceManager` singleton, `ReactFragment`, activity lifecycle |
+| [Running Multiple RN Instances](https://www.callstack.com/blog/running-multiple-instances-of-react-native-in-sandbox) | Callstack | Super-app sandbox isolation, inter-sandbox postMessage |
+| [Brownfield Integration: Exploring the Limits](https://www.youtube.com/watch?v=mOg29UnIMMA) | App.js Conf 2024 / Software Mansion | 35-min talk — edge cases in production, 12 M user scale |
+| [Async Storage 3.0 Brownfield](https://react-native-async-storage.github.io/3.0/integrations/brownfield/) | Community | Native `StorageRegistry` API for reading AsyncStorage from Kotlin/Swift |
+| [Expo Brownfield Overview](https://docs.expo.dev/brownfield/overview/) | Expo | Integrated vs isolated approaches, per-platform setup |
+
+### Working Group Discussions (New Architecture specifics)
+
+| Thread | Key insight |
+|---|---|
+| [reactwg #142 — TurboModules in existing apps](https://github.com/reactwg/react-native-new-architecture/discussions/142) | Registration patterns when native owns most of the logic |
+| [reactwg #143 — Fabric with Swift](https://github.com/reactwg/react-native-new-architecture/discussions/143) | Why Fabric requires Obj-C++ (cannot be called from pure Swift) |
+| [reactwg #182 — ReactFragment + New Arch](https://github.com/reactwg/react-native-new-architecture/discussions/182) | ReactFragment crash (NullPointerException) fixed in 0.76 |
+| [PR #46980 — ReactActivity exposes ReactHost](https://github.com/facebook/react-native/pull/46980) | New `getReactHost()` getter, removes need to subclass ReactHostDelegate |
+
+### Interactive Reference
+
+| Tool | Purpose |
+|---|---|
+| [flokol120/react-native-brownfield-examples](https://github.com/flokol120/react-native-brownfield-examples) | Branch-per-chapter repo: TurboModule, Fabric, state sync, event emitter — step-by-step from scratch |
+
+---
+
+Next → **[TurboModules](../modulo-02-turbomodules/what-is-turbomodules/)**

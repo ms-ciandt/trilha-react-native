@@ -7,21 +7,33 @@ Conteúdo educacional completo para aprender React Native, organizado em duas tr
 ## Estrutura de pastas
 
 ```
-introducao/                  ← módulo zero, comum às duas trilhas, leia antes de tudo
-trilha-nativo/               ← para devs Android (Kotlin) / iOS (Swift)
-  modulo-fundamentos/        ← CONCLUÍDO — ver CLAUDE.md interno
-  modulo-recursos-nativos/   ← a criar
-  modulo-performance/        ← a criar
-  modulo-testes/             ← a criar
-  modulo-cicd/               ← a criar
-  modulo-arquitetura/        ← a criar
-trilha-web/                  ← para devs React web
-  modulo-fundamentos/        ← CONCLUÍDO — ver CLAUDE.md interno
-  modulo-recursos-nativos/   ← a criar
-  modulo-performance/        ← a criar
-  modulo-testes/             ← a criar
-  modulo-cicd/               ← a criar
-  modulo-arquitetura/        ← a criar
+docs/
+  introducao/                  ← módulo zero, comum às duas trilhas, leia antes de tudo
+  trilha-nativo/               ← para devs Android (Kotlin) / iOS (Swift)
+    modulo-fundamentos/        ← CONCLUÍDO — ver CLAUDE.md interno
+    modulo-recursos-nativos/   ← a criar
+    modulo-performance/        ← a criar
+    modulo-testes/             ← a criar
+    modulo-cicd/               ← a criar
+    modulo-arquitetura/        ← a criar
+  trilha-web/                  ← para devs React web
+    modulo-fundamentos/        ← CONCLUÍDO — ver CLAUDE.md interno
+    modulo-recursos-nativos/   ← a criar
+    modulo-performance/        ← a criar
+    modulo-testes/             ← a criar
+    modulo-cicd/               ← a criar
+    modulo-arquitetura/        ← a criar
+  trilha-masterclass/          ← trilha avançada (Brownfield, TurboModules, Fabric, Performance, CI/CD)
+    modulo-00-overview/        ← visão geral do curso — arquivo .mdx com JSX
+    modulo-01-brownfield/      ← integração brownfield (3 arquivos)
+    modulo-02-turbomodules/    ← TurboModules
+    modulo-03-fabric-jsi/      ← Fabric & JSI (6 arquivos)
+    modulo-04-performance-cicd/ ← Performance e CI/CD (4 arquivos)
+    modulo-05-upgrade/         ← Upgrade Strategy
+_course-refs/                  ← arquivos COURSE-*.md consolidados (fora do docs/, não publicados)
+  trilha-nativo/modulo-fundamentos/
+  trilha-web/modulo-fundamentos/
+  trilha-masterclass/...
 ```
 
 ## Mapeamento tópico → módulo
@@ -47,15 +59,23 @@ trilha-web/                  ← para devs React web
 - **Nunca commitar diretamente na branch `main`** — sempre criar uma branch separada e abrir um PR
 - Formato sugerido para branches: `<tipo>/<slug-do-topico>` (ex.: `content/performance-nativo`, `fix/video-paths`)
 
+## Páginas da plataforma (src/pages/)
+
+Toda nova página em `src/pages/` deve seguir o design system documentado em `.claude/design-system.md` — paleta de cores, anatomia de card, animações de entrada, grid de fundo e hero.
+
+Toda página também precisa de versão traduzida em `i18n/pt/docusaurus-plugin-content-pages/`. Ver seção i18n no design system.
+
 ## Convenções obrigatórias
 
 - Arquivos individuais: `NN-slug-do-tema.md` com frontmatter mínimo (`title` apenas)
-- Cada pasta de módulo tem um `COURSE-[nome-modulo].md` consolidando tudo — não publicado no site
+- Arquivos `.mdx` são usados quando a página precisa de JSX (ex: `modulo-00-overview/00-course-overview.mdx`)
+- Cada pasta de módulo tem um `COURSE-[nome-modulo].md` consolidando tudo — ficam em `_course-refs/`, **não dentro de `docs/`** (foram movidos para evitar warnings de build)
 - Cada pasta tem seu próprio `CLAUDE.md` com contexto local — não publicado no site
 - `trilha-nativo`: analogias com Kotlin/Swift; `trilha-web`: analogias com HTML/CSS/React web
 - Comando `/adicionar-topico` disponível em `.claude/commands/adicionar-topico.md`
 - Sem emojis em nenhum arquivo de conteúdo
 - Sem `{% raw %}`/`{% endraw %}` — o site usa Docusaurus, blocos de código são renderizados diretamente
+- Tamanho ideal de arquivo de conteúdo: 150–400 linhas. Acima de 500 linhas, quebrar em múltiplos arquivos
 
 ## Site (Docusaurus)
 
@@ -66,6 +86,11 @@ trilha-web/                  ← para devs React web
 - Assets estáticos (vídeos): pasta `static/assets/videos/`
 - Deploy: GitHub Actions (`.github/workflows/deploy.yml`) — push para `main` publica automaticamente
 - Testar local: `npm run build && npm run serve` → `http://localhost:3000/trilha-react-native`
+- `markdown.format: 'detect'` habilitado — suporta `.md` e `.mdx` lado a lado
+- Footer removido — configurar `footer: undefined` no `docusaurus.config.js`
+- Navbar simplificada: apenas About, localeDropdown e GitHub (links de trilha removidos da navbar)
+- Navbar com `hideOnScroll: true` — esconde ao rolar para baixo
+- Sidebar com `hideable: true` — botão para recolher sidebar
 
 ## Adicionando páginas ao site
 
@@ -121,10 +146,19 @@ A URL usa sempre `/trilha-react-native/assets/videos/<subpasta>/nome.mp4` — fu
 
 ## Referências internas
 
-- Introdução ao projeto: `introducao/00-welcome.md`
-- História e arquitetura: `introducao/01-history-and-architecture.md`
-- New Architecture (JSI/Fabric/TurboModules): `introducao/02-new-architecture.md`
-- Guia de escolha de trilha: `introducao/03-choose-your-track.md`
-- Conteúdo completo trilha nativo fundamentos: `trilha-nativo/modulo-fundamentos/COURSE-fundamentos.md`
-- Conteúdo completo trilha web fundamentos: `trilha-web/modulo-fundamentos/COURSE-fundamentos.md`
+- Introdução ao projeto: `docs/introducao/00-welcome.md`
+- História e arquitetura: `docs/introducao/01-history-and-architecture.md`
+- New Architecture (JSI/Fabric/TurboModules): `docs/introducao/02-new-architecture.md`
+- Guia de escolha de trilha: `docs/introducao/03-choose-your-track.md`
+- Conteúdo completo trilha nativo fundamentos: `_course-refs/trilha-nativo/modulo-fundamentos/COURSE-fundamentos.md`
+- Conteúdo completo trilha web fundamentos: `_course-refs/trilha-web/modulo-fundamentos/COURSE-fundamentos.md`
+- Design system e padrões visuais: `.claude/design-system.md`
 - README com regras de contribuição: `README.md`
+
+## Trilha Masterclass
+
+A trilha avançada (`docs/trilha-masterclass/`) segue padrões visuais próprios:
+- Páginas usam classes CSS `.mc-page`, `.mc-header`, `.mc-badge`, `.mc-level-badge`, `.mc-title`, `.mc-subtitle`
+- Sidebar tema escuro (`#0a0e1a`) com links ativos em dourado (`#d4a017`)
+- Overview do módulo usa `.mdx` com JSX para aplicar o layout visual
+- Ver `.claude/design-system.md` para detalhes completos das classes e animações

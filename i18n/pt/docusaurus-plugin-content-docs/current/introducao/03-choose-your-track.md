@@ -28,7 +28,7 @@ title: Escolha Sua Trilha
 **Sua vantagem:**
 Você já entende _por que_ a renderização nativa importa, o que é thread safety e como as APIs de plataforma funcionam. Você vai apreciar a Nova Arquitetura de forma mais profunda do que a maioria.
 
-→ **[Começar a Trilha Nativo: JS/TS para Devs Nativos](../trilha-nativo/modulo-fundamentos/js-ts-overview)**
+→ **[Começar a Trilha Nativo: JS/TS para Devs Nativos](../trilha-nativo/modulo-fundamentos/javascript-for-native-developers)**
 
 ---
 

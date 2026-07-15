@@ -19,14 +19,28 @@ Both tracks cover the same React Native skill set — they just approach it from
 
 ## Course Modules
 
+### Native Dev Track & Web Dev Track
+
 | Module | Native Track | Web Track |
 |--------|-------------|-----------|
+| Introduction | ✅ Done (shared) | ✅ Done (shared) |
 | Fundamentals | ✅ Done | ✅ Done |
-| Native Resources | ✅ Done | ✅ Done |
-| Performance | ✅ Done | ✅ Done |
-| Testing | ✅ Done | ✅ Done |
-| CI/CD | ✅ Done | ✅ Done |
-| Architecture | ✅ Done | ✅ Done |
+| Native Resources | 🔜 Coming soon | 🔜 Coming soon |
+| Performance | 🔜 Coming soon | 🔜 Coming soon |
+| Testing | 🔜 Coming soon | 🔜 Coming soon |
+| CI/CD | 🔜 Coming soon | 🔜 Coming soon |
+| Architecture | 🔜 Coming soon | 🔜 Coming soon |
+
+### Masterclass Track (Advanced)
+
+| Module | Status |
+|--------|--------|
+| 00 — Course Overview | ✅ Done |
+| 01 — Brownfield Integration | ✅ Done |
+| 02 — TurboModules | ✅ Done |
+| 03 — Fabric & JSI | ✅ Done |
+| 04 — Performance & CI/CD | ✅ Done |
+| 05 — Upgrade Strategy | ✅ Done |
 
 ---
 
@@ -63,17 +77,31 @@ trilha-react-native/
 │   │   ├── modulo-testes/
 │   │   ├── modulo-cicd/
 │   │   └── modulo-arquitetura/
-│   └── trilha-web/                  ← for React web devs
-│       ├── modulo-fundamentos/
-│       ├── modulo-recursos-nativos/
-│       ├── modulo-performance/
-│       ├── modulo-testes/
-│       ├── modulo-cicd/
-│       └── modulo-arquitetura/
+│   ├── trilha-web/                  ← for React web devs
+│   │   ├── modulo-fundamentos/
+│   │   ├── modulo-recursos-nativos/
+│   │   ├── modulo-performance/
+│   │   ├── modulo-testes/
+│   │   ├── modulo-cicd/
+│   │   └── modulo-arquitetura/
+│   └── trilha-masterclass/          ← advanced track
+│       ├── modulo-00-overview/
+│       ├── modulo-01-brownfield/
+│       ├── modulo-02-turbomodules/
+│       ├── modulo-03-fabric-jsi/
+│       ├── modulo-04-performance-cicd/
+│       └── modulo-05-upgrade/
+├── _course-refs/                    ← consolidated COURSE-*.md files (not published)
+├── i18n/pt/                         ← Portuguese (PT-BR) translations
+│   ├── docusaurus-plugin-content-docs/current/
+│   └── docusaurus-plugin-content-pages/
 ├── static/assets/videos/            ← mp4 video files
 ├── src/
-│   ├── pages/                       ← custom pages (About)
+│   ├── pages/                       ← home page (index.jsx) and About page
 │   └── css/
+├── .claude/
+│   ├── design-system.md             ← visual design rules for all pages
+│   └── commands/
 ├── docusaurus.config.js
 └── sidebars.js
 ```
@@ -98,10 +126,12 @@ Suggested branch format: `content/<slug>` for content, `fix/<slug>` for fixes.
 ### File conventions
 
 - Individual files: `NN-slug.md` with `title` frontmatter only
-- Each module folder has a `COURSE-[module].md` consolidating all content (not published to the site)
+- Use `.mdx` extension only when JSX is needed inside the file (e.g. Masterclass overview pages)
+- `COURSE-[module].md` files live in `_course-refs/` — not inside `docs/` (avoids build warnings)
 - Each folder has its own `CLAUDE.md` with local context (not published to the site)
 - No emojis in content files
 - `trilha-nativo`: Kotlin/Swift analogies; `trilha-web`: HTML/CSS/React web analogies
+- Target file size: 150–400 lines; split if over 500 lines
 
 ### Running locally
 

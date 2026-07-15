@@ -1,0 +1,30 @@
+{
+  "navbar.title": {
+    "message": "Trilha React Native",
+    "description": "The title in the navbar"
+  },
+  "item.label.Introdução": {
+    "message": "Introdução",
+    "description": "Navbar link — Introdução"
+  },
+  "item.label.Trilha Web": {
+    "message": "Trilha Web",
+    "description": "Navbar link — Trilha Web"
+  },
+  "item.label.Trilha Nativo": {
+    "message": "Trilha Nativo",
+    "description": "Navbar link — Trilha Nativo"
+  },
+  "item.label.Masterclass": {
+    "message": "Masterclass",
+    "description": "Navbar link — Masterclass"
+  },
+  "item.label.About": {
+    "message": "Sobre",
+    "description": "Navbar link — About page"
+  },
+  "item.label.GitHub": {
+    "message": "GitHub",
+    "description": "Navbar link — GitHub"
+  }
+}
