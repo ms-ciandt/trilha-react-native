@@ -14,7 +14,7 @@ const config = {
   onBrokenMarkdownLinks: 'warn',
 
   markdown: {
-    format: 'md',
+    format: 'detect',
   },
 
   i18n: {
@@ -35,6 +35,7 @@ const config = {
           path: 'docs',
           routeBasePath: '/',
           sidebarPath: require.resolve('./sidebars.js'),
+          sidebarCollapsible: true,
         },
         blog: false,
         theme: {
@@ -47,31 +48,40 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
-      navbar: {
-        title: 'Trilha React Native',
-        logo: {
-          alt: 'Trilha React Native',
-          src: 'img/logo.svg',
-          style: { height: '38px', width: 'auto' },
+      docs: {
+        sidebar: {
+          hideable: true,
+          autoCollapseCategories: false,
         },
+      },
+      navbar: {
+        hideOnScroll: true,
+        title: 'Trilha React Native',
+        logo: undefined,
         items: [
           {
-            type: 'docSidebar',
-            sidebarId: 'introducao',
-            position: 'left',
+            to: '/introducao/intro',
             label: 'Introdução',
+            position: 'left',
+            activeBaseRegex: '^/trilha-react-native/introducao',
           },
           {
-            type: 'docSidebar',
-            sidebarId: 'trilhaNativo',
-            position: 'left',
-            label: 'Trilha Nativo',
-          },
-          {
-            type: 'docSidebar',
-            sidebarId: 'trilhaWeb',
-            position: 'left',
+            to: '/trilha-web/modulo-fundamentos/adaptando-js-ts',
             label: 'Trilha Web',
+            position: 'left',
+            activeBaseRegex: '^/trilha-react-native/trilha-web',
+          },
+          {
+            to: '/trilha-nativo/modulo-fundamentos/javascript-for-native-developers',
+            label: 'Trilha Nativo',
+            position: 'left',
+            activeBaseRegex: '^/trilha-react-native/trilha-nativo',
+          },
+          {
+            to: '/trilha-masterclass/modulo-00-overview/course-overview',
+            label: 'Masterclass',
+            position: 'left',
+            activeBaseRegex: '^/trilha-react-native/trilha-masterclass',
           },
           {
             to: '/about',
@@ -89,7 +99,7 @@ const config = {
           },
         ],
       },
-      footer: { style: 'dark' },
+      footer: undefined,
       prism: {
         theme: require('prism-react-renderer').themes.github,
         darkTheme: require('prism-react-renderer').themes.dracula,

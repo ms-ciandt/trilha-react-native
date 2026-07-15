@@ -8,6 +8,13 @@ const CONTRIBUTORS = [
   { username: 'erickSuh',       name: 'Erick Sugahara' },
 ];
 
+const REVIEWERS = [
+  { name: 'Matheus Sales', role: 'React Native', username: 'AlimuraMatheus', color: '#00d4ff' },
+  { name: 'Reviewer',      role: 'Web',          username: null,             color: '#059669' },
+  { name: 'Reviewer',      role: 'Android',      username: null,             color: '#d97706' },
+  { name: 'Reviewer',      role: 'iOS',          username: null,             color: '#d97706' },
+];
+
 const TOOLS = [
   {
     name: 'NotebookLM',
@@ -17,6 +24,32 @@ const TOOLS = [
     name: 'Claude',
     description: 'Authored all written content — explanations, code examples, analogies, and narrative sections — across both tracks.',
   },
+];
+
+const TRACKS = [
+  {
+    label: 'Web Track',
+    color: '#059669',
+    desc: 'For developers coming from React, HTML/CSS and JavaScript. Covers the mental-model shift from browser to mobile environment.',
+  },
+  {
+    label: 'Native Track',
+    color: '#d97706',
+    desc: 'For Android (Kotlin) and iOS (Swift) developers. Maps native concepts — lifecycles, layouts, threading — to the JS ecosystem.',
+  },
+  {
+    label: 'Masterclass',
+    color: '#00d4ff',
+    desc: 'Advanced track covering Brownfield integration, TurboModules, Fabric, JSI, Performance and CI/CD.',
+  },
+];
+
+const STACK = [
+  'React Native 0.76+',
+  'Expo SDK 56',
+  'New Architecture (default)',
+  'JSI · Fabric · TurboModules',
+  'Hermes Engine',
 ];
 
 export default function About() {
@@ -31,6 +64,32 @@ export default function About() {
             how to build software — either on mobile (Android/iOS) or on the web (React) —
             and want to master React Native with the New Architecture.
           </p>
+        </section>
+
+        <section className={styles.section}>
+          <h2>Who is it for</h2>
+          <div className={styles.tools}>
+            {TRACKS.map((track) => (
+              <div
+                key={track.label}
+                className={styles.toolCard}
+                style={{ borderLeft: `3px solid ${track.color}` }}
+              >
+                <h3 style={{ color: track.color }}>{track.label}</h3>
+                <p>{track.desc}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className={styles.section}>
+          <h2>Reference Stack</h2>
+          <p>All content targets the current stable versions of React Native and Expo.</p>
+          <div className={styles.stackTags}>
+            {STACK.map((tag) => (
+              <span key={tag} className={styles.stackTag}>{tag}</span>
+            ))}
+          </div>
         </section>
 
         <section className={styles.section}>
@@ -77,6 +136,36 @@ export default function About() {
         </section>
 
         <section className={styles.section}>
+          <h2>Reviewers</h2>
+          <p>Each track was reviewed by a specialist in that platform.</p>
+          <div className={styles.reviewers}>
+            {REVIEWERS.map(({ name, role, username, color }) => (
+              <div key={role} className={styles.reviewerCard}>
+                <img
+                  src={username
+                    ? `https://github.com/${username}.png?size=120`
+                    : `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&size=120&background=1e2030&color=888&rounded=true`}
+                  alt={name}
+                  className={styles.avatar}
+                  style={{ borderColor: color, boxShadow: `0 0 0 2px color-mix(in srgb, ${color} 20%, transparent)` }}
+                />
+                <span className={styles.reviewerName}>{name}</span>
+                <span
+                  className={styles.reviewerRole}
+                  style={{
+                    color,
+                    background: `color-mix(in srgb, ${color} 12%, transparent)`,
+                    border: `1px solid color-mix(in srgb, ${color} 30%, transparent)`,
+                  }}
+                >
+                  {role}
+                </span>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className={styles.section}>
           <h2>Open Source</h2>
           <p>
             The full course content is open source and available on GitHub. Contributions,
@@ -90,6 +179,32 @@ export default function About() {
           >
             View on GitHub
           </a>
+        </section>
+
+        <section className={styles.section}>
+          <h2>Want to contribute?</h2>
+          <p>
+            Have a suggestion, found an error, or want to add content? Reach out to the
+            contributors directly on GitHub.
+          </p>
+          <div className={styles.contributors} style={{ marginTop: '1.5rem' }}>
+            {CONTRIBUTORS.map(({ username, name }) => (
+              <a
+                key={username}
+                href={`https://github.com/${username}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.contributor}
+              >
+                <img
+                  src={`https://github.com/${username}.png?size=120`}
+                  alt={name}
+                  className={styles.avatar}
+                />
+                <span>{name}</span>
+              </a>
+            ))}
+          </div>
         </section>
 
       </main>

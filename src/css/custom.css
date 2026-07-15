@@ -46,12 +46,30 @@
   padding: 0 1.5rem;
   font-size: 0.875rem;
   font-weight: 500;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background: color-mix(in srgb, var(--ifm-navbar-background-color) 85%, transparent) !important;
+  border-bottom: 1px solid var(--ifm-toc-border-color);
+  box-shadow: none !important;
+}
+
+[data-theme='dark'] .navbar {
+  background: color-mix(in srgb, #0f172a 88%, transparent) !important;
 }
 
 .navbar__brand {
   align-items: center;
+  margin-right: 1.5rem;
+}
+
+/* separator between brand and trail links */
+.navbar__brand::after {
+  content: '';
+  display: block;
+  width: 1px;
+  height: 20px;
+  background: var(--ifm-toc-border-color);
+  margin-left: 1.5rem;
 }
 
 .navbar__logo {
@@ -77,52 +95,231 @@
   background-clip: text;
 }
 
+/* ─── Navbar trail pills ─────────────────────────────────────────────── */
 .navbar__link {
   font-weight: 500;
-}
-
-/* Trilha Nativo — amber pill (3rd child: brand + Introdução + Trilha Nativo) */
-.navbar__items--left > :nth-child(3) .navbar__link,
-.navbar__items--left > :nth-child(3).navbar__link {
-  background: #d97706;
-  color: #fff !important;
   border-radius: 999px;
-  padding: 0.25rem 0.875rem;
-  font-weight: 600;
-  transition: box-shadow 0.2s ease, transform 0.2s ease, background 0.2s ease;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.8125rem;
+  transition: background 0.15s ease, color 0.15s ease;
 }
 
-.navbar__items--left > :nth-child(3) .navbar__link:hover,
-.navbar__items--left > :nth-child(3).navbar__link:hover {
-  background: #b45309;
-  box-shadow: 0 4px 14px rgba(217, 119, 6, 0.45);
-  transform: translateY(-1px);
-  text-decoration: none;
+/* Introdução — azul */
+.navbar__link[href*="/introducao"]:hover,
+.navbar__link[href*="/introducao"].navbar__link--active {
+  background: color-mix(in srgb, #2563eb 12%, transparent);
+  color: #2563eb;
+}
+[data-theme='dark'] .navbar__link[href*="/introducao"]:hover,
+[data-theme='dark'] .navbar__link[href*="/introducao"].navbar__link--active {
+  background: color-mix(in srgb, #60a5fa 14%, transparent);
+  color: #60a5fa;
 }
 
-/* Trilha Web — emerald pill (4th child) */
-.navbar__items--left > :nth-child(4) .navbar__link,
-.navbar__items--left > :nth-child(4).navbar__link {
-  background: #059669;
-  color: #fff !important;
-  border-radius: 999px;
-  padding: 0.25rem 0.875rem;
-  font-weight: 600;
-  transition: box-shadow 0.2s ease, transform 0.2s ease, background 0.2s ease;
+/* Trilha Web — verde */
+.navbar__link[href*="/trilha-web"]:hover,
+.navbar__link[href*="/trilha-web"].navbar__link--active {
+  background: color-mix(in srgb, #059669 12%, transparent);
+  color: #059669;
+}
+[data-theme='dark'] .navbar__link[href*="/trilha-web"]:hover,
+[data-theme='dark'] .navbar__link[href*="/trilha-web"].navbar__link--active {
+  background: color-mix(in srgb, #34d399 14%, transparent);
+  color: #34d399;
 }
 
-.navbar__items--left > :nth-child(4) .navbar__link:hover,
-.navbar__items--left > :nth-child(4).navbar__link:hover {
-  background: #047857;
-  box-shadow: 0 4px 14px rgba(5, 150, 105, 0.45);
-  transform: translateY(-1px);
-  text-decoration: none;
+/* Trilha Nativo — amber */
+.navbar__link[href*="/trilha-nativo"]:hover,
+.navbar__link[href*="/trilha-nativo"].navbar__link--active {
+  background: color-mix(in srgb, #d97706 12%, transparent);
+  color: #d97706;
 }
+[data-theme='dark'] .navbar__link[href*="/trilha-nativo"]:hover,
+[data-theme='dark'] .navbar__link[href*="/trilha-nativo"].navbar__link--active {
+  background: color-mix(in srgb, #fbbf24 14%, transparent);
+  color: #fbbf24;
+}
+
+/* Masterclass — ciano */
+.navbar__link[href*="/trilha-masterclass"]:hover,
+.navbar__link[href*="/trilha-masterclass"].navbar__link--active {
+  background: color-mix(in srgb, #00d4ff 12%, transparent);
+  color: #0099bb;
+}
+[data-theme='dark'] .navbar__link[href*="/trilha-masterclass"]:hover,
+[data-theme='dark'] .navbar__link[href*="/trilha-masterclass"].navbar__link--active {
+  background: color-mix(in srgb, #00d4ff 14%, transparent);
+  color: #00d4ff;
+}
+
+/* ─── Track themes — sidebar + content accent ────────────────────────── */
+
+/* Introdução — azul */
+:root:has(.navbar__link[href*="/introducao"].navbar__link--active) {
+  --track-accent: #2563eb;
+  --track-accent-bg: color-mix(in srgb, #2563eb 8%, transparent);
+  --track-accent-border: color-mix(in srgb, #2563eb 30%, transparent);
+}
+[data-theme='dark']:has(.navbar__link[href*="/introducao"].navbar__link--active) {
+  --track-accent: #60a5fa;
+  --track-accent-bg: color-mix(in srgb, #60a5fa 10%, transparent);
+  --track-accent-border: color-mix(in srgb, #60a5fa 25%, transparent);
+}
+
+/* Trilha Web — verde */
+:root:has(.navbar__link[href*="/trilha-web"].navbar__link--active) {
+  --track-accent: #059669;
+  --track-accent-bg: color-mix(in srgb, #059669 8%, transparent);
+  --track-accent-border: color-mix(in srgb, #059669 30%, transparent);
+}
+[data-theme='dark']:has(.navbar__link[href*="/trilha-web"].navbar__link--active) {
+  --track-accent: #34d399;
+  --track-accent-bg: color-mix(in srgb, #34d399 10%, transparent);
+  --track-accent-border: color-mix(in srgb, #34d399 25%, transparent);
+}
+
+/* Trilha Nativo — amber */
+:root:has(.navbar__link[href*="/trilha-nativo"].navbar__link--active) {
+  --track-accent: #d97706;
+  --track-accent-bg: color-mix(in srgb, #d97706 8%, transparent);
+  --track-accent-border: color-mix(in srgb, #d97706 30%, transparent);
+}
+[data-theme='dark']:has(.navbar__link[href*="/trilha-nativo"].navbar__link--active) {
+  --track-accent: #fbbf24;
+  --track-accent-bg: color-mix(in srgb, #fbbf24 10%, transparent);
+  --track-accent-border: color-mix(in srgb, #fbbf24 25%, transparent);
+}
+
+/* Masterclass — ciano */
+:root:has(.navbar__link[href*="/trilha-masterclass"].navbar__link--active) {
+  --track-accent: #0099bb;
+  --track-accent-bg: color-mix(in srgb, #00d4ff 8%, transparent);
+  --track-accent-border: color-mix(in srgb, #00d4ff 30%, transparent);
+}
+[data-theme='dark']:has(.navbar__link[href*="/trilha-masterclass"].navbar__link--active) {
+  --track-accent: #00d4ff;
+  --track-accent-bg: color-mix(in srgb, #00d4ff 10%, transparent);
+  --track-accent-border: color-mix(in srgb, #00d4ff 25%, transparent);
+}
+
+/* Apply accent to sidebar active link + indicator */
+.menu__link--active {
+  color: var(--track-accent, var(--ifm-color-primary)) !important;
+  background: var(--track-accent-bg, color-mix(in srgb, var(--ifm-color-primary) 8%, transparent)) !important;
+}
+
+/* Thin colored bar on the left of the doc content area */
+.theme-doc-markdown {
+  border-left: 3px solid var(--track-accent-border, transparent);
+  padding-left: 1.25rem;
+}
+
+/* Category label color in sidebar */
+.menu__link--sublist {
+  color: var(--track-accent, var(--ifm-color-primary-dark)) !important;
+}
+[data-theme='dark'] .menu__link--sublist {
+  color: var(--track-accent, var(--ifm-color-primary-light)) !important;
+}
+
 
 /* ─── Sidebar ────────────────────────────────────────────────────────── */
 .theme-doc-sidebar-container {
   border-right: 1px solid var(--ifm-toc-border-color) !important;
 }
+
+/* Sidebar track header — repurpose sidebarLogo (above the scrollable menu,
+   never scrolls away, appears when hideOnScroll hides the navbar) */
+[class*='trilha-masterclass'] [class*='sidebarLogo'],
+[class*='trilha-web'] [class*='sidebarLogo'],
+[class*='trilha-nativo'] [class*='sidebarLogo'],
+[class*='introducao'] [class*='sidebarLogo'] {
+  border-left: 3px solid;
+  border-bottom: 1px solid;
+  padding-left: calc(1rem - 3px) !important;
+  text-decoration: none !important;
+}
+
+[class*='trilha-masterclass'] [class*='sidebarLogo'] img,
+[class*='trilha-web'] [class*='sidebarLogo'] img,
+[class*='trilha-nativo'] [class*='sidebarLogo'] img,
+[class*='introducao'] [class*='sidebarLogo'] img,
+[class*='trilha-masterclass'] [class*='sidebarLogo'] b,
+[class*='trilha-web'] [class*='sidebarLogo'] b,
+[class*='trilha-nativo'] [class*='sidebarLogo'] b,
+[class*='introducao'] [class*='sidebarLogo'] b {
+  display: none !important;
+}
+
+[class*='trilha-masterclass'] [class*='sidebarLogo']::before,
+[class*='trilha-web'] [class*='sidebarLogo']::before,
+[class*='trilha-nativo'] [class*='sidebarLogo']::before,
+[class*='introducao'] [class*='sidebarLogo']::before {
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+[class*='trilha-masterclass'] [class*='sidebarLogo'] {
+  background: #0a0e1a;
+  border-left-color: #00d4ff;
+  border-bottom-color: rgba(0, 212, 255, 0.2);
+}
+[class*='trilha-masterclass'] [class*='sidebarLogo']::before {
+  content: 'Masterclass → React Native';
+  color: #00d4ff;
+}
+
+[class*='trilha-web'] [class*='sidebarLogo'] {
+  background: var(--ifm-background-color);
+  border-left-color: #059669;
+  border-bottom-color: rgba(5, 150, 105, 0.25);
+}
+[class*='trilha-web'] [class*='sidebarLogo']::before {
+  content: 'Trilha Web → React Native';
+  color: #059669;
+}
+[data-theme='dark'] [class*='trilha-web'] [class*='sidebarLogo'] {
+  background: #0f172a;
+  border-left-color: #34d399;
+  border-bottom-color: rgba(52, 211, 153, 0.2);
+}
+[data-theme='dark'] [class*='trilha-web'] [class*='sidebarLogo']::before {
+  color: #34d399;
+}
+
+[class*='trilha-nativo'] [class*='sidebarLogo'] {
+  background: var(--ifm-background-color);
+  border-left-color: #d97706;
+  border-bottom-color: rgba(217, 119, 6, 0.25);
+}
+[class*='trilha-nativo'] [class*='sidebarLogo']::before {
+  content: 'Trilha Nativo → React Native';
+  color: #d97706;
+}
+[data-theme='dark'] [class*='trilha-nativo'] [class*='sidebarLogo'] {
+  background: #0f172a;
+  border-left-color: #fbbf24;
+  border-bottom-color: rgba(251, 191, 36, 0.2);
+}
+[data-theme='dark'] [class*='trilha-nativo'] [class*='sidebarLogo']::before {
+  color: #fbbf24;
+}
+
+[class*='introducao'] [class*='sidebarLogo'] {
+  background: var(--ifm-background-color);
+  border-left-color: var(--ifm-color-primary);
+  border-bottom-color: color-mix(in srgb, var(--ifm-color-primary) 25%, transparent);
+}
+[class*='introducao'] [class*='sidebarLogo']::before {
+  content: 'Introdução → React Native';
+  color: var(--ifm-color-primary);
+}
+[data-theme='dark'] [class*='introducao'] [class*='sidebarLogo'] {
+  background: #0f172a;
+}
+
 
 .menu__link {
   font-size: 0.875rem;
@@ -140,17 +337,11 @@
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--ifm-color-primary-dark);
   margin-top: 0.75rem;
 }
 
 .menu__link--sublist:hover {
-  color: var(--ifm-color-primary);
   background: transparent;
-}
-
-[data-theme='dark'] .menu__link--sublist {
-  color: var(--ifm-color-primary-light);
 }
 
 /* ─── Content ────────────────────────────────────────────────────────── */
@@ -208,68 +399,322 @@ video {
   background: #000;
 }
 
-/* ─── Pagination (Prev/Next) — fixed to viewport bottom ─────────────── */
+/* ─── Pagination (Prev/Next) ─────────────────────────────────────────── */
 .pagination-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 100;
   display: flex;
   justify-content: space-between;
-  margin: 0;
-  padding: 0.6rem 1rem;
-  background: var(--ifm-navbar-background-color);
-  border-top: 1px solid var(--ifm-toc-border-color);
-  backdrop-filter: blur(8px);
+  gap: 1rem;
+  margin: 3rem 0 1rem;
+  padding: 0;
+  border: none;
 }
 
 .pagination-nav__item {
-  flex: 0 0 auto;
+  flex: 1;
 }
 
 .pagination-nav__item--next {
-  margin-left: auto;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .pagination-nav__link {
-  padding: 0.4rem 0.875rem;
-  border-radius: var(--ifm-global-radius);
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.875rem 1.25rem;
+  border-radius: 12px;
   border: 1px solid var(--ifm-toc-border-color);
   font-size: 0.8125rem;
   font-weight: 500;
-  transition: border-color 0.15s, background 0.15s;
   background: var(--ifm-background-surface-color);
-  max-width: 320px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  text-decoration: none !important;
+  max-width: 360px;
+  width: 100%;
 }
 
 .pagination-nav__link:hover {
-  border-color: var(--ifm-color-primary);
+  border-color: var(--module-accent, var(--ifm-color-primary));
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--module-accent, var(--ifm-color-primary)) 15%, transparent);
+  transform: translateY(-2px);
   text-decoration: none;
-}
-
-.pagination-nav__label {
-  font-size: 0.8125rem;
 }
 
 .pagination-nav__sublabel {
   font-size: 0.7rem;
-  opacity: 0.6;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--module-accent, var(--ifm-color-primary));
+  opacity: 0.8;
 }
 
-/* Add padding so fixed footer doesn't overlap last content/sidebar items */
-.theme-doc-markdown {
-  padding-bottom: 80px;
+.pagination-nav__label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--ifm-color-emphasis-700);
 }
 
-.theme-doc-sidebar-menu {
-  padding-bottom: 80px !important;
+/* ─── Sidebar hideable button ────────────────────────────────────────── */
+.theme-doc-sidebar-container button[class*='collapseSidebarButton'] {
+  border-top: 1px solid var(--ifm-toc-border-color);
+  background: transparent;
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
+}
+
+.theme-doc-sidebar-container button[class*='collapseSidebarButton']:hover {
+  opacity: 1;
+  background: transparent;
+}
+
+/* ─── Module themes via --module-accent ─────────────────────────────── */
+
+/* Masterclass */
+[class*='trilha-masterclass'] {
+  --module-accent: #00d4ff;
+}
+
+/* Trilha Web */
+[class*='trilha-web'] {
+  --module-accent: #059669;
+}
+
+/* Trilha Nativo */
+[class*='trilha-nativo'] {
+  --module-accent: #d97706;
+}
+
+/* Introdução */
+[class*='introducao'] {
+  --module-accent: var(--ifm-color-primary);
+}
+
+/* Masterclass — fundo escuro na área de conteúdo */
+[class*='trilha-masterclass'] .theme-doc-sidebar-container {
+  background: #0a0e1a;
+  border-right-color: rgba(0, 212, 255, 0.2) !important;
+}
+
+[class*='trilha-masterclass'] .menu__link--sublist {
+  color: #00d4ff !important;
+}
+
+[class*='trilha-masterclass'] .menu__link--active {
+  background: color-mix(in srgb, #00d4ff 10%, transparent) !important;
+  color: #00d4ff !important;
+}
+
+[class*='trilha-masterclass'] .menu__link:hover {
+  background: color-mix(in srgb, #00d4ff 8%, transparent);
+}
+
+/* Trilha Web — sidebar com sotaque emerald */
+[class*='trilha-web'] .menu__link--sublist {
+  color: #059669 !important;
+}
+
+[data-theme='dark'] [class*='trilha-web'] .menu__link--sublist {
+  color: #34d399 !important;
+}
+
+[class*='trilha-web'] .menu__link--active {
+  background: color-mix(in srgb, #059669 10%, transparent) !important;
+  color: #059669 !important;
+}
+
+[data-theme='dark'] [class*='trilha-web'] .menu__link--active {
+  background: color-mix(in srgb, #34d399 10%, transparent) !important;
+  color: #34d399 !important;
+}
+
+/* Trilha Nativo — sidebar com sotaque amber */
+[class*='trilha-nativo'] .menu__link--sublist {
+  color: #d97706 !important;
+}
+
+[data-theme='dark'] [class*='trilha-nativo'] .menu__link--sublist {
+  color: #fbbf24 !important;
+}
+
+[class*='trilha-nativo'] .menu__link--active {
+  background: color-mix(in srgb, #d97706 10%, transparent) !important;
+  color: #d97706 !important;
+}
+
+[data-theme='dark'] [class*='trilha-nativo'] .menu__link--active {
+  background: color-mix(in srgb, #fbbf24 10%, transparent) !important;
+  color: #fbbf24 !important;
 }
 
 /* ─── Admonitions ────────────────────────────────────────────────────── */
 .admonition {
   border-radius: var(--ifm-global-radius);
   font-size: 0.875rem;
+}
+
+/* ─── Masterclass pages ──────────────────────────────────────────────── */
+.mc-page {
+  position: relative;
+}
+
+.mc-header {
+  position: relative;
+  padding: 2rem 2rem 1.75rem;
+  margin: -1rem -1rem 2rem;
+  border-radius: 12px;
+  background: #0d1117;
+  border: 1px dashed #b8860b55;
+  overflow: hidden;
+}
+
+.mc-header::before {
+  content: '';
+  position: absolute;
+  top: -60px;
+  right: -60px;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: #b8860b;
+  filter: blur(60px);
+  opacity: 0.12;
+  pointer-events: none;
+}
+
+.mc-header::after {
+  content: '';
+  position: absolute;
+  bottom: -40px;
+  left: -40px;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: #00d4ff;
+  filter: blur(60px);
+  opacity: 0.06;
+  pointer-events: none;
+}
+
+.mc-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.mc-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, #b8860b 15%, transparent);
+  color: #d4a017;
+  border: 1px solid color-mix(in srgb, #b8860b 40%, transparent);
+}
+
+.mc-level-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, #00d4ff 10%, transparent);
+  color: #00d4ff;
+  border: 1px solid color-mix(in srgb, #00d4ff 30%, transparent);
+}
+
+.mc-title {
+  font-size: 1.875rem !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em !important;
+  margin: 0 0 0.25rem !important;
+  color: #d4a017 !important;
+  text-shadow: 0 0 30px rgba(212, 160, 23, 0.25);
+}
+
+.mc-subtitle {
+  font-size: 0.875rem;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.mc-coming-soon {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, #b8860b 12%, transparent);
+  color: #d4a017;
+  border: 1px solid color-mix(in srgb, #b8860b 35%, transparent);
+  margin-top: 0.25rem;
+}
+
+/* ─── Content animations ─────────────────────────────────────────────── */
+.markdown h1 {
+  animation: fadeUp 0.5s ease both;
+}
+
+.markdown h2 {
+  animation: fadeUp 0.4s ease 0.05s both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Masterclass — gradient glow no topo da área de conteúdo */
+[class*='trilha-masterclass'] .theme-doc-markdown {
+  position: relative;
+}
+
+[class*='trilha-masterclass'] .theme-doc-markdown::before {
+  content: '';
+  position: fixed;
+  top: 56px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #d4a017 30%, #00d4ff 70%, transparent);
+  opacity: 0.6;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Trilha Web — linha de acento no topo */
+[class*='trilha-web'] .theme-doc-markdown::before {
+  content: '';
+  position: fixed;
+  top: 56px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #059669 50%, transparent);
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Trilha Nativo — linha de acento no topo */
+[class*='trilha-nativo'] .theme-doc-markdown::before {
+  content: '';
+  position: fixed;
+  top: 56px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #d97706 50%, transparent);
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: 10;
 }
 
 /* ─── TOC (right sidebar) ────────────────────────────────────────────── */
@@ -279,4 +724,71 @@ video {
 
 .table-of-contents {
   padding-bottom: 80px !important;
+}
+
+/* ─── Go To Top button ───────────────────────────────────────────────── */
+.go-to-top {
+  --_from: var(--btn-from, #2563eb);
+  --_to:   var(--btn-to,   #7c3aed);
+
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 200;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+
+  /* gradient fill */
+  background: linear-gradient(135deg, var(--_from) 0%, var(--_to) 100%);
+  color: #fff;
+
+  /* subtle glow matching the gradient midpoint */
+  box-shadow:
+    0 4px 14px color-mix(in srgb, var(--_from) 35%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--_from) 30%, transparent);
+
+  opacity: 0;
+  transform: translateY(14px) scale(0.85);
+  pointer-events: none;
+  transition:
+    opacity 0.28s ease,
+    transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.22s ease;
+}
+
+.go-to-top--visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.go-to-top:hover {
+  box-shadow:
+    0 8px 28px color-mix(in srgb, var(--_from) 50%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--_from) 45%, transparent);
+  transform: translateY(-3px) scale(1.08);
+}
+
+.go-to-top:active {
+  transform: translateY(0) scale(0.96);
+  box-shadow:
+    0 3px 10px color-mix(in srgb, var(--_from) 30%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--_from) 25%, transparent);
+}
+
+@media (max-width: 768px) {
+  .go-to-top {
+    bottom: 1.25rem;
+    right: 1.25rem;
+    width: 38px;
+    height: 38px;
+  }
 }
