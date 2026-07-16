@@ -1,8 +1,8 @@
 ---
-title: Choose Your Track
+title: Choose Your Trail
 ---
 
-# Choose Your Track
+# Choose Your Trail
 
 ## Video Overview
 
@@ -15,7 +15,7 @@ title: Choose Your Track
 
 <div style="flex: 1; min-width: 280px; border: 2px solid #3578e5; border-radius: 12px; padding: 28px;">
 
-### Native Dev Track
+### Native Dev Trail
 
 **For Android / iOS developers**
 
@@ -36,7 +36,7 @@ You already understand _why_ native rendering matters, what thread safety means,
 
 <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #3578e5;">
 
-**[Start the Native Dev Track →](../trilha-nativo/modulo-fundamentos/javascript-for-native-developers)**
+**[Start the Native Dev Trail →](../trilha-nativo/modulo-fundamentos/javascript-for-native-developers)**
 
 </div>
 
@@ -44,7 +44,7 @@ You already understand _why_ native rendering matters, what thread safety means,
 
 <div style="flex: 1; min-width: 280px; border: 2px solid #25c2a0; border-radius: 12px; padding: 28px;">
 
-### Web Dev Track
+### Web Dev Trail
 
 **For React developers**
 
@@ -65,9 +65,38 @@ React Native components work exactly like React components. Your hook knowledge,
 
 <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #25c2a0;">
 
-**[Start the Web Dev Track →](../trilha-web/modulo-fundamentos/adaptando-js-ts)**
+**[Start the Web Dev Trail →](../trilha-web/modulo-fundamentos/adaptando-js-ts)**
 
 </div>
+
+</div>
+
+</div>
+
+<div style="margin-top: 24px; border: 2px solid #d4a017; border-radius: 12px; padding: 28px; background: linear-gradient(135deg, #0a0e1a 0%, #1a1f35 100%);">
+
+### Masterclass
+
+**Advanced trail — internals, integrations, and production scale**
+
+**Best for you if:**
+- You already know React Native fundamentals (either trail)
+- You need to integrate RN into an existing native app (brownfield)
+- You want to build TurboModules, Fabric components, or use JSI directly
+- You need production-grade performance tuning and CI/CD pipelines
+- You're targeting React Native 0.76+ New Architecture
+
+**What you'll cover:**
+- Brownfield integration with Android and iOS codebases
+- TurboModules and the new native module API
+- Fabric renderer and JSI — how RN renders under the hood
+- Performance profiling, tracing, and optimization techniques
+- Automated CI/CD pipelines for React Native apps
+- Upgrade strategies for large codebases
+
+<div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #d4a017;">
+
+**[Start the Masterclass →](../trilha-masterclass/modulo-00-overview/course-overview)**
 
 </div>
 

@@ -157,6 +157,6 @@ Features navigate by calling `navigation.navigate('ScreenName')` — they know s
 
 ## Feedback
 
-You've reached the end of the Native Track. Fill out the form to share your thoughts:
+You've reached the end of the Native Dev Trail. Fill out the form to share your thoughts:
 
 [Give Feedback](https://forms.gle/75pKeXQxkSZogzxv5)

@@ -176,6 +176,6 @@ Features navigate by calling `navigation.navigate('ScreenName')`. They know scre
 
 ## Feedback
 
-You've reached the end of the Web Track. Fill out the form to share your thoughts:
+You've reached the end of the Web Dev Trail. Fill out the form to share your thoughts:
 
 [Give Feedback](https://forms.gle/75pKeXQxkSZogzxv5)

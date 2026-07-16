@@ -14,16 +14,16 @@ title: Welcome to React Native Trail
 
 **React Native Trail** is a structured course for developers who already know how to build software — either on **mobile (Android/iOS)** or on the **web (React)** — and want to master React Native with the New Architecture.
 
-## Two Tracks, One Destination
+## Two Trails, One Destination
 
 This course is split into two parallel learning paths:
 
-| Track | For | Starting Point |
+| Trail | For | Starting Point |
 |-------|-----|----------------|
-|  **Native Dev Track** | Android (Kotlin) or iOS (Swift) developers | JS/TS → React → React Native |
-|  **Web Dev Track** | React / JavaScript web developers | Mobile mindset → RN differences → Native components |
+|  **Native Dev Trail** | Android (Kotlin) or iOS (Swift) developers | JS/TS → React → React Native |
+|  **Web Dev Trail** | React / JavaScript web developers | Mobile mindset → RN differences → Native components |
 
-Both tracks converge on the same React Native skill set — they just approach it from your existing strengths.
+Both trails converge on the same React Native skill set, approaching it from your existing strengths.
 
 ---
 
@@ -42,11 +42,11 @@ By the end of this course you will:
 
 ## Prerequisites
 
-**Native Dev Track:**
+**Native Dev Trail:**
 - You can read/write Kotlin or Swift
 - You understand the concept of Activities/ViewControllers, layouts, and lifecycle
 
-**Web Dev Track:**
+**Web Dev Trail:**
 - You can build React components with hooks
 - You understand JSX, props, state, and the component tree
 
@@ -86,4 +86,4 @@ Every code example in this course can be run immediately in **[Expo Snack](https
 
 ## Next Step
 
-→ Start with **[History & Architecture](./history-and-architecture)** to understand *why* React Native is compelling in 2026, then pick your track.
+→ Start with **[History & Architecture](./history-and-architecture)** to understand *why* React Native is compelling in 2026, then pick your trail.

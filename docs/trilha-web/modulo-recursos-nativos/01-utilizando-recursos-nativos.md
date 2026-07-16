@@ -5,7 +5,7 @@ sidebar_label: "Using Native Resources"
 sidebar_position: 1
 ---
 
-# Topic 1 — Using Native Resources (Track 1: Web/React Developers)
+# Topic 1 — Using Native Resources (Web Dev Trail)
 
 ---
 

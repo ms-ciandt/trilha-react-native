@@ -10,6 +10,7 @@ const CONTRIBUTORS = [
 
 const REVIEWERS = [
   { name: 'Matheus Sales', role: 'React Native', username: 'AlimuraMatheus', color: '#00d4ff' },
+  { name: 'Revisor',       role: 'Arquiteto',    username: null,             color: '#7c3aed' },
   { name: 'Revisor',       role: 'Web',          username: null,             color: '#059669' },
   { name: 'Revisor',       role: 'Android',      username: null,             color: '#d97706' },
   { name: 'Revisor',       role: 'iOS',          username: null,             color: '#d97706' },
@@ -22,7 +23,7 @@ const TOOLS = [
   },
   {
     name: 'Claude',
-    description: 'Responsável por todo o conteúdo escrito — explicações, exemplos de código, analogias e seções narrativas — nas duas trilhas.',
+    description: 'Responsável por todo o conteúdo escrito: explicações, exemplos de código, analogias e seções narrativas nas duas trilhas.',
   },
 ];
 
@@ -35,10 +36,10 @@ const TRACKS = [
   {
     label: 'Trilha Nativo',
     color: '#d97706',
-    desc: 'Para devs Android (Kotlin) e iOS (Swift). Mapeia conceitos nativos — ciclos de vida, layouts, threads — para o ecossistema JS.',
+    desc: 'Para devs Android (Kotlin) e iOS (Swift). Mapeia conceitos nativos: ciclos de vida, layouts, threads para o ecossistema JS.',
   },
   {
-    label: 'Masterclass',
+    label: 'Trilha React Native MasterClass',
     color: '#00d4ff',
     desc: 'Trilha avançada cobrindo integração Brownfield, TurboModules, Fabric, JSI, Performance e CI/CD.',
   },
@@ -61,7 +62,7 @@ export default function About() {
           <h1>Sobre Este Curso</h1>
           <p>
             React Native Trail é um curso gratuito e open source para desenvolvedores que já
-            sabem construir software — seja no mobile (Android/iOS) ou na web (React) — e
+            sabem construir software, seja no mobile (Android/iOS) ou na web (React), e
             querem dominar o React Native com a New Architecture.
           </p>
         </section>
@@ -97,7 +98,7 @@ export default function About() {
           <p>
             Este curso foi criado com um fluxo de trabalho centrado em IA. Cada explicação,
             exemplo de código, analogia e seção narrativa foi produzida com ferramentas de IA
-            — não como atalho, mas como escolha deliberada para avançar rápido e manter
+            não como atalho, mas como escolha deliberada para avançar rápido e manter
             consistência em duas trilhas paralelas com dezenas de tópicos.
           </p>
           <div className={styles.tools}>

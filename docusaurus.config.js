@@ -2,8 +2,8 @@
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'Trilha React Native',
-  tagline: 'Do zero ao React Native — trilhas para devs nativos e web',
+  title: 'React Native Trail',
+  tagline: 'From zero to React Native — tracks for native and web devs',
   url: 'https://alimuramatheus.github.io',
   baseUrl: '/trilha-react-native/',
   organizationName: 'AlimuraMatheus',
@@ -56,30 +56,30 @@ const config = {
       },
       navbar: {
         hideOnScroll: true,
-        title: 'Trilha React Native',
+        title: 'React Native Trail',
         logo: undefined,
         items: [
           {
             to: '/introducao/intro',
-            label: 'Introdução',
+            label: 'Introduction',
             position: 'left',
             activeBaseRegex: '^/trilha-react-native/introducao',
           },
           {
             to: '/trilha-web/modulo-fundamentos/adaptando-js-ts',
-            label: 'Trilha Web',
+            label: 'Web developer trail',
             position: 'left',
             activeBaseRegex: '^/trilha-react-native/trilha-web',
           },
           {
             to: '/trilha-nativo/modulo-fundamentos/javascript-for-native-developers',
-            label: 'Trilha Nativo',
+            label: 'Native dev trail',
             position: 'left',
             activeBaseRegex: '^/trilha-react-native/trilha-nativo',
           },
           {
             to: '/trilha-masterclass/modulo-00-overview/course-overview',
-            label: 'Masterclass',
+            label: 'React Native MasterClass Trail',
             position: 'left',
             activeBaseRegex: '^/trilha-react-native/trilha-masterclass',
           },

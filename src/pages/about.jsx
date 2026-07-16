@@ -10,6 +10,7 @@ const CONTRIBUTORS = [
 
 const REVIEWERS = [
   { name: 'Matheus Sales', role: 'React Native', username: 'AlimuraMatheus', color: '#00d4ff' },
+  { name: 'Reviewer',      role: 'Architect',    username: null,             color: '#7c3aed' },
   { name: 'Reviewer',      role: 'Web',          username: null,             color: '#059669' },
   { name: 'Reviewer',      role: 'Android',      username: null,             color: '#d97706' },
   { name: 'Reviewer',      role: 'iOS',          username: null,             color: '#d97706' },
@@ -22,25 +23,25 @@ const TOOLS = [
   },
   {
     name: 'Claude',
-    description: 'Authored all written content — explanations, code examples, analogies, and narrative sections — across both tracks.',
+    description: 'Authored all written content: explanations, code examples, analogies, and narrative sections across both trails.',
   },
 ];
 
 const TRACKS = [
   {
-    label: 'Web Track',
+    label: 'Web dev trail',
     color: '#059669',
     desc: 'For developers coming from React, HTML/CSS and JavaScript. Covers the mental-model shift from browser to mobile environment.',
   },
   {
-    label: 'Native Track',
+    label: 'Native dev trail',
     color: '#d97706',
-    desc: 'For Android (Kotlin) and iOS (Swift) developers. Maps native concepts — lifecycles, layouts, threading — to the JS ecosystem.',
+    desc: 'For Android (Kotlin) and iOS (Swift) developers. Maps native concepts: lifecycles, layouts, threading to the JS ecosystem.',
   },
   {
-    label: 'Masterclass',
+    label: 'React Native MasterClass Trail',
     color: '#00d4ff',
-    desc: 'Advanced track covering Brownfield integration, TurboModules, Fabric, JSI, Performance and CI/CD.',
+    desc: 'Advanced trail covering Brownfield integration, TurboModules, Fabric, JSI, Performance and CI/CD.',
   },
 ];
 
@@ -61,7 +62,7 @@ export default function About() {
           <h1>About This Course</h1>
           <p>
             React Native Trail is a free, open-source course for developers who already know
-            how to build software — either on mobile (Android/iOS) or on the web (React) —
+            how to build software, either on mobile (Android/iOS) or on the web (React),
             and want to master React Native with the New Architecture.
           </p>
         </section>
@@ -96,8 +97,8 @@ export default function About() {
           <h2>Built AI-First</h2>
           <p>
             This course was created with an AI-first workflow. Every explanation, code example,
-            analogy, and narrative section was authored using AI tools — not as a shortcut, but
-            as a deliberate choice to move fast and maintain consistency across two parallel tracks
+            analogy, and narrative section was authored using AI tools, not as a shortcut, but
+            as a deliberate choice to move fast and maintain consistency across two parallel trails
             and dozens of topics.
           </p>
           <div className={styles.tools}>
@@ -137,7 +138,7 @@ export default function About() {
 
         <section className={styles.section}>
           <h2>Reviewers</h2>
-          <p>Each track was reviewed by a specialist in that platform.</p>
+          <p>Each trail was reviewed by a specialist in that platform.</p>
           <div className={styles.reviewers}>
             {REVIEWERS.map(({ name, role, username, color }) => (
               <div key={role} className={styles.reviewerCard}>

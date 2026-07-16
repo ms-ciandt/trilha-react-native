@@ -54,15 +54,15 @@ export default function Home() {
   return (
     <Layout
       title="Home"
-      description="The next wave — one codebase, two platforms"
+      description="The next wave: one codebase, two platforms"
     >
       <main className={styles.main}>
         <GridBackground />
 
         <header className={styles.hero}>
-          <h1 className={styles.heroTitle}>Trilha React Native</h1>
+          <h1 className={styles.heroTitle}>React Native Trail</h1>
           <p className={styles.heroSubtitle}>
-            The next wave — one codebase, two platforms
+            The next wave: one codebase, two platforms
           </p>
         </header>
 
@@ -79,7 +79,7 @@ export default function Home() {
             <div className={styles.introGlow} />
             <div className={styles.introLabel}>Introduction</div>
             <p className={styles.trackDesc}>
-              History, architecture and New Architecture — essential context before choosing your track.
+              History, architecture and New Architecture: essential context before choosing your trail.
             </p>
             <Link
               className={`${styles.trackBtn} ${styles.introBtnStyle}`}
@@ -92,7 +92,7 @@ export default function Home() {
 
         <ForkArrows />
 
-        <p className={styles.forkCaption}>Choose your background — two paths, one destination</p>
+        <p className={styles.forkCaption}>Choose your background: two paths, one destination</p>
 
         <section className={styles.tracks}>
           <div className={`${styles.trackCard} ${styles.trackCardWeb}`} style={{ animationDelay: '0.1s' }}>
@@ -101,7 +101,7 @@ export default function Home() {
               <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" style={{marginRight: '4px', verticalAlign: 'middle'}}><path d="M9.4 16.6 4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0 4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>
               Web
             </div>
-            <div className={styles.trackLabel}>Web Track</div>
+            <div className={styles.trackLabel}>Web dev trail</div>
             <p className={styles.trackDesc}>
               You come from React, HTML/CSS and JavaScript. Learn the differences of the mobile environment.
             </p>
@@ -120,7 +120,7 @@ export default function Home() {
               <img src="/trilha-react-native/img/android-logo.svg" alt="Android" width="12" height="12" style={{marginRight: '5px', verticalAlign: 'middle', filter: 'invert(71%) sepia(62%) saturate(450%) hue-rotate(93deg) brightness(95%) contrast(90%)'}} />
               Native
             </div>
-            <div className={styles.trackLabel}>Native Track</div>
+            <div className={styles.trackLabel}>Native dev trail</div>
             <p className={styles.trackDesc}>
               You come from Kotlin or Swift. Map your concepts to the JavaScript ecosystem.
             </p>
@@ -143,7 +143,7 @@ export default function Home() {
             React Native
           </span>
           <p className={styles.goalDesc}>
-            One codebase — native apps on iOS and Android
+            One codebase: native apps on iOS and Android
           </p>
           <div className={styles.levelBadge}>Beginner · Intermediate</div>
         </div>
@@ -207,6 +207,7 @@ export default function Home() {
           <div className={styles.contributorsList}>
             {[
               { name: 'Matheus Sales', role: 'React Native', username: 'AlimuraMatheus', color: '#00d4ff' },
+              { name: 'Reviewer',      role: 'Architect',    username: null,             color: '#7c3aed' },
               { name: 'Reviewer',      role: 'Web',          username: null,             color: '#059669' },
               { name: 'Reviewer',      role: 'Android',      username: null,             color: '#d97706' },
               { name: 'Reviewer',      role: 'iOS',          username: null,             color: '#d97706' },

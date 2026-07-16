@@ -54,7 +54,7 @@ export default function Home() {
   return (
     <Layout
       title="Home"
-      description="Do zero ao React Native — escolha seu background e comece agora"
+      description="A próxima onda: um código, duas plataformas"
     >
       <main className={styles.main}>
         <GridBackground />
@@ -62,7 +62,7 @@ export default function Home() {
         <header className={styles.hero}>
           <h1 className={styles.heroTitle}>Trilha React Native</h1>
           <p className={styles.heroSubtitle}>
-            A próxima onda — um código, duas plataformas
+            A próxima onda: um código, duas plataformas
           </p>
         </header>
 
@@ -79,7 +79,7 @@ export default function Home() {
             <div className={styles.introGlow} />
             <div className={styles.introLabel}>Introdução</div>
             <p className={styles.trackDesc}>
-              História, arquitetura e New Architecture — contexto essencial antes de escolher sua trilha.
+              História, arquitetura e New Architecture: contexto essencial antes de escolher sua trilha.
             </p>
             <Link
               className={`${styles.trackBtn} ${styles.introBtnStyle}`}
@@ -92,7 +92,7 @@ export default function Home() {
 
         <ForkArrows />
 
-        <p className={styles.forkCaption}>Escolha seu background — dois caminhos, o mesmo destino</p>
+        <p className={styles.forkCaption}>Escolha seu background: dois caminhos, o mesmo destino</p>
 
         <section className={styles.tracks}>
           <div className={`${styles.trackCard} ${styles.trackCardWeb}`} style={{ animationDelay: '0.1s' }}>
@@ -143,7 +143,7 @@ export default function Home() {
             React Native
           </span>
           <p className={styles.goalDesc}>
-            Um único codebase — apps nativos em iOS e Android
+            Um único codebase: apps nativos em iOS e Android
           </p>
           <div className={styles.levelBadge}>Básico · Intermediário</div>
         </div>
@@ -164,6 +164,7 @@ export default function Home() {
               <p className={styles.masterclassDesc}>
                 Brownfield App · TurboModules · Fabric · Performance · CI/CD e mais
               </p>
+              <div className={styles.masterclassLevelBadge}>Avançado</div>
               <Link
                 className={styles.masterclassBtn}
                 to="/trilha-masterclass/modulo-00-overview/course-overview"
@@ -206,6 +207,7 @@ export default function Home() {
           <div className={styles.contributorsList}>
             {[
               { name: 'Matheus Sales', role: 'React Native', username: 'AlimuraMatheus', color: '#00d4ff' },
+              { name: 'Revisor',       role: 'Arquiteto',    username: null,             color: '#7c3aed' },
               { name: 'Revisor',       role: 'Web',          username: null,             color: '#059669' },
               { name: 'Revisor',       role: 'Android',      username: null,             color: '#d97706' },
               { name: 'Revisor',       role: 'iOS',          username: null,             color: '#d97706' },

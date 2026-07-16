@@ -262,9 +262,12 @@
 }
 
 [class*='trilha-masterclass'] [class*='sidebarLogo'] {
-  background: #0a0e1a;
+  background: #111827;
   border-left-color: #00d4ff;
   border-bottom-color: rgba(0, 212, 255, 0.2);
+}
+[data-theme='light'] [class*='trilha-masterclass'] [class*='sidebarLogo'] {
+  background: #1a1f2e;
 }
 [class*='trilha-masterclass'] [class*='sidebarLogo']::before {
   content: 'Masterclass → React Native';
@@ -493,8 +496,11 @@ video {
 
 /* Masterclass — fundo escuro na área de conteúdo */
 [class*='trilha-masterclass'] .theme-doc-sidebar-container {
-  background: #0a0e1a;
+  background: #111827;
   border-right-color: rgba(0, 212, 255, 0.2) !important;
+}
+[data-theme='light'] [class*='trilha-masterclass'] .theme-doc-sidebar-container {
+  background: #1a1f2e;
 }
 
 [class*='trilha-masterclass'] .menu__link--sublist {
@@ -564,9 +570,12 @@ video {
   padding: 2rem 2rem 1.75rem;
   margin: -1rem -1rem 2rem;
   border-radius: 12px;
-  background: #0d1117;
+  background: #111827;
   border: 1px dashed #b8860b55;
   overflow: hidden;
+}
+[data-theme='light'] .mc-header {
+  background: #1a1f2e;
 }
 
 .mc-header::before {
@@ -641,6 +650,9 @@ video {
   font-size: 0.875rem;
   color: #94a3b8;
   margin: 0;
+}
+[data-theme='light'] .mc-subtitle {
+  color: #6b7280;
 }
 
 .mc-coming-soon {

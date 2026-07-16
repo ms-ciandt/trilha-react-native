@@ -80,7 +80,7 @@ const sidebars = {
   trilhaMasterclass: [
     {
       type: 'category',
-      label: 'Module 00 — Overview',
+      label: 'Module 00: Overview',
       collapsed: false,
       items: [
         'trilha-masterclass/modulo-00-overview/course-overview',
@@ -88,7 +88,7 @@ const sidebars = {
     },
     {
       type: 'category',
-      label: 'Module 01 — Brownfield Integration',
+      label: 'Module 01: Brownfield Integration',
       collapsed: false,
       items: [
         'trilha-masterclass/modulo-01-brownfield/setup-and-embedding',
@@ -98,7 +98,7 @@ const sidebars = {
     },
     {
       type: 'category',
-      label: 'Module 02 — TurboModules',
+      label: 'Module 02: TurboModules',
       collapsed: false,
       items: [
         'trilha-masterclass/modulo-02-turbomodules/what-is-turbomodules',
@@ -113,7 +113,7 @@ const sidebars = {
     },
     {
       type: 'category',
-      label: 'Module 03 — Fabric & JSI',
+      label: 'Module 03: Fabric & JSI',
       collapsed: false,
       items: [
         'trilha-masterclass/modulo-03-fabric-jsi/jsi-javascript-interface',
@@ -126,7 +126,7 @@ const sidebars = {
     },
     {
       type: 'category',
-      label: 'Module 04 — Performance, Bundle & CI/CD',
+      label: 'Module 04: Performance, Bundle & CI/CD',
       collapsed: false,
       items: [
         'trilha-masterclass/modulo-04-performance-cicd/performance',
@@ -138,12 +138,12 @@ const sidebars = {
     },
     {
       type: 'category',
-      label: 'Module 05 — RN Version Updates',
+      label: 'Module 05: RN Version Updates',
       collapsed: false,
       items: [
         {
           type: 'category',
-          label: 'Process — Upgrade Strategy',
+          label: 'Process: Upgrade Strategy',
           collapsed: false,
           items: [
             'trilha-masterclass/modulo-05-version-updates/upgrade-strategy',
@@ -155,7 +155,7 @@ const sidebars = {
         },
         {
           type: 'category',
-          label: 'Dependencies — Patches and Environment',
+          label: 'Dependencies: Patches and Environment',
           collapsed: false,
           items: [
             'trilha-masterclass/modulo-05-version-updates/patches-recreation',

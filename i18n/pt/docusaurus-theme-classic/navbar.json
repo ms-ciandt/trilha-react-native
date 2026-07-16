@@ -1,30 +1,30 @@
 {
-  "navbar.title": {
-    "message": "Trilha React Native",
-    "description": "The title in the navbar"
-  },
-  "item.label.Introdução": {
+  "item.label.Introduction": {
     "message": "Introdução",
-    "description": "Navbar link — Introdução"
+    "description": "Navbar item with label Introduction"
   },
-  "item.label.Trilha Web": {
-    "message": "Trilha Web",
-    "description": "Navbar link — Trilha Web"
+  "item.label.Web developer trail": {
+    "message": "Web dev trail",
+    "description": "Navbar item with label Web developer trail"
   },
-  "item.label.Trilha Nativo": {
-    "message": "Trilha Nativo",
-    "description": "Navbar link — Trilha Nativo"
+  "item.label.Native dev trail": {
+    "message": "Native dev trail",
+    "description": "Navbar item with label Native dev trail"
   },
-  "item.label.Masterclass": {
-    "message": "Masterclass",
-    "description": "Navbar link — Masterclass"
+  "item.label.React Native MasterClass Trail": {
+    "message": "React Native MasterClass Trail",
+    "description": "Navbar item with label React Native MasterClass Trail"
   },
   "item.label.About": {
     "message": "Sobre",
-    "description": "Navbar link — About page"
+    "description": "Navbar item with label About"
   },
   "item.label.GitHub": {
     "message": "GitHub",
-    "description": "Navbar link — GitHub"
+    "description": "Navbar item with label GitHub"
+  },
+  "title": {
+    "message": "Trilha React Native",
+    "description": "The title in the navbar"
   }
 }

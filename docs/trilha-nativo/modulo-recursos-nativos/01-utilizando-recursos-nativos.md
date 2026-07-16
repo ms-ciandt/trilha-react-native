@@ -3,7 +3,7 @@ id: utilizando-recursos-nativos
 title: "Using Native Resources"
 ---
 
-# Topic 1 — Using Native Resources (Track 1: Native Devs)
+# Topic 1 — Using Native Resources (Native Dev Trail)
 
 ## Video Overview
 
