@@ -261,13 +261,18 @@
   text-transform: uppercase;
 }
 
-[class*='trilha-masterclass'] [class*='sidebarLogo'] {
+[data-theme='dark'] [class*='trilha-masterclass'] [class*='sidebarLogo'] {
   background: #111827;
   border-left-color: #00d4ff;
   border-bottom-color: rgba(0, 212, 255, 0.2);
 }
 [data-theme='light'] [class*='trilha-masterclass'] [class*='sidebarLogo'] {
-  background: #1a1f2e;
+  background: var(--ifm-background-color);
+  border-left-color: #0099bb;
+  border-bottom-color: rgba(0, 153, 187, 0.2);
+}
+[data-theme='light'] [class*='trilha-masterclass'] [class*='sidebarLogo']::before {
+  color: #0099bb;
 }
 [class*='trilha-masterclass'] [class*='sidebarLogo']::before {
   content: 'Masterclass → React Native';
@@ -494,26 +499,37 @@ video {
   --module-accent: var(--ifm-color-primary);
 }
 
-/* Masterclass — fundo escuro na área de conteúdo */
-[class*='trilha-masterclass'] .theme-doc-sidebar-container {
+/* Masterclass — fundo escuro na área de conteúdo (apenas dark) */
+[data-theme='dark'] [class*='trilha-masterclass'] .theme-doc-sidebar-container {
   background: #111827;
   border-right-color: rgba(0, 212, 255, 0.2) !important;
 }
-[data-theme='light'] [class*='trilha-masterclass'] .theme-doc-sidebar-container {
-  background: #1a1f2e;
-}
 
-[class*='trilha-masterclass'] .menu__link--sublist {
+[data-theme='dark'] [class*='trilha-masterclass'] .menu__link--sublist {
   color: #00d4ff !important;
 }
 
-[class*='trilha-masterclass'] .menu__link--active {
+[data-theme='dark'] [class*='trilha-masterclass'] .menu__link--active {
   background: color-mix(in srgb, #00d4ff 10%, transparent) !important;
   color: #00d4ff !important;
 }
 
-[class*='trilha-masterclass'] .menu__link:hover {
+[data-theme='dark'] [class*='trilha-masterclass'] .menu__link:hover {
   background: color-mix(in srgb, #00d4ff 8%, transparent);
+}
+
+/* Masterclass — tema claro: herda sidebar padrão com acento ciano escuro */
+[data-theme='light'] [class*='trilha-masterclass'] .menu__link--sublist {
+  color: #0099bb !important;
+}
+
+[data-theme='light'] [class*='trilha-masterclass'] .menu__link--active {
+  background: color-mix(in srgb, #0099bb 10%, transparent) !important;
+  color: #0099bb !important;
+}
+
+[data-theme='light'] [class*='trilha-masterclass'] .menu__link:hover {
+  background: color-mix(in srgb, #0099bb 8%, transparent);
 }
 
 /* Trilha Web — sidebar com sotaque emerald */
