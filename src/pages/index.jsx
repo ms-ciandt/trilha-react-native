@@ -207,20 +207,22 @@ export default function Home() {
           <div className={styles.contributorsList}>
             {[
               { name: 'Matheus Sales', role: 'React Native', username: 'AlimuraMatheus', color: '#00d4ff' },
-              { name: 'Diego Karol Gouvea Lana', role: 'Architect', username: null, color: '#7c3aed' },
-              { name: 'Reviewer',               role: 'Web',       username: null, color: '#059669' },
-              { name: 'Paulo Vitor Sato',        role: 'Android',   username: null, color: '#d97706' },
+              { name: 'Diego Karol Gouvea Lana', role: 'Architect', username: null, avatar: '/trilha-react-native/img/lana.webp', color: '#7c3aed' },
+              { name: 'Reviewer',               role: 'Web',       username: null, avatar: null,                                   color: '#059669' },
+              { name: 'Paulo Vitor Sato',        role: 'Android',   username: null, avatar: '/trilha-react-native/img/sato.webp', color: '#d97706' },
               { name: 'Reviewer',      role: 'iOS',          username: null,             color: '#d97706' },
-            ].map(({ name, role, username, color }, i) => (
+            ].map(({ name, role, username, avatar, color }, i) => (
               <div
                 key={role}
                 className={styles.contributorCard}
                 style={{ animationDelay: `${1.3 + i * 0.1}s` }}
               >
                 <img
-                  src={username
-                    ? `https://github.com/${username}.png?size=120`
-                    : `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&size=120&background=1e2030&color=888&rounded=true`}
+                  src={avatar
+                    ? avatar
+                    : username
+                      ? `https://github.com/${username}.png?size=120`
+                      : `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&size=120&background=1e2030&color=888&rounded=true`}
                   alt={name}
                   className={styles.contributorAvatar}
                   style={{ borderColor: color, boxShadow: `0 0 0 2px color-mix(in srgb, ${color} 20%, transparent)` }}
