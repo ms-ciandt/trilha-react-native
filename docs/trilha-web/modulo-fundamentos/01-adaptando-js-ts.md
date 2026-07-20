@@ -4,8 +4,6 @@ title: "Adapting JS/TS for Mobile"
 
 # Adapting JavaScript/TypeScript for Mobile
 
-## Video Overview
-
 <video width="100%" controls>
   <source src="/trilha-react-native/assets/videos/trilha_web/fund_01_adaptando_js_ts.mp4" type="video/mp4">
   Your browser does not support the video tag.

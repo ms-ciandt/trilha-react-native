@@ -4,8 +4,6 @@ title: JavaScript for Native Developers
 
 # JavaScript for Native Developers
 
-## Video Overview
-
 <video width="100%" controls style="border-radius: 8px; margin: 16px 0;">
   <source src="/trilha-react-native/assets/videos/trilha_nativo/fund_01_javascript.mp4" type="video/mp4">
   Your browser does not support the video tag.

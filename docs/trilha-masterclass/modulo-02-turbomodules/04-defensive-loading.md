@@ -4,6 +4,11 @@ title: Defensive Loading of Modules
 
 # Defensive Loading of Modules
 
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc02_04_defensive-loading.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 > Never blindly call a TurboModule. Modules can be absent in environments you did not anticipate — and a `getEnforcing` in the wrong place will crash the app silently in production.
 
 ---

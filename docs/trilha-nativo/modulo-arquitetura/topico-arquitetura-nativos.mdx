@@ -1,0 +1,171 @@
+---
+title: Architecture
+---
+
+# Architecture
+
+<video width="100%" controls style="border-radius: 8px; margin: 16px 0;">
+  <source src="/trilha-react-native/assets/videos/trilha_nativo/arq_01_arquitetura.mp4" type="video/mp4" />
+  Your browser does not support the video tag.
+</video>
+
+## Patterns You Already Know
+
+MVVM and Clean Architecture translate directly to React Native. The vocabulary changes — `Activity` becomes a screen component, `ViewModel` becomes a hook backed by a store — but the separation of concerns is identical. If you've enforced a layered architecture in an Android or iOS codebase, the instincts carry over.
+
+The main difference is that RN apps tend to organize by **feature** rather than by **layer**. Instead of a top-level `viewmodels/` folder sitting next to `repositories/`, each feature owns its own screens, hooks, and API modules. Shared infrastructure — navigation, global stores, config — lives in an `app/` layer that sits above the features.
+
+---
+
+## Mapping: MVVM/Clean → React Native
+
+| Native concept | React Native | Note |
+|---|---|---|
+| View (Activity / ViewController) | Screen components | UI layer — renders, no logic |
+| ViewModel | Hooks + stores (Zustand / Redux) | Presentation logic and state |
+| Use Case / Interactor | Functions in a domain or services layer | Orchestrate business rules |
+| Repository | API adapters / local storage adapters | Data access implementation |
+
+---
+
+## Suggested Project Structure
+
+```
+src/
+  app/
+    navigation/
+      RootNavigator.tsx
+      AppDrawer.tsx
+      AppTabs.tsx
+    store/
+      authStore.ts
+    config/
+      env.ts
+  features/
+    auth/
+      screens/
+        LoginScreen.tsx
+        RegisterScreen.tsx
+      components/
+      hooks/
+      api/
+    feed/
+    profile/
+  shared/
+    components/
+    hooks/
+    styles/
+  native/
+    modules/
+    ui/
+```
+
+- `app/` — infrastructure: navigation tree, global stores, environment config. Nothing here knows about individual features.
+- `features/` — one folder per product domain. Each is self-contained: its own screens, hooks, API calls, and local components.
+- `shared/` — genuinely reusable pieces that more than one feature needs. Keep the bar high; prefer duplication over premature abstraction.
+- `native/` — the bridge boundary: your native modules and native UI components. Isolating them here makes the JS↔native surface explicit and easy to audit.
+
+---
+
+## Global State with Zustand
+
+Zustand is a minimal state library — a store is just a function that returns state and actions. It avoids the boilerplate of Redux while remaining predictable enough for large teams.
+
+```ts
+// src/app/store/authStore.ts
+import { create } from 'zustand';
+
+interface AuthState {
+  isAuthenticated: boolean;
+  token?: string;
+  login: (token: string) => void;
+  logout: () => void;
+}
+
+export const useAuthStore = create<AuthState>((set) => ({
+  isAuthenticated: false,
+  token: undefined,
+  login: (token) => set({ isAuthenticated: true, token }),
+  logout: () => set({ isAuthenticated: false, token: undefined }),
+}));
+```
+
+Consuming it in a screen:
+
+```tsx
+// src/features/profile/screens/ProfileScreen.tsx
+import React from 'react';
+import { View, Button, Text } from 'react-native';
+import { useAuthStore } from '../../../app/store/authStore';
+
+export function ProfileScreen() {
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const logout = useAuthStore((s) => s.logout);
+
+  return (
+    <View>
+      <Text>Authenticated: {isAuthenticated ? 'Yes' : 'No'}</Text>
+      <Button title="Logout" onPress={logout} />
+    </View>
+  );
+}
+```
+
+The selector `(s) => s.isAuthenticated` is important — it means the component only re-renders when `isAuthenticated` changes, not on every store update. This is the Zustand equivalent of a ViewModel exposing a `StateFlow` with `distinctUntilChanged`.
+
+---
+
+## Navigation as Infrastructure
+
+Navigation belongs in `app/navigation`, not inside a feature. A feature that owns its own navigator quickly becomes impossible to reuse or reorganize — every entry point is buried inside a product module.
+
+```tsx
+// src/app/navigation/RootNavigator.tsx
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import { AppTabs } from './AppTabs';
+
+const Drawer = createDrawerNavigator();
+
+export function RootNavigator() {
+  return (
+    <NavigationContainer>
+      <Drawer.Navigator>
+        <Drawer.Screen name="Main" component={AppTabs} />
+      </Drawer.Navigator>
+    </NavigationContainer>
+  );
+}
+```
+
+Features navigate by calling `navigation.navigate('ScreenName')` — they know screen names but not how the navigator is assembled. This is the same boundary you'd draw between a `Fragment` and the `Activity` that hosts it.
+
+---
+
+## Resources
+
+| Resource | Type | Link |
+|---|---|---|
+| React Navigation | Official Docs | [reactnavigation.org](https://reactnavigation.org) |
+| Zustand | Official Docs | [docs.pmnd.rs/zustand](https://docs.pmnd.rs/zustand/getting-started/introduction) |
+| React Native Directory | Community | [reactnative.directory](https://reactnative.directory) |
+
+---
+
+<div className="trail-feedback trail-feedback--nativo">
+  <div className="trail-feedback-icon" style={{display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'}}>
+    <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor" style={{color: '#fbbf24'}}><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98l-.09.06c-.22.14-2.18 1.27-2.16 3.8.03 3.02 2.65 4.03 2.68 4.04l-.07.28zM13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+    <img src="/trilha-react-native/img/android-logo.svg" alt="" width="26" height="26" style={{filter: 'invert(71%) sepia(62%) saturate(450%) hue-rotate(93deg) brightness(95%) contrast(90%)'}} />
+  </div>
+  <p className="trail-feedback-title">You've completed the Native Dev Trail</p>
+  <p className="trail-feedback-sub">Your feedback helps improve the content. Takes less than 2 minutes.</p>
+  <a
+    href="https://forms.gle/75pKeXQxkSZogzxv5"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="trail-feedback-btn"
+  >
+    Give Feedback
+  </a>
+</div>

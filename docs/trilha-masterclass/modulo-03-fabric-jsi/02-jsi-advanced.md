@@ -2,6 +2,13 @@
 title: "JSI — Advanced Patterns"
 ---
 
+# JSI — Advanced Patterns
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc03_02_jsi-advanced.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 ## 5. Synchronous and Asynchronous Calls
 
 JSI allows both. The choice is yours; JSI does not force asynchrony.

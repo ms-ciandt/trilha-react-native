@@ -1,10 +1,8 @@
 ---
-title: "Module 3: React Native Core Components"
+title: "React Native Core Components"
 ---
 
-# Module 3: React Native Core Components
-
-## Video Overview
+# React Native Core Components
 
 <video width="100%" controls>
   <source src="/trilha-react-native/assets/videos/trilha_nativo/fund_06_rn_core_components.mp4" type="video/mp4">

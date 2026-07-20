@@ -2,6 +2,11 @@
 title: RN Upgrade Helper & Native Diffs
 ---
 
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc05_02_rn-upgrade-helper.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 # RN Upgrade Helper & Native Diffs
 
 > The Upgrade Helper is the most important tool in the RN upgrade workflow. Understanding exactly what it shows — and what it doesn't — is the difference between a smooth upgrade and three days of mysterious build failures.

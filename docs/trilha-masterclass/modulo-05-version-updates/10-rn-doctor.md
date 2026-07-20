@@ -276,3 +276,21 @@ Build fails after upgrade
 | [react-native info — docs](https://reactnative.dev/docs/environment-setup) | `npx react-native info` — full dependency version report |
 | [react-native-clean-project](https://github.com/pmadruga/react-native-clean-project) | Clears all build caches, node_modules, Pods in one command |
 | [xcpretty — GitHub](https://github.com/xcpretty/xcpretty) | Formats xcodebuild output to be human-readable |
+
+---
+
+<div className="mc-feedback">
+  <div className="mc-feedback-icon">
+    <img src="/trilha-react-native/img/react-native-masterclass-icon-v2.png" alt="" width="48" height="48" />
+  </div>
+  <p className="mc-feedback-title">You've completed the React Native Masterclass</p>
+  <p className="mc-feedback-sub">Your feedback helps improve the content. Takes less than 2 minutes.</p>
+  <a
+    href="https://forms.gle/75pKeXQxkSZogzxv5"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="mc-feedback-btn"
+  >
+    Give Feedback
+  </a>
+</div>

@@ -4,8 +4,6 @@ title: No DOM, No CSS — What That Actually Means
 
 # No DOM, No CSS — What That Actually Means
 
-## Video Overview
-
 <video width="100%" controls>
   <source src="/trilha-react-native/assets/videos/trilha_web/fund_04_sem_dom_css.mp4" type="video/mp4">
   Your browser does not support the video tag.

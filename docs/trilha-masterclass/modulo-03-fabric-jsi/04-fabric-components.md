@@ -2,6 +2,13 @@
 title: "Fabric — Native Components"
 ---
 
+# Fabric — Native Components
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc03_04_fabric-components.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 ## 5. Native Components (Fabric Components)
 
 A Fabric Component is a native view exposed to React. In RN 0.76, all native views are Fabric components — the old UIManager-based approach is gone.

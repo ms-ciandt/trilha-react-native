@@ -4,8 +4,6 @@ title: Advanced Native Integration
 
 # Advanced Native Integration
 
-## Video Overview
-
 <video width="100%" controls style="border-radius: 8px; margin: 16px 0;">
   <source src="/trilha-react-native/assets/videos/trilha_nativo/rec_02_integracao_nativa.mp4" type="video/mp4">
   Your browser does not support the video tag.

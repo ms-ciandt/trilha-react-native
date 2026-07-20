@@ -669,6 +669,180 @@ video {
   margin-top: 0.25rem;
 }
 
+/* ─── Track feedback cards ──────────────────────────────────────────── */
+.trail-feedback {
+  position: relative;
+  margin: 3rem 0 1rem;
+  padding: 2rem 2rem 1.75rem;
+  border-radius: 12px;
+  background: #0f172a;
+  overflow: hidden;
+  text-align: center;
+}
+[data-theme='light'] .trail-feedback {
+  background: #f8fafc;
+}
+.trail-feedback::before,
+.trail-feedback::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.trail-feedback::before {
+  top: -50px;
+  right: -50px;
+  width: 160px;
+  height: 160px;
+  filter: blur(55px);
+  opacity: 0.15;
+}
+.trail-feedback::after {
+  bottom: -40px;
+  left: -40px;
+  width: 130px;
+  height: 130px;
+  filter: blur(55px);
+  opacity: 0.08;
+}
+
+/* Nativo — amber */
+.trail-feedback--nativo {
+  border: 1px dashed color-mix(in srgb, #d97706 45%, transparent);
+}
+[data-theme='light'] .trail-feedback--nativo {
+  border-color: color-mix(in srgb, #d97706 35%, transparent);
+}
+.trail-feedback--nativo::before { background: #d97706; }
+.trail-feedback--nativo::after  { background: #fbbf24; }
+.trail-feedback--nativo .trail-feedback-title { color: #fbbf24; text-shadow: 0 0 24px rgba(251,191,36,0.2); }
+[data-theme='light'] .trail-feedback--nativo .trail-feedback-title { color: #d97706; }
+.trail-feedback--nativo .trail-feedback-btn { background: #d97706; }
+[data-theme='dark'] .trail-feedback--nativo .trail-feedback-btn { background: #fbbf24; }
+
+/* Web — emerald */
+.trail-feedback--web {
+  border: 1px dashed color-mix(in srgb, #059669 45%, transparent);
+}
+[data-theme='light'] .trail-feedback--web {
+  border-color: color-mix(in srgb, #059669 35%, transparent);
+}
+.trail-feedback--web::before { background: #059669; }
+.trail-feedback--web::after  { background: #34d399; }
+.trail-feedback--web .trail-feedback-title { color: #34d399; text-shadow: 0 0 24px rgba(52,211,153,0.2); }
+[data-theme='light'] .trail-feedback--web .trail-feedback-title { color: #059669; }
+.trail-feedback--web .trail-feedback-btn { background: #059669; }
+[data-theme='dark'] .trail-feedback--web .trail-feedback-btn { background: #34d399; }
+
+.trail-feedback-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+.trail-feedback-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 0 0 0.4rem;
+}
+.trail-feedback-sub {
+  font-size: 0.875rem;
+  color: #94a3b8;
+  margin: 0 0 1.5rem;
+}
+[data-theme='light'] .trail-feedback-sub { color: #6b7280; }
+.trail-feedback-btn {
+  display: inline-block;
+  padding: 0.6rem 1.75rem;
+  border-radius: 8px;
+  color: #0f172a !important;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-decoration: none !important;
+  letter-spacing: 0.01em;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+.trail-feedback-btn:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
+/* ─── Masterclass feedback card ─────────────────────────────────────── */
+.mc-feedback {
+  position: relative;
+  margin: 3rem 0 1rem;
+  padding: 2rem 2rem 1.75rem;
+  border-radius: 12px;
+  background: #111827;
+  border: 1px dashed color-mix(in srgb, #b8860b 45%, transparent);
+  overflow: hidden;
+  text-align: center;
+}
+[data-theme='light'] .mc-feedback {
+  background: #1a1f2e;
+}
+.mc-feedback::before {
+  content: '';
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: #b8860b;
+  filter: blur(55px);
+  opacity: 0.12;
+  pointer-events: none;
+}
+.mc-feedback::after {
+  content: '';
+  position: absolute;
+  bottom: -40px;
+  left: -40px;
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  background: #00d4ff;
+  filter: blur(55px);
+  opacity: 0.07;
+  pointer-events: none;
+}
+.mc-feedback-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+.mc-feedback-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #d4a017;
+  letter-spacing: -0.01em;
+  margin: 0 0 0.4rem;
+  text-shadow: 0 0 24px rgba(212, 160, 23, 0.2);
+}
+.mc-feedback-sub {
+  font-size: 0.875rem;
+  color: #94a3b8;
+  margin: 0 0 1.5rem;
+}
+[data-theme='light'] .mc-feedback-sub {
+  color: #6b7280;
+}
+.mc-feedback-btn {
+  display: inline-block;
+  padding: 0.6rem 1.75rem;
+  border-radius: 8px;
+  background: #d4a017;
+  color: #0a0e1a !important;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-decoration: none !important;
+  letter-spacing: 0.01em;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+.mc-feedback-btn:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
 /* ─── Content animations ─────────────────────────────────────────────── */
 .markdown h1 {
   animation: fadeUp 0.5s ease both;

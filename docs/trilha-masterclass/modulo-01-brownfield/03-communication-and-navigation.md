@@ -2,6 +2,11 @@
 title: Communication & Navigation
 ---
 
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc01_03_communication-and-navigation.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 ## 6. Communication: Native ↔ RN
 
 There are five distinct channels. Use the right tool for each job.

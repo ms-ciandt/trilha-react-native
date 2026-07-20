@@ -4,8 +4,6 @@ title: TypeScript for Native Developers
 
 # TypeScript for Native Developers
 
-## Video Overview
-
 <video width="100%" controls>
   <source src="/trilha-react-native/assets/videos/trilha_nativo/fund_02_typescript.mp4" type="video/mp4">
   Your browser does not support the video tag.

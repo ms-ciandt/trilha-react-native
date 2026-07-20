@@ -4,6 +4,11 @@ title: "Codegen: Native Typed Interfaces"
 
 # Codegen: Native Typed Interfaces
 
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc02_03_codegen.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 > Codegen is a build-time compiler. It reads your TypeScript spec and writes the native boilerplate — the abstract classes, protocols, and JSI dispatch tables — so you never write bridging glue by hand.
 
 ---

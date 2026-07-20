@@ -4,6 +4,11 @@ title: Supported Types and Serialization
 
 # Supported Types and Serialization
 
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc02_07_supported-types.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 > Codegen validates types at **build time**. Invalid types are Codegen errors, not runtime crashes. This is one of the biggest safety improvements over the old bridge — type mismatches become CI failures, not production incidents.
 
 ---

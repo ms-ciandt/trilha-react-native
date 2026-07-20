@@ -4,8 +4,6 @@ title: New Architecture Deep Dive
 
 # New Architecture Deep Dive
 
-## Video Overview
-
 <video width="100%" controls style="border-radius: 8px; margin: 16px 0;">
   <source src="/trilha-react-native/assets/videos/introducao/02_new_architecture.mp4" type="video/mp4">
   Your browser does not support the video tag.

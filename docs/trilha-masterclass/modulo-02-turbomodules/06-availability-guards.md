@@ -4,6 +4,11 @@ title: "Availability Guards (isAvailable)"
 
 # Availability Guards (`isAvailable`)
 
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc02_06_availability-guards.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 > `TurboModuleRegistry` has no official `isAvailable()` method. The idiomatic check is `get() !== null`. This topic shows where to put that check and how to expose it cleanly to consumers.
 
 ---

@@ -2,6 +2,11 @@
 title: Setup & Embedding
 ---
 
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc01_01_setup-and-embedding.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 ## 1. What Is Brownfield vs. Greenfield
 
 **Greenfield** means you start the entire app from React Native on day one. The entry point is `index.js`, there is no native code you did not write, and the RN toolchain owns the build system.

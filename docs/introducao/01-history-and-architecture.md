@@ -4,8 +4,6 @@ title: History & Architecture of React Native
 
 # History & Architecture of React Native
 
-## Video Overview
-
 <video width="100%" controls style="border-radius: 8px; margin: 16px 0;">
   <source src="/trilha-react-native/assets/videos/introducao/01_history_architecture.mp4" type="video/mp4">
   Your browser does not support the video tag.

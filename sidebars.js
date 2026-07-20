@@ -80,7 +80,7 @@ const sidebars = {
   trilhaMasterclass: [
     {
       type: 'category',
-      label: 'Module 00: Overview',
+      label: 'Overview',
       collapsed: false,
       items: [
         'trilha-masterclass/modulo-00-overview/course-overview',
@@ -88,7 +88,7 @@ const sidebars = {
     },
     {
       type: 'category',
-      label: 'Module 01: Brownfield Integration',
+      label: 'Brownfield Integration',
       collapsed: false,
       items: [
         'trilha-masterclass/modulo-01-brownfield/setup-and-embedding',
@@ -98,7 +98,7 @@ const sidebars = {
     },
     {
       type: 'category',
-      label: 'Module 02: TurboModules',
+      label: 'TurboModules',
       collapsed: false,
       items: [
         'trilha-masterclass/modulo-02-turbomodules/what-is-turbomodules',
@@ -113,7 +113,7 @@ const sidebars = {
     },
     {
       type: 'category',
-      label: 'Module 03: Fabric & JSI',
+      label: 'Fabric & JSI',
       collapsed: false,
       items: [
         'trilha-masterclass/modulo-03-fabric-jsi/jsi-javascript-interface',
@@ -126,7 +126,7 @@ const sidebars = {
     },
     {
       type: 'category',
-      label: 'Module 04: Performance, Bundle & CI/CD',
+      label: 'Performance, Bundle & CI/CD',
       collapsed: false,
       items: [
         'trilha-masterclass/modulo-04-performance-cicd/performance',
@@ -138,7 +138,7 @@ const sidebars = {
     },
     {
       type: 'category',
-      label: 'Module 05: RN Version Updates',
+      label: 'RN Version Updates',
       collapsed: false,
       items: [
         {

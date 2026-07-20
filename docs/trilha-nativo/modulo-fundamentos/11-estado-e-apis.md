@@ -7,8 +7,6 @@ sidebar_position: 11
 
 # State & APIs
 
-## Video Overview
-
 <video width="100%" controls>
   <source src="/trilha-react-native/assets/videos/trilha_nativo/fund_10_estado_apis.mp4" type="video/mp4">
   Your browser does not support the video tag.

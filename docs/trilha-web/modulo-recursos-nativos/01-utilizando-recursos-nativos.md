@@ -9,8 +9,6 @@ sidebar_position: 1
 
 ---
 
-## Video Overview
-
 <video width="100%" controls>
   <source src="/trilha-react-native/assets/videos/trilha_web/rec_01_utilizando_recursos_nativos.mp4" type="video/mp4">
   Your browser does not support the video tag.

@@ -2,6 +2,11 @@
 title: "Process: Upgrade Strategy"
 ---
 
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc05_01_upgrade-strategy.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 # Process: Upgrade Strategy
 
 > Upgrading React Native is not a single command. It is a structured migration: diff, apply, validate, repeat. The developers who get it right treat it like a planned refactor — not a dependency bump.
