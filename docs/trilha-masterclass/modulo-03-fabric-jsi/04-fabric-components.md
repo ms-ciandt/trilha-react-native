@@ -135,53 +135,88 @@ using namespace facebook::react;
 
 ```kotlin
 // android/MySliderView.kt
-class MySliderView(context: Context) : SeekBar(context) {
 
-    var eventDispatcher: EventDispatcher? = null
-    var surfaceId: Int = -1
-    var reactTag: Int = -1
-    
+// Constructor receives ThemedReactContext — required to reach UIManagerHelper at dispatch time
+class MySliderView(private val reactContext: ThemedReactContext) : SeekBar(reactContext) {
+
     init {
         setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                eventDispatcher?.dispatchEvent(
-                    SliderChangeEvent(surfaceId, reactTag, progress / 100f, fromUser)
+                // Fabric: obtain dispatcher at dispatch time, not stored as a field
+                val dispatcher = UIManagerHelper.getEventDispatcherForReactTag(reactContext, id)
+                val surfaceId  = UIManagerHelper.getSurfaceId(this@MySliderView)
+                dispatcher?.dispatchEvent(
+                    SliderChangeEvent(surfaceId, id, progress / 100f, fromUser)
                 )
             }
             override fun onStartTrackingTouch(seekBar: SeekBar) {}
             override fun onStopTrackingTouch(seekBar: SeekBar) {
-                eventDispatcher?.dispatchEvent(
-                    SliderCompleteEvent(surfaceId, reactTag, progress / 100f)
+                val dispatcher = UIManagerHelper.getEventDispatcherForReactTag(reactContext, id)
+                val surfaceId  = UIManagerHelper.getSurfaceId(this@MySliderView)
+                dispatcher?.dispatchEvent(
+                    SliderCompleteEvent(surfaceId, id, progress / 100f)
                 )
             }
         })
     }
 }
 
-// ViewManager wiring
-class MySliderManager : SimpleViewManager<MySliderView>() {
+// Fabric event: extends Event<T> and returns a WritableMap payload
+class SliderChangeEvent(
+    surfaceId: Int,
+    viewId: Int,
+    private val value: Float,
+    private val fromUser: Boolean,
+) : Event<SliderChangeEvent>(surfaceId, viewId) {
+
+    override fun getEventName() = "onChange"
+
+    // Fabric reads this map and merges it into nativeEvent on the JS side
+    override fun getEventData(): WritableMap = Arguments.createMap().apply {
+        putDouble("value", value.toDouble())
+        putBoolean("fromUser", fromUser)
+    }
+}
+
+class SliderCompleteEvent(
+    surfaceId: Int,
+    viewId: Int,
+    private val value: Float,
+) : Event<SliderCompleteEvent>(surfaceId, viewId) {
+
+    override fun getEventName() = "onSlidingComplete"
+
+    override fun getEventData(): WritableMap = Arguments.createMap().apply {
+        putDouble("value", value.toDouble())
+        putBoolean("fromUser", true)
+    }
+}
+
+// ViewManager extends the Codegen-generated abstract class, NOT SimpleViewManager.
+// Codegen reads the TypeScript spec and generates NativeMySliderManagerSpec with one
+// abstract setter per prop — @ReactProp is not used here.
+class MySliderManager : NativeMySliderManagerSpec<MySliderView>() {
+
     override fun getName() = "MySlider"
-    
-    override fun createViewInstance(context: ThemedReactContext) = MySliderView(context)
-    
-    @ReactProp(name = "value")
-    fun setValue(view: MySliderView, value: Float) {
-        view.progress = (value * 100).toInt()
+
+    override fun createViewInstance(reactContext: ThemedReactContext) =
+        MySliderView(reactContext)
+
+    // Each override corresponds to an abstract method generated from the TS spec
+    override fun setValue(view: MySliderView, value: Float?) {
+        view.progress = ((value ?: 0f) * 100).toInt()
     }
-    
-    @ReactProp(name = "minimumValue")
-    fun setMinimumValue(view: MySliderView, min: Float) {
-        view.min = (min * 100).toInt()
+
+    override fun setMinimumValue(view: MySliderView, min: Float?) {
+        view.min = ((min ?: 0f) * 100).toInt()
     }
-    
-    @ReactProp(name = "maximumValue")
-    fun setMaximumValue(view: MySliderView, max: Float) {
-        view.max = (max * 100).toInt()
+
+    override fun setMaximumValue(view: MySliderView, max: Float?) {
+        view.max = ((max ?: 1f) * 100).toInt()
     }
-    
-    @ReactProp(name = "disabled")
-    fun setDisabled(view: MySliderView, disabled: Boolean) {
-        view.isEnabled = !disabled
+
+    override fun setDisabled(view: MySliderView, disabled: Boolean?) {
+        view.isEnabled = disabled != true
     }
 }
 ```
