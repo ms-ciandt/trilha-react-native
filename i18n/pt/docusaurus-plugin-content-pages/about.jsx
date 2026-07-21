@@ -10,9 +10,9 @@ const CONTRIBUTORS = [
 
 const REVIEWERS = [
   { name: 'Matheus Sales', role: 'React Native', username: 'AlimuraMatheus', color: '#00d4ff' },
-  { name: 'Revisor',       role: 'Arquiteto',    username: null,             color: '#7c3aed' },
-  { name: 'Revisor',       role: 'Web',          username: null,             color: '#059669' },
-  { name: 'Revisor',       role: 'Android',      username: null,             color: '#d97706' },
+  { name: 'Diego Karol Gouvea Lana', role: 'Arquiteto', username: null, avatar: '/trilha-react-native/img/lana.webp', color: '#7c3aed' },
+  { name: 'Guilherme Rovaron', role: 'Web',       username: null, avatar: '/trilha-react-native/img/web-reviewer.jpg', color: '#059669' },
+  { name: 'Paulo Vitor Sato', role: 'Android',    username: null, avatar: '/trilha-react-native/img/sato.webp', color: '#d97706' },
   { name: 'Revisor',       role: 'iOS',          username: null,             color: '#d97706' },
 ];
 
@@ -140,12 +140,14 @@ export default function About() {
           <h2>Revisores</h2>
           <p>Cada trilha foi revisada por um especialista na plataforma correspondente.</p>
           <div className={styles.reviewers}>
-            {REVIEWERS.map(({ name, role, username, color }) => (
+            {REVIEWERS.map(({ name, role, username, avatar, color }) => (
               <div key={role} className={styles.reviewerCard}>
                 <img
-                  src={username
-                    ? `https://github.com/${username}.png?size=120`
-                    : `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&size=120&background=1e2030&color=888&rounded=true`}
+                  src={avatar
+                    ? avatar
+                    : username
+                      ? `https://github.com/${username}.png?size=120`
+                      : `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&size=120&background=1e2030&color=888&rounded=true`}
                   alt={name}
                   className={styles.avatar}
                   style={{ borderColor: color, boxShadow: `0 0 0 2px color-mix(in srgb, ${color} 20%, transparent)` }}
