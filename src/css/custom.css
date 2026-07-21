@@ -1028,6 +1028,15 @@ video {
   .navbar {
     padding: 0 0.875rem;
     font-size: 0.8125rem;
+    /* Solid background on mobile — color-mix with transparent renders as black
+       in some mobile browsers when backdrop-filter is active */
+    background: var(--ifm-navbar-background-color) !important;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  [data-theme='dark'] .navbar {
+    background: #0f172a !important;
   }
 
   /* Pagination: stack vertically on small screens */
