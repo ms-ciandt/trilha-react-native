@@ -87,6 +87,10 @@
     "message": "Fundamentos",
     "description": "The label for category 'Fundamentals' in sidebar 'trilhaAndroid'"
   },
+  "sidebar.trilhaAndroid.category.New Architecture": {
+    "message": "Nova Arquitetura",
+    "description": "The label for category 'New Architecture' in sidebar 'trilhaAndroid'"
+  },
   "sidebar.trilhaAndroid.category.Compose → React Native": {
     "message": "Compose → React Native",
     "description": "The label for category 'Compose → React Native' in sidebar 'trilhaAndroid'"

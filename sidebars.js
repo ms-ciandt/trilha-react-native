@@ -244,6 +244,18 @@ const sidebars = {
     },
     {
       type: 'category',
+      label: 'New Architecture',
+      collapsed: false,
+      items: [
+        'trilha-android/modulo-new-architecture/hermes-engine',
+        'trilha-android/modulo-new-architecture/jsi-javascript-interface',
+        'trilha-android/modulo-new-architecture/turbomodule-kotlin',
+        'trilha-android/modulo-new-architecture/fabric-component-compose',
+        'trilha-android/modulo-new-architecture/debugging-new-architecture',
+      ],
+    },
+    {
+      type: 'category',
       label: 'Compose → React Native',
       collapsed: false,
       items: [
