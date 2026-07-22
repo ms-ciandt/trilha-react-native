@@ -2,6 +2,13 @@
 title: "Bundle — Packaging & Distribution"
 ---
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc04_04_packaging-and-distribution.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 ## 3. Packaging with Metadata and Patches
 
 ### Bundle metadata

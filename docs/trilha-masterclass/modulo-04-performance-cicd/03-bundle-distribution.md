@@ -4,6 +4,13 @@ title: "Bundle — Metro & Production Builds"
 
 # Bundle & Distribution
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc04_03_bundle-distribution.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 > **Module 04 — React Native Masterclass**
 > Target: senior engineers responsible for the full release pipeline — from Metro configuration to Artifactory artifact publication.
 > React Native 0.76+ — New Architecture, Hermes, Gradle 8, Xcode 16.

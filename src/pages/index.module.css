@@ -778,6 +778,43 @@
 }
 
 /* ─── Responsive ────────────────────────────────────────────── */
+
+/* Tablet (≤768px) */
+@media (max-width: 768px) {
+  .main {
+    padding: 2rem 1.25rem 5rem;
+  }
+
+  .heroTitle {
+    font-size: 2.25rem;
+  }
+
+  /* Hide the decorative "start here" annotation — clips at this width */
+  .startHere {
+    display: none;
+  }
+
+  /* Masterclass card: stack icon + text vertically */
+  .masterclassContent {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .masterclassIcon {
+    width: 52px;
+    height: 52px;
+  }
+
+  .intro,
+  .trackCard,
+  .goal,
+  .masterclass {
+    padding: 1.5rem 1.25rem;
+  }
+}
+
+/* Mobile (≤640px) */
 @media (max-width: 640px) {
   .tracks {
     grid-template-columns: 1fr;
@@ -787,8 +824,58 @@
     font-size: 2rem;
   }
 
-  .masterclassInner {
+  .masterclassContent {
     flex-direction: column;
     align-items: flex-start;
+  }
+}
+
+/* Small phones (≤480px) */
+@media (max-width: 480px) {
+  .main {
+    padding: 1.5rem 1rem 4rem;
+  }
+
+  .heroTitle {
+    font-size: 1.75rem;
+    letter-spacing: -0.03em;
+  }
+
+  .heroSubtitle {
+    font-size: 0.8125rem;
+  }
+
+  .hero {
+    margin-bottom: 2.5rem;
+  }
+
+  .intro,
+  .trackCard,
+  .goal,
+  .masterclass {
+    padding: 1.25rem 1rem;
+    border-radius: 12px;
+  }
+
+  .trackLabel,
+  .introLabel,
+  .goalLabel,
+  .masterclassLabel {
+    font-size: 1rem;
+  }
+
+  .trackDesc,
+  .goalDesc,
+  .masterclassDesc {
+    font-size: 0.8125rem;
+  }
+
+  .contributorsList {
+    gap: 1rem;
+  }
+
+  .contributorAvatar {
+    width: 44px;
+    height: 44px;
   }
 }

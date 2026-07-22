@@ -77,6 +77,33 @@ Toda página também precisa de versão traduzida em `i18n/pt/docusaurus-plugin-
 - Sem `{% raw %}`/`{% endraw %}` — o site usa Docusaurus, blocos de código são renderizados diretamente
 - Tamanho ideal de arquivo de conteúdo: 150–400 linhas. Acima de 500 linhas, quebrar em múltiplos arquivos
 
+### Bilinguismo obrigatório (EN + PT-BR)
+
+Toda implementação deve cobrir os dois idiomas. As regras de espelhamento são:
+
+| Tipo de arquivo | EN (fonte) | PT-BR (espelho) |
+|---|---|---|
+| Página (`src/pages/`) | `src/pages/foo.jsx` | `i18n/pt/docusaurus-plugin-content-pages/foo.jsx` |
+| Doc de conteúdo (`docs/`) | `docs/<trilha>/.../<arquivo>.md` | `i18n/pt/docusaurus-plugin-content-docs/current/<trilha>/.../<arquivo>.md` |
+| CSS module de página | apenas em `src/pages/` — compartilhado entre os dois idiomas, **não duplicar** | — |
+
+- Ao criar ou editar qualquer arquivo em `src/pages/`, criar/atualizar o espelho em `i18n/pt/docusaurus-plugin-content-pages/`
+- Ao criar ou editar qualquer doc em `docs/`, criar/atualizar o espelho em `i18n/pt/docusaurus-plugin-content-docs/current/`
+- O conteúdo PT-BR não é uma tradução mecânica palavra-por-palavra — mantém o mesmo código, estrutura e exemplos, apenas o texto explicativo é em português
+- Se uma página EN ainda não tiver espelho PT-BR, criar junto na mesma tarefa
+
+### New Architecture como padrão absoluto
+
+Todo código de exemplo, snippet, explicação e referência de API deve usar exclusivamente a **New Architecture do React Native (0.76+)**:
+
+- JSX/TSX usando Fabric (renderer) e JSI (bridge) — **sem menção à Bridge assíncrona legada como abordagem atual**
+- TurboModules para módulos nativos — não `NativeModules` legado (pode mencionar como contexto histórico, nunca como solução recomendada)
+- Fabric Components para componentes nativos — não `requireNativeComponent` legado
+- Hermes como engine padrão — sem menção ao JavaScriptCore como padrão atual
+- `InteractionManager`, `useNativeDriver: true`, `startTransition` e Concurrent Features disponíveis via New Architecture
+- Expo SDK 56+ como ambiente de referência (já usa New Architecture por padrão)
+- Se precisar mencionar a arquitetura legada, fazê-lo apenas como contexto histórico de comparação, nunca como caminho recomendado
+
 ## Site (Docusaurus)
 
 - Gerador: **Docusaurus 3** com tema Classic
