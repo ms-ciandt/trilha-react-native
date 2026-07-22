@@ -1,4 +1,4 @@
----
+﻿---
 title: "Environment Requirements (Node, Xcode, SDKs)"
 ---
 
@@ -285,5 +285,3 @@ Compare the output against the compatibility matrix. Fix every mismatch **before
 | [sdkmanager — Android docs](https://developer.android.com/tools/sdkmanager) | Managing Android SDK components from the CLI |
 
 ---
-
-Next → [Changes to Native Settings (Edge-to-Edge)](./native-settings)

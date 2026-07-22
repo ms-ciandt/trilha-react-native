@@ -1,4 +1,4 @@
----
+﻿---
 title: "Performance — Profiling & Renders"
 ---
 
@@ -378,5 +378,3 @@ With proper `staleTime` configuration, navigating back to a screen that has alre
 | [TanStack Query DevTools](https://tanstack.com/query/latest/docs/framework/react/devtools) | Inspect query cache, stale times, background refetch |
 
 ---
-
-Next → [Bundle & Distribution](./bundle-distribution)

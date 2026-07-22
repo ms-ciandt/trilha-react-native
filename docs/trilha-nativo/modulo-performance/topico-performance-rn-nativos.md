@@ -1,4 +1,4 @@
----
+﻿---
 title: Performance React Native
 ---
 
@@ -158,5 +158,3 @@ The workflow mirrors native: measure first, optimize second. Guessing at bottlen
 | FlatList API reference | Official Docs | [reactnative.dev/docs/flatlist](https://reactnative.dev/docs/flatlist) |
 
 ---
-
-Next → **[Tests](../modulo-testes/topico-testes-nativos)**

@@ -1,4 +1,4 @@
----
+﻿---
 title: "Changes to Native Settings (Edge-to-Edge)"
 ---
 
@@ -291,5 +291,3 @@ Missing `namespace` causes: `Namespace not specified. Specify a namespace in the
 | [useSafeAreaInsets — docs](https://reactnavigation.org/docs/use-safe-area-insets/) | Hook reference and usage examples |
 
 ---
-
-Next → [Fault Diagnosis (RN Doctor)](./rn-doctor)

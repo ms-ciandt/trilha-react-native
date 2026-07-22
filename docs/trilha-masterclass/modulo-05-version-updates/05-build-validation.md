@@ -1,4 +1,4 @@
----
+﻿---
 title: Validation with a Build on Both Platforms
 ---
 
@@ -263,5 +263,3 @@ If the crash rate spikes: rollback via CodePush (JS-layer crashes) or immediate 
 | [Running on iOS Device](https://reactnative.dev/docs/running-on-simulator-ios) | Simulator and device build instructions |
 
 ---
-
-Next → [Recreation of Patches (patch-package)](./patches-recreation)

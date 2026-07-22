@@ -1,4 +1,4 @@
----
+﻿---
 title: Communication & Navigation
 ---
 
@@ -528,5 +528,3 @@ For Callstack's typed contract approach, see [@callstack/brownfield-navigation](
 | [flokol120/react-native-brownfield-examples](https://github.com/flokol120/react-native-brownfield-examples) | Branch-per-chapter repo: TurboModule, Fabric, state sync, event emitter — step-by-step from scratch |
 
 ---
-
-Next → **[TurboModules](../modulo-02-turbomodules/what-is-turbomodules/)**

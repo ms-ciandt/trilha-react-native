@@ -1,4 +1,4 @@
----
+﻿---
 title: TypeScript for Native Developers
 ---
 
@@ -370,5 +370,3 @@ const styles = StyleSheet.create({
 | TypeScript Cheat Sheets | Reference | [typescriptlang.org/cheatsheets](https://www.typescriptlang.org/cheatsheets) |
 
 ---
-
-Next → **[React Fundamentals](./react-fundamentals)**

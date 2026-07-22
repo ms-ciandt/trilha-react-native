@@ -1,4 +1,4 @@
----
+﻿---
 title: CI/CD
 ---
 
@@ -142,5 +142,3 @@ iOS builds require a `macos-latest` runner, which costs significantly more than 
 | React Native — Publishing | Official Docs | [reactnative.dev/docs/publishing-to-app-store](https://reactnative.dev/docs/publishing-to-app-store) |
 
 ---
-
-Next → **[Architecture](../modulo-arquitetura/topico-arquitetura-web)**

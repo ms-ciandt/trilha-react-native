@@ -1,4 +1,4 @@
----
+﻿---
 title: JavaScript for Native Developers
 ---
 
@@ -443,5 +443,3 @@ function MyButton() {
 | TypeScript Playground | Interactive | [typescriptlang.org/play](https://www.typescriptlang.org/play/) |
 
 ---
-
-Next → **[TypeScript for Native Developers](./typescript)**

@@ -1,4 +1,4 @@
----
+﻿---
 title: RN Upgrade Helper & Native Diffs
 ---
 
@@ -223,5 +223,3 @@ This writes a `.patch` file you can inspect or apply with `git apply --3way`.
 | [Callstack — Brownfield Upgrade 0.71→0.76](https://www.callstack.com/blog/how-to-upgrade-react-native-in-a-brownfield-application) | Detailed native diff walkthrough in a real brownfield app |
 
 ---
-
-Next → [Analysis of Breaking Changes](./breaking-changes)

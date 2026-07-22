@@ -1,4 +1,4 @@
----
+﻿---
 title: Advanced Native Integration
 ---
 
@@ -342,5 +342,3 @@ In a brownfield app, RN is hosted inside an existing Activity or ViewController.
 | Native UI Components — iOS | Official Docs | [reactnative.dev/docs/native-components-ios](https://reactnative.dev/docs/native-components-ios) |
 
 ---
-
-Next → **[React Native Performance](../modulo-performance/topico-performance-rn-nativos)**

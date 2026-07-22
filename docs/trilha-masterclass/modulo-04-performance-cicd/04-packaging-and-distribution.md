@@ -1,4 +1,4 @@
----
+﻿---
 title: "Bundle — Packaging & Distribution"
 ---
 
@@ -418,5 +418,3 @@ npm dist-tag add @mycompany/react-native-my-sdk@2.0.0-beta.1 latest
 | [Semver calculator](https://semver.npmjs.com/) | Test semver ranges — understand what `^1.2.3` actually resolves to |
 
 ---
-
-Next → [CI/CD Pipeline](./cicd-pipeline)

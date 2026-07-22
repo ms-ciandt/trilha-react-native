@@ -1,4 +1,4 @@
----
+﻿---
 title: "TurboModuleRegistry: get vs getEnforcing"
 ---
 
@@ -180,5 +180,3 @@ export default TurboModuleRegistry.get<Spec>('NativeStorage');
 | [0.76 TurboModuleRegistry error on iOS new arch — #48760](https://github.com/facebook/react-native/issues/48760) | Platform-specific registration issue post-upgrade |
 
 ---
-
-Next → [Availability Guards (isAvailable)](./availability-guards)

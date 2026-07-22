@@ -1,4 +1,4 @@
----
+﻿---
 title: Supported Types and Serialization
 ---
 
@@ -293,5 +293,3 @@ The only serialization that still happens is at the **native implementation boun
 | [EventEmitter PR — facebook/react-native](https://github.com/facebook/react-native/pull/44459) | PR that introduced typed EventEmitter to Codegen specs |
 
 ---
-
-Next → [Tests and Mocks for Native Modules](./tests-mocks)

@@ -1,4 +1,4 @@
----
+﻿---
 title: Styling in React Native
 ---
 
@@ -311,5 +311,3 @@ function MyScreen() {
 | Expo Google Fonts | Expo | [docs.expo.dev/develop/user-interface/fonts/](https://docs.expo.dev/develop/user-interface/fonts/) |
 
 ---
-
-Next → **[Navigation](./navegacao-nativo)**

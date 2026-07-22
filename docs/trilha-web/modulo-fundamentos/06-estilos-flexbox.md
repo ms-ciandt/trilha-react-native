@@ -1,4 +1,4 @@
----
+﻿---
 title: Styling & Flexbox for Web Developers
 ---
 
@@ -272,5 +272,3 @@ The official approach is `StyleSheet.create`. NativeWind compiles Tailwind class
 | Yoga Layout | Reference | [yogalayout.dev](https://yogalayout.dev/) |
 
 ---
-
-Next → **[Lists & Navigation](./listas-navegacao)**

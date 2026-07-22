@@ -1,4 +1,4 @@
----
+﻿---
 title: Tests and Mocks for Native Modules
 ---
 
@@ -364,5 +364,3 @@ it('renders device info correctly', () => {
 | [Testing NativeModules — oneuptime.com](https://oneuptime.com/blog/post/2026-01-15-react-native-mock-native-modules/view) | Modern mocking patterns for 2025+ |
 
 ---
-
-Next → [Fabric & JSI in Deep](../modulo-03-fabric-jsi/jsi-javascript-interface/)

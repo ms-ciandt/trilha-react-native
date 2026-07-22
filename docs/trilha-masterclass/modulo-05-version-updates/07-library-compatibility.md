@@ -1,4 +1,4 @@
----
+﻿---
 title: Compatibility of Third-Party Libraries
 ---
 
@@ -229,5 +229,3 @@ As of 2024, >61% of the 400 most-installed RN libraries support New Architecture
 | [New Architecture is Here](https://reactnative.dev/blog/2024/10/23/the-new-architecture-is-here) | Which libraries are compatible at 0.76 launch |
 
 ---
-
-Next → [Environment Requirements (Node, Xcode, SDKs)](./environment-requirements)
