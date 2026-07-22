@@ -2,6 +2,11 @@
 title: Validation with a Build on Both Platforms
 ---
 
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc05_05_build-validation.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 # Validation with a Build on Both Platforms
 
 > A successful `yarn install` and a green `pod install` are not validation. Validation means a clean build on both platforms, passing tests, and a smoke test on a physical device. In that order.

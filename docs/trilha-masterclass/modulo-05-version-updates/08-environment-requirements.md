@@ -2,6 +2,11 @@
 title: "Environment Requirements (Node, Xcode, SDKs)"
 ---
 
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc05_08_environment-requirements.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 # Environment Requirements (Node, Xcode, SDKs)
 
 > A wrong environment version causes the most cryptic build failures — errors that have nothing to do with your code. Get the environment right first, before touching `package.json`.
