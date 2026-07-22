@@ -77,6 +77,66 @@ const sidebars = {
     },
   ],
 
+  trilhaIos: [
+    {
+      type: 'category',
+      label: 'Fundamentals',
+      collapsed: false,
+      items: [
+        'trilha-ios/modulo-fundamentos/swift-to-javascript',
+        'trilha-ios/modulo-fundamentos/typescript-for-swift-devs',
+        'trilha-ios/modulo-fundamentos/swiftui-to-react',
+        'trilha-ios/modulo-fundamentos/components-and-props',
+        'trilha-ios/modulo-fundamentos/state-and-hooks',
+        'trilha-ios/modulo-fundamentos/rn-core-components',
+        'trilha-ios/modulo-fundamentos/layout-and-flexbox',
+        'trilha-ios/modulo-fundamentos/styling',
+        'trilha-ios/modulo-fundamentos/navigation',
+        'trilha-ios/modulo-fundamentos/state-and-apis',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Native Resources',
+      collapsed: false,
+      items: [
+        'trilha-ios/modulo-recursos-nativos/native-resources-ios',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Performance',
+      collapsed: false,
+      items: [
+        'trilha-ios/modulo-performance/performance-ios',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Testing',
+      collapsed: false,
+      items: [
+        'trilha-ios/modulo-testes/testing-ios',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'CI/CD',
+      collapsed: false,
+      items: [
+        'trilha-ios/modulo-cicd/cicd-ios',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Architecture',
+      collapsed: false,
+      items: [
+        'trilha-ios/modulo-arquitetura/architecture-ios',
+      ],
+    },
+  ],
+
   trilhaMasterclass: [
     {
       type: 'category',
@@ -98,30 +158,30 @@ const sidebars = {
     },
     {
       type: 'category',
-      label: 'TurboModules',
+      label: 'JSI & Fabric',
       collapsed: false,
       items: [
-        'trilha-masterclass/modulo-02-turbomodules/what-is-turbomodules',
-        'trilha-masterclass/modulo-02-turbomodules/specs-typescript',
-        'trilha-masterclass/modulo-02-turbomodules/codegen',
-        'trilha-masterclass/modulo-02-turbomodules/defensive-loading',
-        'trilha-masterclass/modulo-02-turbomodules/get-vs-getenforcing',
-        'trilha-masterclass/modulo-02-turbomodules/availability-guards',
-        'trilha-masterclass/modulo-02-turbomodules/supported-types',
-        'trilha-masterclass/modulo-02-turbomodules/tests-mocks',
+        'trilha-masterclass/modulo-02-jsi-fabric/jsi-javascript-interface',
+        'trilha-masterclass/modulo-02-jsi-fabric/jsi-advanced',
+        'trilha-masterclass/modulo-02-jsi-fabric/fabric-renderer',
+        'trilha-masterclass/modulo-02-jsi-fabric/fabric-components',
+        'trilha-masterclass/modulo-02-jsi-fabric/runtime-new-architecture',
+        'trilha-masterclass/modulo-02-jsi-fabric/runtime-debugging',
       ],
     },
     {
       type: 'category',
-      label: 'Fabric & JSI',
+      label: 'TurboModules',
       collapsed: false,
       items: [
-        'trilha-masterclass/modulo-03-fabric-jsi/jsi-javascript-interface',
-        'trilha-masterclass/modulo-03-fabric-jsi/jsi-advanced',
-        'trilha-masterclass/modulo-03-fabric-jsi/fabric-renderer',
-        'trilha-masterclass/modulo-03-fabric-jsi/fabric-components',
-        'trilha-masterclass/modulo-03-fabric-jsi/runtime-new-architecture',
-        'trilha-masterclass/modulo-03-fabric-jsi/runtime-debugging',
+        'trilha-masterclass/modulo-03-turbomodules/what-is-turbomodules',
+        'trilha-masterclass/modulo-03-turbomodules/specs-typescript',
+        'trilha-masterclass/modulo-03-turbomodules/codegen',
+        'trilha-masterclass/modulo-03-turbomodules/defensive-loading',
+        'trilha-masterclass/modulo-03-turbomodules/get-vs-getenforcing',
+        'trilha-masterclass/modulo-03-turbomodules/availability-guards',
+        'trilha-masterclass/modulo-03-turbomodules/supported-types',
+        'trilha-masterclass/modulo-03-turbomodules/tests-mocks',
       ],
     },
     {
@@ -165,6 +225,21 @@ const sidebars = {
             'trilha-masterclass/modulo-05-version-updates/rn-doctor',
           ],
         },
+      ],
+    },
+  ],
+
+  trilhaAndroid: [
+    {
+      type: 'category',
+      label: 'Compose → React Native',
+      collapsed: false,
+      items: [
+        'trilha-android/modulo-compose-para-rn/composable-vs-component',
+        'trilha-android/modulo-compose-para-rn/remember-vs-usestate',
+        'trilha-android/modulo-compose-para-rn/layout-column-row-vs-flexbox',
+        'trilha-android/modulo-compose-para-rn/navigation-navhost-vs-react-navigation',
+        'trilha-android/modulo-compose-para-rn/theming-material3-vs-rn',
       ],
     },
   ],
