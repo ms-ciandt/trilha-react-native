@@ -11,7 +11,7 @@ const CONTRIBUTORS = [
 const REVIEWERS = [
   { name: 'Matheus Sales', role: 'React Native', username: 'AlimuraMatheus', color: '#00d4ff' },
   { name: 'Diego Karol Gouvea Lana', role: 'Architect', username: null, avatar: '/trilha-react-native/img/lana.webp', color: '#7c3aed' },
-  { name: 'Reviewer',               role: 'Web',       username: null, avatar: null,                                   color: '#059669' },
+  { name: 'Guilherme Rovaron',       role: 'Web',       username: null, avatar: '/trilha-react-native/img/web-reviewer.jpg', color: '#059669' },
   { name: 'Paulo Vitor Sato',        role: 'Android',   username: null, avatar: '/trilha-react-native/img/sato.webp', color: '#d97706' },
   { name: 'Reviewer',      role: 'iOS',          username: null,             color: '#d97706' },
 ];
