@@ -244,6 +244,18 @@ const sidebars = {
     },
     {
       type: 'category',
+      label: 'Native Resources',
+      collapsed: false,
+      items: [
+        'trilha-android/modulo-recursos-nativos/permissions',
+        'trilha-android/modulo-recursos-nativos/camera',
+        'trilha-android/modulo-recursos-nativos/storage',
+        'trilha-android/modulo-recursos-nativos/sensors-device-apis',
+        'trilha-android/modulo-recursos-nativos/notifications',
+      ],
+    },
+    {
+      type: 'category',
       label: 'New Architecture',
       collapsed: false,
       items: [

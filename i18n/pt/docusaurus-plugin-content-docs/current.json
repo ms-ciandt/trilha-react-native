@@ -87,6 +87,10 @@
     "message": "Fundamentos",
     "description": "The label for category 'Fundamentals' in sidebar 'trilhaAndroid'"
   },
+  "sidebar.trilhaAndroid.category.Native Resources": {
+    "message": "Recursos Nativos",
+    "description": "The label for category 'Native Resources' in sidebar 'trilhaAndroid'"
+  },
   "sidebar.trilhaAndroid.category.New Architecture": {
     "message": "Nova Arquitetura",
     "description": "The label for category 'New Architecture' in sidebar 'trilhaAndroid'"
