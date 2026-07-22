@@ -232,6 +232,18 @@ const sidebars = {
   trilhaAndroid: [
     {
       type: 'category',
+      label: 'Fundamentals',
+      collapsed: false,
+      items: [
+        'trilha-android/modulo-fundamentos/javascript-for-android-devs',
+        'trilha-android/modulo-fundamentos/typescript-for-kotlin-devs',
+        'trilha-android/modulo-fundamentos/rn-core-components',
+        'trilha-android/modulo-fundamentos/styling-stylesheet',
+        'trilha-android/modulo-fundamentos/state-and-apis',
+      ],
+    },
+    {
+      type: 'category',
       label: 'Compose → React Native',
       collapsed: false,
       items: [
