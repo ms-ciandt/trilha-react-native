@@ -256,6 +256,18 @@ const sidebars = {
     },
     {
       type: 'category',
+      label: 'Performance',
+      collapsed: false,
+      items: [
+        'trilha-android/modulo-performance/thread-model',
+        'trilha-android/modulo-performance/flatlist-optimisation',
+        'trilha-android/modulo-performance/reanimated',
+        'trilha-android/modulo-performance/memo-usememo-usecallback',
+        'trilha-android/modulo-performance/bundle-startup',
+      ],
+    },
+    {
+      type: 'category',
       label: 'New Architecture',
       collapsed: false,
       items: [
