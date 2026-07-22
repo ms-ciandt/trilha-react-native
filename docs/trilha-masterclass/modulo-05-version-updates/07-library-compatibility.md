@@ -2,6 +2,11 @@
 title: Compatibility of Third-Party Libraries
 ---
 
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc05_07_library-compatibility.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 # Compatibility of Third-Party Libraries
 
 > The single largest source of upgrade friction is third-party libraries that have not migrated to the New Architecture. Before committing to an upgrade timeline, inventory your dependencies first.

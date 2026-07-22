@@ -2,6 +2,11 @@
 title: "Performance — Profiling & Renders"
 ---
 
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc04_02_profiling-and-renders.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 ## 3. Profiling and Bottleneck Detection
 
 ### The measurement loop

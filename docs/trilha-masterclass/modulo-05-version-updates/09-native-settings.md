@@ -2,6 +2,11 @@
 title: "Changes to Native Settings (Edge-to-Edge)"
 ---
 
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc05_09_native-settings.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 # Changes to Native Settings (Edge-to-Edge)
 
 > Edge-to-edge is the most visually breaking change in recent RN history. Setting `targetSdk = 35` activates it on Android 15 — and suddenly content overflows under the status bar and gesture navigation bar on every screen.

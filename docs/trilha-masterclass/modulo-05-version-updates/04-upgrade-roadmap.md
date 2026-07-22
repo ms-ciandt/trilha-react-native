@@ -2,6 +2,11 @@
 title: Roadmap and Recommended Upgrade Path
 ---
 
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc05_04_upgrade-roadmap.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 # Roadmap and Recommended Upgrade Path
 
 > The meta-question before any upgrade: *where are we going, and why now?* Upgrades done reactively ("the library we need requires 0.76") are harder than upgrades done proactively as part of a planned roadmap.

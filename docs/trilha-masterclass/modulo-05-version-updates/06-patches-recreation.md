@@ -2,6 +2,11 @@
 title: "Recreation of Patches (patch-package)"
 ---
 
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc05_06_patches-recreation.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 # Recreation of Patches (patch-package)
 
 > Patches in `patches/` are technical debt with an expiry date. Every RN upgrade is a forcing function to audit them — some can be deleted (the upstream fix landed), some need recreation, and some reveal that a library has been abandoned.
