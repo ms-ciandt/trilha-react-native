@@ -4,6 +4,13 @@ title: "Performance — Startup & Hermes"
 
 # Performance
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc04_01_performance.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 > **Module 04 — React Native Masterclass**
 > Target: senior engineers shipping RN 0.76+ apps who need measurable, production-grade performance improvements — not tips, but a systematic methodology.
 
