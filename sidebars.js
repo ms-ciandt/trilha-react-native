@@ -268,6 +268,42 @@ const sidebars = {
     },
     {
       type: 'category',
+      label: 'Testing',
+      collapsed: false,
+      items: [
+        'trilha-android/modulo-testes/jest-unit-tests',
+        'trilha-android/modulo-testes/react-native-testing-library',
+        'trilha-android/modulo-testes/mocking-native-modules',
+        'trilha-android/modulo-testes/integration-tests',
+        'trilha-android/modulo-testes/detox-e2e',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'CI/CD',
+      collapsed: false,
+      items: [
+        'trilha-android/modulo-cicd/fastlane',
+        'trilha-android/modulo-cicd/github-actions',
+        'trilha-android/modulo-cicd/eas-build',
+        'trilha-android/modulo-cicd/code-signing-keystore',
+        'trilha-android/modulo-cicd/ota-updates',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Architecture',
+      collapsed: false,
+      items: [
+        'trilha-android/modulo-arquitetura/architecture-patterns',
+        'trilha-android/modulo-arquitetura/monorepo',
+        'trilha-android/modulo-arquitetura/state-management-at-scale',
+        'trilha-android/modulo-arquitetura/error-handling-monitoring',
+        'trilha-android/modulo-arquitetura/accessibility',
+      ],
+    },
+    {
+      type: 'category',
       label: 'New Architecture',
       collapsed: false,
       items: [
