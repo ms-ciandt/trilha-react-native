@@ -9,11 +9,11 @@ const CONTRIBUTORS = [
 ];
 
 const REVIEWERS = [
-  { name: 'Matheus Sales',           role: 'React Native', username: 'ms-ciandt', avatar: null,                                           color: '#00d4ff' },
-  { name: 'Diego Karol Gouvea Lana', role: 'Arquiteto',    username: null,             avatar: '/trilha-react-native/img/lana.webp',           color: '#7c3aed' },
-  { name: 'Guilherme Rovaron',       role: 'Web',          username: null,             avatar: '/trilha-react-native/img/web-reviewer.jpg',    color: '#059669' },
-  { name: 'Paulo Vitor Sato',        role: 'Android',      username: null,             avatar: '/trilha-react-native/img/sato.webp',           color: '#d97706' },
-  { name: 'Revisor',                 role: 'iOS',          username: null,             avatar: null,                                           color: '#d97706' },
+  { name: 'Matheus Sales',           role: 'React Native', username: 'ms-ciandt', avatar: null,                                        color: '#00d4ff' },
+  { name: 'Diego Karol Gouvea Lana', role: 'Arquiteto',    username: null,        avatar: '/trilha-react-native/img/lana.webp',        color: '#7c3aed' },
+  { name: 'Guilherme Rovaron',       role: 'Web',          username: null,        avatar: '/trilha-react-native/img/web-reviewer.jpg', color: '#0284c7' },
+  { name: 'Paulo Vitor Sato',        role: 'Android',      username: null,        avatar: '/trilha-react-native/img/sato.webp',        color: '#3ddc84' },
+  { name: 'Revisor',                 role: 'iOS',          username: null,        avatar: null,                                        color: '#a855f7' },
 ];
 
 const TOOLS = [
@@ -30,13 +30,18 @@ const TOOLS = [
 const TRACKS = [
   {
     label: 'Trilha Web',
-    color: '#059669',
+    color: '#0284c7',
     desc: 'Para devs com background em React, HTML/CSS e JavaScript. Cobre a mudança de mentalidade do browser para o ambiente mobile.',
   },
   {
-    label: 'Trilha Nativo',
-    color: '#d97706',
-    desc: 'Para devs Android (Kotlin) e iOS (Swift). Mapeia conceitos nativos: ciclos de vida, layouts, threads para o ecossistema JS.',
+    label: 'Trilha Android',
+    color: '#3ddc84',
+    desc: 'Para devs Android vindos de Kotlin e Jetpack Compose. Mapeia conceitos do Compose — Composables, remember, NavHost — para os equivalentes em React Native.',
+  },
+  {
+    label: 'Trilha iOS',
+    color: '#a855f7',
+    desc: 'Para devs iOS vindos de Swift e SwiftUI. Mapeia conceitos do SwiftUI — Views, @State, NavigationStack — para o ecossistema React Native.',
   },
   {
     label: 'Trilha React Native MasterClass',

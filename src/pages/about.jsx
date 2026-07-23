@@ -9,11 +9,11 @@ const CONTRIBUTORS = [
 ];
 
 const REVIEWERS = [
-  { name: 'Matheus Sales', role: 'React Native', username: 'ms-ciandt', color: '#00d4ff' },
-  { name: 'Diego Karol Gouvea Lana', role: 'Architect', username: null, avatar: '/trilha-react-native/img/lana.webp', color: '#7c3aed' },
-  { name: 'Guilherme Rovaron',       role: 'Web',       username: null, avatar: '/trilha-react-native/img/web-reviewer.jpg', color: '#059669' },
-  { name: 'Paulo Vitor Sato',        role: 'Android',   username: null, avatar: '/trilha-react-native/img/sato.webp', color: '#d97706' },
-  { name: 'Reviewer',      role: 'iOS',          username: null,             color: '#d97706' },
+  { name: 'Matheus Sales',           role: 'React Native', username: 'ms-ciandt', avatar: null,                                        color: '#00d4ff' },
+  { name: 'Diego Karol Gouvea Lana', role: 'Architect',    username: null,        avatar: '/trilha-react-native/img/lana.webp',        color: '#7c3aed' },
+  { name: 'Guilherme Rovaron',       role: 'Web',          username: null,        avatar: '/trilha-react-native/img/web-reviewer.jpg', color: '#0284c7' },
+  { name: 'Paulo Vitor Sato',        role: 'Android',      username: null,        avatar: '/trilha-react-native/img/sato.webp',        color: '#3ddc84' },
+  { name: 'Reviewer',                role: 'iOS',          username: null,        avatar: null,                                        color: '#a855f7' },
 ];
 
 const TOOLS = [
@@ -30,13 +30,18 @@ const TOOLS = [
 const TRACKS = [
   {
     label: 'Web dev trail',
-    color: '#059669',
+    color: '#0284c7',
     desc: 'For developers coming from React, HTML/CSS and JavaScript. Covers the mental-model shift from browser to mobile environment.',
   },
   {
-    label: 'Native dev trail',
-    color: '#d97706',
-    desc: 'For Android (Kotlin) and iOS (Swift) developers. Maps native concepts: lifecycles, layouts, threading to the JS ecosystem.',
+    label: 'Android native trail',
+    color: '#3ddc84',
+    desc: 'For Android developers coming from Kotlin and Jetpack Compose. Maps Compose concepts — Composables, remember, NavHost — to their React Native equivalents.',
+  },
+  {
+    label: 'iOS native trail',
+    color: '#a855f7',
+    desc: 'For iOS developers coming from Swift and SwiftUI. Maps SwiftUI concepts — Views, @State, NavigationStack — to the React Native ecosystem.',
   },
   {
     label: 'React Native MasterClass Trail',
