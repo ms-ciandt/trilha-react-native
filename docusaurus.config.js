@@ -73,9 +73,15 @@ const config = {
           },
           {
             to: '/trilha-android/modulo-compose-para-rn/composable-vs-component',
-            label: 'Android Native Trail',
+            label: 'Android native trail',
             position: 'left',
             activeBaseRegex: '^/trilha-react-native/trilha-android',
+          },
+          {
+            to: '/trilha-ios/modulo-fundamentos/swift-to-javascript',
+            label: 'iOS native trail',
+            position: 'left',
+            activeBaseRegex: '^/trilha-react-native/trilha-ios',
           },
           {
             to: '/trilha-masterclass/modulo-00-overview/course-overview',

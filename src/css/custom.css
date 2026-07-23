@@ -140,6 +140,30 @@
   color: #fbbf24;
 }
 
+/* Trilha Android — green */
+.navbar__link[href*="/trilha-android"]:hover,
+.navbar__link[href*="/trilha-android"].navbar__link--active {
+  background: color-mix(in srgb, #2db370 12%, transparent);
+  color: #2db370;
+}
+[data-theme='dark'] .navbar__link[href*="/trilha-android"]:hover,
+[data-theme='dark'] .navbar__link[href*="/trilha-android"].navbar__link--active {
+  background: color-mix(in srgb, #3ddc84 14%, transparent);
+  color: #3ddc84;
+}
+
+/* Trilha iOS — purple */
+.navbar__link[href*="/trilha-ios"]:hover,
+.navbar__link[href*="/trilha-ios"].navbar__link--active {
+  background: color-mix(in srgb, #9333ea 12%, transparent);
+  color: #9333ea;
+}
+[data-theme='dark'] .navbar__link[href*="/trilha-ios"]:hover,
+[data-theme='dark'] .navbar__link[href*="/trilha-ios"].navbar__link--active {
+  background: color-mix(in srgb, #d8b4fe 14%, transparent);
+  color: #d8b4fe;
+}
+
 /* Masterclass — ciano */
 .navbar__link[href*="/trilha-masterclass"]:hover,
 .navbar__link[href*="/trilha-masterclass"].navbar__link--active {
