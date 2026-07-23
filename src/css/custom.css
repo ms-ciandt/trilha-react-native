@@ -116,16 +116,16 @@
   color: #60a5fa;
 }
 
-/* Trilha Web — verde */
+/* Trilha Web — sky blue */
 .navbar__link[href*="/trilha-web"]:hover,
 .navbar__link[href*="/trilha-web"].navbar__link--active {
-  background: color-mix(in srgb, #059669 12%, transparent);
-  color: #059669;
+  background: color-mix(in srgb, #0284c7 12%, transparent);
+  color: #0284c7;
 }
 [data-theme='dark'] .navbar__link[href*="/trilha-web"]:hover,
 [data-theme='dark'] .navbar__link[href*="/trilha-web"].navbar__link--active {
-  background: color-mix(in srgb, #34d399 14%, transparent);
-  color: #34d399;
+  background: color-mix(in srgb, #38bdf8 14%, transparent);
+  color: #38bdf8;
 }
 
 /* Trilha Nativo — amber */
@@ -138,6 +138,30 @@
 [data-theme='dark'] .navbar__link[href*="/trilha-nativo"].navbar__link--active {
   background: color-mix(in srgb, #fbbf24 14%, transparent);
   color: #fbbf24;
+}
+
+/* Trilha Android — green */
+.navbar__link[href*="/trilha-android"]:hover,
+.navbar__link[href*="/trilha-android"].navbar__link--active {
+  background: color-mix(in srgb, #2db370 12%, transparent);
+  color: #2db370;
+}
+[data-theme='dark'] .navbar__link[href*="/trilha-android"]:hover,
+[data-theme='dark'] .navbar__link[href*="/trilha-android"].navbar__link--active {
+  background: color-mix(in srgb, #3ddc84 14%, transparent);
+  color: #3ddc84;
+}
+
+/* Trilha iOS — purple */
+.navbar__link[href*="/trilha-ios"]:hover,
+.navbar__link[href*="/trilha-ios"].navbar__link--active {
+  background: color-mix(in srgb, #9333ea 12%, transparent);
+  color: #9333ea;
+}
+[data-theme='dark'] .navbar__link[href*="/trilha-ios"]:hover,
+[data-theme='dark'] .navbar__link[href*="/trilha-ios"].navbar__link--active {
+  background: color-mix(in srgb, #d8b4fe 14%, transparent);
+  color: #d8b4fe;
 }
 
 /* Masterclass — ciano */
@@ -166,16 +190,40 @@
   --track-accent-border: color-mix(in srgb, #60a5fa 25%, transparent);
 }
 
-/* Trilha Web — verde */
+/* Trilha Web — sky blue */
 :root:has(.navbar__link[href*="/trilha-web"].navbar__link--active) {
-  --track-accent: #059669;
-  --track-accent-bg: color-mix(in srgb, #059669 8%, transparent);
-  --track-accent-border: color-mix(in srgb, #059669 30%, transparent);
+  --track-accent: #0284c7;
+  --track-accent-bg: color-mix(in srgb, #0284c7 8%, transparent);
+  --track-accent-border: color-mix(in srgb, #0284c7 30%, transparent);
 }
 [data-theme='dark']:has(.navbar__link[href*="/trilha-web"].navbar__link--active) {
-  --track-accent: #34d399;
-  --track-accent-bg: color-mix(in srgb, #34d399 10%, transparent);
-  --track-accent-border: color-mix(in srgb, #34d399 25%, transparent);
+  --track-accent: #38bdf8;
+  --track-accent-bg: color-mix(in srgb, #38bdf8 10%, transparent);
+  --track-accent-border: color-mix(in srgb, #38bdf8 25%, transparent);
+}
+
+/* Trilha Android — green */
+:root:has(.navbar__link[href*="/trilha-android"].navbar__link--active) {
+  --track-accent: #2db370;
+  --track-accent-bg: color-mix(in srgb, #2db370 8%, transparent);
+  --track-accent-border: color-mix(in srgb, #2db370 30%, transparent);
+}
+[data-theme='dark']:has(.navbar__link[href*="/trilha-android"].navbar__link--active) {
+  --track-accent: #3ddc84;
+  --track-accent-bg: color-mix(in srgb, #3ddc84 10%, transparent);
+  --track-accent-border: color-mix(in srgb, #3ddc84 25%, transparent);
+}
+
+/* Trilha iOS — purple */
+:root:has(.navbar__link[href*="/trilha-ios"].navbar__link--active) {
+  --track-accent: #9333ea;
+  --track-accent-bg: color-mix(in srgb, #9333ea 8%, transparent);
+  --track-accent-border: color-mix(in srgb, #9333ea 30%, transparent);
+}
+[data-theme='dark']:has(.navbar__link[href*="/trilha-ios"].navbar__link--active) {
+  --track-accent: #d8b4fe;
+  --track-accent-bg: color-mix(in srgb, #a855f7 10%, transparent);
+  --track-accent-border: color-mix(in srgb, #a855f7 25%, transparent);
 }
 
 /* Trilha Nativo — amber */
@@ -233,7 +281,11 @@
 [class*='trilha-masterclass'] [class*='sidebarLogo'],
 [class*='trilha-web'] [class*='sidebarLogo'],
 [class*='trilha-nativo'] [class*='sidebarLogo'],
+[class*='trilha-android'] [class*='sidebarLogo'],
+[class*='trilha-ios'] [class*='sidebarLogo'],
 [class*='introducao'] [class*='sidebarLogo'] {
+  border-top: none !important;
+  border-right: none !important;
   border-left: 3px solid;
   border-bottom: 1px solid;
   padding-left: calc(1rem - 3px) !important;
@@ -243,10 +295,14 @@
 [class*='trilha-masterclass'] [class*='sidebarLogo'] img,
 [class*='trilha-web'] [class*='sidebarLogo'] img,
 [class*='trilha-nativo'] [class*='sidebarLogo'] img,
+[class*='trilha-android'] [class*='sidebarLogo'] img,
+[class*='trilha-ios'] [class*='sidebarLogo'] img,
 [class*='introducao'] [class*='sidebarLogo'] img,
 [class*='trilha-masterclass'] [class*='sidebarLogo'] b,
 [class*='trilha-web'] [class*='sidebarLogo'] b,
 [class*='trilha-nativo'] [class*='sidebarLogo'] b,
+[class*='trilha-android'] [class*='sidebarLogo'] b,
+[class*='trilha-ios'] [class*='sidebarLogo'] b,
 [class*='introducao'] [class*='sidebarLogo'] b {
   display: none !important;
 }
@@ -254,6 +310,8 @@
 [class*='trilha-masterclass'] [class*='sidebarLogo']::before,
 [class*='trilha-web'] [class*='sidebarLogo']::before,
 [class*='trilha-nativo'] [class*='sidebarLogo']::before,
+[class*='trilha-android'] [class*='sidebarLogo']::before,
+[class*='trilha-ios'] [class*='sidebarLogo']::before,
 [class*='introducao'] [class*='sidebarLogo']::before {
   font-size: 0.625rem;
   font-weight: 700;
@@ -281,20 +339,56 @@
 
 [class*='trilha-web'] [class*='sidebarLogo'] {
   background: var(--ifm-background-color);
-  border-left-color: #059669;
-  border-bottom-color: rgba(5, 150, 105, 0.25);
+  border-left-color: #0284c7;
+  border-bottom-color: rgba(2, 132, 199, 0.25);
 }
 [class*='trilha-web'] [class*='sidebarLogo']::before {
   content: 'Trilha Web → React Native';
-  color: #059669;
+  color: #0284c7;
 }
 [data-theme='dark'] [class*='trilha-web'] [class*='sidebarLogo'] {
   background: #0f172a;
-  border-left-color: #34d399;
-  border-bottom-color: rgba(52, 211, 153, 0.2);
+  border-left-color: #38bdf8;
+  border-bottom-color: rgba(56, 189, 248, 0.2);
 }
 [data-theme='dark'] [class*='trilha-web'] [class*='sidebarLogo']::before {
-  color: #34d399;
+  color: #38bdf8;
+}
+
+[class*='trilha-android'] [class*='sidebarLogo'] {
+  background: var(--ifm-background-color);
+  border-left-color: #2db370;
+  border-bottom-color: rgba(45, 179, 112, 0.25);
+}
+[class*='trilha-android'] [class*='sidebarLogo']::before {
+  content: 'Trilha Android → React Native';
+  color: #2db370;
+}
+[data-theme='dark'] [class*='trilha-android'] [class*='sidebarLogo'] {
+  background: #0f172a;
+  border-left-color: #3ddc84;
+  border-bottom-color: rgba(61, 220, 132, 0.2);
+}
+[data-theme='dark'] [class*='trilha-android'] [class*='sidebarLogo']::before {
+  color: #3ddc84;
+}
+
+[class*='trilha-ios'] [class*='sidebarLogo'] {
+  background: var(--ifm-background-color);
+  border-left-color: #9333ea;
+  border-bottom-color: rgba(147, 51, 234, 0.25);
+}
+[class*='trilha-ios'] [class*='sidebarLogo']::before {
+  content: 'Trilha iOS → React Native';
+  color: #9333ea;
+}
+[data-theme='dark'] [class*='trilha-ios'] [class*='sidebarLogo'] {
+  background: #0f172a;
+  border-left-color: #d8b4fe;
+  border-bottom-color: rgba(216, 180, 254, 0.2);
+}
+[data-theme='dark'] [class*='trilha-ios'] [class*='sidebarLogo']::before {
+  color: #d8b4fe;
 }
 
 [class*='trilha-nativo'] [class*='sidebarLogo'] {
@@ -486,7 +580,17 @@ video {
 
 /* Trilha Web */
 [class*='trilha-web'] {
-  --module-accent: #059669;
+  --module-accent: #0284c7;
+}
+
+/* Trilha Android */
+[class*='trilha-android'] {
+  --module-accent: #2db370;
+}
+
+/* Trilha iOS */
+[class*='trilha-ios'] {
+  --module-accent: #9333ea;
 }
 
 /* Trilha Nativo */
@@ -532,23 +636,61 @@ video {
   background: color-mix(in srgb, #0099bb 8%, transparent);
 }
 
-/* Trilha Web — sidebar com sotaque emerald */
+/* Trilha Web — sidebar com sotaque sky blue */
 [class*='trilha-web'] .menu__link--sublist {
-  color: #059669 !important;
+  color: #0284c7 !important;
 }
 
 [data-theme='dark'] [class*='trilha-web'] .menu__link--sublist {
-  color: #34d399 !important;
+  color: #38bdf8 !important;
 }
 
 [class*='trilha-web'] .menu__link--active {
-  background: color-mix(in srgb, #059669 10%, transparent) !important;
-  color: #059669 !important;
+  background: color-mix(in srgb, #0284c7 10%, transparent) !important;
+  color: #0284c7 !important;
 }
 
 [data-theme='dark'] [class*='trilha-web'] .menu__link--active {
-  background: color-mix(in srgb, #34d399 10%, transparent) !important;
-  color: #34d399 !important;
+  background: color-mix(in srgb, #38bdf8 10%, transparent) !important;
+  color: #38bdf8 !important;
+}
+
+/* Trilha Android — sidebar com sotaque green */
+[class*='trilha-android'] .menu__link--sublist {
+  color: #2db370 !important;
+}
+
+[data-theme='dark'] [class*='trilha-android'] .menu__link--sublist {
+  color: #3ddc84 !important;
+}
+
+[class*='trilha-android'] .menu__link--active {
+  background: color-mix(in srgb, #2db370 10%, transparent) !important;
+  color: #2db370 !important;
+}
+
+[data-theme='dark'] [class*='trilha-android'] .menu__link--active {
+  background: color-mix(in srgb, #3ddc84 10%, transparent) !important;
+  color: #3ddc84 !important;
+}
+
+/* Trilha iOS — sidebar com sotaque purple */
+[class*='trilha-ios'] .menu__link--sublist {
+  color: #9333ea !important;
+}
+
+[data-theme='dark'] [class*='trilha-ios'] .menu__link--sublist {
+  color: #d8b4fe !important;
+}
+
+[class*='trilha-ios'] .menu__link--active {
+  background: color-mix(in srgb, #9333ea 10%, transparent) !important;
+  color: #9333ea !important;
+}
+
+[data-theme='dark'] [class*='trilha-ios'] .menu__link--active {
+  background: color-mix(in srgb, #d8b4fe 10%, transparent) !important;
+  color: #d8b4fe !important;
 }
 
 /* Trilha Nativo — sidebar com sotaque amber */
@@ -899,7 +1041,7 @@ video {
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, transparent, #059669 50%, transparent);
+  background: linear-gradient(90deg, transparent, #0284c7 50%, transparent);
   opacity: 0.5;
   pointer-events: none;
   z-index: 10;
@@ -914,6 +1056,34 @@ video {
   right: 0;
   height: 2px;
   background: linear-gradient(90deg, transparent, #d97706 50%, transparent);
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Trilha Android — linha de acento no topo */
+[class*='trilha-android'] .theme-doc-markdown::before {
+  content: '';
+  position: fixed;
+  top: 56px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #3ddc84 50%, transparent);
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Trilha iOS — linha de acento no topo */
+[class*='trilha-ios'] .theme-doc-markdown::before {
+  content: '';
+  position: fixed;
+  top: 56px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #a855f7 50%, transparent);
   opacity: 0.5;
   pointer-events: none;
   z-index: 10;
