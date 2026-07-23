@@ -206,8 +206,8 @@
 }
 
 .trackCardWeb:hover {
-  border-color: #059669;
-  box-shadow: 0 8px 30px rgba(5, 150, 105, 0.15);
+  border-color: #0ea5e9;
+  box-shadow: 0 8px 30px rgba(14, 165, 233, 0.15);
 }
 
 .trackCardAndroid:hover {
@@ -216,8 +216,8 @@
 }
 
 .trackCardIos:hover {
-  border-color: #6366f1;
-  box-shadow: 0 8px 30px rgba(99, 102, 241, 0.15);
+  border-color: #a855f7;
+  box-shadow: 0 8px 30px rgba(168, 85, 247, 0.15);
 }
 
 /* glow blob no canto */
@@ -235,7 +235,7 @@
 }
 
 .trackCardWeb .cardGlow {
-  background: #059669;
+  background: #0ea5e9;
 }
 
 .trackCardAndroid .cardGlow {
@@ -243,7 +243,7 @@
 }
 
 .trackCardIos .cardGlow {
-  background: #6366f1;
+  background: #a855f7;
 }
 
 .trackCard:hover .cardGlow {
@@ -263,9 +263,9 @@
 }
 
 .trackCardWeb .cardBadge {
-  background: color-mix(in srgb, #059669 12%, transparent);
-  color: #059669;
-  border: 1px solid color-mix(in srgb, #059669 30%, transparent);
+  background: color-mix(in srgb, #0ea5e9 12%, transparent);
+  color: #0ea5e9;
+  border: 1px solid color-mix(in srgb, #0ea5e9 30%, transparent);
 }
 
 .trackCardAndroid .cardBadge {
@@ -275,9 +275,9 @@
 }
 
 .trackCardIos .cardBadge {
-  background: color-mix(in srgb, #6366f1 12%, transparent);
-  color: #6366f1;
-  border: 1px solid color-mix(in srgb, #6366f1 30%, transparent);
+  background: color-mix(in srgb, #a855f7 12%, transparent);
+  color: #a855f7;
+  border: 1px solid color-mix(in srgb, #a855f7 30%, transparent);
 }
 
 [data-theme='dark'] .trackCardAndroid .cardBadge {
@@ -287,9 +287,9 @@
 }
 
 [data-theme='dark'] .trackCardIos .cardBadge {
-  color: #a5b4fc;
-  background: color-mix(in srgb, #6366f1 15%, transparent);
-  border-color: color-mix(in srgb, #6366f1 35%, transparent);
+  color: #d8b4fe;
+  background: color-mix(in srgb, #a855f7 15%, transparent);
+  border-color: color-mix(in srgb, #a855f7 35%, transparent);
 }
 
 .trackLabel {
@@ -300,7 +300,7 @@
 }
 
 .trackCardWeb .trackLabel {
-  color: #059669;
+  color: #0284c7;
 }
 
 .trackCardAndroid .trackLabel {
@@ -308,11 +308,11 @@
 }
 
 .trackCardIos .trackLabel {
-  color: #6366f1;
+  color: #a855f7;
 }
 
 [data-theme='dark'] .trackCardWeb .trackLabel {
-  color: #34d399;
+  color: #38bdf8;
 }
 
 [data-theme='dark'] .trackCardAndroid .trackLabel {
@@ -320,7 +320,7 @@
 }
 
 [data-theme='dark'] .trackCardIos .trackLabel {
-  color: #a5b4fc;
+  color: #d8b4fe;
 }
 
 .trackDesc {
@@ -344,12 +344,12 @@
 }
 
 .trackBtnWeb {
-  background: #059669;
+  background: #0284c7;
 }
 
 .trackBtnWeb:hover {
-  background: #047857;
-  box-shadow: 0 4px 14px rgba(5, 150, 105, 0.4);
+  background: #0369a1;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4);
   transform: translateY(-1px);
 }
 
@@ -364,12 +364,12 @@
 }
 
 .trackBtnIos {
-  background: #6366f1;
+  background: #a855f7;
 }
 
 .trackBtnIos:hover {
-  background: #4f46e5;
-  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+  background: #9333ea;
+  box-shadow: 0 4px 14px rgba(168, 85, 247, 0.4);
   transform: translateY(-1px);
 }
 
