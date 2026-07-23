@@ -21,42 +21,47 @@ Your job is not to write that native code. Your job is to consume it correctly f
 
 | Web concept | React Native / Native | Note |
 |---|---|---|
-| npm library (JS SDK) | Native SDK + bridge | Implementation in Kotlin/Swift, exposed as JS functions |
-| React component | Native UI Component | Props/events API is React; rendering is native |
-| DOM events | Events via bridge | Generated in native, received in JS |
-| `localStorage` / Web Storage | Platform APIs (Android/iOS) | Accessed via native modules or libs that wrap native code |
+| npm library (JS SDK) | TurboModule | Implementation in Kotlin/Swift, exposed as typed JS functions via JSI |
+| React component | Fabric Native Component | Props/events API is React; rendering is native |
+| DOM events | Typed EventEmitter spec | Generated in native, received in JS via subscription |
+| `localStorage` / Web Storage | Platform APIs (Android/iOS) | Accessed via TurboModules or libs that wrap native code |
 | webpack / Vite build | Metro + Android/iOS build | JS bundle + native binary (APK/IPA) |
 
 ---
 
-## Consuming a Native Module
+## Consuming a TurboModule
 
-A **Native Module** appears in JavaScript as an object on `NativeModules`. The native team writes the Kotlin/Swift implementation and tells you the module name and available methods. You write the JS wrapper.
+A **TurboModule** is a native module accessed via JSI — synchronous, typed, and lazy-loaded. The native team writes the Kotlin/Swift implementation and provides a TypeScript spec. You import the registered module directly; no runtime dictionary lookup.
 
 ```ts
-// src/native/appEnv.ts
-import { NativeModules } from 'react-native';
+// src/native/NativeAppEnv.ts  (TypeScript spec — shared with Codegen)
+import { TurboModuleRegistry } from 'react-native';
+import type { TurboModule } from 'react-native';
 
-const { AppEnv } = NativeModules;
+export interface Spec extends TurboModule {
+  getEnvironment(): Promise<string>;
+  getBuildNumber(): Promise<string>;
+}
+
+export default TurboModuleRegistry.getEnforcing<Spec>('AppEnv');
+```
+
+```ts
+// src/native/appEnv.ts  (thin typed wrapper consumed by the rest of the app)
+import NativeAppEnv from './NativeAppEnv';
 
 type Environment = 'dev' | 'staging' | 'prod';
 
-export async function getEnvironment(): Promise<Environment> {
-  if (!AppEnv) {
-    throw new Error('AppEnv module not available');
-  }
-  return AppEnv.getEnvironment();
+export function getEnvironment(): Promise<Environment> {
+  return NativeAppEnv.getEnvironment() as Promise<Environment>;
 }
 
-export async function getBuildNumber(): Promise<string> {
-  if (!AppEnv) {
-    throw new Error('AppEnv module not available');
-  }
-  return AppEnv.getBuildNumber();
+export function getBuildNumber(): Promise<string> {
+  return NativeAppEnv.getBuildNumber();
 }
 ```
 
-The null check on `AppEnv` matters — if the native module isn't registered (wrong build, wrong platform), `NativeModules.AppEnv` is `undefined`. Without the guard, you get an unhelpful `TypeError: undefined is not an object` instead of a clear message about the missing module.
+`getEnforcing` throws at module load time if the native side is absent — you get a clear error pointing to the missing registration, not a silent `undefined` at call time.
 
 Consuming it in a hook:
 
@@ -90,33 +95,39 @@ export function useAppEnv(): AppEnvState {
 
 ---
 
-## Consuming a Native UI Component
+## Consuming a Fabric Native Component
 
-A **Native UI Component** is a React component whose rendering is handled entirely by native code. You use it in JSX like any other component — you just don't control what's inside.
+A **Fabric Native Component** is a React component whose rendering is handled entirely by native code (via the Fabric renderer). The native team provides a TypeScript spec; Codegen generates the glue. You use it in JSX like any other component.
 
 ```tsx
-// src/native/MyNativeChart.tsx
-import { requireNativeComponent } from 'react-native';
+// src/native/NativeMyChart.ts  (TypeScript spec — drives Codegen)
+import type { HostComponent, ViewProps } from 'react-native';
+import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
 
-type MyNativeChartProps = {
-  data: number[];
+type NativeProps = ViewProps & {
+  data: ReadonlyArray<number>;
   color?: string;
-  style?: object;
 };
 
-export const MyNativeChart = requireNativeComponent<MyNativeChartProps>('MyNativeChart');
+export default codegenNativeComponent<NativeProps>('MyChart') as HostComponent<NativeProps>;
+```
+
+```tsx
+// src/native/MyNativeChart.tsx  (typed wrapper for use in screens)
+import NativeMyChart from './NativeMyChart';
+export { NativeMyChart };
 ```
 
 ```tsx
 // Usage in a screen
-import { MyNativeChart } from '../native/MyNativeChart';
+import { NativeMyChart } from '../native/MyNativeChart';
 
 export function SalesScreen() {
-  return <MyNativeChart data={[10, 20, 30]} color="#3366FF" style={{ height: 200 }} />;
+  return <NativeMyChart data={[10, 20, 30]} color="#3366FF" style={{ height: 200 }} />;
 }
 ```
 
-The available props and events are defined by the native team. If the chart isn't rendering correctly or a prop isn't doing what you expect, the issue is almost certainly in the native implementation, not in your JSX.
+The available props are defined by the TypeScript spec the native team maintains. If the chart isn't rendering correctly or a prop isn't working as expected, the issue is almost certainly in the native implementation, not in your JSX.
 
 ---
 
@@ -136,7 +147,7 @@ Your job in a native error: identify which screen and flow triggered it, capture
 
 | Resource | Type | Link |
 |---|---|---|
-| Native Modules Overview | Official Docs | [reactnative.dev/docs/native-modules-intro](https://reactnative.dev/docs/native-modules-intro) |
-| Native UI Components | Official Docs | [reactnative.dev/docs/native-components-android](https://reactnative.dev/docs/native-components-android) |
+| TurboModules Introduction | Official Docs | [reactnative.dev/docs/turbo-native-modules-introduction](https://reactnative.dev/docs/turbo-native-modules-introduction) |
+| Fabric Native Components | Official Docs | [reactnative.dev/docs/fabric-native-components-introduction](https://reactnative.dev/docs/fabric-native-components-introduction) |
 
 ---

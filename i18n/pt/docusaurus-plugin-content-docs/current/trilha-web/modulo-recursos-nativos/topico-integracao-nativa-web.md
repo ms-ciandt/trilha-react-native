@@ -10,7 +10,7 @@ Ao final, o dev deve conseguir:
 
 - Explicar em alto nível o que é um **Native Module** e um **Native UI Component**
 - Saber em quais casos precisa envolver o time nativo (SDKs proprietários, APIs específicas de sistema)
-- Consumir um módulo nativo existente via `NativeModules`
+- Consumir um TurboModule existente via `TurboModuleRegistry`
 - Ler e interpretar erros vindos da camada nativa (stacktrace no Android/iOS)
 - Ter vocabulário para discutir integrações com devs Android/iOS
 
@@ -29,75 +29,87 @@ Ao final, o dev deve conseguir:
 
 | Conceito Web                  | React Native / Nativo               | Observação                                                                 |
 |-------------------------------|-------------------------------------|----------------------------------------------------------------------------|
-| SDK JS (biblioteca npm)       | SDK nativo + bridge                 | Implementação em Kotlin/Swift exposta como funções JS                     |
-| Componentes React             | Native UI Components                | API de props/eventos é React; implementação e renderização são nativas   |
-| Eventos DOM                   | Eventos via bridge                  | Eventos gerados na camada nativa e recebidos no JS                        |
+| SDK JS (biblioteca npm)       | TurboModule                         | Implementação em Kotlin/Swift exposta via JSI — tipada e lazy-loaded      |
+| Componentes React             | Fabric Native Components            | API de props/eventos é React; renderização é nativa via Fabric            |
+| Eventos DOM                   | EventEmitter tipado (spec)          | Eventos gerados na camada nativa recebidos via subscription tipada        |
 | Build web (webpack, vite)     | Metro + build Android/iOS           | JS bundle + binários nativos (APK/IPA)                                   |
-| API de browser (localStorage) | APIs de plataforma (Android/iOS)    | RN acessa via módulos nativos ou libs que usam código nativo internamente |
+| API de browser (localStorage) | APIs de plataforma (Android/iOS)    | RN acessa via TurboModules ou libs que usam código nativo internamente    |
 
 ---
 
 ### Conceitos centrais
 
-#### Native Modules (consumo do ponto de vista Web)
+#### TurboModules (consumo do ponto de vista Web)
 
-Um **Native Module** é visto em JS como um objeto em `NativeModules`:
+Um **TurboModule** é acessado via `TurboModuleRegistry` — tipado em TypeScript, carregado via JSI sem serialização JSON:
 
 ```tsx
-import { NativeModules } from 'react-native';
+// src/native/NativeAppEnv.ts  (spec TypeScript — alimenta o Codegen)
+import { TurboModuleRegistry } from 'react-native';
+import type { TurboModule } from 'react-native';
 
-const { AppEnv } = NativeModules;
+export interface Spec extends TurboModule {
+  getEnvironment(): Promise<string>;
+  getBuildNumber(): Promise<string>;
+}
 
-// AppEnv foi implementado em código nativo (Android/iOS).
-// Aqui você só consome seus métodos JS.
+export default TurboModuleRegistry.getEnforcing<Spec>('AppEnv');
 ```
 
-Os métodos são assíncronos na maioria dos casos (Promise-based):
-
 ```tsx
+// src/native/appEnv.ts  (wrapper tipado usado pelo restante do app)
+import NativeAppEnv from './NativeAppEnv';
+
 type Environment = 'dev' | 'staging' | 'prod';
 
-async function getEnvironment(): Promise<Environment> {
-  if (!AppEnv) {
-    throw new Error('AppEnv module not available');
-  }
+export function getEnvironment(): Promise<Environment> {
+  return NativeAppEnv.getEnvironment() as Promise<Environment>;
+}
 
-  return AppEnv.getEnvironment();
+export function getBuildNumber(): Promise<string> {
+  return NativeAppEnv.getBuildNumber();
 }
 ```
 
 Você não precisa saber Kotlin/Swift para isso — apenas:
 - Nome do módulo (`AppEnv`).
-- Métodos disponíveis (`getEnvironment`, `getBuildNumber`, etc.).
-- Tipos esperados de retorno (combinado com o time nativo).
+- Spec TypeScript acordada com o time nativo.
+- Tipos de retorno definidos na interface `Spec`.
 
 ---
 
-#### Native UI Components (consumo do ponto de vista Web)
+#### Fabric Native Components (consumo do ponto de vista Web)
 
-Um **Native UI Component** é um componente React cuja implementação é nativa.
+Um **Fabric Native Component** é um componente React cuja renderização é feita pelo renderizador Fabric na camada nativa.
 
 ```tsx
-import { requireNativeComponent } from 'react-native';
+// src/native/NativeMyChart.ts  (spec TypeScript — alimenta o Codegen)
+import type { HostComponent, ViewProps } from 'react-native';
+import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
 
-type MyNativeChartProps = {
-  data: number[];
+type NativeProps = ViewProps & {
+  data: ReadonlyArray<number>;
   color?: string;
 };
 
-const MyNativeChart = requireNativeComponent<MyNativeChartProps>('MyNativeChart');
+export default codegenNativeComponent<NativeProps>('MyChart') as HostComponent<NativeProps>;
+```
+
+```tsx
+// Uso em uma tela
+import NativeMyChart from '../native/NativeMyChart';
 
 export function SalesChart() {
-  return <MyNativeChart data={[10, 20, 30]} color="#3366FF" />;
+  return <NativeMyChart data={[10, 20, 30]} color="#3366FF" />;
 }
 ```
 
-Você usa `<MyNativeChart />` como qualquer outro componente React.  
+Você usa `<NativeMyChart />` como qualquer outro componente React.
 A diferença está em:
 
-- Quem implementa `MyNativeChart` é o time nativo (Android/iOS).
+- Quem implementa `MyChart` é o time nativo (Android/iOS) usando a spec Codegen.
 - Problemas de layout/performance podem vir da implementação nativa.
-- Props e eventos disponíveis são definidos pela equipe nativa.
+- Props e eventos disponíveis são definidos na spec TypeScript acordada com a equipe nativa.
 
 ---
 
@@ -120,28 +132,35 @@ Seu papel como dev web:
 
 ### Exercício prático
 
-Construa um pequeno módulo de integração (do ponto de vista JS), assumindo que o time nativo já criou `NativeModules.AppEnv` com:
+Construa um pequeno módulo de integração (do ponto de vista JS), assumindo que o time nativo já implementou o TurboModule `AppEnv` com a spec:
 
-- `getEnvironment(): 'dev' | 'staging' | 'prod'`
-- `getBuildNumber(): string`
+- `getEnvironment(): Promise<string>` — retorna `'dev' | 'staging' | 'prod'`
+- `getBuildNumber(): Promise<string>`
 
-1. Implemente um serviço JS:
+1. Implemente a spec e o wrapper:
 
    ```tsx
-   import { NativeModules } from 'react-native';
+   // src/native/NativeAppEnv.ts
+   import { TurboModuleRegistry } from 'react-native';
+   import type { TurboModule } from 'react-native';
 
-   const { AppEnv } = NativeModules;
+   export interface Spec extends TurboModule {
+     getEnvironment(): Promise<string>;
+     getBuildNumber(): Promise<string>;
+   }
+
+   export default TurboModuleRegistry.getEnforcing<Spec>('AppEnv');
+   ```
+
+   ```tsx
+   // src/native/appEnv.ts
+   import NativeAppEnv from './NativeAppEnv';
 
    type Environment = 'dev' | 'staging' | 'prod';
 
    export async function loadAppEnv() {
-     if (!AppEnv) {
-       throw new Error('AppEnv module not available');
-     }
-
-     const env: Environment = await AppEnv.getEnvironment();
-     const buildNumber: string = await AppEnv.getBuildNumber();
-
+     const env = (await NativeAppEnv.getEnvironment()) as Environment;
+     const buildNumber = await NativeAppEnv.getBuildNumber();
      return { env, buildNumber };
    }
    ```
@@ -150,13 +169,14 @@ Construa um pequeno módulo de integração (do ponto de vista JS), assumindo qu
    - Carrega essas informações na montagem.
    - Exibe um banner diferente para `dev` vs `prod`.
 
-3. Trate o caso de erro (módulo ausente ou falha de chamada) exibindo uma mensagem padrão em dev.
+3. Trate o caso de erro (falha de chamada) exibindo uma mensagem padrão em dev.
 
 ---
 
 ### Materiais de estudo
 
-- [Native Modules Overview — React Native Docs](https://reactnative.dev/docs/native-modules-intro)
+- [TurboModules Introduction — React Native Docs](https://reactnative.dev/docs/turbo-native-modules-introduction)
+- [Fabric Native Components — React Native Docs](https://reactnative.dev/docs/fabric-native-components-introduction)
 - Artigo: *React Native for Web Developers — Understanding Native Integration*
 - Vídeo: *Native Modules for React Developers (Conceptual Overview)*
 
