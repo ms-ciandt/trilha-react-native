@@ -260,10 +260,6 @@ function MainTabs() {
 
 ---
 
-Next → **[Navigation](./navegacao-web)**
-
----
-
  **You've completed the Web Dev Trail!**
 
 You now have the foundations to build real React Native apps. Next steps:

@@ -77,66 +77,6 @@ const sidebars = {
     },
   ],
 
-  trilhaIos: [
-    {
-      type: 'category',
-      label: 'Fundamentals',
-      collapsed: false,
-      items: [
-        'trilha-ios/modulo-fundamentos/swift-to-javascript',
-        'trilha-ios/modulo-fundamentos/typescript-for-swift-devs',
-        'trilha-ios/modulo-fundamentos/swiftui-to-react',
-        'trilha-ios/modulo-fundamentos/components-and-props',
-        'trilha-ios/modulo-fundamentos/state-and-hooks',
-        'trilha-ios/modulo-fundamentos/rn-core-components',
-        'trilha-ios/modulo-fundamentos/layout-and-flexbox',
-        'trilha-ios/modulo-fundamentos/styling',
-        'trilha-ios/modulo-fundamentos/navigation',
-        'trilha-ios/modulo-fundamentos/state-and-apis',
-      ],
-    },
-    {
-      type: 'category',
-      label: 'Native Resources',
-      collapsed: false,
-      items: [
-        'trilha-ios/modulo-recursos-nativos/native-resources-ios',
-      ],
-    },
-    {
-      type: 'category',
-      label: 'Performance',
-      collapsed: false,
-      items: [
-        'trilha-ios/modulo-performance/performance-ios',
-      ],
-    },
-    {
-      type: 'category',
-      label: 'Testing',
-      collapsed: false,
-      items: [
-        'trilha-ios/modulo-testes/testing-ios',
-      ],
-    },
-    {
-      type: 'category',
-      label: 'CI/CD',
-      collapsed: false,
-      items: [
-        'trilha-ios/modulo-cicd/cicd-ios',
-      ],
-    },
-    {
-      type: 'category',
-      label: 'Architecture',
-      collapsed: false,
-      items: [
-        'trilha-ios/modulo-arquitetura/architecture-ios',
-      ],
-    },
-  ],
-
   trilhaMasterclass: [
     {
       type: 'category',
@@ -327,6 +267,7 @@ const sidebars = {
       ],
     },
   ],
+
 
   trilhaWeb: [
     {

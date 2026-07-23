@@ -1,4 +1,4 @@
----
+﻿---
 id: estado-e-apis-nativo
 title: "State & APIs"
 sidebar_label: "State & APIs"
@@ -358,5 +358,3 @@ This separation is the equivalent of the native **ViewModel + Repository** patte
 | react-native-mmkv | GitHub | [mrousavy/react-native-mmkv](https://github.com/mrousavy/react-native-mmkv) |
 
 ---
-
-Next → **[Using Native Resources](../modulo-recursos-nativos/utilizando-recursos-nativos)**

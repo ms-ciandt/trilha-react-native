@@ -1,4 +1,4 @@
----
+﻿---
 title: Testing
 ---
 
@@ -175,5 +175,3 @@ Jest configuration lives in `jest.config.js` or the `"jest"` key in `package.jso
 | Jest | Official Docs | [jestjs.io](https://jestjs.io) |
 
 ---
-
-Next → **[CI/CD](../modulo-cicd/topico-ci-cd-nativos)**

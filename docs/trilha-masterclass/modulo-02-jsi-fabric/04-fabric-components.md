@@ -1,4 +1,4 @@
----
+﻿---
 title: "Fabric — Native Components"
 ---
 
@@ -318,5 +318,3 @@ For the remaining 5% (libraries that use `setNativeProps` heavily or rely on UIM
 | [React Conf 2024 — Concurrent RN](https://www.youtube.com/watch?v=Ck0N9FsKAhI) | 30 min | Latest state of concurrent rendering in RN |
 
 ---
-
-Next → [Runtime — New Architecture](./03-runtime-new-architecture.md)

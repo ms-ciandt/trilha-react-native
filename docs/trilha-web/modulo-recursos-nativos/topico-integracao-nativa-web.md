@@ -1,4 +1,4 @@
----
+﻿---
 title: Native Integration
 ---
 
@@ -140,5 +140,3 @@ Your job in a native error: identify which screen and flow triggered it, capture
 | Native UI Components | Official Docs | [reactnative.dev/docs/native-components-android](https://reactnative.dev/docs/native-components-android) |
 
 ---
-
-Next → **[Mobile Performance](../modulo-performance/topico-performance-mobile-web)**

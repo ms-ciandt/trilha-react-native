@@ -1,4 +1,4 @@
----
+﻿---
 id: navegacao-nativo
 title: "Navigation"
 sidebar_label: "Navigation"
@@ -333,5 +333,3 @@ Build an app with:
 - [Mastering Navigation in React Native — Djamware](https://www.djamware.com/post/682e9c920b36e34005ad0878/mastering-navigation-in-react-native-stack-tabs-and-more)
 
 ---
-
-Next → **[State & APIs](./estado-e-apis-nativo)**

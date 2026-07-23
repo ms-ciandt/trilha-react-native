@@ -1,4 +1,4 @@
----
+﻿---
 title: Web vs React Native — Key Differences
 ---
 
@@ -261,5 +261,3 @@ React Navigation uses a **stack model** — screens are pushed and popped like a
 | NativeWind (Tailwind for RN) | Community | [nativewind.dev](https://www.nativewind.dev/) |
 
 ---
-
-Next → **[No DOM, No CSS — Styling in Depth](./sem-dom-sem-css)**

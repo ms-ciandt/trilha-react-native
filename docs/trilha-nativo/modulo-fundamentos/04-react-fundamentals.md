@@ -1,4 +1,4 @@
----
+﻿---
 title: "React Fundamentals for Native Developers"
 ---
 
@@ -356,5 +356,3 @@ This is analogous to a ViewModel in Android MVVM that both an Activity and a Fra
 | react.gg | Practice Problems | [react.gg](https://react.gg/) |
 
 ---
-
-Next → **[Components & Props in Depth](./components-and-props)**

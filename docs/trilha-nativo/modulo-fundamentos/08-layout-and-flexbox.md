@@ -1,4 +1,4 @@
----
+﻿---
 title: Layout & Flexbox in React Native
 ---
 
@@ -302,5 +302,3 @@ The best way to internalize Flexbox is through play. Since RN uses the same flex
 | Yoga (the layout engine RN uses) | Reference | [yogalayout.dev](https://yogalayout.dev/) |
 
 ---
-
-Next → **[Styling in React Native](./styling)**

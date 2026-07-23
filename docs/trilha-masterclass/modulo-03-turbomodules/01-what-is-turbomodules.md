@@ -1,4 +1,4 @@
----
+﻿---
 title: What Is TurboModules
 ---
 
@@ -114,5 +114,3 @@ This means brownfield apps or apps with unmigrated third-party libraries do not 
 | [New Architecture overview](https://reactnative.dev/docs/the-new-architecture/landing-page) | Full context: JSI + Fabric + TurboModules together |
 
 ---
-
-Next → [SPECS in TypeScript](./specs-typescript)

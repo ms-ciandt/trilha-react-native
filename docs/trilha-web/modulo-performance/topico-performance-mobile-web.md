@@ -1,4 +1,4 @@
----
+﻿---
 title: Mobile Performance
 ---
 
@@ -126,5 +126,3 @@ The workflow is the same as web: measure first, then optimize. Check the Perf Mo
 | Reanimated | Official Docs | [docs.swmansion.com/react-native-reanimated](https://docs.swmansion.com/react-native-reanimated) |
 
 ---
-
-Next → **[Tests](../modulo-testes/topico-testes-web)**

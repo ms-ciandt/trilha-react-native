@@ -1,4 +1,4 @@
----
+﻿---
 title: Components & Props in Depth
 ---
 
@@ -287,5 +287,3 @@ Profile before you memoize. For cheap components or short lists the memo compari
 3. **Build a `Section` wrapper** (as shown above) and use it to group a list of items under a title, with a "See all" button that triggers a callback.
 
 ---
-
-Next → **[State & Hooks in Depth](./state-and-hooks)**

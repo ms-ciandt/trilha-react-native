@@ -1,6 +1,11 @@
----
+﻿---
 title: "Recreation of Patches (patch-package)"
 ---
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc05_06_patches-recreation.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 # Recreation of Patches (patch-package)
 
@@ -230,5 +235,3 @@ Without documentation, the next developer to maintain these patches has to rever
 | [Patch Package in React Native — Medium](https://medium.com/@renaldhif/patch-package-in-react-native-a-practical-way-to-survive-updates-19a5197c2de6) | Practical walkthrough for RN-specific patches |
 
 ---
-
-Next → [Compatibility of Third-Party Libraries](./library-compatibility)

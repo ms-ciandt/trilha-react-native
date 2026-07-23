@@ -1,6 +1,11 @@
----
+﻿---
 title: "Environment Requirements (Node, Xcode, SDKs)"
 ---
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc05_08_environment-requirements.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 # Environment Requirements (Node, Xcode, SDKs)
 
@@ -285,5 +290,3 @@ Compare the output against the compatibility matrix. Fix every mismatch **before
 | [sdkmanager — Android docs](https://developer.android.com/tools/sdkmanager) | Managing Android SDK components from the CLI |
 
 ---
-
-Next → [Changes to Native Settings (Edge-to-Edge)](./native-settings)

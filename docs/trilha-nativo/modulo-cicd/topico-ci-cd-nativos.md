@@ -1,4 +1,4 @@
----
+﻿---
 title: CI/CD
 ---
 
@@ -133,5 +133,3 @@ The `cache: 'npm'` key on `setup-node` caches `node_modules` keyed to `package-l
 | EAS Build (Expo alternative) | Official | [docs.expo.dev/build/introduction](https://docs.expo.dev/build/introduction) |
 
 ---
-
-Next → **[Architecture](../modulo-arquitetura/topico-arquitetura-nativos)**

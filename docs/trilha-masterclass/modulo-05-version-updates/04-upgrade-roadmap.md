@@ -1,6 +1,11 @@
----
+﻿---
 title: Roadmap and Recommended Upgrade Path
 ---
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc05_04_upgrade-roadmap.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 # Roadmap and Recommended Upgrade Path
 
@@ -177,5 +182,3 @@ Use this as a starting point for planning an upgrade sprint:
 | [App.js Conf 2025](https://appjs.swmansion.com/editions/2025) | Post-0.76 roadmap, Legacy Architecture sunset plan |
 
 ---
-
-Next → [Validation with a Build on Both Platforms](./build-validation)

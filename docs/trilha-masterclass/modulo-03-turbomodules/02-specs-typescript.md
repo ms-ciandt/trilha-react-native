@@ -1,4 +1,4 @@
----
+﻿---
 title: SPECS in TypeScript
 ---
 
@@ -190,5 +190,3 @@ The generated files live in `build/` and should never be edited manually.
 | [Partial\<T\> not supported — #35864](https://github.com/facebook/react-native/issues/35864) | Why Partial is rejected and the workaround |
 
 ---
-
-Next → [Codegen: Native Typed Interfaces](./codegen)

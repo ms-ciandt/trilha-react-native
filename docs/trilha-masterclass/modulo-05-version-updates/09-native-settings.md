@@ -1,6 +1,11 @@
----
+﻿---
 title: "Changes to Native Settings (Edge-to-Edge)"
 ---
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc05_09_native-settings.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 # Changes to Native Settings (Edge-to-Edge)
 
@@ -291,5 +296,3 @@ Missing `namespace` causes: `Namespace not specified. Specify a namespace in the
 | [useSafeAreaInsets — docs](https://reactnavigation.org/docs/use-safe-area-insets/) | Hook reference and usage examples |
 
 ---
-
-Next → [Fault Diagnosis (RN Doctor)](./rn-doctor)

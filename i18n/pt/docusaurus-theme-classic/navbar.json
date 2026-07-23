@@ -4,19 +4,23 @@
     "description": "Navbar item with label Introduction"
   },
   "item.label.Web developer trail": {
-    "message": "Web dev trail",
+    "message": "Trilha dev web",
     "description": "Navbar item with label Web developer trail"
   },
-  "item.label.Native dev trail": {
-    "message": "Native dev trail",
-    "description": "Navbar item with label Native dev trail"
+  "item.label.Android dev trail": {
+    "message": "Trilha dev Android",
+    "description": "Navbar item with label Android dev trail"
+  },
+  "item.label.iOS dev trail": {
+    "message": "Trilha dev iOS",
+    "description": "Navbar item with label iOS dev trail"
   },
   "item.label.Android Native Trail": {
     "message": "Trilha Android Nativo",
     "description": "Navbar item with label Android Native Trail"
   },
   "item.label.React Native MasterClass Trail": {
-    "message": "React Native MasterClass Trail",
+    "message": "Trilha React Native MasterClass",
     "description": "Navbar item with label React Native MasterClass Trail"
   },
   "item.label.About": {
