@@ -101,36 +101,69 @@ O React Native tem um modelo de layout simplificado:
 
 - **Todo componente é um flex container por padrão** — sem distinção de block vs inline vs inline-block
 - **`box-sizing: border-box` é o padrão** — você não precisa definir isso
-- **`display: 'none'` funciona** — mas se comporta diferente da renderização condicional:
+- **`display: 'none'` funciona** — e se comporta **igual à web**: o componente permanece montado (estado preservado), mas fica oculto e não ocupa espaço. Isso não é uma diferença do React Native — na web, `display: none` também mantém o componente React montado com seu estado intacto.
 
   ```tsx
   // display: 'none' — componente permanece montado (estado preservado), mas oculto e sem ocupar espaço
+  // Comportamento idêntico à web
   <MyComponent style={{ display: isVisible ? 'flex' : 'none' }} />
 
   // Renderização condicional — componente é completamente desmontado (estado perdido, memória liberada)
+  // Também idêntico à web
   {isVisible && <MyComponent />}
   ```
-  Use `display: 'none'` quando precisar preservar o estado ao ocultar (ex.: telas de tabs). Use renderização condicional quando quiser uma desmontagem limpa.
+  Use `display: 'none'` quando precisar preservar o estado ao ocultar (ex.: telas de tabs, onde o usuário quer voltar de onde parou). Use renderização condicional quando quiser uma desmontagem limpa.
 
 ---
 
 ## Propriedades de Layout que Não Existem no RN
 
-| Propriedade CSS | Alternativa React Native |
+| Propriedade CSS | Status no RN |
 |---|---|
-| `display: grid` | Use Flexbox aninhado |
-| `display: inline-flex` | Use `flexDirection: 'row'` |
-| `float: left/right` | Use `flexDirection: 'row'` |
-| `overflow: scroll` | Use `ScrollView` ou `FlatList` |
-| `overflow: hidden` | `overflow: 'hidden'` funciona |
-| `z-index` | `zIndex` funciona |
-| `clip-path` | Não suportado (use `overflow: 'hidden'` com `borderRadius`) |
-| `grid-template-columns` | Use `FlatList` com prop `numColumns` |
-| CSS `transition` | Use Reanimated ou `Animated.spring/timing` |
-| CSS `animation` | Use worklets do Reanimated |
-| Unidades `vh`, `vw` | Use `Dimensions.get('window').height/width` |
-| `calc()` | Faça o cálculo em JavaScript |
-| Unidades `em`, `rem` | Use números brutos (pixels independentes de dispositivo) |
+| `display: grid` | ❌ — use Flexbox aninhado |
+| `display: inline-flex` | ❌ — use `flexDirection: 'row'` |
+| `display: contents` / `block` / `inline` | ❌ — `display` é efetivamente `flex` ou `none` |
+| `float: left/right` | ❌ — use `flexDirection: 'row'` |
+| `overflow: scroll` | ❌ — use `ScrollView` ou `FlatList` |
+| `clip-path` | ❌ — use `overflow: 'hidden'` com `borderRadius` |
+| `grid-template-columns` | ❌ — use `FlatList` com prop `numColumns` |
+| CSS `transition` | ❌ — use Reanimated ou `Animated.spring/timing` |
+| CSS `animation` | ❌ — use worklets do Reanimated |
+| Unidades `vh`, `vw` | ❌ — use `Dimensions.get('window').height/width` |
+| `calc()` | ❌ — faça o cálculo em JavaScript |
+| Unidades `em`, `rem` | ❌ — use números brutos (pixels independentes de dispositivo) |
+| `order` | ❌ — a ordem é determinada pela ordem no JSX |
+| `place-items` / `place-content` / `place-self` | ❌ — atalhos não existem |
+| `visibility` | ❌ — use `display: 'none'` ou `opacity: 0` |
+| `overflow: hidden` | ✅ funciona |
+| `z-index` | ✅ funciona como `zIndex` (ordena irmãos; não cria stacking context completo do CSS) |
+| `gap` / `rowGap` / `columnGap` | ✅ desde o RN 0.71 |
+| `position: 'static'` | ✅ desde o RN 0.74 (Yoga 3.0) — opt-in; elementos static são ignorados como containing block para filhos `absolute` |
+| `alignContent: 'space-evenly'` | ✅ desde o RN 0.74 (Yoga 3.0) |
+| `boxShadow` / `filter` | ✅ desde o RN 0.76 (New Architecture) |
+
+---
+
+## `position` — Como Difere do CSS
+
+Vindo da web, há duas diferenças importantes:
+
+- **O padrão é `relative`, não `static`.** Todo elemento começa como `relative` no RN. Diferente da web, um elemento `relative` no RN pode ser deslocado com `top`/`left`/etc. (movendo-o sem afetar irmãos).
+- **`absolute` sempre ancora no pai direto (pré-0.74).** Na web, `position: absolute` encontra o ancestral *posicionado* mais próximo. Antes do RN 0.74, sempre ancorava no pai direto — não existia o conceito de "ancestral posicionado mais próximo".
+- **`position: 'static'` foi adicionado no RN 0.74 (Yoga 3.0).** Elementos marcados como `static` não podem ser deslocados *e são ignorados* quando um filho `absolute` busca seu containing block — permitindo posicionar um elemento absolute em relação a um ancestral não-pai (comportamento web-like, mas opt-in).
+
+```tsx
+// Pré-0.74: absolute sempre ancora no pai
+// 0.74+: marque nós intermediários como static para pulá-los
+<View style={{ position: 'relative' }}>
+  <View style={{ position: 'static' }}>   {/* ignorado como containing block */}
+    <View style={{ position: 'absolute', top: 0, left: 0 }} />
+    {/* ancora no View avô, não neste pai static */}
+  </View>
+</View>
+```
+
+`zIndex` funciona, mas não cria o stacking context completo do CSS — a ordem dos irmãos e as regras de overlay da plataforma também influenciam como os elementos se sobrepõem.
 
 ---
 
@@ -166,8 +199,9 @@ O RN suporta um subconjunto útil de layout e estilo:
 | `position: 'absolute'` / `'relative'` | Sem `fixed` ou `sticky` |
 | `zIndex` | — |
 | `transform` | Sintaxe de array: `[{ translateX: 10 }, { rotate: '45deg' }]` |
-| `shadowColor`, `shadowOffset`, `shadowOpacity`, `shadowRadius` | **Apenas iOS** — ignorado silenciosamente no Android |
-| `elevation` | Sombra **apenas Android** — cinza, não customizável |
+| `shadowColor`, `shadowOffset`, `shadowOpacity`, `shadowRadius` | Sombra iOS. No Android 9+ (API 28), `shadowColor` + `elevation` colore a sombra. Em Android mais antigo, `shadowColor` é ignorado silenciosamente. |
+| `elevation` | Profundidade da sombra Android. Combine com `shadowColor` no Android 9+ para sombra colorida. |
+| `boxShadow` | Cross-platform (New Architecture, RN 0.76+). Sintaxe compatível com CSS, suporta múltiplas sombras e `inset`. |
 | `fontSize`, `fontWeight`, `letterSpacing`, `lineHeight`, `textAlign`, `textDecorationLine` | Apenas em `<Text>`, não em `<View>` |
 
 ---

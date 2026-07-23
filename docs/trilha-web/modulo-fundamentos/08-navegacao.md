@@ -110,7 +110,7 @@ const { productId, productName } = route.params;
 
 In React Router there is no component equivalent to the Tab Navigator — tabs on mobile behave differently from browser tabs. On mobile, tabs are persistent and each one maintains its own independent navigation state. When you switch tabs and come back, the previous tab is exactly where you left it, including its internal stack history.
 
-The `lazy: true` option is important for apps with many tabs: without it, all screens are rendered on initialization, even if the user never visits them.
+`createBottomTabNavigator` already has `lazy: true` by default — unvisited tabs are not rendered until the user navigates to them. No configuration needed for this behavior; it is `createMaterialTopTabNavigator` that defaults to `lazy: false`.
 
 ```tsx
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -121,7 +121,6 @@ function AppTabs() {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        lazy: true, // does not render unvisited tabs
         tabBarIcon: ({ focused, color }) => {
           const icon = route.name === 'Home' ? '🏠' : '👤';
           return <Text>{icon}</Text>;

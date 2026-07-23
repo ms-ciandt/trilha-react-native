@@ -1,10 +1,10 @@
 ---
-title: Listas & Navegação no React Native
+title: Listas no React Native
 ---
 
-# Listas & Navegação no React Native
+# Listas no React Native
 
-> Você já construiu listas com `.map()` e navegou com React Router. Este módulo mostra as APIs de listas virtualizadas do RN e como o React Navigation gerencia transições de tela no mobile.
+> Você já construiu listas com `.map()` na web. Este módulo mostra as APIs de listas virtualizadas do RN — `FlatList`, `SectionList` e layouts em grid.
 
 ## Listas
 
@@ -118,137 +118,10 @@ const sections: Section[] = [
 
 ---
 
-## Navegação com React Navigation
-
-A navegação mobile é fundamentalmente diferente da web. Não existe barra de URL — a navegação é uma **pilha de telas empurradas para a memória**, com gestos nativos (swipe back no iOS, botão voltar do Android) para removê-las.
-
-O **React Navigation** é a biblioteca padrão para isso. Instale em um projeto React Native CLI:
-
-```bash
-npm install @react-navigation/native @react-navigation/native-stack
-npm install react-native-screens react-native-safe-area-context
-```
-
-### Configurando o Navigator
-
-```tsx
-// App.tsx
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import HomeScreen from './screens/HomeScreen';
-import ProfileScreen from './screens/ProfileScreen';
-
-type RootStackParamList = {
-    Home: undefined;
-    Profile: { userId: string };
-};
-
-const Stack = createNativeStackNavigator<RootStackParamList>();
-
-export default function App() {
-    return (
-        <NavigationContainer>
-            <Stack.Navigator>
-                <Stack.Screen name="Home" component={HomeScreen} />
-                <Stack.Screen name="Profile" component={ProfileScreen} />
-            </Stack.Navigator>
-        </NavigationContainer>
-    );
-}
-```
-
-### Navegando Entre Telas
-
-```tsx
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-
-type HomeNavProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
-
-function HomeScreen() {
-    const navigation = useNavigation<HomeNavProp>();
-
-    return (
-        <View>
-            {/* Empurrar uma nova tela */}
-            <Pressable onPress={() => navigation.navigate('Profile', { userId: '123' })}>
-                <Text>Ir para Perfil</Text>
-            </Pressable>
-            {/* Voltar */}
-            <Pressable onPress={() => navigation.goBack()}>
-                <Text>Voltar</Text>
-            </Pressable>
-            {/* Substituir tela atual (sem back) */}
-            <Pressable onPress={() => navigation.replace('Home')}>
-                <Text>Resetar</Text>
-            </Pressable>
-        </View>
-    );
-}
-```
-
-### Lendo Parâmetros de Rota
-
-```tsx
-import { useRoute, RouteProp } from '@react-navigation/native';
-
-type ProfileRouteProp = RouteProp<RootStackParamList, 'Profile'>;
-
-function ProfileScreen() {
-    const route = useRoute<ProfileRouteProp>();
-    const { userId } = route.params;
-
-    return <Text>Usuário: {userId}</Text>;
-}
-```
-
-### Navegação por Tabs
-
-```tsx
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-
-// npm install @react-navigation/bottom-tabs
-
-const Tab = createBottomTabNavigator();
-
-function MainTabs() {
-    return (
-        <Tab.Navigator>
-            <Tab.Screen name="Home" component={HomeScreen} />
-            <Tab.Screen name="Profile" component={ProfileScreen} />
-        </Tab.Navigator>
-    );
-}
-```
-
----
-
-## Roteamento Web vs Navegação Mobile
-
-| Web (React Router / Next.js) | React Native (React Navigation) |
-|------------------------------|---------------------------------|
-| Baseado em URL, links compartilháveis | Deep links suportados, mas opcionais |
-| Botão voltar do browser | Gesto voltar nativo (swipe esquerda no iOS) |
-| `<Link to="...">` | `navigation.navigate('NomeDaTela')` |
-| `useNavigate()` push/replace | `navigation.navigate()` / `navigation.replace()` |
-| Query strings `?key=val` | Objeto `route.params` |
-| Modal via rota | `presentation: 'modal'` no Stack.Screen |
-| Página 404 | Tela catch-all no navigator |
-
----
-
-> **Sobre o Expo Router**
->
-> Se você usa o **Expo** (em vez do React Native CLI), o **Expo Router** oferece roteamento baseado em arquivos — mais próximo do App Router do Next.js em modelo mental. É uma alternativa válida, mas está vinculada ao toolchain do Expo. Pesquise separadamente em [docs.expo.dev/router/introduction/](https://docs.expo.dev/router/introduction/).
-
----
-
 ## Recursos
 
 | Recurso | Tipo | Link |
 |---|---|---|
-| Início Rápido React Navigation | Oficial | [reactnavigation.org/docs/getting-started](https://reactnavigation.org/docs/getting-started) |
-| React Navigation — Stack Navigator | Oficial | [reactnavigation.org/docs/native-stack-navigator](https://reactnavigation.org/docs/native-stack-navigator) |
 | API FlatList | Oficial | [reactnative.dev/docs/flatlist](https://reactnative.dev/docs/flatlist) |
 | API SectionList | Oficial | [reactnative.dev/docs/sectionlist](https://reactnative.dev/docs/sectionlist) |
 | notJust.dev — Curso Completo (8h) | Vídeo | [youtube.com/@notjustdev](https://www.youtube.com/@notjustdev) |
@@ -256,12 +129,3 @@ function MainTabs() {
 ---
 
 Próximo → **[Navegação](./navegacao-web)**
-
----
-
- **Você concluiu a Trilha Web!**
-
-Você agora tem os fundamentos para construir apps React Native reais. Próximos passos:
-- Crie seu primeiro projeto Expo: `npx create-expo-app@latest MyApp`
-- Experimente o [Expo Snack](https://snack.expo.dev) para experimentos rápidos
-- Assista ao [curso gratuito de 8 horas do notJust.dev](https://www.youtube.com/@notjustdev) para um walkthrough completo de projeto
