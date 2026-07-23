@@ -287,33 +287,504 @@ function DeviceInfoScreen() {
 
 ---
 
-## TurboModule with Coroutines
+## TurboModule with Coroutines — Full Pattern
 
-The Promise-based API works but Kotlin coroutines are more idiomatic. Use `kotlinx-coroutines-android` to bridge them:
+The Promise-based API works but Kotlin coroutines are more idiomatic. This section covers the full production pattern: scope management, dispatcher selection, cancellation, and streaming data back to JS via `callbackFlow`.
 
 ```kotlin
 // build.gradle (app)
 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 ```
 
+### Scope Management: Never Leak a CoroutineScope
+
+A common mistake is creating an anonymous `CoroutineScope(Dispatchers.IO)` inside every method — each call spawns a new scope with no lifecycle, so coroutines can outlive the module or run after the React context is destroyed.
+
+The correct pattern mirrors `viewModelScope` in Android's ViewModel: one scope tied to the module's lifecycle, cancelled when the module is invalidated.
+
 ```kotlin
 import kotlinx.coroutines.*
+import com.facebook.react.bridge.*
 
-override fun getBatteryLevel(promise: Promise) {
-    CoroutineScope(Dispatchers.IO).launch {
+class NativeDeviceInfoModule(
+    reactContext: ReactApplicationContext
+) : NativeDeviceInfoModuleSpec(reactContext) {
+
+    // Single scope for the module — SupervisorJob means one child failure
+    // doesn't cancel other running coroutines
+    private val moduleScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+
+    override fun getName() = "NativeDeviceInfoModule"
+
+    // Called by React Native when the module is torn down
+    override fun invalidate() {
+        super.invalidate()
+        moduleScope.cancel() // cancel all in-flight coroutines
+    }
+}
+```
+
+### Dispatcher Selection
+
+| Work type | Dispatcher | Reason |
+|-----------|-----------|--------|
+| File I/O, network, DB | `Dispatchers.IO` | Designed for blocking I/O — thread pool sized for waiting |
+| CPU-intensive work | `Dispatchers.Default` | Thread pool sized for CPU cores — no blocking |
+| Reading Android system APIs | `Dispatchers.Main` | Some system services require the main thread |
+| Resolving/rejecting Promise | Any | Promise is thread-safe — call from any dispatcher |
+
+```kotlin
+override fun readFile(path: String, promise: Promise) {
+    moduleScope.launch {
         try {
-            val level = fetchBatteryLevelSuspend()  // your suspend fun
-            promise.resolve(level)
+            // withContext switches dispatcher for this block only
+            val content = withContext(Dispatchers.IO) {
+                java.io.File(path).readText()   // blocking I/O — correct on IO dispatcher
+            }
+            promise.resolve(content)             // resolve from any thread — safe
+        } catch (e: CancellationException) {
+            throw e                              // always re-throw CancellationException
         } catch (e: Exception) {
-            promise.reject("BATTERY_ERROR", e)
+            promise.reject("FILE_READ_ERROR", "Cannot read $path: ${e.message}", e)
         }
     }
 }
 
-private suspend fun fetchBatteryLevelSuspend(): Double = withContext(Dispatchers.Main) {
-    val bm = reactApplicationContext
-        .getSystemService(Context.BATTERY_SERVICE) as BatteryManager
-    bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY).toDouble()
+override fun processLargeDataset(data: ReadableArray, promise: Promise) {
+    moduleScope.launch {
+        try {
+            val result = withContext(Dispatchers.Default) {
+                // CPU-bound: parse and transform — correct on Default dispatcher
+                (0 until data.size()).map { i ->
+                    transformItem(data.getMap(i))
+                }
+            }
+            val output = Arguments.createArray()
+            result.forEach { output.pushMap(it) }
+            promise.resolve(output)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            promise.reject("PROCESSING_ERROR", e.message, e)
+        }
+    }
+}
+```
+
+### Cancellation: Respecting Structured Concurrency
+
+When the JS side no longer needs a result (component unmounted, screen popped), coroutines should stop. TurboModules don't have a direct cancellation API from JS, but `moduleScope.cancel()` in `invalidate()` handles module teardown. For per-call cancellation, use a `Job` map:
+
+```kotlin
+private val activeJobs = mutableMapOf<String, Job>()
+
+override fun startLongOperation(operationId: String, promise: Promise) {
+    // Cancel any previous operation with the same ID
+    activeJobs[operationId]?.cancel()
+
+    val job = moduleScope.launch {
+        try {
+            val result = withContext(Dispatchers.IO) {
+                performLongOperation()   // will be cancelled if job is cancelled
+            }
+            promise.resolve(result)
+        } catch (e: CancellationException) {
+            promise.reject("CANCELLED", "Operation $operationId was cancelled")
+            throw e
+        } catch (e: Exception) {
+            promise.reject("OPERATION_ERROR", e.message, e)
+        } finally {
+            activeJobs.remove(operationId)
+        }
+    }
+
+    activeJobs[operationId] = job
+}
+
+override fun cancelOperation(operationId: String, promise: Promise) {
+    activeJobs[operationId]?.cancel()
+    activeJobs.remove(operationId)
+    promise.resolve(true)
+}
+```
+
+### callbackFlow — Streaming Data to JS
+
+For continuous data streams (sensor updates, file watcher, BLE events), `callbackFlow` converts callback-based Android APIs into a coroutine `Flow`, then you push each emission to JS via the event emitter.
+
+```kotlin
+import kotlinx.coroutines.flow.*
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
+
+class NativeAccelerometerModule(
+    reactContext: ReactApplicationContext
+) : NativeAccelerometerModuleSpec(reactContext) {
+
+    private val moduleScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+    private var streamJob: Job? = null
+
+    override fun getName() = "NativeAccelerometerModule"
+
+    override fun startStream(intervalMs: Double, promise: Promise) {
+        streamJob?.cancel()
+
+        streamJob = moduleScope.launch {
+            // callbackFlow converts SensorEventListener into a Flow<SensorEvent>
+            val sensorFlow = callbackFlow {
+                val sm = reactApplicationContext
+                    .getSystemService(Context.SENSOR_SERVICE) as SensorManager
+                val sensor = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+
+                val listener = object : SensorEventListener {
+                    override fun onSensorChanged(event: SensorEvent) {
+                        // trySend is non-blocking — drops if buffer is full
+                        trySend(event)
+                    }
+                    override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {}
+                }
+
+                sm.registerListener(listener, sensor, intervalMs.toInt() * 1000)
+
+                // awaitClose runs when the Flow is cancelled — clean up the listener
+                awaitClose {
+                    sm.unregisterListener(listener)
+                }
+            }
+
+            // Consume the flow and emit each value to JS
+            sensorFlow
+                .conflate()   // drop old values if JS can't keep up
+                .collect { event ->
+                    val params = Arguments.createMap().apply {
+                        putDouble("x", event.values[0].toDouble())
+                        putDouble("y", event.values[1].toDouble())
+                        putDouble("z", event.values[2].toDouble())
+                        putDouble("timestamp", event.timestamp / 1_000_000.0)
+                    }
+                    // Send event to JS — the JS side listens with NativeEventEmitter
+                    reactApplicationContext
+                        .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+                        .emit("onAccelerometerData", params)
+                }
+        }
+
+        promise.resolve(true)
+    }
+
+    override fun stopStream(promise: Promise) {
+        streamJob?.cancel()
+        streamJob = null
+        promise.resolve(true)
+    }
+
+    override fun invalidate() {
+        super.invalidate()
+        moduleScope.cancel()
+    }
+}
+```
+
+On the JavaScript side:
+
+```tsx
+import { NativeEventEmitter, NativeModules } from 'react-native';
+import NativeAccelerometer from '../specs/NativeAccelerometerModule';
+
+const emitter = new NativeEventEmitter(NativeModules.NativeAccelerometerModule);
+
+function useAccelerometer(intervalMs = 100) {
+  const [data, setData] = useState({ x: 0, y: 0, z: 0 });
+
+  useEffect(() => {
+    NativeAccelerometer.startStream(intervalMs);
+
+    const sub = emitter.addListener('onAccelerometerData', setData);
+
+    return () => {
+      sub.remove();
+      NativeAccelerometer.stopStream();
+    };
+  }, [intervalMs]);
+
+  return data;
+}
+```
+
+---
+
+## CMakeLists.txt — When You Need C++ in a TurboModule
+
+Most TurboModules are pure Kotlin — Codegen handles the C++ glue. But two scenarios require you to write C++ directly:
+
+1. **Wrapping a C++ library** (OpenCV, SQLite, audio codec, crypto)
+2. **Writing a JSI HostObject directly** without Codegen (maximum performance, minimal overhead)
+
+### Project Structure
+
+```
+android/
+  app/
+    src/
+      main/
+        cpp/
+          CMakeLists.txt        ← your CMake config
+          NativeStorage.cpp     ← C++ implementation
+          NativeStorage.h
+        java/
+          com/yourapp/
+            NativeStorageModule.kt
+```
+
+### CMakeLists.txt Explained
+
+```cmake
+# android/app/src/main/cpp/CMakeLists.txt
+
+cmake_minimum_required(VERSION 3.13)
+project(NativeStorage)
+
+# React Native's CMake package — provides jsi, react_nativemodule_core, etc.
+find_package(ReactAndroid REQUIRED CONFIG)
+
+# Your shared library — compiled from your .cpp files
+add_library(
+    NativeStorage           # output: libNativeStorage.so
+    SHARED
+    NativeStorage.cpp
+)
+
+# Link against React Native's JSI and core module libs
+target_link_libraries(
+    NativeStorage
+    ReactAndroid::jsi                    # JSI runtime API
+    ReactAndroid::react_nativemodule_core # TurboModule base
+    ReactAndroid::reactnativejni         # JNI helpers
+    android                              # Android NDK
+    log                                  # Android logging (__android_log_print)
+)
+
+# Include directories so your .cpp can find jsi/jsi.h etc.
+target_include_directories(NativeStorage PRIVATE
+    ${ReactAndroid_DIR}/../../../jni/first-party/jsi/
+)
+```
+
+Wire it into `build.gradle`:
+
+```groovy
+// android/app/build.gradle
+android {
+    defaultConfig {
+        externalNativeBuild {
+            cmake {
+                cppFlags "-std=c++17 -fexceptions -frtti"
+                arguments "-DANDROID_STL=c++_shared"
+                // Only build for these ABIs — covers all modern Android devices
+                abiFilters "arm64-v8a", "armeabi-v7a"
+            }
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path "src/main/cpp/CMakeLists.txt"
+            version "3.22.1"
+        }
+    }
+}
+```
+
+### Minimal C++ JSI HostObject
+
+```cpp
+// NativeStorage.cpp
+#include <jsi/jsi.h>
+#include <ReactCommon/TurboModule.h>
+#include "NativeStorage.h"
+
+using namespace facebook::jsi;
+using namespace facebook::react;
+
+// The C++ object that JS holds a reference to
+class NativeStorageHostObject : public HostObject {
+public:
+    // Called when JS reads a property: storage.getString
+    Value get(Runtime& rt, const PropNameID& name) override {
+        auto methodName = name.utf8(rt);
+
+        if (methodName == "getString") {
+            return Function::createFromHostFunction(
+                rt, PropNameID::forAscii(rt, "getString"), 1,
+                [](Runtime& rt, const Value&, const Value* args, size_t count) -> Value {
+                    if (count < 1) return Value::undefined();
+                    auto key = args[0].getString(rt).utf8(rt);
+
+                    // Call into JNI / Kotlin here via a stored JNI reference
+                    // For brevity: direct MMKV C++ API call
+                    auto result = mmkv::MMKV::defaultMMKV()->getString(key, "");
+                    return String::createFromUtf8(rt, result);
+                }
+            );
+        }
+
+        if (methodName == "setString") {
+            return Function::createFromHostFunction(
+                rt, PropNameID::forAscii(rt, "setString"), 2,
+                [](Runtime& rt, const Value&, const Value* args, size_t count) -> Value {
+                    if (count < 2) return Value::undefined();
+                    auto key   = args[0].getString(rt).utf8(rt);
+                    auto value = args[1].getString(rt).utf8(rt);
+                    mmkv::MMKV::defaultMMKV()->set(value, key);
+                    return Value::undefined();
+                }
+            );
+        }
+
+        return Value::undefined();
+    }
+
+    // Called when JS writes a property — not needed for methods
+    void set(Runtime&, const PropNameID&, const Value&) override {}
+
+    // List all properties JS can enumerate
+    std::vector<PropNameID> getPropertyNames(Runtime& rt) override {
+        return {
+            PropNameID::forAscii(rt, "getString"),
+            PropNameID::forAscii(rt, "setString"),
+        };
+    }
+};
+
+// Entry point called from Kotlin via JNI
+extern "C" JNIEXPORT void JNICALL
+Java_com_yourapp_NativeStorageModule_nativeInstall(
+    JNIEnv* env, jobject /* this */, jlong jsiPointer
+) {
+    auto& runtime = *reinterpret_cast<Runtime*>(jsiPointer);
+
+    // Install the host object as a global — JS accesses it as global.__NativeStorage
+    auto hostObject = std::make_shared<NativeStorageHostObject>();
+    runtime.global().setProperty(
+        runtime,
+        "__NativeStorage",
+        Object::createFromHostObject(runtime, hostObject)
+    );
+}
+```
+
+Kotlin side — installing the host object into the JS runtime:
+
+```kotlin
+class NativeStorageModule(reactContext: ReactApplicationContext) :
+    NativeStorageModuleSpec(reactContext) {
+
+    override fun getName() = "NativeStorageModule"
+
+    override fun initialize() {
+        super.initialize()
+        // Get the JSI runtime pointer and install the C++ host object
+        val jsContext = reactApplicationContext
+            .catalystInstance
+            ?.javaScriptContext
+            ?: return
+        nativeInstall(jsContext)
+    }
+
+    // Declares the JNI method implemented in NativeStorage.cpp
+    private external fun nativeInstall(jsiPtr: Long)
+
+    companion object {
+        init {
+            System.loadLibrary("NativeStorage")  // loads libNativeStorage.so
+        }
+    }
+}
+```
+
+> **When to use a C++ HostObject vs a Codegen TurboModule**: use Codegen for anything that fits the supported type system — it's safer and generates tests. Use a C++ HostObject only when you need synchronous access to a C++ library that cannot be wrapped cleanly in JNI callbacks, or when you need maximum throughput (e.g. reading camera frames synchronously).
+
+---
+
+## The `react {}` Gradle Block
+
+Every React Native Android project has a `react {}` block in `android/app/build.gradle`. Each flag directly controls how Metro, Hermes, and the New Architecture behave at build time.
+
+```groovy
+// android/app/build.gradle
+react {
+    /* ── JavaScript bundler ───────────────────────────────────────────── */
+
+    // Root of your JS project (where package.json lives)
+    root = file("../../")  // monorepo: two levels up; single-repo: "../.."
+
+    // Entry file for Metro bundler
+    entryFile = file("../../index.js")
+
+    // Metro config path — only needed if you customised metro.config.js location
+    // reactNativeDir = file("../../node_modules/react-native")
+
+    /* ── Hermes ───────────────────────────────────────────────────────── */
+
+    // Enable Hermes (default true in RN 0.70+, mandatory for New Architecture)
+    hermesEnabled = true
+
+    // Hermes flags — passed to hermesc at bundle time
+    // hermesFlags = ["-O", "-output-source-map"]
+
+    /* ── Bundle ───────────────────────────────────────────────────────── */
+
+    // Bundle JS in release builds (default true)
+    // Set false only for debugging release builds against a running Metro server
+    bundleInRelease = true
+
+    // Bundle JS in debug builds (default false — Metro serves it live)
+    bundleInDebug = false
+
+    // JS bundle destination inside the APK/AAB
+    jsBundleDir = "$buildDir/intermediates/assets/release"
+    resourcesDir = "$buildDir/intermediates/res/merged/release"
+
+    /* ── New Architecture ─────────────────────────────────────────────── */
+
+    // Enables the New Architecture (Fabric + TurboModules + JSI bridge-free)
+    // Default true in RN 0.76+
+    newArchEnabled = true
+
+    /* ── Codegen ──────────────────────────────────────────────────────── */
+
+    // Where Codegen writes generated files
+    // codegenDir = file("$buildDir/generated/source/codegen")
+
+    /* ── Source maps ──────────────────────────────────────────────────── */
+
+    // Generate source maps for crash symbolication (Sentry, Crashlytics)
+    // Upload them after the build — never ship them in the APK
+    // hermesFlags = ["-O", "-output-source-map"]
+
+    /* ── Developer experience ─────────────────────────────────────────── */
+
+    // Disable bundle in specific build variants (e.g. benchmark builds)
+    // bundleIn<VariantName> = true/false
+}
+```
+
+### The flags that matter most in practice
+
+```groovy
+react {
+    hermesEnabled = true      // never disable in production
+    newArchEnabled = true     // enables Fabric, TurboModules, bridge-free JSI
+
+    // For monorepos — point to the correct root
+    root = file("../../")
+    entryFile = file("../../index.js")
+
+    // Enable debug bundle only when you need to inspect the bundled output
+    // (e.g. testing ProGuard against a real bundle)
+    // bundleInDebug = true
 }
 ```
 
