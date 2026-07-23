@@ -179,7 +179,7 @@ export default function Home() {
           <Link to="/about" className={styles.contributorsLabel}>Made by</Link>
           <div className={styles.contributorsList}>
             {[
-              { username: 'AlimuraMatheus', name: 'Matheus Sales' },
+              { username: 'ms-ciandt', name: 'Matheus Sales' },
               { username: 'gbonin-ciandt',  name: 'Gabriel Bonin' },
               { username: 'erickSuh',       name: 'Erick Sugahara' },
             ].map(({ username, name }, i) => (
@@ -206,7 +206,7 @@ export default function Home() {
           <span className={styles.contributorsLabel}>Reviewers</span>
           <div className={styles.contributorsList}>
             {[
-              { name: 'Matheus Sales', role: 'React Native', username: 'AlimuraMatheus', color: '#00d4ff' },
+              { name: 'Matheus Sales', role: 'React Native', username: 'ms-ciandt', color: '#00d4ff' },
               { name: 'Diego Karol Gouvea Lana', role: 'Architect', username: null, avatar: '/trilha-react-native/img/lana.webp', color: '#7c3aed' },
               { name: 'Reviewer',               role: 'Web',       username: null, avatar: null,                                   color: '#059669' },
               { name: 'Paulo Vitor Sato',        role: 'Android',   username: null, avatar: '/trilha-react-native/img/sato.webp', color: '#d97706' },

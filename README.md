@@ -66,7 +66,7 @@ All content was reviewed and validated by the contributors.
 
 | | GitHub |
 |---|---|
-| Matheus Sales | [@AlimuraMatheus](https://github.com/AlimuraMatheus) |
+| Matheus Sales | [@ms-ciandt](https://github.com/ms-ciandt) |
 | Gabriel Bonin | [@gbonin-ciandt](https://github.com/gbonin-ciandt) |
 | Erick Sugahara | [@erickSuh](https://github.com/erickSuh) |
 
