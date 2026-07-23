@@ -254,12 +254,16 @@
   position: absolute;
   top: 1rem;
   right: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   padding: 0.15rem 0.5rem;
   border-radius: 999px;
+  line-height: 1;
 }
 
 .trackCardWeb .cardBadge {
