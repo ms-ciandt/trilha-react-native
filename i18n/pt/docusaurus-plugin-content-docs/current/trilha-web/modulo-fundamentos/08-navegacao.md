@@ -112,7 +112,7 @@ const { productId, productName } = route.params;
 
 No React Router não existe um componente equivalente ao Tab Navigator — abas no mobile têm comportamento diferente de abas no browser. No mobile, as abas são persistentes e cada uma mantém seu próprio estado de navegação independente. Quando você muda de aba e volta, a aba anterior está exatamente onde você a deixou, incluindo seu histórico de stack interno.
 
-A opção `lazy: true` é importante para apps com muitas abas: sem ela, todas as telas são renderizadas na inicialização, mesmo que o usuário nunca as visite.
+O `createBottomTabNavigator` já tem `lazy: true` por padrão — abas não visitadas não são renderizadas até o usuário navegar até elas. Nenhuma configuração é necessária para esse comportamento; é o `createMaterialTopTabNavigator` que tem `lazy: false` por padrão.
 
 ```tsx
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -123,7 +123,6 @@ function AppTabs() {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        lazy: true, // não renderiza tabs não visitadas
         tabBarIcon: ({ focused, color }) => {
           const icon = route.name === 'Home' ? '🏠' : '👤';
           return <Text>{icon}</Text>;

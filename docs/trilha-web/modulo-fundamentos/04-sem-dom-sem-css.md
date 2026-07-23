@@ -106,36 +106,69 @@ React Native has a simplified layout model:
 
 - **Every component is a flex container by default** — no block vs inline vs inline-block distinction
 - **`box-sizing: border-box` is the default** — you don't need to set it
-- **`display: 'none'` works** — but behaves differently from conditional rendering:
+- **`display: 'none'` works** — and it behaves **the same as on the web**: the component stays mounted (state preserved), but is hidden and takes no space. This is not a React Native difference — on the web, `display: none` also keeps the React component mounted with its state intact.
 
   ```tsx
   // display: 'none' — component stays mounted (state preserved), but hidden and takes no space
+  // This is identical to web behavior
   <MyComponent style={{ display: isVisible ? 'flex' : 'none' }} />
 
   // Conditional rendering — component fully unmounts (state lost, memory freed)
+  // Also identical to web behavior
   {isVisible && <MyComponent />}
   ```
-  Use `display: 'none'` when you need to preserve state while hiding (e.g. tab screens). Use conditional rendering when you want a clean unmount.
+  Use `display: 'none'` when you need to preserve state while hiding (e.g. tab screens, where you want the user to return to where they left off). Use conditional rendering when you want a clean unmount.
 
 ---
 
 ## Layout Properties That Don't Exist in RN
 
-| CSS Property | React Native Alternative |
+| CSS Property | Status in RN |
 |---|---|
-| `display: grid` | Use nested Flexbox |
-| `display: inline-flex` | Use `flexDirection: 'row'` |
-| `float: left/right` | Use `flexDirection: 'row'` |
-| `overflow: scroll` | Use `ScrollView` or `FlatList` |
-| `overflow: hidden` | `overflow: 'hidden'` works |
-| `z-index` | `zIndex` works |
-| `clip-path` | Not supported (use `overflow: 'hidden'` with `borderRadius`) |
-| `grid-template-columns` | Use `FlatList` with `numColumns` prop |
-| CSS `transition` | Use Reanimated or `Animated.spring/timing` |
-| CSS `animation` | Use Reanimated worklets |
-| `vh`, `vw` units | Use `Dimensions.get('window').height/width` |
-| `calc()` | Do the math in JavaScript |
-| `em`, `rem` units | Use raw numbers (device-independent pixels) |
+| `display: grid` | ❌ — use nested Flexbox |
+| `display: inline-flex` | ❌ — use `flexDirection: 'row'` |
+| `display: contents` / `block` / `inline` | ❌ — `display` is effectively `flex` or `none` |
+| `float: left/right` | ❌ — use `flexDirection: 'row'` |
+| `overflow: scroll` | ❌ — use `ScrollView` or `FlatList` |
+| `clip-path` | ❌ — use `overflow: 'hidden'` with `borderRadius` |
+| `grid-template-columns` | ❌ — use `FlatList` with `numColumns` prop |
+| CSS `transition` | ❌ — use Reanimated or `Animated.spring/timing` |
+| CSS `animation` | ❌ — use Reanimated worklets |
+| `vh`, `vw` units | ❌ — use `Dimensions.get('window').height/width` |
+| `calc()` | ❌ — do the math in JavaScript |
+| `em`, `rem` units | ❌ — use raw numbers (device-independent pixels) |
+| `order` | ❌ — order is determined by JSX order |
+| `place-items` / `place-content` / `place-self` | ❌ — shorthand aliases don't exist |
+| `visibility` | ❌ — use `display: 'none'` or `opacity: 0` |
+| `overflow: hidden` | ✅ works |
+| `z-index` | ✅ works as `zIndex` (orders siblings; does not create full CSS stacking context) |
+| `gap` / `rowGap` / `columnGap` | ✅ since RN 0.71 |
+| `position: 'static'` | ✅ since RN 0.74 (Yoga 3.0) — opt-in; elements are ignored as containing blocks for `absolute` children |
+| `alignContent: 'space-evenly'` | ✅ since RN 0.74 (Yoga 3.0) |
+| `boxShadow` / `filter` | ✅ since RN 0.76 (New Architecture) |
+
+---
+
+## `position` — How It Differs from CSS
+
+Coming from the web, there are two important differences:
+
+- **Default is `relative`, not `static`.** Every element starts as `relative` in RN. Unlike the web, a `relative` element in RN can be offset with `top`/`left`/etc. (shifting it without affecting siblings).
+- **`absolute` always anchors to the nearest parent (pre-0.74).** On the web, `position: absolute` finds the nearest *positioned* ancestor. Before RN 0.74, it always anchored to the direct parent — there was no concept of "nearest positioned ancestor."
+- **`position: 'static'` was added in RN 0.74 (Yoga 3.0).** Elements marked `static` cannot be offset *and are ignored* when an `absolute` child searches for its containing block — allowing you to position an absolute element relative to a non-parent ancestor (web-like, but opt-in).
+
+```tsx
+// Pre-0.74: absolute always anchors to parent
+// 0.74+: mark intermediate nodes as static to skip them
+<View style={{ position: 'relative' }}>
+  <View style={{ position: 'static' }}>   {/* ignored as containing block */}
+    <View style={{ position: 'absolute', top: 0, left: 0 }} />
+    {/* anchors to the grandparent View, not this static parent */}
+  </View>
+</View>
+```
+
+`zIndex` works, but does not create the full CSS stacking context — sibling order and platform overlay rules also influence how elements stack.
 
 ---
 
@@ -171,8 +204,9 @@ RN does support a useful subset of layout and style:
 | `position: 'absolute'` / `'relative'` | No `fixed` or `sticky` |
 | `zIndex` | — |
 | `transform` | Array syntax: `[{ translateX: 10 }, { rotate: '45deg' }]` |
-| `shadowColor`, `shadowOffset`, `shadowOpacity`, `shadowRadius` | **iOS only** — silently ignored on Android |
-| `elevation` | **Android only** shadow — grey, not customizable |
+| `shadowColor`, `shadowOffset`, `shadowOpacity`, `shadowRadius` | iOS shadow. On Android 9+ (API 28), `shadowColor` + `elevation` tints the shadow color. On older Android, `shadowColor` is silently ignored. |
+| `elevation` | Android shadow depth. Combine with `shadowColor` on Android 9+ for a colored shadow. |
+| `boxShadow` | Cross-platform (New Architecture, RN 0.76+). CSS-compatible syntax, supports multiple shadows and `inset`. |
 | `fontSize`, `fontWeight`, `letterSpacing`, `lineHeight`, `textAlign`, `textDecorationLine` | On `<Text>` only, not `<View>` |
 
 ---
