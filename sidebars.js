@@ -193,7 +193,7 @@ const sidebars = {
       items: [
         'trilha-web/modulo-recursos-nativos/utilizando-recursos-nativos',
         'trilha-web/modulo-recursos-nativos/topico-integracao-nativa-web',
-        'trilha-web/modulo-recursos-nativos/02-dependencias-nativas',
+        'trilha-web/modulo-recursos-nativos/dependencias-nativas',
       ],
     },
     {
@@ -218,7 +218,7 @@ const sidebars = {
       collapsed: false,
       items: [
         'trilha-web/modulo-cicd/topico-ci-cd-web',
-        'trilha-web/modulo-cicd/02-modelo-entrega-mobile',
+        'trilha-web/modulo-cicd/modelo-entrega-mobile',
       ],
     },
     {
