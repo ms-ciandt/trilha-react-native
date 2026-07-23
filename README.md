@@ -2,7 +2,7 @@
 
 A free, open-source course for developers who already know how to build software — either on mobile (Android/iOS) or on the web (React) — and want to master React Native with the New Architecture.
 
-**Live site:** [alimuramatheus.github.io/trilha-react-native](https://alimuramatheus.github.io/trilha-react-native)
+**Live site:** [ms-ciandt.github.io/trilha-react-native](https://ms-ciandt.github.io/trilha-react-native)
 
 ---
 

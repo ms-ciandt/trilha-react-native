@@ -4,9 +4,9 @@
 const config = {
   title: 'React Native Trail',
   tagline: 'From zero to React Native — tracks for native and web devs',
-  url: 'https://alimuramatheus.github.io',
+  url: 'https://ms-ciandt.github.io',
   baseUrl: '/trilha-react-native/',
-  organizationName: 'AlimuraMatheus',
+  organizationName: 'ms-ciandt',
   projectName: 'trilha-react-native',
   trailingSlash: false,
 

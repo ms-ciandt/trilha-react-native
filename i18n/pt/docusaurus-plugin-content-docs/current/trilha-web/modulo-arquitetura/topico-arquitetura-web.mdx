@@ -21,7 +21,7 @@ Ao final, o dev deve conseguir:
 ### Video Demonstration
 
 <video width="100%" max-width="800px" controls style={{borderRadius: '8px', margin: '16px 0'}}>
-  <source src="https://alimuramatheus.github.io/trilha-react-native/assets/videos/Arch_RN_Apps_-_web.mp4" type="video/mp4" />
+  <source src="https://ms-ciandt.github.io/trilha-react-native/assets/videos/Arch_RN_Apps_-_web.mp4" type="video/mp4" />
   Your browser does not support the video tag.
 </video>
 
@@ -66,7 +66,6 @@ src/
 ### Hooks de domínio (paralelo com React web)
 
 ```tsx
-
 // features/feed/hooks/useFeed.ts
 import { useEffect, useState } from 'react';
 import { fetchFeed } from '../api/feedApi';
@@ -83,13 +82,15 @@ export function useFeed() {
 
   return { items, loading };
 }
-
 ```
+
+:::note Simplificado para o exemplo de arquitetura
+O fetch acima usa `useEffect` simples para manter o foco na estrutura de pastas. Em produção, use TanStack Query para estado de servidor — ele gerencia cache, refetch em background, estado de erro e stale-while-revalidate. Veja [Estado Global & APIs](../modulo-fundamentos/estado-e-apis-web) para o setup completo.
+:::
 
 Uso em tela:
 
 ```tsx
-
 // features/feed/screens/FeedScreen.tsx
 import React from 'react';
 import { View, ActivityIndicator } from 'react-native';
@@ -107,7 +108,6 @@ export function FeedScreen() {
     </View>
   );
 }
-
 ```
 
 ---

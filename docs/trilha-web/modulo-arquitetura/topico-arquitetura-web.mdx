@@ -83,6 +83,11 @@ export function useFeed() {
 }
 ```
 
+:::note Simplified for the architecture example
+The fetch above uses plain `useEffect` to keep the focus on folder structure. In production, use TanStack Query for server state — it handles caching, background refetch, error state, and stale-while-revalidate out of the box. See [Global State & APIs](../modulo-fundamentos/estado-e-apis-web) for the full setup.
+:::
+```
+
 ```tsx
 // src/features/feed/screens/FeedScreen.tsx
 import React from 'react';
@@ -109,26 +114,17 @@ export function FeedScreen() {
 
 ## Global State with Zustand
 
-```ts
-// src/app/store/authStore.ts
-import { create } from 'zustand';
+Global stores live in `app/store/` — one file per domain concern. The full Zustand setup (store creation, persistence with MMKV, cart and auth examples) is covered in [Global State & APIs](../modulo-fundamentos/estado-e-apis-web). Here, the focus is on where stores fit in the architecture:
 
-interface AuthState {
-  isAuthenticated: boolean;
-  token?: string;
-  login: (token: string) => void;
-  logout: () => void;
-}
-
-export const useAuthStore = create<AuthState>((set) => ({
-  isAuthenticated: false,
-  token: undefined,
-  login: (token) => set({ isAuthenticated: true, token }),
-  logout: () => set({ isAuthenticated: false, token: undefined }),
-}));
+```
+src/
+  app/
+    store/
+      authStore.ts    ← session state (isAuthenticated, token)
+      cartStore.ts    ← transient UI state (cart items)
 ```
 
-If you've used Zustand on the web, this is identical. If you've used Redux, Zustand is the same idea with far less boilerplate — a store is just a function that returns state and actions.
+A store belongs in `app/store/` when more than one feature reads or writes it. Feature-local state (a single screen's form, a modal's open/close) stays in the feature itself.
 
 ---
 
