@@ -1,4 +1,4 @@
----
+﻿---
 title: Defensive Loading of Modules
 ---
 
@@ -193,5 +193,3 @@ if (canUseBatchTrack) {
 | [getEnforcing fails in brownfield — #49246](https://github.com/facebook/react-native/issues/49246) | Why `getEnforcing` crashes in unregistered brownfield surfaces |
 
 ---
-
-Next → [TurboModuleRegistry: get vs getEnforcing](./get-vs-getenforcing)

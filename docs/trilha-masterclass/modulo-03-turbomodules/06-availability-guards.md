@@ -1,4 +1,4 @@
----
+﻿---
 title: "Availability Guards (isAvailable)"
 ---
 
@@ -226,5 +226,3 @@ function ARFeature() {
 | [Platform API — React Native](https://reactnative.dev/docs/platform) | `Platform.OS`, `Platform.select`, `Platform.Version` |
 
 ---
-
-Next → [Supported Types and Serialization](./supported-types)

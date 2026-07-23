@@ -1,6 +1,11 @@
----
+﻿---
 title: Compatibility of Third-Party Libraries
 ---
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc05_07_library-compatibility.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 # Compatibility of Third-Party Libraries
 
@@ -229,5 +234,3 @@ As of 2024, >61% of the 400 most-installed RN libraries support New Architecture
 | [New Architecture is Here](https://reactnative.dev/blog/2024/10/23/the-new-architecture-is-here) | Which libraries are compatible at 0.76 launch |
 
 ---
-
-Next → [Environment Requirements (Node, Xcode, SDKs)](./environment-requirements)

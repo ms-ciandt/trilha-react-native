@@ -1,4 +1,4 @@
----
+﻿---
 title: Testing
 ---
 
@@ -166,5 +166,3 @@ The default RN template ships with a working Jest config. You rarely need to cha
 | Testing Overview | Official Docs | [reactnative.dev/docs/testing-overview](https://reactnative.dev/docs/testing-overview) |
 
 ---
-
-Next → **[CI/CD](../modulo-cicd/topico-ci-cd-web)**

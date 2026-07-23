@@ -1,4 +1,4 @@
----
+﻿---
 title: "React Native Core Components"
 ---
 
@@ -360,5 +360,3 @@ If `KeyboardAvoidingView` still isn't enough, `react-native-keyboard-controller`
 | react-native-safe-area-context | Community | [github.com/AppAndFlow/react-native-safe-area-context](https://github.com/AppAndFlow/react-native-safe-area-context) |
 
 ---
-
-Next → **[Layout & Flexbox](./layout-and-flexbox)**

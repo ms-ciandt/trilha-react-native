@@ -1,4 +1,4 @@
----
+﻿---
 id: utilizando-recursos-nativos
 title: "Using Native Resources"
 sidebar_label: "Using Native Resources"
@@ -402,5 +402,3 @@ Compatibility with **New Architecture** (JSI + TurboModules) is an important cri
 - [PermissionsAndroid — Official React Native Documentation](https://reactnative.dev/docs/permissionsandroid)
 
 ---
-
-Next → **[Native Integration](./topico-integracao-nativa-web)**

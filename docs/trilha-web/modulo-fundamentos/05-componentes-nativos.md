@@ -1,4 +1,4 @@
----
+﻿---
 title: Native Components for Web Developers
 ---
 
@@ -235,5 +235,3 @@ const [isEnabled, setIsEnabled] = useState(false);
 3. **Build a settings screen** with three toggle switches (Push Notifications, Dark Mode, Analytics), each persisting its state.
 
 ---
-
-Next → **[Styling & Flexbox for Web Devs](./estilos-flexbox)**

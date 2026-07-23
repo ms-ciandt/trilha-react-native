@@ -1,4 +1,4 @@
----
+﻿---
 id: utilizando-recursos-nativos
 title: "Using Native Resources"
 ---
@@ -365,5 +365,3 @@ The practical rule: search [React Native Directory](https://reactnative.director
 - [Implementing Camera Functionality in React Native — LogRocket (Dec 2024)](https://blog.logrocket.com/implementing-camera-functionality-react-native/)
 
 ---
-
-Next → **[Advanced Native Integration](./integracao-nativa-avancada)**

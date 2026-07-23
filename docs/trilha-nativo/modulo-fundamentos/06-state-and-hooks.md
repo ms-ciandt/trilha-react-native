@@ -1,4 +1,4 @@
----
+﻿---
 title: State & Hooks in Depth
 ---
 
@@ -325,5 +325,3 @@ Custom hooks are the equivalent of a Kotlin extension function on a ViewModel, o
 | usehooks.com | Community Hooks | [usehooks.com](https://usehooks.com/) |
 
 ---
-
-Next → **[React Native Core Components](./rn-core-components)**

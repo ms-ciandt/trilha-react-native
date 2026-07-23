@@ -1,4 +1,4 @@
----
+﻿---
 title: No DOM, No CSS — What That Actually Means
 ---
 
@@ -219,5 +219,3 @@ RN does support a useful subset of layout and style:
 | Yoga Layout Engine | Reference | [yogalayout.dev](https://yogalayout.dev/) |
 
 ---
-
-Next → **[Native Components for Web Devs](./componentes-nativos)**

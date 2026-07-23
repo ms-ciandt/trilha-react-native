@@ -1,4 +1,4 @@
----
+﻿---
 id: navegacao-web
 title: "Navigation"
 sidebar_label: "Navigation"
@@ -335,5 +335,3 @@ useFocusEffect(
 - [Your Complete Guide to React Native Navigation in 2025 — Peanut Square](https://www.peanutsquare.com/your-complete-guide-to-react-native-navigation-in-2025/)
 
 ---
-
-Next → **[Global State & APIs](./estado-e-apis-web)**

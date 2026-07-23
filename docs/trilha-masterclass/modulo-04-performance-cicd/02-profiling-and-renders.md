@@ -1,6 +1,11 @@
----
+﻿---
 title: "Performance — Profiling & Renders"
 ---
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc04_02_profiling-and-renders.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 ## 3. Profiling and Bottleneck Detection
 
@@ -378,5 +383,3 @@ With proper `staleTime` configuration, navigating back to a screen that has alre
 | [TanStack Query DevTools](https://tanstack.com/query/latest/docs/framework/react/devtools) | Inspect query cache, stale times, background refetch |
 
 ---
-
-Next → [Bundle & Distribution](./bundle-distribution)

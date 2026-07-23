@@ -3,13 +3,13 @@ import Layout from '@theme/Layout';
 import styles from '@site/src/pages/about.module.css';
 
 const CONTRIBUTORS = [
-  { username: 'AlimuraMatheus', name: 'Matheus Sales' },
+  { username: 'ms-ciandt', name: 'Matheus Sales' },
   { username: 'gbonin-ciandt',  name: 'Gabriel Bonin' },
   { username: 'erickSuh',       name: 'Erick Sugahara' },
 ];
 
 const REVIEWERS = [
-  { name: 'Matheus Sales',           role: 'React Native', username: 'AlimuraMatheus', avatar: null,                                           color: '#00d4ff' },
+  { name: 'Matheus Sales',           role: 'React Native', username: 'ms-ciandt', avatar: null,                                           color: '#00d4ff' },
   { name: 'Diego Karol Gouvea Lana', role: 'Arquiteto',    username: null,             avatar: '/trilha-react-native/img/lana.webp',           color: '#7c3aed' },
   { name: 'Guilherme Rovaron',       role: 'Web',          username: null,             avatar: '/trilha-react-native/img/web-reviewer.jpg',    color: '#059669' },
   { name: 'Paulo Vitor Sato',        role: 'Android',      username: null,             avatar: '/trilha-react-native/img/sato.webp',           color: '#d97706' },

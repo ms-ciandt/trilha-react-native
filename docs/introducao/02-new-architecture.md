@@ -1,4 +1,4 @@
----
+﻿---
 title: New Architecture Deep Dive
 ---
 
@@ -134,5 +134,3 @@ Hermes compiles your JS to bytecode **at build time**, so the app starts faster 
 | Hermes engine | Official | [hermesengine.dev](https://hermesengine.dev) |
 | Codegen docs | Official | [reactnative.dev/docs/the-new-architecture/pillars-codegen](https://reactnative.dev/docs/the-new-architecture/pillars-codegen) |
 | BolderApps — JSI & Fabric deep dive (2026) | Tutorial | [bolderapps.com blog](https://www.bolderapps.com/blog-posts/react-natives-2026-new-architecture-how-jsi-and-fabric-finally-killed-the-performance-bridge) |
-
-Next → **[Choose Your Trail](./choose-your-track)**

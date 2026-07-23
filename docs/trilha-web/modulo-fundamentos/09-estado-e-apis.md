@@ -1,4 +1,4 @@
----
+﻿---
 id: estado-e-apis-web
 title: "Global State & APIs"
 sidebar_label: "Global State & APIs"
@@ -297,5 +297,3 @@ src/
 | react-native-mmkv | GitHub | [mrousavy/react-native-mmkv](https://github.com/mrousavy/react-native-mmkv) |
 
 ---
-
-Next → **[Using Native Resources](../modulo-recursos-nativos/utilizando-recursos-nativos)**

@@ -1,4 +1,4 @@
----
+﻿---
 title: "JSI — Advanced Patterns"
 ---
 
@@ -345,5 +345,3 @@ Each `HostFunction` call appears as a `JSI::HostFunction::<name>` slice. If you 
 | [react-native-jsi-example](https://github.com/ospfranco/react-native-jsi-template) | Minimal template: one HostObject, CMakeLists, iOS + Android — fork and build |
 
 ---
-
-Next → [Fabric — New Renderer](./02-fabric-renderer.md)

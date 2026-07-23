@@ -81,49 +81,65 @@ class UserModule(reactContext: ReactApplicationContext) :
 
 ### Canal 3: Event Emitter (Nativo → JS, eventos push)
 
-O nativo envia eventos sem aguardar uma chamada JS. Use para eventos assíncronos do sistema.
+O nativo envia eventos sem aguardar uma chamada JS. Use para eventos assíncronos do sistema. Na New Architecture, os eventos são declarados na spec TypeScript com o tipo `EventEmitter` — o Codegen gera o código de subscription tipado em ambas as plataformas.
+
+```typescript
+// Spec TypeScript — declara o evento como parte do TurboModule
+import { TurboModuleRegistry } from 'react-native';
+import type { TurboModule } from 'react-native';
+import type { EventEmitter } from 'react-native/Libraries/Types/CodegenTypes';
+
+type NetworkStatusChangedEvent = { isConnected: boolean; type: string };
+
+export interface Spec extends TurboModule {
+    readonly onNetworkStatusChanged: EventEmitter<NetworkStatusChangedEvent>;
+}
+
+export default TurboModuleRegistry.getEnforcing<Spec>('NetworkModule');
+```
 
 ```kotlin
-// Android: enviar evento de qualquer thread
+// Android: enviar evento tipado de qualquer thread
 class NetworkModule(private val reactContext: ReactApplicationContext) :
-    NativeEventEmitter(reactContext) {
+    NativeNetworkModuleSpec(reactContext) {  // gerado pelo Codegen
 
     fun sendConnectivityChange(isConnected: Boolean) {
         val event = Arguments.createMap().apply {
             putBoolean("isConnected", isConnected)
             putString("type", if (isConnected) "wifi" else "none")
         }
-        reactContext
-            .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
-            .emit("NetworkStatusChanged", event)
+        emitOnNetworkStatusChanged(event)  // método tipado gerado pelo Codegen
     }
+
+    override fun getName() = NAME
+    companion object { const val NAME = "NetworkModule" }
 }
 ```
 
 ```swift
-// iOS: enviar evento de qualquer thread
-func sendConnectivityChange(isConnected: Bool) {
-    bridge?.eventDispatcher().sendDeviceEvent(
-        withName: "NetworkStatusChanged",
-        body: [
+// iOS: enviar evento tipado de qualquer thread (spec gerada pelo Codegen)
+class NetworkModule: NativeNetworkModuleSpec {
+
+    func sendConnectivityChange(isConnected: Bool) {
+        emitOnNetworkStatusChanged([
             "isConnected": isConnected,
             "type": isConnected ? "wifi" : "none",
-        ]
-    )
+        ])
+    }
+
+    override static func moduleName() -> String { "NetworkModule" }
 }
 ```
 
 ```typescript
-// JS: assinar o evento
-import { NativeEventEmitter, NativeModules } from 'react-native';
-
-const emitter = new NativeEventEmitter(NativeModules.NetworkModule);
+// JS: assinar via EventEmitter tipado
+import NativeNetworkModule from '../modules/NativeNetworkModule';
 
 function useNetworkStatus() {
     const [connected, setConnected] = useState(true);
 
     useEffect(() => {
-        const sub = emitter.addListener('NetworkStatusChanged', (event) => {
+        const sub = NativeNetworkModule.onNetworkStatusChanged((event) => {
             setConnected(event.isConnected);
         });
         return () => sub.remove();
@@ -404,22 +420,18 @@ class NativeNavigationModule(
 ```
 
 ```swift
-// Implementação iOS
-@objc(NativeNavigation)
-final class NativeNavigationModule: NSObject, RCTBridgeModule {
+// Implementação iOS (NativeNativeNavigationSpec gerada pelo Codegen)
+final class NativeNavigationModule: NativeNativeNavigationSpec {
 
-    static func moduleName() -> String { "NativeNavigation" }
+    override static func moduleName() -> String { "NativeNavigation" }
 
-    // Deve rodar na main thread — todo trabalho de UI
-    static func requiresMainQueueSetup() -> Bool { true }
-
-    @objc func goBack() {
+    override func goBack() {
         DispatchQueue.main.async {
             AppNavigationRouter.shared.goBack()
         }
     }
 
-    @objc func navigateTo(_ screenName: String, params: NSDictionary) {
+    override func navigateTo(_ screenName: String, params: NSDictionary) {
         DispatchQueue.main.async {
             AppNavigationRouter.shared.navigate(to: screenName, params: params as? [String: Any] ?? [:])
         }

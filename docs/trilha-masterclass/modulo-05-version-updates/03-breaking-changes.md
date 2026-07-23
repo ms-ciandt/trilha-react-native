@@ -1,6 +1,11 @@
----
+﻿---
 title: Analysis of Breaking Changes
 ---
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc05_03_breaking-changes.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 # Analysis of Breaking Changes
 
@@ -240,5 +245,3 @@ The Directory has a filter: `Libraries > New Architecture > Supported`. Use it b
 | [Library support — reactwg #167](https://github.com/reactwg/react-native-new-architecture/discussions/167) | 2024 status tracker of library adoption for New Architecture |
 
 ---
-
-Next → [Roadmap and Recommended Upgrade Path](./upgrade-roadmap)

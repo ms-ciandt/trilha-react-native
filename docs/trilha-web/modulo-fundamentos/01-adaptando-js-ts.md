@@ -1,4 +1,4 @@
----
+﻿---
 title: "Adapting JS/TS for Mobile"
 ---
 
@@ -246,5 +246,3 @@ The `expo/tsconfig.base` already configures path aliases, module resolution for 
 | react-native-safe-area-context | Community | [github.com/AppAndFlow/react-native-safe-area-context](https://github.com/AppAndFlow/react-native-safe-area-context) |
 
 ---
-
-Next → **[TypeScript for Web Devs](./typescript)**
