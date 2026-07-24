@@ -172,6 +172,18 @@ const sidebars = {
   trilhaAndroid: [
     {
       type: 'category',
+      label: 'Compose → React Native',
+      collapsed: false,
+      items: [
+        'trilha-android/modulo-compose-para-rn/composable-vs-component',
+        'trilha-android/modulo-compose-para-rn/remember-vs-usestate',
+        'trilha-android/modulo-compose-para-rn/layout-column-row-vs-flexbox',
+        'trilha-android/modulo-compose-para-rn/navigation-navhost-vs-react-navigation',
+        'trilha-android/modulo-compose-para-rn/theming-material3-vs-rn',
+      ],
+    },
+    {
+      type: 'category',
       label: 'Fundamentals',
       collapsed: false,
       items: [
@@ -192,6 +204,18 @@ const sidebars = {
         'trilha-android/modulo-recursos-nativos/storage',
         'trilha-android/modulo-recursos-nativos/sensors-device-apis',
         'trilha-android/modulo-recursos-nativos/notifications',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'New Architecture',
+      collapsed: false,
+      items: [
+        'trilha-android/modulo-new-architecture/hermes-engine',
+        'trilha-android/modulo-new-architecture/jsi-javascript-interface',
+        'trilha-android/modulo-new-architecture/turbomodule-kotlin',
+        'trilha-android/modulo-new-architecture/fabric-component-compose',
+        'trilha-android/modulo-new-architecture/debugging-new-architecture',
       ],
     },
     {
@@ -223,10 +247,10 @@ const sidebars = {
       label: 'CI/CD',
       collapsed: false,
       items: [
+        'trilha-android/modulo-cicd/code-signing-keystore',
         'trilha-android/modulo-cicd/fastlane',
         'trilha-android/modulo-cicd/github-actions',
         'trilha-android/modulo-cicd/eas-build',
-        'trilha-android/modulo-cicd/code-signing-keystore',
         'trilha-android/modulo-cicd/ota-updates',
       ],
     },
@@ -240,30 +264,6 @@ const sidebars = {
         'trilha-android/modulo-arquitetura/state-management-at-scale',
         'trilha-android/modulo-arquitetura/error-handling-monitoring',
         'trilha-android/modulo-arquitetura/accessibility',
-      ],
-    },
-    {
-      type: 'category',
-      label: 'New Architecture',
-      collapsed: false,
-      items: [
-        'trilha-android/modulo-new-architecture/hermes-engine',
-        'trilha-android/modulo-new-architecture/jsi-javascript-interface',
-        'trilha-android/modulo-new-architecture/turbomodule-kotlin',
-        'trilha-android/modulo-new-architecture/fabric-component-compose',
-        'trilha-android/modulo-new-architecture/debugging-new-architecture',
-      ],
-    },
-    {
-      type: 'category',
-      label: 'Compose → React Native',
-      collapsed: false,
-      items: [
-        'trilha-android/modulo-compose-para-rn/composable-vs-component',
-        'trilha-android/modulo-compose-para-rn/remember-vs-usestate',
-        'trilha-android/modulo-compose-para-rn/layout-column-row-vs-flexbox',
-        'trilha-android/modulo-compose-para-rn/navigation-navhost-vs-react-navigation',
-        'trilha-android/modulo-compose-para-rn/theming-material3-vs-rn',
       ],
     },
   ],
