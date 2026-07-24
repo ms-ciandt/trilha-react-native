@@ -54,7 +54,6 @@
   justify-content: center;
   padding: 8vh 1rem 2rem;
 
-  /* hidden by default */
   opacity: 0;
   pointer-events: none;
   visibility: hidden;
@@ -92,8 +91,9 @@
   transform: translateY(0) scale(1);
 }
 
+/* Pagefind container — padding so content doesn't touch the card walls */
 .pagefind {
-  /* Pagefind injects its search UI here */
+  padding: 1rem 1.25rem 1.25rem;
 }
 
 .hint {
@@ -129,5 +129,9 @@
   .modal {
     max-height: 85vh;
     border-radius: 10px;
+  }
+
+  .pagefind {
+    padding: 0.875rem 1rem 1rem;
   }
 }

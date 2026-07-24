@@ -11,6 +11,104 @@
   --pagefind-ui-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
+/* Search input */
+.pagefind-ui__search-input {
+  width: 100% !important;
+  background: var(--ifm-background-color) !important;
+  color: var(--ifm-color-content) !important;
+  border-color: var(--ifm-toc-border-color) !important;
+  font-family: var(--ifm-font-family-base) !important;
+  font-size: 0.9375rem !important;
+}
+
+.pagefind-ui__search-input:focus {
+  border-color: var(--ifm-color-primary) !important;
+  outline: none !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--ifm-color-primary) 20%, transparent) !important;
+}
+
+/* Result items */
+.pagefind-ui__result {
+  border-color: var(--ifm-toc-border-color) !important;
+}
+
+.pagefind-ui__result-link {
+  color: var(--ifm-color-primary) !important;
+  font-weight: 600 !important;
+}
+
+.pagefind-ui__result-excerpt {
+  color: var(--ifm-color-content-secondary, var(--ifm-color-emphasis-700)) !important;
+  font-size: 0.8125rem !important;
+  line-height: 1.6 !important;
+}
+
+/* "Load more" button */
+.pagefind-ui__button {
+  background: var(--ifm-color-primary) !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: var(--ifm-global-radius) !important;
+  font-family: var(--ifm-font-family-base) !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+}
+
+/* ─── Search result trail theming ────────────────────────────────────── */
+/* Left-border accent matches the trail where the result lives */
+.pagefind-ui__result {
+  border-left: 3px solid transparent !important;
+  padding-left: calc(1rem - 3px) !important;
+  border-radius: 0 var(--ifm-global-radius) var(--ifm-global-radius) 0 !important;
+  transition: background 0.15s ease !important;
+}
+
+.pagefind-ui__result:has(a[href*="/trilha-masterclass"]) {
+  border-left-color: #00d4ff !important;
+  background: color-mix(in srgb, #00d4ff 5%, transparent) !important;
+}
+
+.pagefind-ui__result:has(a[href*="/trilha-android"]) {
+  border-left-color: #2db370 !important;
+  background: color-mix(in srgb, #2db370 5%, transparent) !important;
+}
+[data-theme='dark'] .pagefind-ui__result:has(a[href*="/trilha-android"]) {
+  border-left-color: #3ddc84 !important;
+  background: color-mix(in srgb, #3ddc84 5%, transparent) !important;
+}
+
+.pagefind-ui__result:has(a[href*="/trilha-ios"]) {
+  border-left-color: #9333ea !important;
+  background: color-mix(in srgb, #9333ea 5%, transparent) !important;
+}
+[data-theme='dark'] .pagefind-ui__result:has(a[href*="/trilha-ios"]) {
+  border-left-color: #d8b4fe !important;
+  background: color-mix(in srgb, #d8b4fe 5%, transparent) !important;
+}
+
+.pagefind-ui__result:has(a[href*="/trilha-nativo"]) {
+  border-left-color: #d97706 !important;
+  background: color-mix(in srgb, #d97706 5%, transparent) !important;
+}
+[data-theme='dark'] .pagefind-ui__result:has(a[href*="/trilha-nativo"]) {
+  border-left-color: #fbbf24 !important;
+  background: color-mix(in srgb, #fbbf24 5%, transparent) !important;
+}
+
+.pagefind-ui__result:has(a[href*="/trilha-web"]) {
+  border-left-color: #0284c7 !important;
+  background: color-mix(in srgb, #0284c7 5%, transparent) !important;
+}
+[data-theme='dark'] .pagefind-ui__result:has(a[href*="/trilha-web"]) {
+  border-left-color: #38bdf8 !important;
+  background: color-mix(in srgb, #38bdf8 5%, transparent) !important;
+}
+
+.pagefind-ui__result:has(a[href*="/introducao"]) {
+  border-left-color: var(--ifm-color-primary) !important;
+  background: color-mix(in srgb, var(--ifm-color-primary) 5%, transparent) !important;
+}
+
 /* ─── Design tokens ─────────────────────────────────────────────────── */
 :root {
   --ifm-color-primary: #2563eb;

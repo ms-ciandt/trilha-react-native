@@ -43,23 +43,33 @@ export default function SearchBar() {
     if (!isOpen || status !== 'idle') return;
     setStatus('loading');
 
-    const addLink = (href) => new Promise((res) => {
-      if (document.querySelector(`link[href="${href}"]`)) { res(); return; }
+    const addLink = (href) => {
+      if (document.querySelector(`link[href="${href}"]`)) return;
       const l = document.createElement('link');
-      l.rel = 'stylesheet'; l.href = href; l.onload = res;
+      l.rel = 'stylesheet';
+      l.href = href;
       document.head.appendChild(l);
-    });
+    };
 
-    const addScript = (src) => new Promise((res, rej) => {
-      if (document.querySelector(`script[src="${src}"]`)) { res(); return; }
-      const s = document.createElement('script');
-      s.src = src; s.onload = res; s.onerror = rej;
-      document.head.appendChild(s);
-    });
+    // Fetch the script text first so HTML 404 pages don't execute as JS
+    const addScript = async (src) => {
+      if (document.querySelector(`script[src="${src}"]`)) return;
+      const res = await fetch(src);
+      if (!res.ok) throw new Error(`Pagefind not found (${res.status})`);
+      const text = await res.text();
+      if (text.trimStart().startsWith('<')) throw new Error('Pagefind returned HTML — index not built yet');
+      await new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = src;
+        s.onload = resolve;
+        s.onerror = reject;
+        document.head.appendChild(s);
+      });
+    };
 
     const init = async () => {
       try {
-        await addLink(`${base}/pagefind/pagefind-ui.css`);
+        addLink(`${base}/pagefind/pagefind-ui.css`);
         await addScript(`${base}/pagefind/pagefind-ui.js`);
 
         if (containerRef.current && window.PagefindUI) {
@@ -83,7 +93,7 @@ export default function SearchBar() {
     init();
   }, [isOpen, status, base]);
 
-  // Focus input when modal opens (ready or already initialized)
+  // Focus input when modal opens
   useEffect(() => {
     if (!isOpen || status !== 'ready') return;
     setTimeout(() => {
@@ -125,8 +135,8 @@ export default function SearchBar() {
           )}
           {status === 'error' && (
             <p className={styles.hint}>
-              Search index not built yet. Run{' '}
-              <code>npm run build &amp;&amp; npm run serve</code> to test locally.
+              Search only works after a full build. Run{' '}
+              <code>npm run build &amp;&amp; npm run serve</code>.
             </p>
           )}
         </div>
@@ -137,20 +147,9 @@ export default function SearchBar() {
 
 function SearchIcon() {
   return (
-    <svg
-      width="14"
-      height="14"
-      viewBox="0 0 14 14"
-      fill="none"
-      aria-hidden="true"
-    >
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
       <circle cx="5.5" cy="5.5" r="4" stroke="currentColor" strokeWidth="1.5" />
-      <path
-        d="M8.5 8.5L13 13"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
+      <path d="M8.5 8.5L13 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
     </svg>
   );
 }
