@@ -104,6 +104,12 @@
   transition: background 0.15s ease, color 0.15s ease;
 }
 
+/* Trails dropdown — highlight toggle when any trail page is active */
+.navbar__item.dropdown:has(.navbar__link--active) > .navbar__link {
+  background: color-mix(in srgb, var(--ifm-color-primary) 10%, transparent);
+  color: var(--ifm-color-primary);
+}
+
 /* Introdução — azul */
 .navbar__link[href*="/introducao"]:hover,
 .navbar__link[href*="/introducao"].navbar__link--active {
