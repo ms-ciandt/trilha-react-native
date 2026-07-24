@@ -93,6 +93,10 @@ const config = {
             ],
           },
           {
+            type: 'search',
+            position: 'right',
+          },
+          {
             to: '/about',
             label: 'About',
             position: 'right',
