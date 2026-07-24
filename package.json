@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "docusaurus start",
-    "build": "docusaurus build",
+    "build": "docusaurus build && pagefind --site build",
     "serve": "docusaurus serve"
   },
   "dependencies": {
@@ -17,7 +17,8 @@
     "react-dom": "^18.0.0"
   },
   "devDependencies": {
-    "@docusaurus/module-type-aliases": "3.10.1"
+    "@docusaurus/module-type-aliases": "3.10.1",
+    "pagefind": "^1.5.2"
   },
   "engines": {
     "node": ">=18.0"

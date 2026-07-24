@@ -1,3 +1,16 @@
+/* ─── Pagefind UI theme ──────────────────────────────────────────────── */
+:root {
+  --pagefind-ui-scale: 0.875;
+  --pagefind-ui-primary: var(--ifm-color-primary);
+  --pagefind-ui-text: var(--ifm-color-content);
+  --pagefind-ui-background: transparent;
+  --pagefind-ui-border: var(--ifm-toc-border-color);
+  --pagefind-ui-border-width: 1px;
+  --pagefind-ui-border-radius: 8px;
+  --pagefind-ui-image-border-radius: 6px;
+  --pagefind-ui-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
 /* ─── Design tokens ─────────────────────────────────────────────────── */
 :root {
   --ifm-color-primary: #2563eb;
