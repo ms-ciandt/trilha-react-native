@@ -4,51 +4,54 @@ title: Escolha Sua Trilha
 
 # Escolha Sua Trilha
 
-## Video Overview
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-top: 32px;">
 
-<video width="100%" controls style="border-radius: 8px; margin: 16px 0;">
-  <source src="/trilha-react-native/assets/videos/intro_03_choose_your_track.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+<div style="border: 2px solid #3ddc84; border-radius: 12px; padding: 20px;">
 
-## Trilha Nativo — Para Desenvolvedores Android/iOS
+### Trilha Android
 
-**Ideal para você se:**
-- Você escreve Kotlin, Java, Swift ou Objective-C
-- Você sabe o que é uma Activity, ViewController, Fragment ou View
-- Você entende o ciclo de vida nativo (onCreate, viewDidLoad, etc.)
-- Você está confortável com Android Studio ou Xcode
+Para desenvolvedores **Kotlin / Jetpack Compose**
 
-**Sua curva de aprendizado:**
-- Sintaxe e semântica de JavaScript / TypeScript ← _é aqui que começamos_
-- O modelo de componentes do React e reconciliação
-- O conjunto de componentes e APIs do React Native
-- Abrir mão de layouts XML e storyboards
+Sua vantagem: você já entende thread safety, renderização nativa e APIs de plataforma. Sua curva de aprendizado é JavaScript/TypeScript e o modelo de componentes do React.
 
-**Sua vantagem:**
-Você já entende _por que_ a renderização nativa importa, o que é thread safety e como as APIs de plataforma funcionam. Você vai apreciar a Nova Arquitetura de forma mais profunda do que a maioria.
+**[Começar →](../trilha-android/modulo-compose-para-rn/composable-vs-component)**
 
-→ **[Começar a Trilha Nativo: JS/TS para Devs Nativos](../trilha-nativo/modulo-fundamentos/javascript-for-native-developers)**
+</div>
 
----
+<div style="border: 2px solid #007aff; border-radius: 12px; padding: 20px;">
 
-## Trilha Web — Para Desenvolvedores React
+### Trilha iOS
 
-**Ideal para você se:**
-- Você desenvolve com React (hooks, JSX, componentes)
-- Você conhece CSS e o DOM
-- Você já usou npm, bundlers, TypeScript
-- Você é novo no desenvolvimento mobile
+Para desenvolvedores **Swift / SwiftUI**
 
-**Sua curva de aprendizado:**
-- Sem DOM — sem `div`, `span`, sem folhas de estilo CSS, sem `document`
-- Restrições específicas do mobile (safe areas, desvio de teclado, gestos)
-- Diferenças entre iOS e Android
-- Publicar na App Store / Play Store
+Sua vantagem: você já entende renderização UIKit/SwiftUI, o ciclo de vida iOS e as ferramentas do Xcode. Sua curva de aprendizado é JavaScript/TypeScript e o modelo de componentes do React.
 
-**Sua vantagem:**
-Os componentes do React Native funcionam exatamente como componentes React. Seu conhecimento de hooks, padrões de componentes e experiência com o ecossistema JS se transfere diretamente.
+**[Começar →](../trilha-ios/modulo-fundamentos/swift-to-javascript)**
 
-→ **[Começar a Trilha Web: Adaptando JS para Mobile](../trilha-web/modulo-fundamentos/adaptando-js-ts)**
+</div>
 
----
+<div style="border: 2px solid #25c2a0; border-radius: 12px; padding: 20px;">
+
+### Trilha Web
+
+Para desenvolvedores **React / JavaScript** web
+
+Sua vantagem: os componentes do React Native funcionam exatamente como componentes React — hooks, JSX e padrões de componentes se transferem diretamente. Sua curva de aprendizado é a mentalidade mobile e as restrições de plataforma.
+
+**[Começar →](../trilha-web/modulo-fundamentos/adaptando-js-ts)**
+
+</div>
+
+<div style="border: 2px solid #d4a017; border-radius: 12px; padding: 20px; background: linear-gradient(135deg, #0a0e1a 0%, #1a1f35 100%);">
+
+### Masterclass
+
+Para desenvolvedores que já conhecem os **fundamentos do React Native**
+
+Cobre integração brownfield, TurboModules, Fabric, JSI, profiling de performance, pipelines de CI/CD e estratégias de upgrade. Nova Arquitetura do início ao fim.
+
+**[Começar →](../trilha-masterclass/modulo-00-overview/course-overview)**
+
+</div>
+
+</div>
