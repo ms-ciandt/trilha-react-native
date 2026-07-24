@@ -176,6 +176,14 @@
   color: #00d4ff;
 }
 
+/* Trails dropdown toggle — highlight when any trail is active */
+.navbar__link.navbar__link--active[class*='dropdownNavbarItemMobile'],
+.navbar__item.dropdown:has(.navbar__link--active) > .navbar__link {
+  background: color-mix(in srgb, var(--ifm-color-primary) 10%, transparent);
+  color: var(--ifm-color-primary);
+  border-radius: 999px;
+}
+
 /* ─── Track themes — sidebar + content accent ────────────────────────── */
 
 /* Introdução — azul */

@@ -66,28 +66,31 @@ const config = {
             activeBaseRegex: '^/trilha-react-native/introducao',
           },
           {
-            to: '/trilha-web/modulo-fundamentos/adaptando-js-ts',
-            label: 'Web developer trail',
+            type: 'dropdown',
+            label: 'Trails',
             position: 'left',
-            activeBaseRegex: '^/trilha-react-native/trilha-web',
-          },
-          {
-            to: '/trilha-android/modulo-compose-para-rn/composable-vs-component',
-            label: 'Android native trail',
-            position: 'left',
-            activeBaseRegex: '^/trilha-react-native/trilha-android',
-          },
-          {
-            to: '/trilha-ios/modulo-fundamentos/swift-to-javascript',
-            label: 'iOS native trail',
-            position: 'left',
-            activeBaseRegex: '^/trilha-react-native/trilha-ios',
-          },
-          {
-            to: '/trilha-masterclass/modulo-00-overview/course-overview',
-            label: 'React Native MasterClass Trail',
-            position: 'left',
-            activeBaseRegex: '^/trilha-react-native/trilha-masterclass',
+            items: [
+              {
+                to: '/trilha-web/modulo-fundamentos/adaptando-js-ts',
+                label: 'Web dev trail',
+                activeBaseRegex: '^/trilha-react-native/trilha-web',
+              },
+              {
+                to: '/trilha-android/modulo-compose-para-rn/composable-vs-component',
+                label: 'Android native trail',
+                activeBaseRegex: '^/trilha-react-native/trilha-android',
+              },
+              {
+                to: '/trilha-ios/modulo-fundamentos/swift-to-javascript',
+                label: 'iOS native trail',
+                activeBaseRegex: '^/trilha-react-native/trilha-ios',
+              },
+              {
+                to: '/trilha-masterclass/modulo-00-overview/course-overview',
+                label: 'React Native MasterClass',
+                activeBaseRegex: '^/trilha-react-native/trilha-masterclass',
+              },
+            ],
           },
           {
             to: '/about',
