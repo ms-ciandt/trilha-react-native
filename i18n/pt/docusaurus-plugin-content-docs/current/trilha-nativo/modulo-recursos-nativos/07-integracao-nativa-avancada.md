@@ -7,10 +7,10 @@ title: Integração Nativa Avançada
 ## Objetivo do tópico
 
 Ao final, o dev deve conseguir:
-- Entender o modelo de **Native Modules** e **Native UI Components** no React Native
-- Criar e registrar um Native Module simples em Android e/ou iOS
-- Expor uma view nativa como componente React via `requireNativeComponent`
-- Emitir eventos do nativo para o JavaScript (bridge de eventos)
+- Entender o modelo de **TurboModules** e **Fabric Native Components** no React Native
+- Criar e registrar um TurboModule simples em Android e/ou iOS com spec TypeScript
+- Expor uma view nativa como Fabric Component via `codegenNativeComponent`
+- Emitir eventos tipados do nativo para o JavaScript via `EventEmitter` spec
 - Integrar SDKs nativos existentes em um projeto brownfield com RN
 - Comparar esse modelo com o que já faz hoje em Android/iOS
 
@@ -19,7 +19,7 @@ Ao final, o dev deve conseguir:
 ### Video Demonstration
 
 <video width="100%" max-width="800px" controls style="border-radius: 8px; margin: 16px 0;">
-  <source src="https://alimuramatheus.github.io/trilha-react-native/assets/videos/Advanced_Native_Integration_-_nativo.mp4" type="video/mp4">
+  <source src="https://ms-ciandt.github.io/trilha-react-native/assets/videos/Advanced_Native_Integration_-_nativo.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
 
@@ -30,98 +30,73 @@ Ao final, o dev deve conseguir:
 | Nativo                           | React Native                          | Observação |
 |----------------------------------|----------------------------------------|------------|
 | Activity / ViewController        | Host da árvore RN                     | RN roda dentro de uma Activity/VC existente em brownfield |
-| Service / SDK nativo             | **Native Module**                     | Métodos expostos via `NativeModules` |
-| View / UIView custom             | **Native UI Component**               | Usado em JSX: `<MyNativeView />` |
-| Callbacks / Delegates            | Event Emitter (`DeviceEventEmitter`)  | Eventos do nativo → JS |
+| Service / SDK nativo             | **TurboModule**                       | Métodos expostos via JSI — tipados e lazy-loaded |
+| View / UIView custom             | **Fabric Native Component**           | Usado em JSX via spec Codegen: `<MyNativeView />` |
+| Callbacks / Delegates            | EventEmitter tipado (spec)            | Eventos do nativo → JS via subscription |
 | Threads / background tasks       | Threads internas do módulo nativo     | Evitar trabalho pesado na main/UI thread |
 | Gradle / Xcodeproj / Pods        | Autolinking / manual linking          | RN descobre módulos via autolinking ou registro explícito |
 
 ---
 
-## Conceito central: Native Modules
+## Conceito central: TurboModules
 
-Um **Native Module** é uma classe nativa registrada no RN que expõe funções chamáveis pelo JS. Conceitualmente é um *SDK interno* acessível pela camada RN.
+Um **TurboModule** é uma classe nativa registrada no RN que expõe funções chamáveis pelo JS via JSI — tipadas por uma spec TypeScript e geradas pelo Codegen. Sem serialização JSON no caminho.
+
+### Spec TypeScript (compartilhada entre JS e Codegen)
+
+```ts
+// src/native/NativeMyDeviceInfo.ts
+import { TurboModuleRegistry } from 'react-native';
+import type { TurboModule } from 'react-native';
+
+export interface Spec extends TurboModule {
+  getDeviceName(): Promise<string>;
+}
+
+export default TurboModuleRegistry.getEnforcing<Spec>('MyDeviceInfo');
+```
 
 ### Android — exemplo (Kotlin)
-
 
 ```kotlin
 // android/app/src/main/java/com/myapp/MyDeviceInfoModule.kt
 package com.myapp
 
 import com.facebook.react.bridge.ReactApplicationContext
-import com.facebook.react.bridge.ReactContextBaseJavaModule
-import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.Promise
+import com.myapp.NativeMyDeviceInfoSpec  // gerado pelo Codegen
 
 class MyDeviceInfoModule(reactContext: ReactApplicationContext) :
-  ReactContextBaseJavaModule(reactContext) {
+  NativeMyDeviceInfoSpec(reactContext) {
 
-  override fun getName(): String = "MyDeviceInfo"
+  override fun getName(): String = NAME
 
-  @ReactMethod
-  fun getDeviceName(promise: Promise) {
-    val name = android.os.Build.MODEL ?: "Unknown"
-    promise.resolve(name)
+  override fun getDeviceName(promise: Promise) {
+    promise.resolve(android.os.Build.MODEL ?: "Unknown")
   }
+
+  companion object { const val NAME = "MyDeviceInfo" }
 }
 ```
 
-
-
-```kotlin
-// android/app/src/main/java/com/myapp/MyDeviceInfoPackage.kt
-package com.myapp
-
-import com.facebook.react.ReactPackage
-import com.facebook.react.bridge.NativeModule
-import com.facebook.react.uimanager.ViewManager
-import com.facebook.react.bridge.ReactApplicationContext
-
-class MyDeviceInfoPackage : ReactPackage {
-  override fun createNativeModules(reactContext: ReactApplicationContext): List<NativeModule> =
-    listOf(MyDeviceInfoModule(reactContext))
-
-  override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<*, *>> =
-    emptyList()
-}
-```
-
-
-Registro no `MainApplication`:
-
-
-```kotlin
-override fun getPackages(): MutableList<ReactPackage> {
-  return mutableListOf(
-    MainReactPackage(),
-    MyDeviceInfoPackage(),
-  )
-}
-```
-
+O registro usa o mesmo `ReactPackage` — em RN 0.76+ módulos Codegen auto-registram via `TurboReactPackage`.
 
 Uso em TypeScript:
 
-
 ```tsx
-// src/native/MyDeviceInfo.ts
-import { NativeModules } from 'react-native';
+// src/native/myDeviceInfo.ts  (wrapper fino)
+import NativeMyDeviceInfo from './NativeMyDeviceInfo';
 
-const { MyDeviceInfo } = NativeModules;
-
-export async function getDeviceName(): Promise<string> {
-  return MyDeviceInfo.getDeviceName();
+export function getDeviceName(): Promise<string> {
+  return NativeMyDeviceInfo.getDeviceName();
 }
 ```
-
-
 
 ```tsx
 // Exemplo de consumo em uma tela RN
 import { useEffect, useState } from 'react';
 import { View, Text } from 'react-native';
-import { getDeviceName } from '../native/MyDeviceInfo';
+import { getDeviceName } from '../native/myDeviceInfo';
 
 export function DeviceInfoScreen() {
   const [name, setName] = useState<string | null>(null);
@@ -138,49 +113,49 @@ export function DeviceInfoScreen() {
 }
 ```
 
-
-### iOS — exemplo (Swift + Obj-C)
-
+### iOS — exemplo (Swift + spec gerada)
 
 ```swift
 // ios/MyDeviceInfoModule.swift
 import Foundation
 import UIKit
 
+// NativeMyDeviceInfoSpec é gerado pelo Codegen a partir da spec TS
 @objc(MyDeviceInfo)
-class MyDeviceInfo: NSObject {
+class MyDeviceInfoModule: NativeMyDeviceInfoSpec {
 
-  @objc
-  func getDeviceName(_ resolve: RCTPromiseResolveBlock,
-                     rejecter reject: RCTPromiseRejectBlock) {
+  override func getDeviceName(_ resolve: @escaping RCTPromiseResolveBlock,
+                               reject: @escaping RCTPromiseRejectBlock) {
     resolve(UIDevice.current.name)
   }
+
+  override static func moduleName() -> String { "MyDeviceInfo" }
 }
 ```
-
-
-
-```objc
-// ios/MyDeviceInfoModule.m
-#import <React/RCTBridgeModule.h>
-
-@interface RCT_EXTERN_MODULE(MyDeviceInfo, NSObject)
-RCT_EXTERN_METHOD(getDeviceName:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject)
-@end
-```
-
 
 O consumo em TS é idêntico ao Android.
 
 ---
 
-## Conceito central: Native UI Components
+## Conceito central: Fabric Native Components
 
-Um **Native UI Component** expõe uma `View`/`UIView` customizada para ser usada como componente React.
+Um **Fabric Native Component** expõe uma `View`/`UIView` customizada para ser usada como componente React. O Codegen lê a spec TypeScript e gera o glue C++; o `ViewManager` implementa a renderização nativa.
+
+### Spec TypeScript
+
+```tsx
+// src/native/NativeMyColoredView.ts
+import type { HostComponent, ViewProps } from 'react-native';
+import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
+
+type NativeProps = ViewProps & {
+  color: string;
+};
+
+export default codegenNativeComponent<NativeProps>('MyColoredView') as HostComponent<NativeProps>;
+```
 
 ### Android — View custom exposta em JSX
-
 
 ```kotlin
 // android/app/src/main/java/com/myapp/MyColoredView.kt
@@ -200,8 +175,6 @@ class MyColoredView(context: ThemedReactContext) : View(context) {
   }
 }
 ```
-
-
 
 ```kotlin
 // android/app/src/main/java/com/myapp/MyColoredViewManager.kt
@@ -227,33 +200,16 @@ class MyColoredViewManager : SimpleViewManager<MyColoredView>() {
 }
 ```
 
-
-Registro no `ReactPackage` e uso em TS:
-
+Uso em JSX:
 
 ```tsx
-// src/native/MyColoredView.tsx
-import { requireNativeComponent } from 'react-native';
-
-export type MyColoredViewProps = {
-  color: string;
-  style?: any;
-};
-
-export const MyColoredView = requireNativeComponent<MyColoredViewProps>('MyColoredView');
-```
-
-
-
-```tsx
-// Exemplo de uso em uma tela
+import NativeMyColoredView from '../native/NativeMyColoredView';
 import { View } from 'react-native';
-import { MyColoredView } from '../native/MyColoredView';
 
 export function ColoredBoxScreen() {
   return (
     <View>
-      <MyColoredView style={{ width: 100, height: 100 }} color="#00FF00" />
+      <NativeMyColoredView style={{ width: 100, height: 100 }} color="#00FF00" />
     </View>
   );
 }
@@ -262,10 +218,29 @@ export function ColoredBoxScreen() {
 
 ---
 
-## Bridge de eventos: nativo → JS
+## EventEmitter tipado: nativo → JS
 
-Exemplo simplificado de evento de bateria no Android.
+Na New Architecture, eventos são declarados na spec TypeScript com o tipo `EventEmitter`. O Codegen gera o código de subscription tipado em ambas as plataformas.
 
+### Spec TypeScript com eventos
+
+```ts
+// src/native/NativeBatteryModule.ts
+import { TurboModuleRegistry } from 'react-native';
+import type { TurboModule } from 'react-native';
+import type { EventEmitter } from 'react-native/Libraries/Types/CodegenTypes';
+
+type BatteryLevelChangedEvent = { level: number };
+
+export interface Spec extends TurboModule {
+  startListening(): void;
+  readonly onBatteryLevelChanged: EventEmitter<BatteryLevelChangedEvent>;
+}
+
+export default TurboModuleRegistry.getEnforcing<Spec>('BatteryModule');
+```
+
+### Android — exemplo (Kotlin)
 
 ```kotlin
 // android/app/src/main/java/com/myapp/BatteryModule.kt
@@ -277,66 +252,52 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.BatteryManager
 import com.facebook.react.bridge.ReactApplicationContext
-import com.facebook.react.bridge.ReactContextBaseJavaModule
-import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.Arguments
-import com.facebook.react.modules.core.DeviceEventManagerModule
+import com.myapp.NativeBatteryModuleSpec  // gerado pelo Codegen
 
 class BatteryModule(private val context: ReactApplicationContext) :
-  ReactContextBaseJavaModule(context) {
+  NativeBatteryModuleSpec(context) {
 
-  override fun getName(): String = "BatteryModule"
+  override fun getName(): String = NAME
 
   private var receiver: BroadcastReceiver? = null
 
-  @ReactMethod
-  fun startListening() {
+  override fun startListening() {
     if (receiver != null) return
 
     receiver = object : BroadcastReceiver() {
       override fun onReceive(c: Context?, intent: Intent?) {
         val level = intent?.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) ?: -1
-        val event = Arguments.createMap().apply {
-          putInt("level", level)
-        }
-
-        context
-          .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
-          .emit("BatteryLevelChanged", event)
+        val event = Arguments.createMap().apply { putInt("level", level) }
+        emitOnBatteryLevelChanged(event)  // método tipado gerado pelo Codegen
       }
     }
 
-    val filter = IntentFilter(Intent.ACTION_BATTERY_CHANGED)
-    context.registerReceiver(receiver, filter)
+    context.registerReceiver(receiver, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
   }
+
+  companion object { const val NAME = "BatteryModule" }
 }
 ```
 
-
 Consumo em RN:
-
 
 ```tsx
 // src/hooks/useBatteryLevel.ts
 import { useEffect, useState } from 'react';
-import { NativeModules, NativeEventEmitter } from 'react-native';
-
-const { BatteryModule } = NativeModules;
-const emitter = new NativeEventEmitter(BatteryModule);
+import NativeBatteryModule from '../native/NativeBatteryModule';
 
 export function useBatteryLevel() {
   const [level, setLevel] = useState<number | null>(null);
 
   useEffect(() => {
-    BatteryModule.startListening();
+    NativeBatteryModule.startListening();
 
-    const sub = emitter.addListener('BatteryLevelChanged', (event) => {
+    const sub = NativeBatteryModule.onBatteryLevelChanged((event) => {
       setLevel(event.level);
     });
 
-    return () => {
-      sub.remove();
-    };
+    return () => sub.remove();
   }, []);
 
   return level;
@@ -351,7 +312,7 @@ export function useBatteryLevel() {
 Em apps brownfield, o RN é hospedado dentro de uma Activity/VC existente. O `NavigationContainer` e a árvore RN gerenciam apenas o trecho em RN — o ciclo de vida da Activity/VC continua nativo.
 
 Boas práticas:
-- Manter o código de bridge (modules, managers) em um namespace claro (`com.myapp.rnbridge`).
+- Manter o código de TurboModules e Fabric Components em um namespace claro (`com.myapp.rn`).
 - Documentar quais módulos nativos estão expostos ao RN e quais telas RN existem.
 - Evitar expor diretamente todos os SDKs nativos; criar uma camada de serviço específica para RN.
 
@@ -361,7 +322,7 @@ Boas práticas:
 
 Construa uma feature RN que consuma código nativo:
 
-1. Crie um Native Module em Android e iOS com:
+1. Crie um TurboModule em Android e iOS com spec TypeScript e:
    - `getAppVersion()`
    - `getBatteryLevel()` (Android; em iOS retorne `"N/A"`).
 2. Exponha as funções para o JS e tipa-as em TypeScript.
@@ -378,10 +339,10 @@ Construa uma feature RN que consuma código nativo:
 ## Materiais de estudo
 
 ### Documentação oficial
-- [Native Modules — Android](https://reactnative.dev/docs/native-modules-android)
-- [Native Modules — iOS](https://reactnative.dev/docs/native-modules-ios)
-- [Native UI Components — Android](https://reactnative.dev/docs/native-components-android)
-- [Native UI Components — iOS](https://reactnative.dev/docs/native-components-ios)
+- [TurboModules — Android](https://reactnative.dev/docs/turbo-native-modules-android)
+- [TurboModules — iOS](https://reactnative.dev/docs/turbo-native-modules-ios)
+- [Fabric Components — Android](https://reactnative.dev/docs/fabric-native-components-android)
+- [Fabric Components — iOS](https://reactnative.dev/docs/fabric-native-components-ios)
 
 ### Artigos
 - *React Native Bridge Architecture Explained* — overview de como o JS conversa com código nativo.

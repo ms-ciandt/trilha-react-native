@@ -1,4 +1,4 @@
----
+﻿---
 title: Styling & Flexbox for Web Developers
 ---
 
@@ -69,12 +69,26 @@ rowGap: 8
 columnGap: 8
 
 // Child properties
-flex: 1              // grow and fill available space (simplified vs CSS flex shorthand)
+flex: 1              // see "The flex shorthand" section below
 flexGrow: 1          // how much to grow
 flexShrink: 1        // how much to shrink
 flexBasis: 'auto' | 100  // initial size before grow/shrink
 alignSelf: 'auto' | 'flex-start' | 'flex-end' | 'center' | 'stretch'
 ```
+
+---
+
+## The `flex` Shorthand is Different from CSS
+
+In CSS, `flex` is a shorthand for up to three values (`flex-grow flex-shrink flex-basis`). In React Native, `flex` accepts **a single number only** — multi-value strings like `flex: 1 1 auto` do not exist.
+
+| Value | Expands to |
+|---|---|
+| `flex: N` (positive) | `flexGrow: N, flexShrink: 1, flexBasis: 0` |
+| `flex: 0` | `flexGrow: 0, flexShrink: 0, flexBasis: auto` (sized by width/height) |
+| `flex: -1` | `flexGrow: 0, flexShrink: 1, flexBasis: auto` |
+
+For combinations the shorthand cannot express, set `flexGrow`, `flexShrink`, and `flexBasis` individually.
 
 ---
 
@@ -110,7 +124,7 @@ The same Flexbox model you already know from web CSS works in RN:
 
 ## Shadow and Elevation
 
-CSS `box-shadow` splits into two in RN — and they behave very differently per platform:
+CSS `box-shadow` splits into two in RN — and they behave differently per platform:
 
 ```typescript
 const styles = StyleSheet.create({
@@ -121,16 +135,32 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 4,
 
-        // Android shadow — elevation only. The four iOS properties above are
-        // silently ignored on Android. Android shadow color cannot be customized
-        // via core StyleSheet (always renders as system grey).
+        // Android shadow — elevation drives the shadow shape.
+        // On Android 9+ (API 28), combining shadowColor + elevation tints the shadow color.
+        // On older Android, shadowColor is silently ignored (shadow is always system grey).
         elevation: 3,
+        shadowColor: '#000', // tints the shadow on Android 9+
     },
 });
 ```
 
-:::note Android shadow limitation
-To get a custom-colored shadow on Android, use a solid-color View as a backdrop or the community library `react-native-shadow-2`.
+### RN 0.76+: `boxShadow` (cross-platform, New Architecture)
+
+RN 0.76 introduced `boxShadow` as a cross-platform style property, with CSS-compatible syntax including multiple shadows and `inset`:
+
+```typescript
+const styles = StyleSheet.create({
+    card: {
+        // Same syntax as CSS box-shadow — works on both iOS and Android
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+        // Multiple shadows and inset are also supported:
+        // boxShadow: '0 1px 3px #0003, inset 0 1px 0 #fff2',
+    },
+});
+```
+
+:::note Legacy vs New Architecture
+`boxShadow` requires the New Architecture (default in RN 0.76+). For apps still on the legacy architecture, use `shadowColor`/`elevation` as shown above.
 :::
 
 ---
@@ -199,12 +229,7 @@ The install command alone won't work — styles will appear to compile but never
 npx expo install nativewind tailwindcss
 ```
 
-**2. Initialize Tailwind**
-```bash
-npx tailwindcss init
-```
-
-**3. Configure `tailwind.config.js`**
+**2. Configure `tailwind.config.js`**
 ```js
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -222,18 +247,27 @@ module.exports = {
 @tailwind utilities;
 ```
 
-**5. Update `babel.config.js`**
+**4. Update `babel.config.js`**
+
+NativeWind v4 uses a Babel preset, not a plugin. The config below is required — using `plugins: ['nativewind/babel']` (the v2 way) compiles silently but styles never apply.
+
 ```js
 module.exports = function (api) {
     api.cache(true);
     return {
-        presets: ['babel-preset-expo'],
-        plugins: ['nativewind/babel'],
+        presets: [
+            ['babel-preset-expo', { jsxImportSource: 'nativewind' }],
+            'nativewind/babel',
+        ],
     };
 };
 ```
 
-**6. Update `metro.config.js`**
+:::warning NativeWind v4 requires Tailwind CSS 3.x
+NativeWind v4 is **not compatible with Tailwind CSS v4**. Pin Tailwind to the v3 range: `npm install tailwindcss@^3`. Using Tailwind v4 will cause silent style failures.
+:::
+
+**5. Update `metro.config.js`**
 ```js
 const { getDefaultConfig } = require('expo/metro-config');
 const { withNativeWind } = require('nativewind/metro');
@@ -242,7 +276,7 @@ const config = getDefaultConfig(__dirname);
 module.exports = withNativeWind(config, { input: './global.css' });
 ```
 
-**7. Import `global.css` in your root `_layout.tsx`**
+**6. Import `global.css` in your root `_layout.tsx`**
 ```tsx
 import '../global.css';
 ```
@@ -272,5 +306,3 @@ The official approach is `StyleSheet.create`. NativeWind compiles Tailwind class
 | Yoga Layout | Reference | [yogalayout.dev](https://yogalayout.dev/) |
 
 ---
-
-Next → **[Lists & Navigation](./listas-navegacao)**

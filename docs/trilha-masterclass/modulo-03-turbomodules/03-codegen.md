@@ -1,4 +1,4 @@
----
+﻿---
 title: "Codegen: Native Typed Interfaces"
 ---
 
@@ -300,5 +300,3 @@ JS: NativeCalculator.add(1, 2) → C++ lambda → result back to JS
 | [Codegen internals — Dev.to](https://dev.to/amitkumar13/the-turbo-way-to-talk-native-react-natives-new-bridging-system-2nh8) | How Codegen parses specs and generates the JSI dispatch |
 
 ---
-
-Next → [Defensive Loading of Modules](./defensive-loading)

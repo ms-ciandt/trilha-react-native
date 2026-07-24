@@ -68,8 +68,8 @@ Todos os exemplos de código neste curso podem ser executados imediatamente no *
 ## Contribuidores
 
 <div style="display:flex; flex-wrap:wrap; gap:24px; margin-top:16px;">
-  <a href="https://github.com/AlimuraMatheus" target="_blank" rel="noopener noreferrer" style="display:flex; flex-direction:column; align-items:center; gap:8px; text-decoration:none; color:inherit;">
-    <img src="https://github.com/AlimuraMatheus.png?size=80" alt="Matheus Sales" style="width:72px; height:72px; border-radius:50%; object-fit:cover;" />
+  <a href="https://github.com/ms-ciandt" target="_blank" rel="noopener noreferrer" style="display:flex; flex-direction:column; align-items:center; gap:8px; text-decoration:none; color:inherit;">
+    <img src="https://github.com/ms-ciandt.png?size=80" alt="Matheus Sales" style="width:72px; height:72px; border-radius:50%; object-fit:cover;" />
     <span style="font-size:13px;">Matheus Sales</span>
   </a>
   <a href="https://github.com/gbonin-ciandt" target="_blank" rel="noopener noreferrer" style="display:flex; flex-direction:column; align-items:center; gap:8px; text-decoration:none; color:inherit;">

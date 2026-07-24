@@ -1,4 +1,4 @@
----
+﻿---
 title: TypeScript for Web Developers in React Native
 ---
 
@@ -197,5 +197,3 @@ function useAsyncState<T>() {
 | Total TypeScript (free tutorials) | Community | [totaltypescript.com/tutorials](https://www.totaltypescript.com/tutorials) |
 
 ---
-
-Next → **[Web vs React Native](./web-vs-rn)**

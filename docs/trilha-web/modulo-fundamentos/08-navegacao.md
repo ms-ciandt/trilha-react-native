@@ -1,4 +1,4 @@
----
+﻿---
 id: navegacao-web
 title: "Navigation"
 sidebar_label: "Navigation"
@@ -51,7 +51,7 @@ By the end, you should be able to:
 npm install @react-navigation/native react-native-screens react-native-safe-area-context
 npm install react-native-gesture-handler react-native-reanimated
 
-npm install @react-navigation/stack
+npm install @react-navigation/native-stack
 npm install @react-navigation/bottom-tabs
 npm install @react-navigation/drawer
 
@@ -68,9 +68,13 @@ The Stack Navigator works like a deck of cards: each new screen is placed on top
 
 The `NavigationContainer` is the central control point for navigation. There should be only one in the app, at the root, and it holds all navigation state in memory. Without it, no navigator works.
 
+:::note Native Stack vs JS Stack
+Use `createNativeStackNavigator` from `@react-navigation/native-stack` (used below). It delegates transitions to the platform's native navigation primitives, giving you native-feel animations and better performance. The older `createStackNavigator` from `@react-navigation/stack` re-implements transitions in JS — only use it if you need deep animation customization that the native stack doesn't support.
+:::
+
 ```tsx
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 // Parameter typing (replaces URL params)
 type RootStackParamList = {
@@ -78,7 +82,7 @@ type RootStackParamList = {
   ProductDetails: { productId: string; productName: string };
 };
 
-const Stack = createStackNavigator<RootStackParamList>();
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function AppStack() {
   return (
@@ -110,7 +114,7 @@ const { productId, productName } = route.params;
 
 In React Router there is no component equivalent to the Tab Navigator — tabs on mobile behave differently from browser tabs. On mobile, tabs are persistent and each one maintains its own independent navigation state. When you switch tabs and come back, the previous tab is exactly where you left it, including its internal stack history.
 
-The `lazy: true` option is important for apps with many tabs: without it, all screens are rendered on initialization, even if the user never visits them.
+`createBottomTabNavigator` already has `lazy: true` by default — unvisited tabs are not rendered until the user navigates to them. No configuration needed for this behavior; it is `createMaterialTopTabNavigator` that defaults to `lazy: false`.
 
 ```tsx
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -121,7 +125,6 @@ function AppTabs() {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        lazy: true, // does not render unvisited tabs
         tabBarIcon: ({ focused, color }) => {
           const icon = route.name === 'Home' ? '🏠' : '👤';
           return <Text>{icon}</Text>;
@@ -336,5 +339,3 @@ useFocusEffect(
 - [Your Complete Guide to React Native Navigation in 2025 — Peanut Square](https://www.peanutsquare.com/your-complete-guide-to-react-native-navigation-in-2025/)
 
 ---
-
-Next → **[Global State & APIs](./estado-e-apis-web)**

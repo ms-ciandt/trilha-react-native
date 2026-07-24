@@ -92,13 +92,13 @@ export default function Home() {
 
         <ForkArrows />
 
-        <p className={styles.forkCaption}>Choose your background: two paths, one destination</p>
+        <p className={styles.forkCaption}>Choose your background: three paths, one destination</p>
 
         <section className={styles.tracks}>
           <div className={`${styles.trackCard} ${styles.trackCardWeb}`} style={{ animationDelay: '0.1s' }}>
             <div className={styles.cardGlow} />
             <div className={styles.cardBadge}>
-              <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" style={{marginRight: '4px', verticalAlign: 'middle'}}><path d="M9.4 16.6 4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0 4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M9.4 16.6 4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0 4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>
               Web
             </div>
             <div className={styles.trackLabel}>Web dev trail</div>
@@ -113,20 +113,43 @@ export default function Home() {
             </Link>
           </div>
 
-          <div className={`${styles.trackCard} ${styles.trackCardNativo}`} style={{ animationDelay: '0.25s' }}>
+          <div className={`${styles.trackCard} ${styles.trackCardAndroid}`} style={{ animationDelay: '0.2s' }}>
             <div className={styles.cardGlow} />
             <div className={styles.cardBadge}>
-              <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" style={{marginRight: '4px', verticalAlign: 'middle'}}><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98l-.09.06c-.22.14-2.18 1.27-2.16 3.8.03 3.02 2.65 4.03 2.68 4.04l-.07.28zM13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-              <img src="/trilha-react-native/img/android-logo.svg" alt="Android" width="12" height="12" style={{marginRight: '5px', verticalAlign: 'middle', filter: 'invert(71%) sepia(62%) saturate(450%) hue-rotate(93deg) brightness(95%) contrast(90%)'}} />
-              Native
+              <svg viewBox="19.933 68.509 228.155 228.155" width="14" height="14" xmlns="http://www.w3.org/2000/svg">
+                <path d="M101.885 207.092c7.865 0 14.241 6.376 14.241 14.241v61.09c0 7.865-6.376 14.24-14.241 14.24-7.864 0-14.24-6.375-14.24-14.24v-61.09c0-7.864 6.376-14.24 14.24-14.24z" fill="#a4c639"/>
+                <path d="M69.374 133.645c-.047.54-.088 1.086-.088 1.638v92.557c0 9.954 7.879 17.973 17.66 17.973h94.124c9.782 0 17.661-8.02 17.661-17.973v-92.557c0-.552-.02-1.1-.066-1.638H69.374z" fill="#a4c639"/>
+                <path d="M166.133 207.092c7.865 0 14.241 6.376 14.241 14.241v61.09c0 7.865-6.376 14.24-14.241 14.24-7.864 0-14.24-6.375-14.24-14.24v-61.09c0-7.864 6.376-14.24 14.24-14.24zM46.405 141.882c7.864 0 14.24 6.376 14.24 14.241v61.09c0 7.865-6.376 14.241-14.24 14.241-7.865 0-14.241-6.376-14.241-14.24v-61.09c-.001-7.865 6.375-14.242 14.241-14.242zM221.614 141.882c7.864 0 14.24 6.376 14.24 14.241v61.09c0 7.865-6.376 14.241-14.24 14.241-7.865 0-14.241-6.376-14.241-14.24v-61.09c0-7.865 6.376-14.242 14.241-14.242zM69.79 127.565c.396-28.43 25.21-51.74 57.062-54.812h14.312c31.854 3.073 56.666 26.384 57.062 54.812H69.79z" fill="#a4c639"/>
+                <path d="M74.743 70.009l15.022 26.02M193.276 70.009l-15.023 26.02" fill="none" stroke="#a4c639" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M114.878 102.087c.012 3.974-3.277 7.205-7.347 7.216-4.068.01-7.376-3.202-7.388-7.176v-.04c-.011-3.975 3.278-7.205 7.347-7.216 4.068-.011 7.376 3.2 7.388 7.176v.04zM169.874 102.087c.012 3.974-3.277 7.205-7.347 7.216-4.068.01-7.376-3.202-7.388-7.176v-.04c-.011-3.975 3.278-7.205 7.347-7.216 4.068-.011 7.376 3.2 7.388 7.176v.04z" fill="#ffffff"/>
+              </svg>
+              Android
             </div>
-            <div className={styles.trackLabel}>Native dev trail</div>
+            <div className={styles.trackLabel}>Android native trail</div>
             <p className={styles.trackDesc}>
-              You come from Kotlin or Swift. Map your concepts to the JavaScript ecosystem.
+              You come from Kotlin and Jetpack Compose. Map your concepts to the React Native ecosystem.
             </p>
             <Link
-              className={`${styles.trackBtn} ${styles.trackBtnNativo}`}
-              to="/trilha-nativo/modulo-fundamentos/javascript-for-native-developers"
+              className={`${styles.trackBtn} ${styles.trackBtnAndroid}`}
+              to="/trilha-android/modulo-compose-para-rn/composable-vs-component"
+            >
+              Start
+            </Link>
+          </div>
+
+          <div className={`${styles.trackCard} ${styles.trackCardIos}`} style={{ animationDelay: '0.3s' }}>
+            <div className={styles.cardGlow} />
+            <div className={styles.cardBadge}>
+              <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98l-.09.06c-.22.14-2.18 1.27-2.16 3.8.03 3.02 2.65 4.03 2.68 4.04l-.07.28zM13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+              iOS
+            </div>
+            <div className={styles.trackLabel}>iOS native trail</div>
+            <p className={styles.trackDesc}>
+              You come from Swift and SwiftUI. Map your concepts to the React Native ecosystem.
+            </p>
+            <Link
+              className={`${styles.trackBtn} ${styles.trackBtnIos}`}
+              to="/trilha-ios/modulo-fundamentos/swift-to-javascript"
             >
               Start
             </Link>
@@ -179,7 +202,7 @@ export default function Home() {
           <Link to="/about" className={styles.contributorsLabel}>Made by</Link>
           <div className={styles.contributorsList}>
             {[
-              { username: 'AlimuraMatheus', name: 'Matheus Sales' },
+              { username: 'ms-ciandt', name: 'Matheus Sales' },
               { username: 'gbonin-ciandt',  name: 'Gabriel Bonin' },
               { username: 'erickSuh',       name: 'Erick Sugahara' },
             ].map(({ username, name }, i) => (
@@ -206,9 +229,9 @@ export default function Home() {
           <span className={styles.contributorsLabel}>Reviewers</span>
           <div className={styles.contributorsList}>
             {[
-              { name: 'Matheus Sales', role: 'React Native', username: 'AlimuraMatheus', color: '#00d4ff' },
+              { name: 'Matheus Sales', role: 'React Native', username: 'ms-ciandt', color: '#00d4ff' },
               { name: 'Diego Karol Gouvea Lana', role: 'Architect', username: null, avatar: '/trilha-react-native/img/lana.webp', color: '#7c3aed' },
-              { name: 'Reviewer',               role: 'Web',       username: null, avatar: null,                                   color: '#059669' },
+              { name: 'Guilherme Rovaron',       role: 'Web',       username: null, avatar: '/trilha-react-native/img/web-reviewer.jpg', color: '#059669' },
               { name: 'Paulo Vitor Sato',        role: 'Android',   username: null, avatar: '/trilha-react-native/img/sato.webp', color: '#d97706' },
               { name: 'Reviewer',      role: 'iOS',          username: null,             color: '#d97706' },
             ].map(({ name, role, username, avatar, color }, i) => (

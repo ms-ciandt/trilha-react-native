@@ -474,7 +474,11 @@ Atualizacoes OTA funcionam substituindo o bundle JS no dispositivo sem passar pe
 ```typescript
 // src/ota/OTAClient.ts
 import RNFS from 'react-native-fs';
-import { NativeModules } from 'react-native';
+import { TurboModuleRegistry } from 'react-native';
+import type { TurboModule } from 'react-native';
+
+interface AppInfoSpec extends TurboModule { version: string }
+const AppInfo = TurboModuleRegistry.getEnforcing<AppInfoSpec>('AppInfo');
 
 const BUNDLE_DIR = `${RNFS.DocumentDirectoryPath}/ota`;
 const ACTIVE_BUNDLE_PATH = `${BUNDLE_DIR}/index.bundle`;
@@ -525,7 +529,7 @@ export async function downloadAndApply(serverUrl: string): Promise<void> {
 }
 
 function isNativeVersionCompatible(minVersion: string): boolean {
-  const appVersion: string = NativeModules.AppInfo.version;
+  const appVersion: string = AppInfo.version;
   return semverCompare(appVersion, minVersion) >= 0;
 }
 ```

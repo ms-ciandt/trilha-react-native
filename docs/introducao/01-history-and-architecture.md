@@ -1,4 +1,4 @@
----
+﻿---
 title: History & Architecture of React Native
 ---
 
@@ -214,5 +214,3 @@ Notice:
 | Expo SDK 56 Changelog | Official | [expo.dev/changelog/sdk-56](https://expo.dev/changelog/sdk-56) |
 
 ---
-
-Next → **[New Architecture Deep Dive](./new-architecture)**

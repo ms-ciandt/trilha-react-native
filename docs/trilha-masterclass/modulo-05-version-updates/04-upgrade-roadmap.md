@@ -1,4 +1,4 @@
----
+﻿---
 title: Roadmap and Recommended Upgrade Path
 ---
 
@@ -182,5 +182,3 @@ Use this as a starting point for planning an upgrade sprint:
 | [App.js Conf 2025](https://appjs.swmansion.com/editions/2025) | Post-0.76 roadmap, Legacy Architecture sunset plan |
 
 ---
-
-Next → [Validation with a Build on Both Platforms](./build-validation)

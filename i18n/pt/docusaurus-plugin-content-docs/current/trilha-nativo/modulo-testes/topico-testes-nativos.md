@@ -18,7 +18,7 @@ Ao final, o dev deve conseguir:
 ### Video Demonstration
 
 <video width="100%" max-width="800px" controls style="border-radius: 8px; margin: 16px 0;">
-  <source src="https://alimuramatheus.github.io/trilha-react-native/assets/videos/Native_to_RN_Testing_-_nativo.mp4" type="video/mp4">
+  <source src="https://ms-ciandt.github.io/trilha-react-native/assets/videos/Native_to_RN_Testing_-_nativo.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
 

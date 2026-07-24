@@ -23,11 +23,11 @@ docs/
     modulo-testes/             ← a criar
     modulo-cicd/               ← a criar
     modulo-arquitetura/        ← a criar
-  trilha-masterclass/          ← trilha avançada (Brownfield, TurboModules, Fabric, Performance, CI/CD)
+  trilha-masterclass/          ← trilha avançada (Brownfield, JSI, Fabric, TurboModules, Performance, CI/CD)
     modulo-00-overview/        ← visão geral do curso — arquivo .mdx com JSX
     modulo-01-brownfield/      ← integração brownfield (3 arquivos)
-    modulo-02-turbomodules/    ← TurboModules
-    modulo-03-fabric-jsi/      ← Fabric & JSI (6 arquivos)
+    modulo-02-jsi-fabric/      ← JSI & Fabric (6 arquivos)
+    modulo-03-turbomodules/    ← TurboModules (builds on JSI)
     modulo-04-performance-cicd/ ← Performance e CI/CD (4 arquivos)
     modulo-05-upgrade/         ← Upgrade Strategy
 _course-refs/                  ← arquivos COURSE-*.md consolidados (fora do docs/, não publicados)

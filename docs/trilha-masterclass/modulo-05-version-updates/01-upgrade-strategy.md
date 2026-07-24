@@ -1,4 +1,4 @@
----
+﻿---
 title: "Process: Upgrade Strategy"
 ---
 
@@ -242,5 +242,3 @@ Run on a **low-end device** for the Android smoke test — most upgrade-introduc
 | [New Architecture is Here — Meta Blog](https://reactnative.dev/blog/2024/10/23/the-new-architecture-is-here) | Official 0.76 announcement: what changed, interop layer, migration path |
 
 ---
-
-Next → [Dependencies: Patches and Environment](./patches-recreation)

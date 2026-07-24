@@ -1,4 +1,4 @@
----
+﻿---
 title: Mobile Performance
 ---
 
@@ -21,11 +21,22 @@ The difference is the hardware. A mid-range Android phone has a fraction of the 
 
 React Native runs three threads that matter for performance:
 
-- **JS Thread** — runs your TypeScript: React renders, hooks, effects, business logic. This is your main thread. If it stalls for 16ms, a frame drops.
+- **JS Thread** — runs your TypeScript: React renders, hooks, effects, business logic. This is your main thread. If it stalls for ~16ms at 60Hz (or ~8ms on 120Hz devices, now common on mid-range phones), a frame drops.
 - **UI Thread** — handles native view rendering, touch events, and native animations. It should never be blocked by JS work.
 - **Native module threads** — used internally for I/O, networking, and background work in native modules.
 
 The key insight: animations that cross through the JS Thread on every frame will visibly stutter. Libraries like `react-native-reanimated` move animation worklets to the UI Thread entirely, making them immune to JS slowdowns.
+
+### New Architecture (RN 0.76+, default)
+
+The three-thread model above describes the legacy architecture. Since RN 0.76, the New Architecture is on by default and changes the internals:
+
+- **JSI** (JavaScript Interface) replaces the asynchronous bridge. JS now calls C++ directly and synchronously — no serialization overhead, no queue.
+- **TurboModules** replace the old `NativeModules` — they load lazily on first access instead of at startup.
+- **Fabric** replaces the old renderer. The view tree is computed in C++ and supports React 18 concurrent features (`startTransition`, `useDeferredValue`).
+- **Layout thread:** in the legacy architecture, Yoga ran on a dedicated Shadow Thread. In Fabric, layout is computed in C++ and can run on the background thread or the main thread depending on context.
+
+For day-to-day performance work, the same rules apply (memoization, FlatList, offloading animations). The New Architecture primarily removes the bridge bottleneck that caused jank in complex animated UIs. For deeper background, see the [New Architecture intro](../../introducao/02-new-architecture).
 
 ---
 
@@ -36,7 +47,7 @@ The key insight: animations that cross through the JS Thread on every frame will
 | DOM virtualization (react-window, react-virtual) | `FlatList` / `SectionList` | Built-in virtualization |
 | `React.memo` / `useMemo` / `useCallback` | Same | Identical API, same purpose |
 | Avoiding layout thrash | `getItemLayout` | Pre-computing item positions avoids measurement |
-| Lighthouse / DevTools profiler | Perf Monitor + Flipper | Different tools, same questions |
+| Lighthouse / DevTools profiler | Perf Monitor + React Native DevTools | Different tools, same questions |
 
 ---
 
@@ -110,8 +121,12 @@ Avoid building new objects or arrays inline in JSX — every render creates a ne
 | Tool | What it shows |
 |---|---|
 | Perf Monitor (shake menu → Perf Monitor) | Live JS FPS and UI FPS — first place to look for jank |
-| Flipper + React Native plugin | Component tree, re-render highlighting, network, and logs |
-| React DevTools (standalone) | Component profiler, same as web DevTools |
+| React Native DevTools (0.76+) | Component profiler, re-render highlighting, network inspector, logs — replaces Flipper |
+| React DevTools (standalone) | Component profiler, same as web DevTools — still works as an alternative |
+
+:::note Flipper is deprecated
+Flipper was deprecated in RN 0.73 and removed from the default template. For profiling, use the built-in **React Native DevTools**, available via the Dev Menu (shake the device or press `j` in the Metro terminal).
+:::
 
 The workflow is the same as web: measure first, then optimize. Check the Perf Monitor on a real mid-range Android device, not on a simulator — simulators share your machine's CPU and hide real-world bottlenecks.
 
@@ -126,5 +141,3 @@ The workflow is the same as web: measure first, then optimize. Check the Perf Mo
 | Reanimated | Official Docs | [docs.swmansion.com/react-native-reanimated](https://docs.swmansion.com/react-native-reanimated) |
 
 ---
-
-Next → **[Tests](../modulo-testes/topico-testes-web)**

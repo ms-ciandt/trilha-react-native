@@ -169,6 +169,7 @@ const sidebars = {
     },
   ],
 
+
   trilhaMasterclass: [
     {
       type: 'category',
@@ -264,6 +265,90 @@ const sidebars = {
   trilhaAndroid: [
     {
       type: 'category',
+      label: 'Fundamentals',
+      collapsed: false,
+      items: [
+        'trilha-android/modulo-fundamentos/javascript-for-android-devs',
+        'trilha-android/modulo-fundamentos/typescript-for-kotlin-devs',
+        'trilha-android/modulo-fundamentos/rn-core-components',
+        'trilha-android/modulo-fundamentos/styling-stylesheet',
+        'trilha-android/modulo-fundamentos/state-and-apis',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Native Resources',
+      collapsed: false,
+      items: [
+        'trilha-android/modulo-recursos-nativos/permissions',
+        'trilha-android/modulo-recursos-nativos/camera',
+        'trilha-android/modulo-recursos-nativos/storage',
+        'trilha-android/modulo-recursos-nativos/sensors-device-apis',
+        'trilha-android/modulo-recursos-nativos/notifications',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Performance',
+      collapsed: false,
+      items: [
+        'trilha-android/modulo-performance/thread-model',
+        'trilha-android/modulo-performance/flatlist-optimisation',
+        'trilha-android/modulo-performance/reanimated',
+        'trilha-android/modulo-performance/memo-usememo-usecallback',
+        'trilha-android/modulo-performance/bundle-startup',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Testing',
+      collapsed: false,
+      items: [
+        'trilha-android/modulo-testes/jest-unit-tests',
+        'trilha-android/modulo-testes/react-native-testing-library',
+        'trilha-android/modulo-testes/mocking-native-modules',
+        'trilha-android/modulo-testes/integration-tests',
+        'trilha-android/modulo-testes/detox-e2e',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'CI/CD',
+      collapsed: false,
+      items: [
+        'trilha-android/modulo-cicd/fastlane',
+        'trilha-android/modulo-cicd/github-actions',
+        'trilha-android/modulo-cicd/eas-build',
+        'trilha-android/modulo-cicd/code-signing-keystore',
+        'trilha-android/modulo-cicd/ota-updates',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Architecture',
+      collapsed: false,
+      items: [
+        'trilha-android/modulo-arquitetura/architecture-patterns',
+        'trilha-android/modulo-arquitetura/monorepo',
+        'trilha-android/modulo-arquitetura/state-management-at-scale',
+        'trilha-android/modulo-arquitetura/error-handling-monitoring',
+        'trilha-android/modulo-arquitetura/accessibility',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'New Architecture',
+      collapsed: false,
+      items: [
+        'trilha-android/modulo-new-architecture/hermes-engine',
+        'trilha-android/modulo-new-architecture/jsi-javascript-interface',
+        'trilha-android/modulo-new-architecture/turbomodule-kotlin',
+        'trilha-android/modulo-new-architecture/fabric-component-compose',
+        'trilha-android/modulo-new-architecture/debugging-new-architecture',
+      ],
+    },
+    {
+      type: 'category',
       label: 'Compose → React Native',
       collapsed: false,
       items: [
@@ -275,6 +360,7 @@ const sidebars = {
       ],
     },
   ],
+
 
   trilhaWeb: [
     {
@@ -300,6 +386,7 @@ const sidebars = {
       items: [
         'trilha-web/modulo-recursos-nativos/utilizando-recursos-nativos',
         'trilha-web/modulo-recursos-nativos/topico-integracao-nativa-web',
+        'trilha-web/modulo-recursos-nativos/dependencias-nativas',
       ],
     },
     {
@@ -324,6 +411,7 @@ const sidebars = {
       collapsed: false,
       items: [
         'trilha-web/modulo-cicd/topico-ci-cd-web',
+        'trilha-web/modulo-cicd/modelo-entrega-mobile',
       ],
     },
     {

@@ -12,14 +12,14 @@ Ao final, o dev deve conseguir:
 - Utilizar `FlatList` de forma performática para listas grandes
 - Reduzir re-renders desnecessários com `React.memo`, `useCallback`, `useMemo`
 - Perceber diferenças entre performance web e mobile (hardware, toques, animações)
-- Usar perf monitor e Flipper para inspecionar FPS e uso de recursos
+- Usar Perf Monitor e React Native DevTools para inspecionar FPS e uso de recursos
 
 ---
 
 ### Video Demonstration
 
 <video width="100%" max-width="800px" controls style="border-radius: 8px; margin: 16px 0;">
-  <source src="https://alimuramatheus.github.io/trilha-react-native/assets/videos/Mobile_Performance_-_web.mp4" type="video/mp4">
+  <source src="https://ms-ciandt.github.io/trilha-react-native/assets/videos/Mobile_Performance_-_web.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
 
@@ -29,9 +29,20 @@ Ao final, o dev deve conseguir:
 
 RN não tem DOM, mas tem problemas equivalentes a “excesso de render” que você já conhece:
 
-- **JS Thread**: semelhante ao “main thread” da aplicação React web — roda sua lógica, hooks, render.
+- **JS Thread**: semelhante ao “main thread” da aplicação React web — roda sua lógica, hooks, render. Se travar por ~16ms a 60Hz (ou ~8ms em telas 120Hz, comuns em celulares intermediários), um frame cai.
 - **UI Thread**: cuida da renderização nativa de views, toques, animações.
-- **Ponte (bridge)**: comunicação entre JS e nativo; tráfego excessivo pode prejudicar performance.
+- **Native module threads**: usados internamente por I/O, rede e trabalho em segundo plano de módulos nativos.
+
+#### New Architecture (RN 0.76+, padrão)
+
+O modelo de três threads acima descreve a arquitetura legada. Desde o RN 0.76, a New Architecture é padrão e muda os internos:
+
+- **JSI** (JavaScript Interface) substitui a bridge assíncrona — JS chama C++ diretamente e de forma síncrona, sem serialização.
+- **TurboModules** substituem o `NativeModules` legado — carregamento lazy no primeiro acesso.
+- **Fabric** substitui o renderer antigo — a árvore de views é computada em C++ e suporta as concurrent features do React 18.
+- **Thread de layout:** na arquitetura legada, o Yoga rodava em uma Shadow Thread dedicada. No Fabric, o layout é computado em C++.
+
+Para o trabalho do dia a dia, as mesmas regras se aplicam (memoização, FlatList, animações na UI Thread). Para mais contexto, veja a [introdução à New Architecture](../../introducao/02-new-architecture).
 
 ---
 
@@ -111,10 +122,12 @@ const expensiveComputedList = useMemo(
 
 ### Ferramentas de observação
 
-- **Perf Monitor** (`Debug → Show Perf Monitor`): mostra FPS de UI/JS.
-- **Flipper**:
-  - Plugin React Native para ver perf, logs e eventos.
-  - Ajuda a identificar warnings como “VirtualizedLists should never be nested” e listas mal configuradas.
+- **Perf Monitor** (menu de shake → Perf Monitor): mostra FPS de UI/JS em tempo real — primeiro lugar para verificar jank.
+- **React Native DevTools** (0.76+): profiler de componentes, destacamento de re-renders, inspetor de rede e logs. Disponível via Menu de Desenvolvedor (shake o dispositivo ou pressione `j` no terminal do Metro). Substitui o Flipper.
+
+:::note Flipper está deprecado
+O Flipper foi deprecado no RN 0.73 e removido do template padrão. Use o **React Native DevTools** embutido para profiling.
+:::
 
 ---
 

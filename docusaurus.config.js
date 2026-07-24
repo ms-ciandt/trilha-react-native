@@ -4,9 +4,9 @@
 const config = {
   title: 'React Native Trail',
   tagline: 'From zero to React Native — tracks for native and web devs',
-  url: 'https://alimuramatheus.github.io',
+  url: 'https://ms-ciandt.github.io',
   baseUrl: '/trilha-react-native/',
-  organizationName: 'AlimuraMatheus',
+  organizationName: 'ms-ciandt',
   projectName: 'trilha-react-native',
   trailingSlash: false,
 
@@ -72,10 +72,16 @@ const config = {
             activeBaseRegex: '^/trilha-react-native/trilha-web',
           },
           {
-            to: '/trilha-nativo/modulo-fundamentos/javascript-for-native-developers',
-            label: 'Native dev trail',
+            to: '/trilha-android/modulo-compose-para-rn/composable-vs-component',
+            label: 'Android native trail',
             position: 'left',
-            activeBaseRegex: '^/trilha-react-native/trilha-nativo',
+            activeBaseRegex: '^/trilha-react-native/trilha-android',
+          },
+          {
+            to: '/trilha-ios/modulo-fundamentos/swift-to-javascript',
+            label: 'iOS native trail',
+            position: 'left',
+            activeBaseRegex: '^/trilha-react-native/trilha-ios',
           },
           {
             to: '/trilha-masterclass/modulo-00-overview/course-overview',
