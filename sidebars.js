@@ -77,6 +77,99 @@ const sidebars = {
     },
   ],
 
+  trilhaIos: [
+    {
+      type: 'category',
+      label: 'Fundamentals',
+      collapsed: false,
+      items: [
+        'trilha-ios/modulo-fundamentos/swift-to-javascript',
+        'trilha-ios/modulo-fundamentos/typescript-for-swift-devs',
+        'trilha-ios/modulo-fundamentos/swiftui-to-react',
+        'trilha-ios/modulo-fundamentos/components-and-props',
+        'trilha-ios/modulo-fundamentos/state-and-hooks',
+        'trilha-ios/modulo-fundamentos/rn-core-components',
+        'trilha-ios/modulo-fundamentos/layout-and-flexbox',
+        'trilha-ios/modulo-fundamentos/styling',
+        'trilha-ios/modulo-fundamentos/navigation',
+        'trilha-ios/modulo-fundamentos/state-and-apis',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Native Resources',
+      collapsed: false,
+      items: [
+        'trilha-ios/modulo-recursos-nativos/permissions-info-plist',
+        'trilha-ios/modulo-recursos-nativos/camera-and-media',
+        'trilha-ios/modulo-recursos-nativos/storage-and-keychain',
+        'trilha-ios/modulo-recursos-nativos/sensors-and-device-apis',
+        'trilha-ios/modulo-recursos-nativos/turbomodule-swift',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Performance',
+      collapsed: false,
+      items: [
+        'trilha-ios/modulo-performance/thread-model-ios',
+        'trilha-ios/modulo-performance/list-performance',
+        'trilha-ios/modulo-performance/animations-reanimated',
+        'trilha-ios/modulo-performance/memo-and-renders',
+        'trilha-ios/modulo-performance/bundle-and-startup',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Testing',
+      collapsed: false,
+      items: [
+        'trilha-ios/modulo-testes/jest-unit-tests',
+        'trilha-ios/modulo-testes/react-native-testing-library',
+        'trilha-ios/modulo-testes/mocking-native-modules',
+        'trilha-ios/modulo-testes/integration-tests',
+        'trilha-ios/modulo-testes/detox-e2e',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'CI/CD',
+      collapsed: false,
+      items: [
+        'trilha-ios/modulo-cicd/xcode-cocoapods-setup',
+        'trilha-ios/modulo-cicd/code-signing-and-fastlane',
+        'trilha-ios/modulo-cicd/github-actions-ios',
+        'trilha-ios/modulo-cicd/eas-build-ios',
+        'trilha-ios/modulo-cicd/privacy-manifest-app-store',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Architecture',
+      collapsed: false,
+      items: [
+        'trilha-ios/modulo-arquitetura/architecture-patterns',
+        'trilha-ios/modulo-arquitetura/brownfield-integration',
+        'trilha-ios/modulo-arquitetura/state-management-scale',
+        'trilha-ios/modulo-arquitetura/error-handling-monitoring',
+        'trilha-ios/modulo-arquitetura/accessibility',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'New Architecture',
+      collapsed: false,
+      items: [
+        'trilha-ios/modulo-new-architecture/hermes-on-ios',
+        'trilha-ios/modulo-new-architecture/jsi-objcpp',
+        'trilha-ios/modulo-new-architecture/fabric-ios',
+        'trilha-ios/modulo-new-architecture/turbomodule-deep-dive',
+        'trilha-ios/modulo-new-architecture/debugging-ios',
+      ],
+    },
+  ],
+
+
   trilhaMasterclass: [
     {
       type: 'category',
