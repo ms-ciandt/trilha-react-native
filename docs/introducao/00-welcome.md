@@ -10,18 +10,18 @@ title: Welcome to React Native Trail
   Your browser does not support the video tag.
 </video>
 
-**React Native Trail** is a structured course for developers who already know how to build software — either on **mobile (Android/iOS)** or on the **web (React)** — and want to master React Native with the New Architecture.
+**React Native Trail** is a structured course for developers who already know how to build software and want to master React Native with the New Architecture.
 
-## Two Trails, One Destination
+## Four Trails, One Destination
 
-This course is split into two parallel learning paths:
+| Trail | For |
+|-------|-----|
+| **Android Native Trail** | Kotlin / Jetpack Compose developers |
+| **iOS Native Trail** | Swift / SwiftUI developers |
+| **Web Dev Trail** | React / JavaScript web developers |
+| **Masterclass** | Developers who already know RN fundamentals |
 
-| Trail | For | Starting Point |
-|-------|-----|----------------|
-|  **Native Dev Trail** | Android (Kotlin) or iOS (Swift) developers | JS/TS → React → React Native |
-|  **Web Dev Trail** | React / JavaScript web developers | Mobile mindset → RN differences → Native components |
-
-Both trails converge on the same React Native skill set, approaching it from your existing strengths.
+All trails converge on the same React Native skill set, starting from your existing strengths.
 
 ---
 
@@ -40,13 +40,20 @@ By the end of this course you will:
 
 ## Prerequisites
 
-**Native Dev Trail:**
-- You can read/write Kotlin or Swift
-- You understand the concept of Activities/ViewControllers, layouts, and lifecycle
+**Android Native Trail:**
+- You write Kotlin and are familiar with Jetpack Compose
+- You understand Activities, Fragments, and the Android lifecycle
+
+**iOS Native Trail:**
+- You write Swift and are familiar with SwiftUI
+- You understand ViewControllers, AppDelegate, and the iOS lifecycle
 
 **Web Dev Trail:**
 - You can build React components with hooks
 - You understand JSX, props, state, and the component tree
+
+**Masterclass:**
+- You have completed one of the trails above, or have equivalent React Native experience
 
 ---
 

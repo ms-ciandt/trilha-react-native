@@ -12,18 +12,18 @@ title: Bem-vindo à Trilha React Native
   Your browser does not support the video tag.
 </video>
 
-**Trilha React Native** é um curso estruturado para desenvolvedores que já sabem construir software — seja no **mobile (Android/iOS)** ou na **web (React)** — e querem dominar o React Native com a Nova Arquitetura.
+**Trilha React Native** é um curso estruturado para desenvolvedores que já sabem construir software e querem dominar o React Native com a Nova Arquitetura.
 
-## Duas Trilhas, Um Destino
+## Quatro Trilhas, Um Destino
 
-Este curso é dividido em dois caminhos de aprendizado paralelos:
+| Trilha | Para |
+|--------|------|
+| **Trilha Android** | Desenvolvedores Kotlin / Jetpack Compose |
+| **Trilha iOS** | Desenvolvedores Swift / SwiftUI |
+| **Trilha Web** | Desenvolvedores React / JavaScript web |
+| **Masterclass** | Desenvolvedores que já conhecem os fundamentos do RN |
 
-| Trilha | Para | Ponto de Partida |
-|--------|------|------------------|
-| **Trilha Nativo** | Desenvolvedores Android (Kotlin) ou iOS (Swift) | JS/TS → React → React Native |
-| **Trilha Web** | Desenvolvedores React / JavaScript web | Mentalidade mobile → diferenças do RN → componentes nativos |
-
-Ambas as trilhas convergem para o mesmo conjunto de habilidades em React Native — elas apenas abordam a partir dos seus pontos fortes existentes.
+Todas as trilhas convergem para o mesmo conjunto de habilidades em React Native, partindo dos seus pontos fortes existentes.
 
 ---
 
@@ -42,13 +42,20 @@ Ao final deste curso você irá:
 
 ## Pré-requisitos
 
-**Trilha Nativo:**
-- Você consegue ler/escrever Kotlin ou Swift
-- Você entende o conceito de Activities/ViewControllers, layouts e ciclo de vida
+**Trilha Android:**
+- Você escreve Kotlin e conhece Jetpack Compose
+- Você entende Activities, Fragments e o ciclo de vida Android
+
+**Trilha iOS:**
+- Você escreve Swift e conhece SwiftUI
+- Você entende ViewControllers, AppDelegate e o ciclo de vida iOS
 
 **Trilha Web:**
 - Você consegue construir componentes React com hooks
 - Você entende JSX, props, estado e a árvore de componentes
+
+**Masterclass:**
+- Você concluiu uma das trilhas acima ou tem experiência equivalente em React Native
 
 ---
 
