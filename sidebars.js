@@ -100,7 +100,11 @@ const sidebars = {
       label: 'Native Resources',
       collapsed: false,
       items: [
-        'trilha-ios/modulo-recursos-nativos/native-resources-ios',
+        'trilha-ios/modulo-recursos-nativos/permissions-info-plist',
+        'trilha-ios/modulo-recursos-nativos/camera-and-media',
+        'trilha-ios/modulo-recursos-nativos/storage-and-keychain',
+        'trilha-ios/modulo-recursos-nativos/sensors-and-device-apis',
+        'trilha-ios/modulo-recursos-nativos/turbomodule-swift',
       ],
     },
     {
@@ -108,7 +112,11 @@ const sidebars = {
       label: 'Performance',
       collapsed: false,
       items: [
-        'trilha-ios/modulo-performance/performance-ios',
+        'trilha-ios/modulo-performance/thread-model-ios',
+        'trilha-ios/modulo-performance/list-performance',
+        'trilha-ios/modulo-performance/animations-reanimated',
+        'trilha-ios/modulo-performance/memo-and-renders',
+        'trilha-ios/modulo-performance/bundle-and-startup',
       ],
     },
     {
@@ -116,7 +124,11 @@ const sidebars = {
       label: 'Testing',
       collapsed: false,
       items: [
-        'trilha-ios/modulo-testes/testing-ios',
+        'trilha-ios/modulo-testes/jest-unit-tests',
+        'trilha-ios/modulo-testes/react-native-testing-library',
+        'trilha-ios/modulo-testes/mocking-native-modules',
+        'trilha-ios/modulo-testes/integration-tests',
+        'trilha-ios/modulo-testes/detox-e2e',
       ],
     },
     {
@@ -124,7 +136,11 @@ const sidebars = {
       label: 'CI/CD',
       collapsed: false,
       items: [
-        'trilha-ios/modulo-cicd/cicd-ios',
+        'trilha-ios/modulo-cicd/xcode-cocoapods-setup',
+        'trilha-ios/modulo-cicd/code-signing-and-fastlane',
+        'trilha-ios/modulo-cicd/github-actions-ios',
+        'trilha-ios/modulo-cicd/eas-build-ios',
+        'trilha-ios/modulo-cicd/privacy-manifest-app-store',
       ],
     },
     {
@@ -132,7 +148,23 @@ const sidebars = {
       label: 'Architecture',
       collapsed: false,
       items: [
-        'trilha-ios/modulo-arquitetura/architecture-ios',
+        'trilha-ios/modulo-arquitetura/architecture-patterns',
+        'trilha-ios/modulo-arquitetura/brownfield-integration',
+        'trilha-ios/modulo-arquitetura/state-management-scale',
+        'trilha-ios/modulo-arquitetura/error-handling-monitoring',
+        'trilha-ios/modulo-arquitetura/accessibility',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'New Architecture',
+      collapsed: false,
+      items: [
+        'trilha-ios/modulo-new-architecture/hermes-on-ios',
+        'trilha-ios/modulo-new-architecture/jsi-objcpp',
+        'trilha-ios/modulo-new-architecture/fabric-ios',
+        'trilha-ios/modulo-new-architecture/turbomodule-deep-dive',
+        'trilha-ios/modulo-new-architecture/debugging-ios',
       ],
     },
   ],

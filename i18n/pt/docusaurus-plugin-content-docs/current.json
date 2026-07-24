@@ -51,6 +51,34 @@
     "message": "Arquitetura",
     "description": "The label for category 'Architecture' in sidebar 'trilhaWeb'"
   },
+  "sidebar.trilhaIos.category.Fundamentals": {
+    "message": "Fundamentos",
+    "description": "The label for category 'Fundamentals' in sidebar 'trilhaIos'"
+  },
+  "sidebar.trilhaIos.category.Native Resources": {
+    "message": "Recursos Nativos",
+    "description": "The label for category 'Native Resources' in sidebar 'trilhaIos'"
+  },
+  "sidebar.trilhaIos.category.Performance": {
+    "message": "Performance",
+    "description": "The label for category 'Performance' in sidebar 'trilhaIos'"
+  },
+  "sidebar.trilhaIos.category.Testing": {
+    "message": "Testes",
+    "description": "The label for category 'Testing' in sidebar 'trilhaIos'"
+  },
+  "sidebar.trilhaIos.category.CI/CD": {
+    "message": "CI/CD",
+    "description": "The label for category 'CI/CD' in sidebar 'trilhaIos'"
+  },
+  "sidebar.trilhaIos.category.Architecture": {
+    "message": "Arquitetura",
+    "description": "The label for category 'Architecture' in sidebar 'trilhaIos'"
+  },
+  "sidebar.trilhaIos.category.New Architecture": {
+    "message": "Nova Arquitetura",
+    "description": "The label for category 'New Architecture' in sidebar 'trilhaIos'"
+  },
   "sidebar.trilhaMasterclass.category.Module 00: Overview": {
     "message": "Módulo 00: Visão Geral",
     "description": "The label for category 'Module 00: Overview' in sidebar 'trilhaMasterclass'"
