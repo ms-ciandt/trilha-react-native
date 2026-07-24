@@ -75,7 +75,6 @@ export default function SearchBar() {
         if (containerRef.current && window.PagefindUI) {
           new window.PagefindUI({
             element: containerRef.current,
-            baseUrl: base,
             showImages: false,
             showSubResults: true,
             translations: {
