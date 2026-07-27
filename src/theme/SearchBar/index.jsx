@@ -53,9 +53,13 @@ export default function SearchBar() {
       document.head.appendChild(l);
     };
 
-    // Fetch the script text first so HTML 404 pages don't execute as JS
+    // Validate the script is real JS before injecting (avoids "Unexpected token <" in dev)
     const addScript = async (src) => {
-      if (document.querySelector(`script[src="${src}"]`)) return;
+      // Remove a previous failed script tag for this src before retrying
+      const existing = document.querySelector(`script[src="${src}"]`);
+      if (existing && window.PagefindUI) return; // already loaded successfully
+      if (existing) existing.remove();
+
       const res = await fetch(src);
       if (!res.ok) throw new Error(`Pagefind not found (${res.status})`);
       const text = await res.text();
@@ -69,27 +73,39 @@ export default function SearchBar() {
       });
     };
 
-    const init = async () => {
-      try {
-        addLink(`${bundlePath}pagefind-ui.css`);
-        await addScript(`${bundlePath}pagefind-ui.js`);
+    // Try locale-specific bundle first; fall back to root bundle
+    const baseBundlePath = `${base}/pagefind/`;
+    const candidates = bundlePath !== baseBundlePath
+      ? [bundlePath, baseBundlePath]
+      : [baseBundlePath];
 
-        if (containerRef.current && window.PagefindUI) {
-          new window.PagefindUI({
-            element: containerRef.current,
-            bundlePath,
-            showImages: false,
-            showSubResults: true,
-            translations: {
-              placeholder: 'Search the trail...',
-              zero_results: 'No results for "[QUERY]"',
-            },
-          });
-          setStatus('ready');
+    const init = async () => {
+      for (const path of candidates) {
+        try {
+          addLink(`${path}pagefind-ui.css`);
+          await addScript(`${path}pagefind-ui.js`);
+
+          if (containerRef.current && window.PagefindUI) {
+            new window.PagefindUI({
+              element: containerRef.current,
+              bundlePath: path,
+              showImages: false,
+              showSubResults: true,
+              translations: {
+                placeholder: 'Search the trail...',
+                zero_results: 'No results for "[QUERY]"',
+              },
+            });
+            setStatus('ready');
+            return;
+          }
+        } catch (e) {
+          console.warn('[SearchBar] bundle path failed, trying next:', path, e?.message ?? e);
+          // Reset PagefindUI so a later candidate can re-initialize cleanly
+          delete window.PagefindUI;
         }
-      } catch {
-        setStatus('error');
       }
+      setStatus('error');
     };
 
     init();
