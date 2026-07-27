@@ -16,9 +16,9 @@ title: Welcome to React Native Trail
 
 | Trail | For |
 |-------|-----|
-| **Android Native Trail** | Kotlin / Jetpack Compose developers |
-| **iOS Native Trail** | Swift / SwiftUI developers |
-| **Web Dev Trail** | React / JavaScript web developers |
+| **Android Trail** | Kotlin / Jetpack Compose developers |
+| **iOS Trail** | Swift / SwiftUI developers |
+| **Web Trail** | React / JavaScript web developers |
 | **Masterclass** | Developers who already know RN fundamentals |
 
 All trails converge on the same React Native skill set, starting from your existing strengths.
@@ -40,15 +40,15 @@ By the end of this course you will:
 
 ## Prerequisites
 
-**Android Native Trail:**
+**Android Trail:**
 - You write Kotlin and are familiar with Jetpack Compose
 - You understand Activities, Fragments, and the Android lifecycle
 
-**iOS Native Trail:**
+**iOS Trail:**
 - You write Swift and are familiar with SwiftUI
 - You understand ViewControllers, AppDelegate, and the iOS lifecycle
 
-**Web Dev Trail:**
+**Web Trail:**
 - You can build React components with hooks
 - You understand JSX, props, state, and the component tree
 
