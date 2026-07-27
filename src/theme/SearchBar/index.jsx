@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import styles from './styles.module.css';
 
@@ -8,6 +9,7 @@ export default function SearchBar() {
   const localePrefix = i18n.currentLocale === i18n.defaultLocale ? '' : `/${i18n.currentLocale}`;
   const bundlePath = `${base}${localePrefix}/pagefind/`;
 
+  const [mounted, setMounted] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [status, setStatus] = useState('idle'); // idle | loading | ready | error
   const [shortcut, setShortcut] = useState('⌘K');
@@ -18,9 +20,8 @@ export default function SearchBar() {
   const close = () => setIsOpen(false);
 
   useEffect(() => {
-    if (typeof navigator !== 'undefined' && !navigator.platform.includes('Mac')) {
-      setShortcut('Ctrl+K');
-    }
+    setMounted(true);
+    if (!navigator.platform.includes('Mac')) setShortcut('Ctrl+K');
   }, []);
 
   useEffect(() => {
@@ -123,7 +124,33 @@ export default function SearchBar() {
     if (e.target === backdropRef.current) close();
   };
 
-  // Modal stays in DOM so Pagefind UI survives open/close cycles
+  const modal = (
+    <div
+      ref={backdropRef}
+      className={`${styles.backdrop} ${isOpen ? styles.backdropVisible : ''}`}
+      onClick={handleBackdrop}
+      aria-modal={isOpen ? 'true' : undefined}
+      role={isOpen ? 'dialog' : undefined}
+      aria-label="Search"
+      aria-hidden={!isOpen}
+    >
+      <div className={styles.modal}>
+        <div ref={containerRef} className={styles.pagefind} />
+        {status === 'loading' && (
+          <p className={styles.hint}>Loading search index...</p>
+        )}
+        {status === 'error' && (
+          <p className={styles.hint}>
+            Search only works after a full build. Run{' '}
+            <code>npm run build &amp;&amp; npm run serve</code>.
+          </p>
+        )}
+      </div>
+    </div>
+  );
+
+  // Portal renders outside the navbar so backdrop-filter doesn't confine
+  // position:fixed to the navbar's stacking context
   return (
     <>
       <button
@@ -137,28 +164,7 @@ export default function SearchBar() {
         <kbd className={styles.kbd}>{shortcut}</kbd>
       </button>
 
-      <div
-        ref={backdropRef}
-        className={`${styles.backdrop} ${isOpen ? styles.backdropVisible : ''}`}
-        onClick={handleBackdrop}
-        aria-modal={isOpen ? 'true' : undefined}
-        role={isOpen ? 'dialog' : undefined}
-        aria-label="Search"
-        aria-hidden={!isOpen}
-      >
-        <div className={styles.modal}>
-          <div ref={containerRef} className={styles.pagefind} />
-          {status === 'loading' && (
-            <p className={styles.hint}>Loading search index...</p>
-          )}
-          {status === 'error' && (
-            <p className={styles.hint}>
-              Search only works after a full build. Run{' '}
-              <code>npm run build &amp;&amp; npm run serve</code>.
-            </p>
-          )}
-        </div>
-      </div>
+      {mounted && createPortal(modal, document.body)}
     </>
   );
 }
