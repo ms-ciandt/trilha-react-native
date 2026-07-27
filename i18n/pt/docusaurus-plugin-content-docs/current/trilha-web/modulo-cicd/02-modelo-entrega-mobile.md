@@ -4,6 +4,11 @@ title: Modelo de Entrega Mobile — Lojas, Rollout e Atualizações
 
 # Modelo de Entrega Mobile — Lojas, Rollout e Atualizações
 
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_web/cicd_02_modelo_entrega_mobile.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 > Na web, o deploy é atômico e universal: sobe para o CDN, todo usuário recebe a versão nova no próximo reload. No mobile, o modelo de entrega é fundamentalmente diferente — e isso muda como você pensa sobre releases.
 
 ## Web vs Mobile na Entrega
