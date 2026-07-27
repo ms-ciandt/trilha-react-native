@@ -1,10 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
+import { useLocation } from '@docusaurus/router';
 import styles from './styles.module.css';
 
 export default function SearchBar() {
   const { siteConfig, i18n } = useDocusaurusContext();
+  const location = useLocation();
   const base = siteConfig.baseUrl.replace(/\/$/, '');
   const localePrefix = i18n.currentLocale === i18n.defaultLocale ? '' : `/${i18n.currentLocale}`;
   const bundlePath = `${base}${localePrefix}/pagefind/`;
@@ -120,12 +122,13 @@ export default function SearchBar() {
     }, 60);
   }, [isOpen, status]);
 
+  // Close when React Router navigates (handles SPA navigation after clicking a result)
+  useEffect(() => {
+    close();
+  }, [location.pathname, location.hash]);
+
   const handleBackdrop = (e) => {
     if (e.target === backdropRef.current) close();
-  };
-
-  const handleResultClick = (e) => {
-    if (e.target.closest('a[href]')) close();
   };
 
   const modal = (
@@ -139,7 +142,7 @@ export default function SearchBar() {
       aria-hidden={!isOpen}
     >
       <div className={styles.modal}>
-        <div ref={containerRef} className={styles.pagefind} onClick={handleResultClick} />
+        <div ref={containerRef} className={styles.pagefind} />
         {status === 'loading' && (
           <p className={styles.hint}>Loading search index...</p>
         )}
