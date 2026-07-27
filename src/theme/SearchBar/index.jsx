@@ -124,6 +124,10 @@ export default function SearchBar() {
     if (e.target === backdropRef.current) close();
   };
 
+  const handleResultClick = (e) => {
+    if (e.target.closest('a[href]')) close();
+  };
+
   const modal = (
     <div
       ref={backdropRef}
@@ -135,7 +139,7 @@ export default function SearchBar() {
       aria-hidden={!isOpen}
     >
       <div className={styles.modal}>
-        <div ref={containerRef} className={styles.pagefind} />
+        <div ref={containerRef} className={styles.pagefind} onClick={handleResultClick} />
         {status === 'loading' && (
           <p className={styles.hint}>Loading search index...</p>
         )}
