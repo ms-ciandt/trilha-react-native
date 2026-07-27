@@ -5,11 +5,9 @@ title: Bem-vindo à Trilha React Native
 
 # Bem-vindo à Trilha React Native
 
-## Video Overview
-
 <video width="100%" controls style="border-radius: 8px; margin: 16px 0;">
-  <source src="/trilha-react-native/assets/videos/intro_00_welcome.mp4" type="video/mp4">
-  Your browser does not support the video tag.
+  <source src="/trilha-react-native/assets/videos/introducao/00_welcome.mp4" type="video/mp4">
+  Seu navegador não suporta o elemento de vídeo.
 </video>
 
 **Trilha React Native** é um curso estruturado para desenvolvedores que já sabem construir software e querem dominar o React Native com a Nova Arquitetura.

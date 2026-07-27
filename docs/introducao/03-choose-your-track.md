@@ -13,7 +13,7 @@ title: Choose Your Trail
 
 <div style="border: 2px solid #3ddc84; border-radius: 12px; padding: 20px;">
 
-### Android Native Trail
+### Android Trail
 
 For **Kotlin / Jetpack Compose** developers
 
@@ -25,7 +25,7 @@ Your advantage: you already understand thread safety, native rendering, and plat
 
 <div style="border: 2px solid #007aff; border-radius: 12px; padding: 20px;">
 
-### iOS Native Trail
+### iOS Trail
 
 For **Swift / SwiftUI** developers
 
@@ -37,7 +37,7 @@ Your advantage: you already understand UIKit/SwiftUI rendering, the iOS lifecycl
 
 <div style="border: 2px solid #25c2a0; border-radius: 12px; padding: 20px;">
 
-### Web Dev Trail
+### Web Trail
 
 For **React / JavaScript** web developers
 

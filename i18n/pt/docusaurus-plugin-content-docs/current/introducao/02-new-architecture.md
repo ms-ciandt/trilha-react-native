@@ -4,11 +4,9 @@ title: Mergulho Profundo na Nova Arquitetura
 
 # Mergulho Profundo na Nova Arquitetura
 
-## Video Overview
-
 <video width="100%" controls style="border-radius: 8px; margin: 16px 0;">
-  <source src="/trilha-react-native/assets/videos/intro_02-new-arch.mp4" type="video/mp4">
-  Your browser does not support the video tag.
+  <source src="/trilha-react-native/assets/videos/introducao/02_new_architecture.mp4" type="video/mp4">
+  Seu navegador não suporta o elemento de vídeo.
 </video>
 
 > React Native 0.76+ — A Nova Arquitetura está **ativada por padrão**. É isso que roda seu app.

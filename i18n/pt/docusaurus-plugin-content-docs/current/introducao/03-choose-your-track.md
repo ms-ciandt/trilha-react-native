@@ -4,6 +4,11 @@ title: Escolha Sua Trilha
 
 # Escolha Sua Trilha
 
+<video width="100%" controls style="border-radius: 8px; margin: 16px 0;">
+  <source src="/trilha-react-native/assets/videos/introducao/03_choose_track.mp4" type="video/mp4">
+  Seu navegador não suporta o elemento de vídeo.
+</video>
+
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-top: 32px;">
 
 <div style="border: 2px solid #3ddc84; border-radius: 12px; padding: 20px;">
