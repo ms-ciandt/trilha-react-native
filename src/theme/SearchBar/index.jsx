@@ -1,11 +1,17 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
+import { useLocation } from '@docusaurus/router';
 import styles from './styles.module.css';
 
 export default function SearchBar() {
-  const { siteConfig } = useDocusaurusContext();
+  const { siteConfig, i18n } = useDocusaurusContext();
+  const location = useLocation();
   const base = siteConfig.baseUrl.replace(/\/$/, '');
+  const localePrefix = i18n.currentLocale === i18n.defaultLocale ? '' : `/${i18n.currentLocale}`;
+  const bundlePath = `${base}${localePrefix}/pagefind/`;
 
+  const [mounted, setMounted] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [status, setStatus] = useState('idle'); // idle | loading | ready | error
   const [shortcut, setShortcut] = useState('⌘K');
@@ -16,9 +22,8 @@ export default function SearchBar() {
   const close = () => setIsOpen(false);
 
   useEffect(() => {
-    if (typeof navigator !== 'undefined' && !navigator.platform.includes('Mac')) {
-      setShortcut('Ctrl+K');
-    }
+    setMounted(true);
+    if (!navigator.platform.includes('Mac')) setShortcut('Ctrl+K');
   }, []);
 
   useEffect(() => {
@@ -51,9 +56,13 @@ export default function SearchBar() {
       document.head.appendChild(l);
     };
 
-    // Fetch the script text first so HTML 404 pages don't execute as JS
+    // Validate the script is real JS before injecting (avoids "Unexpected token <" in dev)
     const addScript = async (src) => {
-      if (document.querySelector(`script[src="${src}"]`)) return;
+      // Remove a previous failed script tag for this src before retrying
+      const existing = document.querySelector(`script[src="${src}"]`);
+      if (existing && window.PagefindUI) return; // already loaded successfully
+      if (existing) existing.remove();
+
       const res = await fetch(src);
       if (!res.ok) throw new Error(`Pagefind not found (${res.status})`);
       const text = await res.text();
@@ -67,31 +76,43 @@ export default function SearchBar() {
       });
     };
 
-    const init = async () => {
-      try {
-        addLink(`${base}/pagefind/pagefind-ui.css`);
-        await addScript(`${base}/pagefind/pagefind-ui.js`);
+    // Try locale-specific bundle first; fall back to root bundle
+    const baseBundlePath = `${base}/pagefind/`;
+    const candidates = bundlePath !== baseBundlePath
+      ? [bundlePath, baseBundlePath]
+      : [baseBundlePath];
 
-        if (containerRef.current && window.PagefindUI) {
-          new window.PagefindUI({
-            element: containerRef.current,
-            baseUrl: base,
-            showImages: false,
-            showSubResults: true,
-            translations: {
-              placeholder: 'Search the trail...',
-              zero_results: 'No results for "[QUERY]"',
-            },
-          });
-          setStatus('ready');
+    const init = async () => {
+      for (const path of candidates) {
+        try {
+          addLink(`${path}pagefind-ui.css`);
+          await addScript(`${path}pagefind-ui.js`);
+
+          if (containerRef.current && window.PagefindUI) {
+            new window.PagefindUI({
+              element: containerRef.current,
+              bundlePath: path,
+              showImages: false,
+              showSubResults: true,
+              translations: {
+                placeholder: 'Search the trail...',
+                zero_results: 'No results for "[QUERY]"',
+              },
+            });
+            setStatus('ready');
+            return;
+          }
+        } catch (e) {
+          console.warn('[SearchBar] bundle path failed, trying next:', path, e?.message ?? e);
+          // Reset PagefindUI so a later candidate can re-initialize cleanly
+          delete window.PagefindUI;
         }
-      } catch {
-        setStatus('error');
       }
+      setStatus('error');
     };
 
     init();
-  }, [isOpen, status, base]);
+  }, [isOpen, status, bundlePath]);
 
   // Focus input when modal opens
   useEffect(() => {
@@ -101,11 +122,42 @@ export default function SearchBar() {
     }, 60);
   }, [isOpen, status]);
 
+  // Close when React Router navigates (handles SPA navigation after clicking a result)
+  useEffect(() => {
+    close();
+  }, [location.pathname, location.hash]);
+
   const handleBackdrop = (e) => {
     if (e.target === backdropRef.current) close();
   };
 
-  // Modal stays in DOM so Pagefind UI survives open/close cycles
+  const modal = (
+    <div
+      ref={backdropRef}
+      className={`${styles.backdrop} ${isOpen ? styles.backdropVisible : ''}`}
+      onClick={handleBackdrop}
+      aria-modal={isOpen ? 'true' : undefined}
+      role={isOpen ? 'dialog' : undefined}
+      aria-label="Search"
+      aria-hidden={!isOpen}
+    >
+      <div className={styles.modal}>
+        <div ref={containerRef} className={styles.pagefind} />
+        {status === 'loading' && (
+          <p className={styles.hint}>Loading search index...</p>
+        )}
+        {status === 'error' && (
+          <p className={styles.hint}>
+            Search only works after a full build. Run{' '}
+            <code>npm run build &amp;&amp; npm run serve</code>.
+          </p>
+        )}
+      </div>
+    </div>
+  );
+
+  // Portal renders outside the navbar so backdrop-filter doesn't confine
+  // position:fixed to the navbar's stacking context
   return (
     <>
       <button
@@ -119,28 +171,7 @@ export default function SearchBar() {
         <kbd className={styles.kbd}>{shortcut}</kbd>
       </button>
 
-      <div
-        ref={backdropRef}
-        className={`${styles.backdrop} ${isOpen ? styles.backdropVisible : ''}`}
-        onClick={handleBackdrop}
-        aria-modal={isOpen ? 'true' : undefined}
-        role={isOpen ? 'dialog' : undefined}
-        aria-label="Search"
-        aria-hidden={!isOpen}
-      >
-        <div className={styles.modal}>
-          <div ref={containerRef} className={styles.pagefind} />
-          {status === 'loading' && (
-            <p className={styles.hint}>Loading search index...</p>
-          )}
-          {status === 'error' && (
-            <p className={styles.hint}>
-              Search only works after a full build. Run{' '}
-              <code>npm run build &amp;&amp; npm run serve</code>.
-            </p>
-          )}
-        </div>
-      </div>
+      {mounted && createPortal(modal, document.body)}
     </>
   );
 }
