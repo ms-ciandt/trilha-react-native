@@ -4,6 +4,11 @@ title: Mobile Delivery Model — Stores, Rollout, and Updates
 
 # Mobile Delivery Model — Stores, Rollout, and Updates
 
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_web/cicd_02_modelo_entrega_mobile.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 > On the web, deploy is atomic and universal: push to the CDN, every user gets the new version on the next reload. On mobile, the delivery model is fundamentally different — and it changes how you think about releases.
 
 ## Web vs Mobile Delivery

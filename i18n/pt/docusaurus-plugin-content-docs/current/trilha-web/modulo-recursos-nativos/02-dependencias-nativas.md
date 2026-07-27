@@ -4,6 +4,11 @@ title: Dependências Nativas — JS puro vs Código Nativo
 
 # Dependências Nativas — JS puro vs Código Nativo
 
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_web/rec_02_dependencias_nativas.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 > Na web, adicionar uma dependência é barato: `npm install`, tree-shaking, pronto. No mobile, essa suposição quebra para uma categoria inteira de bibliotecas. Entender a diferença antes de adicionar um pacote poupa horas de debug.
 
 ## Duas Classes de Dependências

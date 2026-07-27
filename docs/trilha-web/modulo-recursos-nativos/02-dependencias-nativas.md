@@ -4,6 +4,11 @@ title: Native Dependencies — JS-only vs Native Code
 
 # Native Dependencies — JS-only vs Native Code
 
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_web/rec_02_dependencias_nativas.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 > On the web, adding a dependency is cheap: `npm install`, tree-shaking, done. On mobile, that assumption breaks for a whole category of libraries. Understanding the difference before you add a package saves hours of debugging.
 
 ## Two Classes of Dependencies
