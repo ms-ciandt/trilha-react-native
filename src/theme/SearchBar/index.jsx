@@ -3,8 +3,10 @@ import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import styles from './styles.module.css';
 
 export default function SearchBar() {
-  const { siteConfig } = useDocusaurusContext();
+  const { siteConfig, i18n } = useDocusaurusContext();
   const base = siteConfig.baseUrl.replace(/\/$/, '');
+  const localePrefix = i18n.currentLocale === i18n.defaultLocale ? '' : `/${i18n.currentLocale}`;
+  const bundlePath = `${base}${localePrefix}/pagefind/`;
 
   const [isOpen, setIsOpen] = useState(false);
   const [status, setStatus] = useState('idle'); // idle | loading | ready | error
@@ -69,12 +71,13 @@ export default function SearchBar() {
 
     const init = async () => {
       try {
-        addLink(`${base}/pagefind/pagefind-ui.css`);
-        await addScript(`${base}/pagefind/pagefind-ui.js`);
+        addLink(`${bundlePath}pagefind-ui.css`);
+        await addScript(`${bundlePath}pagefind-ui.js`);
 
         if (containerRef.current && window.PagefindUI) {
           new window.PagefindUI({
             element: containerRef.current,
+            bundlePath,
             showImages: false,
             showSubResults: true,
             translations: {
@@ -90,7 +93,7 @@ export default function SearchBar() {
     };
 
     init();
-  }, [isOpen, status, base]);
+  }, [isOpen, status, bundlePath]);
 
   // Focus input when modal opens
   useEffect(() => {
