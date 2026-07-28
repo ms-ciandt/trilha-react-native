@@ -4,6 +4,13 @@ title: Pipeline de CI/CD
 
 # Pipeline de CI/CD
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc04_05_cicd-pipeline.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 > **Modulo 04 — React Native Masterclass**
 > Publico-alvo: engenheiros senior que constroem pipelines de release automatizados para apps React Native.
 > Ferramentas: GitHub Actions, Fastlane, Gradle, Xcode CLI. React Native 0.76+.

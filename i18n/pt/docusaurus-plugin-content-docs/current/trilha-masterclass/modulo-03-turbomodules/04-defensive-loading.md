@@ -4,6 +4,11 @@ title: Carregamento Defensivo de Módulos
 
 # Carregamento Defensivo de Módulos
 
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc02_04_defensive-loading.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 > Nunca chame um TurboModule às cegas. Módulos podem estar ausentes em ambientes que você não antecipou — e um `getEnforcing` no lugar errado vai derrubar o app silenciosamente em produção.
 
 ---

@@ -4,6 +4,11 @@ title: RN Upgrade Helper e Diffs Nativos
 
 # RN Upgrade Helper e Diffs Nativos
 
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc05_02_rn-upgrade-helper.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 > O Upgrade Helper e a ferramenta mais importante no fluxo de upgrade do RN. Entender exatamente o que ele mostra — e o que ele nao mostra — e a diferenca entre um upgrade tranquilo e tres dias de falhas de build misteriosas.
 
 ---

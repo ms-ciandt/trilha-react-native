@@ -2,6 +2,11 @@
 title: "Runtime — Debugging & E2E"
 ---
 
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc03_06_runtime-debugging.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 ## 4. Depurando a Nova Arquitetura
 
 ### Habilitando logs do modo Bridgeless

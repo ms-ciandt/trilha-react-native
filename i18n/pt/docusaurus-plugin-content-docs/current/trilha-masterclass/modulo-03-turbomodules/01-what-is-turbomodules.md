@@ -4,6 +4,11 @@ title: O que são TurboModules
 
 # O que são TurboModules
 
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc02_01_what-is-turbomodules.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 > Antes da Nova Arquitetura, toda chamada a um módulo nativo cruzava a **bridge assíncrona**. Os TurboModules eliminam a bridge completamente — substituindo-a pelo JSI, um canal C++ direto entre o JavaScript e o código nativo.
 
 ---

@@ -4,6 +4,11 @@ title: Validacao com Build nas Duas Plataformas
 
 # Validacao com Build nas Duas Plataformas
 
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc05_05_build-validation.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 > Um `yarn install` bem-sucedido e um `pod install` verde nao sao validacao. Validacao significa um build limpo nas duas plataformas, testes passando e um smoke test em um dispositivo fisico. Nessa ordem.
 
 ---

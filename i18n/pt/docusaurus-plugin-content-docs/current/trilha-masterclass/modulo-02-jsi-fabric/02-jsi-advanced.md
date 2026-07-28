@@ -2,6 +2,11 @@
 title: "JSI — Padroes Avancados"
 ---
 
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc03_02_jsi-advanced.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 ## 5. Chamadas Sincronas e Assincronas
 
 O JSI permite ambas. A escolha e sua; o JSI nao impos assincronicidade.

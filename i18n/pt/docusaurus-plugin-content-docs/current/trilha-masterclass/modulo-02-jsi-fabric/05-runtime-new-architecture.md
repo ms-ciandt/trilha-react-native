@@ -4,6 +4,11 @@ title: "Runtime — Hermes & Codegen"
 
 # Runtime — New Architecture
 
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc03_05_runtime-new-architecture.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 > **Modulo 03 — React Native Masterclass**
 > Publico-alvo: engenheiros senior que precisam entender como todas as partes da New Architecture se conectam — do bytecode Hermes aos commits do Fabric e chamadas de TurboModule.
 > React Native 0.76+ — modo Bridgeless, Codegen, JSI-first.
