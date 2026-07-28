@@ -442,10 +442,7 @@
   padding: 1.75rem 1.75rem;
   border-radius: 16px;
   border: 1px solid rgba(124, 58, 237, 0.4);
-  background: linear-gradient(135deg,
-    color-mix(in srgb, #2563eb 12%, var(--ifm-background-surface-color)),
-    color-mix(in srgb, #7c3aed 12%, var(--ifm-background-surface-color))
-  );
+  background: var(--ifm-background-surface-color);
   overflow: hidden;
   animation: fadeUp 0.4s ease 0.7s both;
   gap: 0.5rem;
@@ -566,15 +563,11 @@
   border: 1px dashed #b8860b55;
   border-radius: 16px;
   padding: 1.75rem 1.75rem;
-  background: #0d1117;
+  background: var(--ifm-background-surface-color);
   overflow: hidden;
   opacity: 0.75;
   animation: fadeUp 0.4s ease 0.85s both;
   transition: opacity 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
-}
-
-[data-theme='light'] .masterclass {
-  background: #1a1f2e;
 }
 
 .masterclass:hover {
@@ -696,12 +689,9 @@
 
 .masterclassDesc {
   font-size: 0.875rem;
-  color: #9ca3af;
+  color: var(--ifm-color-emphasis-600);
   margin: 0;
   line-height: 1.6;
-}
-[data-theme='light'] .masterclassDesc {
-  color: #d1d5db;
 }
 
 .masterclassBtn {
