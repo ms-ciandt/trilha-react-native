@@ -76,6 +76,12 @@ export default function SearchBar() {
       });
     };
 
+    // Ensures Pagefind relative URLs become absolute (prevents /pt/pt/ duplication)
+    const toAbsolute = (url) => {
+      if (!url || url.startsWith('/') || url.startsWith('http')) return url;
+      return `${base}/${url}`;
+    };
+
     // Try locale-specific bundle first; fall back to root bundle
     const baseBundlePath = `${base}/pagefind/`;
     const candidates = bundlePath !== baseBundlePath
@@ -94,6 +100,16 @@ export default function SearchBar() {
               bundlePath: path,
               showImages: false,
               showSubResults: true,
+              processResult: (result) => {
+                result.url = toAbsolute(result.url);
+                if (Array.isArray(result.sub_results)) {
+                  result.sub_results = result.sub_results.map((sub) => ({
+                    ...sub,
+                    url: toAbsolute(sub.url),
+                  }));
+                }
+                return result;
+              },
               translations: {
                 placeholder: 'Search the trail...',
                 zero_results: 'No results for "[QUERY]"',
