@@ -47,7 +47,7 @@ Sua vantagem: os componentes do React Native funcionam exatamente como component
 
 </div>
 
-<div style="border: 2px solid #d4a017; border-radius: 12px; padding: 20px; background: linear-gradient(135deg, #0a0e1a 0%, #1a1f35 100%);">
+<div style="border: 2px solid #d4a017; border-radius: 12px; padding: 20px;">
 
 ### Masterclass
 
