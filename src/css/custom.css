@@ -43,6 +43,12 @@
   line-height: 1.6 !important;
 }
 
+/* Result count message ("N results for …") */
+.pagefind-ui__message {
+  color: var(--ifm-color-emphasis-700) !important;
+  font-size: 0.8125rem !important;
+}
+
 /* "Load more" button */
 .pagefind-ui__button {
   background: var(--ifm-color-primary) !important;
