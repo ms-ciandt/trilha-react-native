@@ -5,11 +5,13 @@ import { useLocation } from '@docusaurus/router';
 import styles from './styles.module.css';
 
 export default function SearchBar() {
-  const { siteConfig, i18n } = useDocusaurusContext();
+  const { siteConfig } = useDocusaurusContext();
   const location = useLocation();
   const base = siteConfig.baseUrl.replace(/\/$/, '');
-  const localePrefix = i18n.currentLocale === i18n.defaultLocale ? '' : `/${i18n.currentLocale}`;
-  const bundlePath = `${base}${localePrefix}/pagefind/`;
+  // Always load from the root bundle — pagefind filters by document.documentElement.lang.
+  // Using a locale-specific bundlePath causes pagefind to prepend its parent dir (/pt/)
+  // to indexed page paths (pt/…), producing double /pt/pt/ URLs in sub-results.
+  const bundlePath = `${base}/pagefind/`;
 
   const [mounted, setMounted] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -76,17 +78,7 @@ export default function SearchBar() {
       });
     };
 
-    // Ensures Pagefind relative URLs become absolute (prevents /pt/pt/ duplication)
-    const toAbsolute = (url) => {
-      if (!url || url.startsWith('/') || url.startsWith('http')) return url;
-      return `${base}/${url}`;
-    };
-
-    // Try locale-specific bundle first; fall back to root bundle
-    const baseBundlePath = `${base}/pagefind/`;
-    const candidates = bundlePath !== baseBundlePath
-      ? [bundlePath, baseBundlePath]
-      : [baseBundlePath];
+    const candidates = [bundlePath];
 
     const init = async () => {
       for (const path of candidates) {
@@ -100,16 +92,6 @@ export default function SearchBar() {
               bundlePath: path,
               showImages: false,
               showSubResults: true,
-              processResult: (result) => {
-                result.url = toAbsolute(result.url);
-                if (Array.isArray(result.sub_results)) {
-                  result.sub_results = result.sub_results.map((sub) => ({
-                    ...sub,
-                    url: toAbsolute(sub.url),
-                  }));
-                }
-                return result;
-              },
               translations: {
                 placeholder: 'Search the trail...',
                 zero_results: 'No results for "[QUERY]"',
