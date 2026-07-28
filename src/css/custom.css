@@ -845,12 +845,9 @@ video {
   padding: 2rem 2rem 1.75rem;
   margin: -1rem -1rem 2rem;
   border-radius: 12px;
-  background: #111827;
+  background: var(--ifm-background-surface-color);
   border: 1px dashed #b8860b55;
   overflow: hidden;
-}
-[data-theme='light'] .mc-header {
-  background: #1a1f2e;
 }
 
 .mc-header::before {
@@ -923,11 +920,8 @@ video {
 
 .mc-subtitle {
   font-size: 0.875rem;
-  color: #94a3b8;
+  color: var(--ifm-color-emphasis-600);
   margin: 0;
-}
-[data-theme='light'] .mc-subtitle {
-  color: #6b7280;
 }
 
 .mc-coming-soon {
