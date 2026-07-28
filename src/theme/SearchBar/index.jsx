@@ -80,17 +80,21 @@ export default function SearchBar() {
 
     const candidates = [bundlePath];
 
-    // pagefind-ui resolves stored paths (e.g. "/pt/trilha-android/...") via
-    // new URL(path, bundlePath), which strips the baseUrl sub-directory and
-    // produces http://host/pt/... instead of http://host/trilha-react-native/pt/...
-    // We fix this by watching the DOM and rewriting every link href after render.
+    // pagefind derives baseUrl from import.meta.url of pagefind.js.
+    // In some browser/caching scenarios this can resolve to a wrong value
+    // (e.g. /trilha-react-native/pt/ instead of /trilha-react-native/), causing
+    // stored paths like /pt/foo/ to become /trilha-react-native/pt/pt/foo/.
+    // We override it explicitly via pagefind_options to guarantee the correct baseUrl.
+    // The MutationObserver is kept as a safety net for any remaining edge cases.
     const fixLinks = (root) => {
       root.querySelectorAll('a[href]').forEach((a) => {
-        const url = new URL(a.href);
-        if (!url.pathname.startsWith(base + '/')) {
-          url.pathname = base + url.pathname;
-          a.href = url.toString();
-        }
+        try {
+          const url = new URL(a.href);
+          if (!url.pathname.startsWith(base + '/')) {
+            url.pathname = base + url.pathname;
+            a.href = url.toString();
+          }
+        } catch (_) {}
       });
     };
 
@@ -104,6 +108,9 @@ export default function SearchBar() {
             new window.PagefindUI({
               element: containerRef.current,
               bundlePath: path,
+              // Explicitly set baseUrl so pagefind never derives a wrong value
+              // from import.meta.url (e.g. /trilha-react-native/pt/ on locale pages).
+              pagefind_options: { baseUrl: base + '/' },
               showImages: false,
               showSubResults: true,
               translations: {
@@ -112,7 +119,7 @@ export default function SearchBar() {
               },
             });
 
-            // Observe DOM mutations to fix links as pagefind-ui renders results
+            // Safety net: fix any links that still lack the base prefix.
             const observer = new MutationObserver(() => fixLinks(containerRef.current));
             observer.observe(containerRef.current, { childList: true, subtree: true });
 
