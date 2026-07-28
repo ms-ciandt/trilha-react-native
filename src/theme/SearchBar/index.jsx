@@ -80,6 +80,20 @@ export default function SearchBar() {
 
     const candidates = [bundlePath];
 
+    // pagefind-ui resolves stored paths (e.g. "/pt/trilha-android/...") via
+    // new URL(path, bundlePath), which strips the baseUrl sub-directory and
+    // produces http://host/pt/... instead of http://host/trilha-react-native/pt/...
+    // We fix this by watching the DOM and rewriting every link href after render.
+    const fixLinks = (root) => {
+      root.querySelectorAll('a[href]').forEach((a) => {
+        const url = new URL(a.href);
+        if (!url.pathname.startsWith(base + '/')) {
+          url.pathname = base + url.pathname;
+          a.href = url.toString();
+        }
+      });
+    };
+
     const init = async () => {
       for (const path of candidates) {
         try {
@@ -97,12 +111,16 @@ export default function SearchBar() {
                 zero_results: 'No results for "[QUERY]"',
               },
             });
+
+            // Observe DOM mutations to fix links as pagefind-ui renders results
+            const observer = new MutationObserver(() => fixLinks(containerRef.current));
+            observer.observe(containerRef.current, { childList: true, subtree: true });
+
             setStatus('ready');
             return;
           }
         } catch (e) {
           console.warn('[SearchBar] bundle path failed, trying next:', path, e?.message ?? e);
-          // Reset PagefindUI so a later candidate can re-initialize cleanly
           delete window.PagefindUI;
         }
       }
