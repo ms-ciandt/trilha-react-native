@@ -40,7 +40,6 @@ const sidebars = {
       collapsed: false,
       items: [
         'trilha-nativo/modulo-recursos-nativos/utilizando-recursos-nativos',
-        'trilha-nativo/modulo-recursos-nativos/xcassets-ios',
         'trilha-nativo/modulo-recursos-nativos/integracao-nativa-avancada',
       ],
     },
@@ -106,6 +105,7 @@ const sidebars = {
         'trilha-ios/modulo-recursos-nativos/storage-and-keychain',
         'trilha-ios/modulo-recursos-nativos/sensors-and-device-apis',
         'trilha-ios/modulo-recursos-nativos/turbomodule-swift',
+        'trilha-ios/modulo-recursos-nativos/xcassets-ios',
       ],
     },
     {
