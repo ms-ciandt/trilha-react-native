@@ -1,28 +1,28 @@
 ---
 id: xcassets-ios
-title: "Assets e xcassets no React Native"
+title: "Assets and xcassets in React Native"
 ---
 
-# Assets e xcassets no React Native
+# Assets and xcassets in React Native
 
-## De xcassets para `require()`
+## From xcassets to `require()`
 
-Desenvolvedores iOS estão acostumados a gerenciar imagens pelo `.xcassets` — um catálogo do Xcode onde cada asset possui variantes 1x, 2x e 3x que o SO escolhe automaticamente conforme a densidade da tela do dispositivo. O React Native substitui esse mecanismo por um sistema de resolução no lado JavaScript que atinge o mesmo objetivo.
+iOS developers are accustomed to managing images through `.xcassets` — an Xcode catalog where each asset has 1x, 2x, and 3x variants that the OS picks automatically based on the device's screen density. React Native replaces this mechanism with a JavaScript-side resolution system that achieves the same goal.
 
-Quando você escreve `require('./images/logo.png')`, o Metro (o bundler JavaScript) escaneia o projeto em busca de `logo@2x.png` e `logo@3x.png` ao lado do arquivo base. Em tempo de execução, o componente `<Image>` consulta `PixelRatio.get()` e escolhe a variante correta automaticamente — o mesmo comportamento de density-aware que você obtém do xcassets, sem precisar do Xcode.
+When you write `require('./images/logo.png')`, Metro (the JavaScript bundler) scans the project for `logo@2x.png` and `logo@3x.png` alongside the base file. At runtime, the `<Image>` component queries `PixelRatio.get()` and picks the correct variant automatically — the same density-aware behavior you get from xcassets, without Xcode.
 
-| Conceito xcassets | Equivalente no React Native |
+| xcassets concept | React Native equivalent |
 |---|---|
-| `AppIcon.appiconset` | `expo-app-icon` / configuração Expo managed |
-| Variantes `1x / 2x / 3x` | `logo.png`, `logo@2x.png`, `logo@3x.png` lado a lado |
+| `AppIcon.appiconset` | `expo-app-icon` / Expo managed config |
+| `1x / 2x / 3x` image variants | `logo.png`, `logo@2x.png`, `logo@3x.png` alongside each other |
 | `LaunchScreen.storyboard` / `LaunchImage` | `expo-splash-screen` |
-| `Color Set` (cor semântica) | `useColorScheme` + tokens de tema |
-| `Data Set` (binário arbitrário) | `require('./data/model.tflite')` no Metro |
-| Named colors (`AccentColor`) | Constantes de design system, sem equivalente direto no Metro |
+| `Color Set` (semantic color) | `useColorScheme` + custom theme tokens |
+| `Data Set` (arbitrary binary) | `require('./data/model.tflite')` in Metro |
+| Named colors (`AccentColor`) | Design system constants, not a direct Metro equivalent |
 
 ---
 
-## 1. Imagens Estáticas via `require()`
+## 1. Static Images via `require()`
 
 ```tsx
 import { Image, StyleSheet } from 'react-native';
@@ -42,26 +42,26 @@ const styles = StyleSheet.create({
 });
 ```
 
-O Metro resolve isso em tempo de bundle. Forneça os três arquivos lado a lado:
+Metro resolves this at bundle time. Provide all three files side-by-side:
 
 ```
 assets/images/
-  logo.png       ← 1x (base, obrigatório)
+  logo.png       ← 1x (baseline, required)
   logo@2x.png    ← 2x retina
   logo@3x.png    ← 3x Super Retina
 ```
 
-Se apenas `logo.png` existir, o Metro o usa em todas as densidades — a imagem ficará borrada em telas de alta densidade, exatamente como em xcassets com apenas o slot 1x preenchido.
+If only `logo.png` exists, Metro uses it at every density — the image will be blurry on high-density screens, exactly as it would be in xcassets with only a 1x slot filled.
 
-### Diferença em relação ao xcassets
+### Difference from xcassets
 
-No xcassets, slots de densidade faltantes geram um aviso de build. No Metro, são aceitos silenciosamente — você não receberá um erro de build, apenas degradação visual em tempo de execução. Certifique-se de que as três variantes existem antes de publicar.
+In xcassets, missing density slots are a build warning. In Metro, they are silently accepted — you will not get a build error, only runtime visual degradation. Make sure the three variants exist before shipping.
 
 ---
 
-## 2. Imagens Dinâmicas via URI
+## 2. Dynamic Images via URI
 
-Quando a fonte da imagem é determinada em tempo de execução (URL remota, avatar do usuário, conteúdo server-driven), use o formato `uri` ao invés de `require`:
+When the image source is determined at runtime (remote URL, user avatar, server-driven content), use the `uri` format instead of `require`:
 
 ```tsx
 import { Image } from 'react-native';
@@ -76,9 +76,9 @@ export function Avatar({ url }: { url: string }) {
 }
 ```
 
-Você deve fornecer `width` e `height` explícitos — ao contrário do `require()`, o Metro não consegue inferir dimensões de uma URI remota.
+You must provide explicit width and height — unlike `require()`, Metro cannot infer dimensions from a remote URI.
 
-Para imagens que exigem headers de autenticação:
+For images requiring authentication headers:
 
 ```tsx
 <Image
@@ -92,11 +92,11 @@ Para imagens que exigem headers de autenticação:
 
 ---
 
-## 3. Ícone do App — equivalente ao `AppIcon.appiconset`
+## 3. App Icon — equivalent to `AppIcon.appiconset`
 
-Em um projeto React Native bare, o ícone do app fica em `android/app/src/main/res/` (Android) e `ios/<AppName>/Images.xcassets/AppIcon.appiconset/` (iOS). Você edita esses arquivos diretamente.
+In a bare React Native project, the app icon lives in `android/app/src/main/res/` (Android) and `ios/<AppName>/Images.xcassets/AppIcon.appiconset/` (iOS). You edit those files directly.
 
-Com Expo (Managed ou Bare), declare o ícone uma vez em `app.json`:
+With Expo (Managed or Bare), declare the icon once in `app.json`:
 
 ```json
 {
@@ -116,13 +116,13 @@ Com Expo (Managed ou Bare), declare o ícone uma vez em `app.json`:
 }
 ```
 
-O processo de build do Expo gera todos os tamanhos de xcassets necessários para iOS (20pt–1024pt em todos os slots `@1x`/`@2x`/`@3x`) a partir do único arquivo fonte de 1024×1024. Sem edição manual do Xcode.
+Expo's build process generates all required xcassets sizes for iOS (20pt–1024pt across all `@1x`/`@2x`/`@3x` slots) from the single 1024×1024 source. No manual Xcode editing needed.
 
 ---
 
-## 4. Splash Screen — equivalente ao `LaunchImage` / `LaunchScreen.storyboard`
+## 4. Splash Screen — equivalent to `LaunchImage` / `LaunchScreen.storyboard`
 
-Em iOS nativo, a tela de launch é uma `.storyboard` ou um conjunto `LaunchImage` dentro do xcassets. No React Native com Expo:
+In native iOS, the launch screen is a `.storyboard` or a `LaunchImage` set inside xcassets. In React Native with Expo:
 
 ```bash
 npx expo install expo-splash-screen
@@ -148,7 +148,7 @@ npx expo install expo-splash-screen
 }
 ```
 
-Controlando a visibilidade via JS:
+Controlling visibility from JS:
 
 ```tsx
 import * as SplashScreen from 'expo-splash-screen';
@@ -174,15 +174,15 @@ export function App() {
 }
 ```
 
-A splash permanece visível até que `hideAsync()` seja chamado — equivalente a dispensar uma `LaunchScreen` storyboard nativa após seu `AppDelegate` terminar o setup.
+The splash stays visible until `hideAsync()` is called — equivalent to dismissing a native `LaunchScreen` storyboard after your `AppDelegate` finishes setup.
 
 ---
 
-## 5. Fontes
+## 5. Fonts
 
-No xcassets, fontes customizadas são adicionadas via `Info.plist` (chave `UIAppFonts`) e "Copy Bundle Resources" do Xcode. No React Native:
+In xcassets, custom fonts are added via `Info.plist` (`UIAppFonts` key) and Xcode's "Copy Bundle Resources". In React Native:
 
-**Com Expo:**
+**With Expo:**
 
 `app.json`:
 ```json
@@ -193,7 +193,7 @@ No xcassets, fontes customizadas são adicionadas via `Info.plist` (chave `UIApp
 }
 ```
 
-Ou carregue programaticamente:
+Or load programmatically:
 
 ```tsx
 import { useFonts } from 'expo-font';
@@ -207,12 +207,12 @@ export function App() {
   if (!loaded) return null;
 
   return (
-    <Text style={{ fontFamily: 'Roboto-Regular' }}>Olá</Text>
+    <Text style={{ fontFamily: 'Roboto-Regular' }}>Hello</Text>
   );
 }
 ```
 
-**Sem Expo (bare React Native):**
+**Without Expo (bare React Native):**
 
 ```bash
 npx react-native-asset
@@ -226,23 +226,23 @@ module.exports = {
 };
 ```
 
-Executar `npx react-native-asset` copia as fontes para os projetos nativos e atualiza o `Info.plist` no iOS e `assets/` no Android.
+Running `npx react-native-asset` copies fonts into the native projects and updates `Info.plist` on iOS and `assets/` on Android.
 
 ---
 
-## 6. Assets SVG
+## 6. SVG Assets
 
-Projetos Xcode frequentemente usam imagens vetoriais baseadas em PDF no xcassets. O React Native não tem um renderizador nativo de PDF/vetor; o equivalente padrão é SVG via `react-native-svg`:
+Xcode projects often use PDF-based vector images in xcassets. React Native has no built-in PDF/vector renderer; the standard equivalent is SVG via `react-native-svg`:
 
 ```bash
 npm install react-native-svg
 npx expo install react-native-svg  # Expo
 ```
 
-**Opção A: Componente SVG inline**
+**Option A: Inline SVG component**
 
 ```tsx
-import Svg, { Path, Circle } from 'react-native-svg';
+import Svg, { Path } from 'react-native-svg';
 
 export function CheckIcon({ size = 24, color = '#000' }: { size?: number; color?: string }) {
   return (
@@ -253,7 +253,7 @@ export function CheckIcon({ size = 24, color = '#000' }: { size?: number; color?
 }
 ```
 
-**Opção B: Importar arquivos `.svg` como componentes via `react-native-svg-transformer`**
+**Option B: Import `.svg` files as components via `react-native-svg-transformer`**
 
 `metro.config.js`:
 ```js
@@ -267,7 +267,7 @@ config.resolver.sourceExts = [...config.resolver.sourceExts, 'svg'];
 module.exports = config;
 ```
 
-Uso:
+Usage:
 ```tsx
 import Logo from './assets/icons/logo.svg';
 
@@ -276,13 +276,13 @@ export function Header() {
 }
 ```
 
-Este é o equivalente direto de usar um conjunto vetorial PDF no xcassets — o ícone escala sem rasterização em qualquer densidade.
+This is the direct equivalent of using a PDF vector set in xcassets — the icon scales without rasterization at any density.
 
 ---
 
-## 7. Assets Binários Arbitrários (Data Sets)
+## 7. Arbitrary Binary Assets (Data Sets)
 
-O xcassets suporta Data Sets para arquivos binários arbitrários (modelos Core ML, imagens de referência AR). No React Native, o Metro trata esses arquivos via a configuração `assetExts` do resolver:
+xcassets supports Data Sets for arbitrary binary files (Core ML models, AR reference images). In React Native, Metro handles these via the `assetExts` resolver config:
 
 `metro.config.js`:
 ```js
@@ -294,40 +294,40 @@ config.resolver.assetExts.push('tflite', 'bin', 'model');
 module.exports = config;
 ```
 
-Em seguida, faça o bundle e referencie como qualquer asset:
+Then bundle and reference them like any asset:
 
 ```tsx
 const modelAsset = require('./assets/models/classifier.tflite');
 ```
 
-A URI do asset resolvido é acessível via `Asset.fromModule(modelAsset).uri` do `expo-asset` — você passa essa URI para frameworks nativos de ML como o TensorFlow Lite.
+The URI of the resolved asset is accessible via `Asset.fromModule(modelAsset).uri` from `expo-asset` — you pass this URI to native ML frameworks like TensorFlow Lite.
 
 ---
 
-## Resumo Comparativo
+## Comparison Summary
 
-| Tarefa | xcassets / Xcode | React Native |
+| Task | xcassets / Xcode | React Native |
 |---|---|---|
-| Imagens density-aware | Slots 1x/2x/3x no xcassets | `img.png`, `img@2x.png`, `img@3x.png` + `require()` |
-| Ícone do app | `AppIcon.appiconset` | Campo `icon` no `app.json` (Expo) ou edição direta do xcassets |
-| Launch screen | `LaunchScreen.storyboard` | `expo-splash-screen` + `splash` no `app.json` |
-| Fontes customizadas | `Info.plist` UIAppFonts + bundle resource | `expo-font` ou `react-native-asset` |
-| Ícones vetoriais | PDF no xcassets | `react-native-svg` ou transformer `.svg` |
-| Cores semânticas | Color Sets + `UIColor.label` | `useColorScheme` + tokens de tema |
-| Assets binários | Data Sets | `assetExts` no `metro.config.js` + `expo-asset` |
+| Density-aware images | 1x/2x/3x slots in xcassets | `img.png`, `img@2x.png`, `img@3x.png` + `require()` |
+| App icon | `AppIcon.appiconset` | `app.json` `icon` field (Expo) or direct xcassets edit |
+| Launch screen | `LaunchScreen.storyboard` | `expo-splash-screen` + `app.json` `splash` |
+| Custom fonts | `Info.plist` UIAppFonts + bundle resource | `expo-font` or `react-native-asset` |
+| Vector icons | PDF in xcassets | `react-native-svg` or `.svg` transformer |
+| Semantic colors | Color Sets + `UIColor.label` | `useColorScheme` + theme tokens |
+| Binary assets | Data Sets | `assetExts` in `metro.config.js` + `expo-asset` |
 
 ---
 
-## Exercício Prático
+## Practical Exercise
 
-1. Adicione um `logo.png` com variantes `@2x` e `@3x` e renderize com `<Image source={require()} />`
-2. Configure o ícone do app usando `app.json` com ícones diferentes para iOS e Android
-3. Implemente uma splash screen que some apenas após um carregamento assíncrono de dados
-4. Substitua um ícone PNG por um equivalente SVG usando `react-native-svg-transformer`
+1. Add a `logo.png` with `@2x` and `@3x` variants and render it with `<Image source={require()} />`
+2. Configure the app icon using `app.json` with different icons for iOS and Android
+3. Implement a splash screen that hides only after an async data load completes
+4. Replace a PNG icon with an SVG equivalent using `react-native-svg-transformer`
 
 ---
 
-## Materiais de Estudo
+## Study Materials
 
 - [Images — React Native Official Docs](https://reactnative.dev/docs/images)
 - [expo-splash-screen — Expo Docs](https://docs.expo.dev/versions/latest/sdk/splash-screen/)
