@@ -10,10 +10,10 @@ const CONTRIBUTORS = [
 
 const REVIEWERS = [
   { name: 'Matheus Sales',           role: 'React Native', username: 'ms-ciandt', avatar: null,                                        color: '#00d4ff' },
-  { name: 'Diego Karol Gouvea Lana', role: 'Architect',    username: null,        avatar: '/trilha-react-native/img/lana.webp',        color: '#7c3aed' },
+  { name: 'Diego Lana', role: 'Architect',    username: null,        avatar: '/trilha-react-native/img/lana.webp',        color: '#7c3aed' },
   { name: 'Guilherme Rovaron',       role: 'Web',          username: null,        avatar: '/trilha-react-native/img/web-reviewer.jpg', color: '#0284c7' },
-  { name: 'Paulo Vitor Sato',        role: 'Android',      username: null,        avatar: '/trilha-react-native/img/sato.webp',        color: '#3ddc84' },
-  { name: 'Gabriel Dos Santos Xavier', role: 'iOS',         username: null,        avatar: '/trilha-react-native/img/gabriel-xavier.webp', color: '#a855f7' },
+  { name: 'Paulo Sato',        role: 'Android',      username: null,        avatar: '/trilha-react-native/img/sato.webp',        color: '#3ddc84' },
+  { name: 'Gabriel Xavier', role: 'iOS',         username: null,        avatar: '/trilha-react-native/img/gabriel-xavier.webp', color: '#a855f7' },
 ];
 
 const TOOLS = [
