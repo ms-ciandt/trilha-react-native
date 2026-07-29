@@ -23,7 +23,7 @@ Your advantage: you already understand thread safety, native rendering, and plat
 
 </div>
 
-<div style="border: 2px solid #393973; border-radius: 12px; padding: 20px;">
+<div style="border: 2px solid #690037; border-radius: 12px; padding: 20px;">
 
 ### iOS Trail
 

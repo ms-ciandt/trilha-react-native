@@ -23,7 +23,7 @@ Sua vantagem: você já entende thread safety, renderização nativa e APIs de p
 
 </div>
 
-<div style="border: 2px solid #393973; border-radius: 12px; padding: 20px;">
+<div style="border: 2px solid #690037; border-radius: 12px; padding: 20px;">
 
 ### Trilha iOS
 
