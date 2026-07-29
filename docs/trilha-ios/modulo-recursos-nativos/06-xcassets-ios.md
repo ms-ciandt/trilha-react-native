@@ -242,7 +242,7 @@ npx expo install react-native-svg  # Expo
 **Option A: Inline SVG component**
 
 ```tsx
-import Svg, { Path, Circle } from 'react-native-svg';
+import Svg, { Path } from 'react-native-svg';
 
 export function CheckIcon({ size = 24, color = '#000' }: { size?: number; color?: string }) {
   return (

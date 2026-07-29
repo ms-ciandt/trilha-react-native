@@ -40,7 +40,6 @@ const sidebars = {
       collapsed: false,
       items: [
         'trilha-nativo/modulo-recursos-nativos/utilizando-recursos-nativos',
-        'trilha-nativo/modulo-recursos-nativos/xcassets-ios',
         'trilha-nativo/modulo-recursos-nativos/integracao-nativa-avancada',
       ],
     },
@@ -106,6 +105,7 @@ const sidebars = {
         'trilha-ios/modulo-recursos-nativos/storage-and-keychain',
         'trilha-ios/modulo-recursos-nativos/sensors-and-device-apis',
         'trilha-ios/modulo-recursos-nativos/turbomodule-swift',
+        'trilha-ios/modulo-recursos-nativos/xcassets-ios',
       ],
     },
     {
@@ -228,6 +228,18 @@ const sidebars = {
         'trilha-masterclass/modulo-04-performance-cicd/bundle-distribution',
         'trilha-masterclass/modulo-04-performance-cicd/packaging-and-distribution',
         'trilha-masterclass/modulo-04-performance-cicd/cicd-pipeline',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Animations',
+      collapsed: false,
+      items: [
+        'trilha-masterclass/modulo-06-animations/threading-model',
+        'trilha-masterclass/modulo-06-animations/animated-api',
+        'trilha-masterclass/modulo-06-animations/reanimated-worklets',
+        'trilha-masterclass/modulo-06-animations/gesture-and-layout',
+        'trilha-masterclass/modulo-06-animations/animation-performance',
       ],
     },
     {

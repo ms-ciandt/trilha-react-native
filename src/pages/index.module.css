@@ -377,13 +377,28 @@
   transform: translateY(-1px);
 }
 
+/* ─── RN note inside track cards ───────────────────────────── */
+.cardRnNote {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.72rem;
+  color: var(--ifm-color-emphasis-500);
+  padding-top: 0.625rem;
+  border-top: 1px solid var(--ifm-color-emphasis-100);
+}
+
+[data-theme='dark'] .cardRnNote {
+  border-top-color: var(--ifm-color-emphasis-200);
+}
+
 /* ─── Convergence arrows ────────────────────────────────────── */
 .arrows {
   width: 100%;
-  max-width: 680px;
-  height: 80px;
+  max-width: 960px;
+  height: 140px;
   overflow: visible;
-  margin: -4px 0 0;
+  margin: 0 0 -8px;
   display: block;
 }
 
