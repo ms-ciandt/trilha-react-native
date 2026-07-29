@@ -7,6 +7,7 @@ title: Bem-vindo à Trilha React Native
 
 <video width="100%" controls style="border-radius: 8px; margin: 16px 0;">
   <source src="/trilha-react-native/assets/videos/introducao/00_welcome.mp4" type="video/mp4">
+  <track kind="captions" src="/trilha-react-native/assets/captions/introducao/00_welcome.vtt" srclang="pt" label="Português" default>
   Seu navegador não suporta o elemento de vídeo.
 </video>
 

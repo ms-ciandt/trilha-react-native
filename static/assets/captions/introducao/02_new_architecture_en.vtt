@@ -1,0 +1,406 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:02.800
+React Native revolutionized mobile development
+
+2
+00:00:02.800 --> 00:00:05.920
+by letting engineering teams write one JavaScript code base
+
+3
+00:00:05.920 --> 00:00:07.920
+and ship it to multiple platforms.
+
+4
+00:00:07.920 --> 00:00:10.880
+But for years, those apps faced a performance ceiling,
+
+5
+00:00:10.880 --> 00:00:13.280
+built into the frameworks core design.
+
+6
+00:00:13.280 --> 00:00:14.960
+The problem was structural.
+
+7
+00:00:14.960 --> 00:00:17.360
+The JavaScript code holding your apps logic
+
+8
+00:00:17.360 --> 00:00:19.520
+and the native device rendering the pixels
+
+9
+00:00:19.520 --> 00:00:22.240
+existed in entirely separate environments.
+
+10
+00:00:22.240 --> 00:00:23.840
+They could not communicate directly
+
+11
+00:00:23.840 --> 00:00:25.440
+across the gap between them.
+
+12
+00:00:25.440 --> 00:00:26.800
+To bridge that divide,
+
+13
+00:00:26.800 --> 00:00:29.280
+every single command had to be serialized.
+
+14
+00:00:29.360 --> 00:00:33.760
+If a user tapped a button, that action was converted into a text-based JSON string,
+
+15
+00:00:33.760 --> 00:00:37.280
+so it could be sent across a mechanism literally called the bridge.
+
+16
+00:00:37.280 --> 00:00:39.680
+Once the JSON string made it across the bridge,
+
+17
+00:00:39.680 --> 00:00:42.640
+the native side had to asynchronously unpack that text
+
+18
+00:00:42.640 --> 00:00:45.760
+and deserialize it back into an actionable command.
+
+19
+00:00:45.760 --> 00:00:48.720
+Only then, with the device actually do what you asked.
+
+20
+00:00:48.720 --> 00:00:52.800
+This constant translation process required a massive amount of overhead.
+
+21
+00:00:52.800 --> 00:00:55.920
+No matter how clean your JavaScript code was,
+
+22
+00:00:56.000 --> 00:01:00.160
+the app could only run as fast as the bridge could process those incoming
+
+23
+00:01:00.160 --> 00:01:01.280
+and outgoing messages.
+
+24
+00:01:01.920 --> 00:01:05.680
+Because the bridge forced all communication to be asynchronous,
+
+25
+00:01:05.680 --> 00:01:08.560
+UI layout passes were calculated out of sync
+
+26
+00:01:08.560 --> 00:01:10.240
+with the actual drawing of the screen.
+
+27
+00:01:10.880 --> 00:01:13.440
+The JavaScript thread was sending dimensions,
+
+28
+00:01:13.440 --> 00:01:16.480
+but the native thread was often already painting pixels.
+
+29
+00:01:16.880 --> 00:01:20.640
+For developers, this meant dealing with unpredictable UI flicker.
+
+30
+00:01:20.640 --> 00:01:23.200
+You couldn't get accurate measurements of an element
+
+31
+00:01:23.200 --> 00:01:26.640
+before the screen painted it, resulting in visual jumps
+
+32
+00:01:26.640 --> 00:01:29.440
+as components quickly resize themselves after the fact.
+
+33
+00:01:30.160 --> 00:01:33.360
+The architecture also forced a severe startup penalty.
+
+34
+00:01:34.000 --> 00:01:37.120
+Native modules, like the camera or the file system,
+
+35
+00:01:37.120 --> 00:01:38.560
+were eagerly initialized.
+
+36
+00:01:39.120 --> 00:01:42.560
+The app loaded every single module into memory at startup,
+
+37
+00:01:42.560 --> 00:01:44.720
+whether the user needed them right then or not.
+
+38
+00:01:45.360 --> 00:01:47.600
+These issues were baked into the foundation.
+
+39
+00:01:48.240 --> 00:01:51.440
+To support modern features like concurrent React,
+
+40
+00:01:51.440 --> 00:01:55.200
+the core engineering team realized the bridge itself had to go.
+
+41
+00:01:55.200 --> 00:01:58.880
+They had to tear out the infrastructure and rebuild the system from scratch.
+
+42
+00:01:59.440 --> 00:02:04.800
+That rebuild is now the default engine in React Native version 0.76 and beyond.
+
+43
+00:02:05.360 --> 00:02:09.760
+At the center of this new architecture is the foundational replacement for the bridge,
+
+44
+00:02:09.760 --> 00:02:12.080
+the JavaScript interface, or JSI.
+
+45
+00:02:12.640 --> 00:02:15.360
+Instead of translating commands into text strings,
+
+46
+00:02:15.360 --> 00:02:21.200
+JSI allows JavaScript to hold direct synchronous C++ references to native objects.
+
+47
+00:02:21.280 --> 00:02:23.280
+This enables shared memory.
+
+48
+00:02:23.280 --> 00:02:27.200
+The two environments no longer pass serialized messages back and forth,
+
+49
+00:02:27.200 --> 00:02:29.040
+because they operate within the same space.
+
+50
+00:02:29.600 --> 00:02:32.960
+You can see the result in libraries like Reanimated 3.
+
+51
+00:02:32.960 --> 00:02:37.680
+It uses JSI workloads to run animation code directly on the UI thread,
+
+52
+00:02:37.680 --> 00:02:40.480
+hitting a flawless 120 frames per second,
+
+53
+00:02:40.480 --> 00:02:42.800
+with zero round trips back to the JavaScript thread.
+
+54
+00:02:43.280 --> 00:02:49.040
+JSI transformed a delayed asynchronous conversation into instant direct device control.
+
+55
+00:02:49.520 --> 00:02:51.600
+With the communication layer fixed,
+
+56
+00:02:51.600 --> 00:02:55.200
+the team completely rewrote the UI rendering pipeline.
+
+57
+00:02:55.200 --> 00:02:58.960
+They built a new shared C++ renderer called Fabric,
+
+58
+00:02:58.960 --> 00:03:02.240
+designed specifically to work across iOS, Android,
+
+59
+00:03:02.240 --> 00:03:04.000
+and eventually desktop environments.
+
+60
+00:03:04.640 --> 00:03:08.320
+Because Fabric sits on top of the synchronous JSI connection,
+
+61
+00:03:08.320 --> 00:03:11.040
+it can measure and commit layout synchronously.
+
+62
+00:03:11.040 --> 00:03:14.400
+The screen only paints when the dimensions are perfectly calculated,
+
+63
+00:03:14.400 --> 00:03:16.880
+which ends the UI flicker of the old architecture.
+
+64
+00:03:17.520 --> 00:03:21.920
+Fabric also runs an automated performance optimization called view flattening.
+
+65
+00:03:21.920 --> 00:03:25.440
+If you have redundant layers of nested UI views in your code,
+
+66
+00:03:25.440 --> 00:03:28.160
+Fabric detects them and strips them out before rendering,
+
+67
+00:03:28.160 --> 00:03:29.840
+leaving a single optimized layer.
+
+68
+00:03:30.480 --> 00:03:34.720
+This synchronous nature means react native can finally utilize modern concurrent
+
+69
+00:03:34.720 --> 00:03:40.160
+react features. Developers can now use use transition to mark state updates as non-urgent,
+
+70
+00:03:40.160 --> 00:03:42.240
+or suspense for complex data fetching.
+
+71
+00:03:42.800 --> 00:03:45.520
+Fabric's role extends beyond rendering speed.
+
+72
+00:03:45.600 --> 00:03:48.560
+By stabilizing the timing of layout and paint,
+
+73
+00:03:48.560 --> 00:03:53.920
+it provides the reliability required for the most complex state management and UI interactions.
+
+74
+00:03:54.560 --> 00:03:57.840
+To fix the severe startup lag of the old architecture,
+
+75
+00:03:57.840 --> 00:04:02.720
+the core team addressed the eager initialization problem by introducing turbo modules.
+
+76
+00:04:03.360 --> 00:04:08.640
+This timeline chart compares app boot processes to show how turbo modules utilize lazy loading.
+
+77
+00:04:09.200 --> 00:04:12.320
+Instead of loading every native module at time zero,
+
+78
+00:04:12.320 --> 00:04:17.200
+a turbo module only initializes at the exact millisecond a user actually accesses it.
+
+79
+00:04:17.760 --> 00:04:20.880
+These modules are also heavily optimized for safety.
+
+80
+00:04:20.880 --> 00:04:23.040
+They are backed by a tool called code gen,
+
+81
+00:04:23.040 --> 00:04:28.000
+which reads your TypeScript specifications and automatically generates the exact C++
+
+82
+00:04:28.000 --> 00:04:31.600
+glue code required, eliminating the need to write those connectors manually.
+
+83
+00:04:32.160 --> 00:04:34.720
+The final layer of optimization is Hermes,
+
+84
+00:04:34.720 --> 00:04:38.880
+Meta's custom built JavaScript engine designed specifically for react native.
+
+85
+00:04:38.880 --> 00:04:42.720
+Traditional engines compile JavaScript at runtime on the user's device.
+
+86
+00:04:42.720 --> 00:04:46.960
+Hermes uses a head of time or AOT compilation.
+
+87
+00:04:46.960 --> 00:04:50.960
+It translates your JavaScript into dense bytecode during the build process
+
+88
+00:04:50.960 --> 00:04:52.560
+before the app is ever downloaded.
+
+89
+00:04:53.200 --> 00:04:58.240
+When you combine the lazy loading of turbo modules with the ahead of time compilation of Hermes,
+
+90
+00:04:58.240 --> 00:05:01.920
+the time it takes for an app to become interactive drops significantly
+
+91
+00:05:01.920 --> 00:05:03.600
+and the total memory footprint shrinks.
+
+92
+00:05:04.240 --> 00:05:08.640
+The entire platform has moved away from being async, eager, and bridged,
+
+93
+00:05:08.640 --> 00:05:11.520
+and is now firmly synchronous, lazy, and direct.
+
+94
+00:05:12.320 --> 00:05:16.720
+By rewriting the core communication and rendering pipelines in shared C++,
+
+95
+00:05:16.720 --> 00:05:21.520
+react native stripped away the translation overhead that previously limited cross-platform apps.
+
+96
+00:05:21.520 --> 00:05:26.960
+Developers can now write complex React logic while the device executes commands with native performance parity.
+
+97
+00:05:27.600 --> 00:05:30.720
+This is no longer an experiment or an opt-in feature.
+
+98
+00:05:30.720 --> 00:05:35.120
+As a version 0.76, the new architecture is on by default.
+
+99
+00:05:35.120 --> 00:05:37.440
+It is the reality of how your apps run.
+
+100
+00:05:37.520 --> 00:05:43.280
+Understanding how these underlying synchronous systems operate is no longer optional.
+
+101
+00:05:43.280 --> 00:05:49.520
+It is a mandatory requirement for engineering the next generation of high-performance mobile software.
+

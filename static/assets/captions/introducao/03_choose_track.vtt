@@ -1,0 +1,386 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:03.520
+Quando você faz a transição para um novo framework como React Native,
+
+2
+00:00:03.520 --> 00:00:07.520
+você está essencialmente pedindo ao seu cérebro que remodele seus hábitos diários.
+
+3
+00:00:07.520 --> 00:00:12.720
+Isso consome uma quantidade massiva de energia mental e tempo longe do seu trabalho de engenharia real.
+
+4
+00:00:12.720 --> 00:00:15.280
+Profissionais que trabalham muitas vezes tentam forçar isso
+
+5
+00:00:15.280 --> 00:00:18.800
+recorrendo a bootcamps massivos de iniciante a avançado.
+
+6
+00:00:18.800 --> 00:00:21.760
+Mas se matricular em um curso projetado para iniciantes absolutos
+
+7
+00:00:21.760 --> 00:00:25.360
+ignora anos de intuição de engenharia que você já desenvolveu.
+
+8
+00:00:25.360 --> 00:00:27.760
+Você acaba preso em um loop frustrante.
+
+9
+00:00:27.840 --> 00:00:29.520
+Metade do tempo, você está entediado para morte,
+
+10
+00:00:29.520 --> 00:00:32.000
+assistindo a acelerações básicas de variáveis.
+
+11
+00:00:32.000 --> 00:00:34.560
+A outra metade, você está completamente perdido porque o curso
+
+12
+00:00:34.560 --> 00:00:38.080
+não abordou adequadamente o contexto específico da plataforma nativa que você realmente precisa
+
+13
+00:00:38.080 --> 00:00:40.080
+entender para fazer o deploy de um app.
+
+14
+00:00:40.080 --> 00:00:43.520
+Uma transição eficiente requer uma abordagem altamente direcionada.
+
+15
+00:00:43.520 --> 00:00:46.880
+Você deve usar sua expertise de domínio existente como trampolim
+
+16
+00:00:46.880 --> 00:00:50.560
+e direcionar sua energia mental estritamente para seus pontos cegos reais.
+
+17
+00:00:50.560 --> 00:00:54.160
+Este diagrama apresenta as quatro linhas de partida comuns que vemos.
+
+18
+00:00:54.160 --> 00:00:56.800
+Você provavelmente está chegando como desenvolvedor Android
+
+19
+00:00:56.800 --> 00:00:59.440
+e desenvolvedor iOS, desenvolvedor web,
+
+20
+00:00:59.440 --> 00:01:02.160
+ou você já está construindo com React Native.
+
+21
+00:01:02.160 --> 00:01:04.720
+Encontrando a rota mais rápida para o domínio do React Native
+
+22
+00:01:04.720 --> 00:01:07.600
+não depende de quantos anos gerais você tem programado.
+
+23
+00:01:07.600 --> 00:01:09.920
+É um problema de otimização altamente específico
+
+24
+00:01:09.920 --> 00:01:13.600
+baseado inteiramente na pilha de tecnologia que você escreve todos os dias.
+
+25
+00:01:13.600 --> 00:01:15.520
+Vamos analisar os especialistas em mobile.
+
+26
+00:01:15.520 --> 00:01:18.880
+Se você passa seus dias construindo nativamente para Android ou iOS,
+
+27
+00:01:18.880 --> 00:01:22.880
+você entra no ecossistema React Native com uma enorme vantagem estrutural.
+
+28
+00:01:22.880 --> 00:01:25.840
+Olhando para essa matriz de comparação, seus pontos fortes são claros.
+
+29
+00:01:25.840 --> 00:01:28.800
+Você compreende intuitivamente a segurança de thread, APIs nativas,
+
+30
+00:01:28.800 --> 00:01:31.440
+e renderização via UI kit ou Compose.
+
+31
+00:01:31.440 --> 00:01:34.560
+Mas você deve deixar para trás suas cadeias de ferramentas de UI imperativa familiares
+
+32
+00:01:34.560 --> 00:01:37.600
+e IDEs pesadas, adotando JavaScript, TypeScript,
+
+33
+00:01:37.600 --> 00:01:40.000
+e o modelo de componente declarativo do React.
+
+34
+00:01:40.000 --> 00:01:43.600
+Se você é um desenvolvedor Kotlin, você pertence à trilha Android nativa.
+
+35
+00:01:43.600 --> 00:01:46.480
+Este caminho mapeia seu conhecimento existente de Jetpack Compose diretamente
+
+36
+00:01:46.480 --> 00:01:47.680
+para React Native.
+
+37
+00:01:47.680 --> 00:01:51.360
+Se você escreve Swift, siga a trilha iOS nativa.
+
+38
+00:01:51.360 --> 00:01:54.560
+Vamos usar sua compreensão do ciclo de vida do Swift UI
+
+39
+00:01:54.560 --> 00:01:57.360
+para fazer sentido da execução de JavaScript.
+
+40
+00:01:57.360 --> 00:02:01.600
+Desenvolvedores nativos devem trocar sua profunda e confortável fluência de plataforma
+
+41
+00:02:01.600 --> 00:02:04.400
+para uma mudança mental inicial acentuada e desafiadora
+
+42
+00:02:04.400 --> 00:02:06.240
+em direção aos paradigmas baseados na web.
+
+43
+00:02:06.240 --> 00:02:09.200
+Mas uma vez que você supera esse obstáculo, sua experiência nativa
+
+44
+00:02:09.200 --> 00:02:11.360
+o torna incrivelmente eficaz.
+
+45
+00:02:11.360 --> 00:02:14.560
+Agora considere os desenvolvedores React e JavaScript web.
+
+46
+00:02:14.560 --> 00:02:17.280
+Você aborda isso do ângulo exatamente oposto,
+
+47
+00:02:17.280 --> 00:02:20.080
+começando forte dentro do ecossistema.
+
+48
+00:02:20.080 --> 00:02:23.280
+Conforme a matriz se expande, suas vantagens são claras.
+
+49
+00:02:23.280 --> 00:02:26.560
+Habilidades como hooks e JSX se transferem perfeitamente.
+
+50
+00:02:26.560 --> 00:02:28.800
+Mas você deve abandonar as suposições do navegador.
+
+51
+00:02:28.800 --> 00:02:31.680
+Não há DOM ou CSS padrão.
+
+52
+00:02:31.680 --> 00:02:35.120
+Em vez disso, você deve dominar paradigmas específicos de UI móvel,
+
+53
+00:02:35.120 --> 00:02:38.480
+ciclos de vida de navegação e restrições rigorosas de hardware.
+
+54
+00:02:38.480 --> 00:02:40.320
+Você precisa do caminho do desenvolvedor web.
+
+55
+00:02:40.320 --> 00:02:43.360
+Esta rota pula os fundamentos do React que você já conhece,
+
+56
+00:02:43.360 --> 00:02:46.880
+dedicando cada aula diretamente à construção de sua mentalidade móvel.
+
+57
+00:02:46.880 --> 00:02:49.680
+Você obtém produtividade de codificação imediata.
+
+58
+00:02:49.680 --> 00:02:52.320
+Mas você a troca pela inevitável fricção
+
+59
+00:02:52.320 --> 00:02:55.600
+de diagnosticar gargalos de desempenho específicos do móvel
+
+60
+00:02:55.600 --> 00:02:58.960
+e se adaptar a limitações rigorosas da plataforma.
+
+61
+00:02:58.960 --> 00:03:02.080
+Finalmente, há um caminho para aqueles que já possuem
+
+62
+00:03:02.080 --> 00:03:03.840
+os fundamentos do React Native,
+
+63
+00:03:03.840 --> 00:03:06.320
+mas se veem precisando escalar aplicações
+
+64
+00:03:06.320 --> 00:03:08.000
+para um nível empresarial.
+
+65
+00:03:08.000 --> 00:03:10.720
+Contar apenas com conhecimento puro de JavaScript
+
+66
+00:03:10.720 --> 00:03:14.320
+eventualmente limitará sua capacidade de entregar recursos de alto desempenho
+
+67
+00:03:14.320 --> 00:03:16.640
+em ambientes móveis complexos.
+
+68
+00:03:16.640 --> 00:03:20.000
+Finalizando nossa matriz, vemos o passo necessário.
+
+69
+00:03:20.000 --> 00:03:23.360
+Você deve enfrentar a nova arquitetura do React Native,
+
+70
+00:03:23.360 --> 00:03:27.680
+mergulhando em integrações C++, JSI e Fabric.
+
+71
+00:03:27.680 --> 00:03:29.920
+Você também gerenciará integrações brownfield
+
+72
+00:03:29.920 --> 00:03:34.080
+com código nativo existente e configurará pipelines robustos de CICD
+
+73
+00:03:34.080 --> 00:03:35.520
+para grandes equipes.
+
+74
+00:03:35.520 --> 00:03:38.480
+Para isso, você vai direto para a trilha masterclass
+
+75
+00:03:38.480 --> 00:03:41.600
+ignorando completamente toda a configuração fundamental.
+
+76
+00:03:41.600 --> 00:03:44.880
+Engenheiros sênior trocam a segurança do JavaScript puro
+
+77
+00:03:44.880 --> 00:03:48.160
+pela alta complexidade das camadas de integração nativa.
+
+78
+00:03:48.160 --> 00:03:51.440
+É uma subida íngreme e exigente,
+
+79
+00:03:51.440 --> 00:03:53.720
+mas, em última análise, é a única maneira
+
+80
+00:03:53.720 --> 00:03:56.400
+de alcançar verdadeira capacidade de escalonamento.
+
+81
+00:03:56.400 --> 00:03:58.880
+A filosofia central é simples.
+
+82
+00:03:58.880 --> 00:04:03.040
+Sua stack de tecnologia atual do dia a dia é seu ponto de alavancagem mais alto.
+
+83
+00:04:03.040 --> 00:04:05.600
+Você nunca deve começar do zero.
+
+84
+00:04:05.600 --> 00:04:07.520
+Vamos revisar o placar.
+
+85
+00:04:07.520 --> 00:04:10.160
+Desenvolvedores Kotlin aproveitam seu background de UI
+
+86
+00:04:10.160 --> 00:04:12.080
+na trilha Android nativa.
+
+87
+00:04:12.080 --> 00:04:15.760
+Desenvolvedores Swift fazem o mesmo na trilha iOS nativa.
+
+88
+00:04:15.760 --> 00:04:19.120
+Desenvolvedores React seguem direto para a trilha de desenvolvimento web.
+
+89
+00:04:19.120 --> 00:04:21.840
+Desenvolvedores estabelecidos entram na masterclass
+
+90
+00:04:21.840 --> 00:04:24.000
+para à prova de futuro suas carreiras.
+
+91
+00:04:24.000 --> 00:04:26.480
+Essa precisão direcionada mantém você focado
+
+92
+00:04:26.480 --> 00:04:30.160
+nas habilidades exatas que você carece, em vez de desperdiçar horas
+
+93
+00:04:30.160 --> 00:04:33.280
+em um tutorial genérico projetado para outra pessoa.
+
+94
+00:04:33.280 --> 00:04:36.920
+Seu tempo é seu ativo mais valioso como engenheiro.
+
+95
+00:04:36.920 --> 00:04:39.960
+O verdadeiro domínio vem de escolher a trilha educacional
+
+96
+00:04:39.960 --> 00:04:43.640
+que respeita os investimentos de carreira que você já fez.
+
