@@ -13,7 +13,7 @@ const REVIEWERS = [
   { name: 'Diego Karol Gouvea Lana',   role: 'Architect',    username: null,        avatar: '/trilha-react-native/img/lana.webp',             color: '#242459' },
   { name: 'Guilherme Rovaron',         role: 'Web',          username: null,        avatar: '/trilha-react-native/img/web-reviewer.jpg',       color: '#FA5A50' },
   { name: 'Paulo Vitor Sato',          role: 'Android',      username: null,        avatar: '/trilha-react-native/img/sato.webp',             color: '#2db370' },
-  { name: 'Gabriel Dos Santos Xavier', role: 'iOS',          username: null,        avatar: '/trilha-react-native/img/gabriel-xavier.webp',   color: '#ffffff' },
+  { name: 'Gabriel Dos Santos Xavier', role: 'iOS',          username: null,        avatar: '/trilha-react-native/img/gabriel-xavier.webp',   color: '#690037', textColor: '#ffffff' },
 ];
 
 const TOOLS = [
@@ -145,7 +145,7 @@ export default function About() {
           <h2>Reviewers</h2>
           <p>Each trail was reviewed by a specialist in that platform.</p>
           <div className={styles.reviewers}>
-            {REVIEWERS.map(({ name, role, username, avatar, color }) => (
+            {REVIEWERS.map(({ name, role, username, avatar, color, textColor }) => (
               <div key={role} className={styles.reviewerCard}>
                 <img
                   src={avatar
@@ -161,7 +161,7 @@ export default function About() {
                 <span
                   className={styles.reviewerRole}
                   style={{
-                    color,
+                    color: textColor ?? color,
                     background: `color-mix(in srgb, ${color} 12%, transparent)`,
                     border: `1px solid color-mix(in srgb, ${color} 30%, transparent)`,
                   }}
