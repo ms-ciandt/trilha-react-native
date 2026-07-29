@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from '@docusaurus/Link';
 import Layout from '@theme/Layout';
+import { useColorMode } from '@docusaurus/theme-common';
 import styles from './index.module.css';
 
 function GridBackground() {
@@ -51,6 +52,49 @@ function DotConnector() {
         <span className={styles.dot} style={{ animationDelay: '0.6s' }} />
       </div>
     </div>
+  );
+}
+
+const REVIEWERS = [
+  { name: 'Matheus Sales',             role: 'React Native', username: 'ms-ciandt', color: '#B4DCFA' },
+  { name: 'Diego Karol Gouvea Lana',   role: 'Architect',    username: null, avatar: '/trilha-react-native/img/lana.webp', color: '#242459', darkColor: '#393973', textColor: '#ffffff' },
+  { name: 'Guilherme Rovaron',         role: 'Web',          username: null, avatar: '/trilha-react-native/img/web-reviewer.jpg', color: '#FA5A50' },
+  { name: 'Paulo Vitor Sato',          role: 'Android',      username: null, avatar: '/trilha-react-native/img/sato.webp', color: '#2db370' },
+  { name: 'Gabriel Dos Santos Xavier', role: 'iOS',          username: null, avatar: '/trilha-react-native/img/gabriel-xavier.webp', color: '#690037', darkColor: '#A63832', textColor: '#ffffff' },
+];
+
+function ReviewersList() {
+  const { colorMode } = useColorMode();
+  const isDark = colorMode === 'dark';
+  return (
+    <section className={styles.contributors}>
+      <span className={styles.contributorsLabel}>Reviewers</span>
+      <div className={styles.contributorsList}>
+        {REVIEWERS.map(({ name, role, username, avatar, color, darkColor, textColor }, i) => {
+          const c = (isDark && darkColor) ? darkColor : color;
+          return (
+            <div
+              key={role}
+              className={styles.contributorCard}
+              style={{ animationDelay: `${1.3 + i * 0.1}s` }}
+            >
+              <img
+                src={avatar
+                  ? avatar
+                  : username
+                    ? `https://github.com/${username}.png?size=120`
+                    : `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&size=120&background=1e2030&color=888&rounded=true`}
+                alt={name}
+                className={styles.contributorAvatar}
+                style={{ borderColor: c, boxShadow: `0 0 0 2px color-mix(in srgb, ${c} 20%, transparent)` }}
+              />
+              <span className={styles.contributorName}>{name}</span>
+              <span className={styles.contributorRole} style={{ color: textColor ?? c, background: `color-mix(in srgb, ${c} 12%, transparent)`, border: `1px solid color-mix(in srgb, ${c} 30%, transparent)` }}>{role}</span>
+            </div>
+          );
+        })}
+      </div>
+    </section>
   );
 }
 
@@ -224,37 +268,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className={styles.contributors}>
-          <span className={styles.contributorsLabel}>Reviewers</span>
-          <div className={styles.contributorsList}>
-            {[
-              { name: 'Matheus Sales', role: 'React Native', username: 'ms-ciandt', color: '#00d4ff' },
-              { name: 'Diego Lana', role: 'Architect', username: null, avatar: '/trilha-react-native/img/lana.webp', color: '#7c3aed' },
-              { name: 'Guilherme Rovaron',       role: 'Web',       username: null, avatar: '/trilha-react-native/img/web-reviewer.jpg', color: '#0284c7' },
-              { name: 'Paulo Sato',        role: 'Android',   username: null, avatar: '/trilha-react-native/img/sato.webp', color: '#3ddc84' },
-              { name: 'Gabriel Xavier', role: 'iOS', username: null, avatar: '/trilha-react-native/img/gabriel-xavier.webp', color: '#a855f7' },
-            ].map(({ name, role, username, avatar, color }, i) => (
-              <div
-                key={role}
-                className={styles.contributorCard}
-                style={{ animationDelay: `${1.3 + i * 0.1}s` }}
-              >
-                <img
-                  src={avatar
-                    ? avatar
-                    : username
-                      ? `https://github.com/${username}.png?size=120`
-                      : `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&size=120&background=1e2030&color=888&rounded=true`}
-                  alt={name}
-                  className={styles.contributorAvatar}
-                  style={{ borderColor: color, boxShadow: `0 0 0 2px color-mix(in srgb, ${color} 20%, transparent)` }}
-                />
-                <span className={styles.contributorName}>{name}</span>
-                <span className={styles.contributorRole} style={{ color, background: `color-mix(in srgb, ${color} 12%, transparent)`, border: `1px solid color-mix(in srgb, ${color} 30%, transparent)` }}>{role}</span>
-              </div>
-            ))}
-          </div>
-        </section>
+        <ReviewersList />
 
       </main>
     </Layout>

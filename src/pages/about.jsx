@@ -1,5 +1,6 @@
 import React from 'react';
 import Layout from '@theme/Layout';
+import { useColorMode } from '@docusaurus/theme-common';
 import styles from './about.module.css';
 
 const CONTRIBUTORS = [
@@ -9,11 +10,11 @@ const CONTRIBUTORS = [
 ];
 
 const REVIEWERS = [
-  { name: 'Matheus Sales',           role: 'React Native', username: 'ms-ciandt', avatar: null,                                        color: '#00d4ff' },
-  { name: 'Diego Lana', role: 'Architect',    username: null,        avatar: '/trilha-react-native/img/lana.webp',        color: '#7c3aed' },
-  { name: 'Guilherme Rovaron',       role: 'Web',          username: null,        avatar: '/trilha-react-native/img/web-reviewer.jpg', color: '#0284c7' },
-  { name: 'Paulo Sato',        role: 'Android',      username: null,        avatar: '/trilha-react-native/img/sato.webp',        color: '#3ddc84' },
-  { name: 'Gabriel Xavier', role: 'iOS',         username: null,        avatar: '/trilha-react-native/img/gabriel-xavier.webp', color: '#a855f7' },
+  { name: 'Matheus Sales',             role: 'React Native', username: 'ms-ciandt', avatar: null,                                             color: '#B4DCFA' },
+  { name: 'Diego Karol Gouvea Lana',   role: 'Architect',    username: null,        avatar: '/trilha-react-native/img/lana.webp',             color: '#242459', darkColor: '#393973', textColor: '#ffffff' },
+  { name: 'Guilherme Rovaron',         role: 'Web',          username: null,        avatar: '/trilha-react-native/img/web-reviewer.jpg',       color: '#FA5A50' },
+  { name: 'Paulo Vitor Sato',          role: 'Android',      username: null,        avatar: '/trilha-react-native/img/sato.webp',             color: '#2db370' },
+  { name: 'Gabriel Dos Santos Xavier', role: 'iOS',          username: null,        avatar: '/trilha-react-native/img/gabriel-xavier.webp',   color: '#690037', darkColor: '#A63832', textColor: '#ffffff' },
 ];
 
 const TOOLS = [
@@ -30,22 +31,22 @@ const TOOLS = [
 const TRACKS = [
   {
     label: 'Web dev trail',
-    color: '#0284c7',
+    color: '#FA5A50',
     desc: 'For developers coming from React, HTML/CSS and JavaScript. Covers the mental-model shift from browser to mobile environment.',
   },
   {
     label: 'Android native trail',
-    color: '#3ddc84',
+    color: '#2db370',
     desc: 'For Android developers coming from Kotlin and Jetpack Compose. Maps Compose concepts — Composables, remember, NavHost — to their React Native equivalents.',
   },
   {
     label: 'iOS native trail',
-    color: '#a855f7',
+    color: '#690037',
     desc: 'For iOS developers coming from Swift and SwiftUI. Maps SwiftUI concepts — Views, @State, NavigationStack — to the React Native ecosystem.',
   },
   {
     label: 'React Native MasterClass Trail',
-    color: '#00d4ff',
+    color: '#8CB3D9',
     desc: 'Advanced trail covering Brownfield integration, TurboModules, Fabric, JSI, Performance and CI/CD.',
   },
 ];
@@ -57,6 +58,39 @@ const STACK = [
   'JSI · Fabric · TurboModules',
   'Hermes Engine',
 ];
+
+function ReviewersCards() {
+  const { colorMode } = useColorMode();
+  const isDark = colorMode === 'dark';
+  return REVIEWERS.map(({ name, role, username, avatar, color, darkColor, textColor }) => {
+    const c = (isDark && darkColor) ? darkColor : color;
+    return (
+      <div key={role} className={styles.reviewerCard}>
+        <img
+          src={avatar
+            ? avatar
+            : username
+              ? `https://github.com/${username}.png?size=120`
+              : `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&size=120&background=1e2030&color=888&rounded=true`}
+          alt={name}
+          className={styles.avatar}
+          style={{ borderColor: c, boxShadow: `0 0 0 2px color-mix(in srgb, ${c} 20%, transparent)` }}
+        />
+        <span className={styles.reviewerName}>{name}</span>
+        <span
+          className={styles.reviewerRole}
+          style={{
+            color: textColor ?? c,
+            background: `color-mix(in srgb, ${c} 12%, transparent)`,
+            border: `1px solid color-mix(in srgb, ${c} 30%, transparent)`,
+          }}
+        >
+          {role}
+        </span>
+      </div>
+    );
+  });
+}
 
 export default function About() {
   return (
@@ -145,31 +179,7 @@ export default function About() {
           <h2>Reviewers</h2>
           <p>Each trail was reviewed by a specialist in that platform.</p>
           <div className={styles.reviewers}>
-            {REVIEWERS.map(({ name, role, username, avatar, color }) => (
-              <div key={role} className={styles.reviewerCard}>
-                <img
-                  src={avatar
-                    ? avatar
-                    : username
-                      ? `https://github.com/${username}.png?size=120`
-                      : `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&size=120&background=1e2030&color=888&rounded=true`}
-                  alt={name}
-                  className={styles.avatar}
-                  style={{ borderColor: color, boxShadow: `0 0 0 2px color-mix(in srgb, ${color} 20%, transparent)` }}
-                />
-                <span className={styles.reviewerName}>{name}</span>
-                <span
-                  className={styles.reviewerRole}
-                  style={{
-                    color,
-                    background: `color-mix(in srgb, ${color} 12%, transparent)`,
-                    border: `1px solid color-mix(in srgb, ${color} 30%, transparent)`,
-                  }}
-                >
-                  {role}
-                </span>
-              </div>
-            ))}
+            <ReviewersCards />
           </div>
         </section>
 
