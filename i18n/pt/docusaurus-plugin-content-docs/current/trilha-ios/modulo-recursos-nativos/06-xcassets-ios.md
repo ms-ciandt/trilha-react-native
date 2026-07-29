@@ -5,6 +5,11 @@ title: "Assets e xcassets no React Native"
 
 # Assets e xcassets no React Native
 
+<video width="100%" controls style="border-radius: 8px; margin: 16px 0;">
+  <source src="/trilha-react-native/assets/videos/trilha_ios/rec_06_xcassets.mp4" type="video/mp4">
+  Seu navegador não suporta o elemento de vídeo.
+</video>
+
 ## De xcassets para `require()`
 
 Desenvolvedores iOS estão acostumados a gerenciar imagens pelo `.xcassets` — um catálogo do Xcode onde cada asset possui variantes 1x, 2x e 3x que o SO escolhe automaticamente conforme a densidade da tela do dispositivo. O React Native substitui esse mecanismo por um sistema de resolução no lado JavaScript que atinge o mesmo objetivo.
