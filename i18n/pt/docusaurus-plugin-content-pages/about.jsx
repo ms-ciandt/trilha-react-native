@@ -1,5 +1,6 @@
 import React from 'react';
 import Layout from '@theme/Layout';
+import { useColorMode } from '@docusaurus/theme-common';
 import styles from '@site/src/pages/about.module.css';
 
 const CONTRIBUTORS = [
@@ -10,10 +11,10 @@ const CONTRIBUTORS = [
 
 const REVIEWERS = [
   { name: 'Matheus Sales',             role: 'React Native', username: 'ms-ciandt', avatar: null,                                             color: '#B4DCFA' },
-  { name: 'Diego Karol Gouvea Lana',   role: 'Arquiteto',    username: null,        avatar: '/trilha-react-native/img/lana.webp',             color: '#242459', textColor: '#ffffff' },
+  { name: 'Diego Karol Gouvea Lana',   role: 'Arquiteto',    username: null,        avatar: '/trilha-react-native/img/lana.webp',             color: '#242459', darkColor: '#393973', textColor: '#ffffff' },
   { name: 'Guilherme Rovaron',         role: 'Web',          username: null,        avatar: '/trilha-react-native/img/web-reviewer.jpg',       color: '#FA5A50' },
   { name: 'Paulo Vitor Sato',          role: 'Android',      username: null,        avatar: '/trilha-react-native/img/sato.webp',             color: '#2db370' },
-  { name: 'Gabriel Dos Santos Xavier', role: 'iOS',          username: null,        avatar: '/trilha-react-native/img/gabriel-xavier.webp',   color: '#690037', textColor: '#ffffff' },
+  { name: 'Gabriel Dos Santos Xavier', role: 'iOS',          username: null,        avatar: '/trilha-react-native/img/gabriel-xavier.webp',   color: '#690037', darkColor: '#A63832', textColor: '#ffffff' },
 ];
 
 const TOOLS = [
@@ -57,6 +58,39 @@ const STACK = [
   'JSI · Fabric · TurboModules',
   'Hermes Engine',
 ];
+
+function RevisoresCards() {
+  const { colorMode } = useColorMode();
+  const isDark = colorMode === 'dark';
+  return REVIEWERS.map(({ name, role, username, avatar, color, darkColor, textColor }) => {
+    const c = (isDark && darkColor) ? darkColor : color;
+    return (
+      <div key={role} className={styles.reviewerCard}>
+        <img
+          src={avatar
+            ? avatar
+            : username
+              ? `https://github.com/${username}.png?size=120`
+              : `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&size=120&background=1e2030&color=888&rounded=true`}
+          alt={name}
+          className={styles.avatar}
+          style={{ borderColor: c, boxShadow: `0 0 0 2px color-mix(in srgb, ${c} 20%, transparent)` }}
+        />
+        <span className={styles.reviewerName}>{name}</span>
+        <span
+          className={styles.reviewerRole}
+          style={{
+            color: textColor ?? c,
+            background: `color-mix(in srgb, ${c} 12%, transparent)`,
+            border: `1px solid color-mix(in srgb, ${c} 30%, transparent)`,
+          }}
+        >
+          {role}
+        </span>
+      </div>
+    );
+  });
+}
 
 export default function About() {
   return (
@@ -145,31 +179,7 @@ export default function About() {
           <h2>Revisores</h2>
           <p>Cada trilha foi revisada por um especialista na plataforma correspondente.</p>
           <div className={styles.reviewers}>
-            {REVIEWERS.map(({ name, role, username, avatar, color, textColor }) => (
-              <div key={role} className={styles.reviewerCard}>
-                <img
-                  src={avatar
-                    ? avatar
-                    : username
-                      ? `https://github.com/${username}.png?size=120`
-                      : `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&size=120&background=1e2030&color=888&rounded=true`}
-                  alt={name}
-                  className={styles.avatar}
-                  style={{ borderColor: color, boxShadow: `0 0 0 2px color-mix(in srgb, ${color} 20%, transparent)` }}
-                />
-                <span className={styles.reviewerName}>{name}</span>
-                <span
-                  className={styles.reviewerRole}
-                  style={{
-                    color: textColor ?? color,
-                    background: `color-mix(in srgb, ${color} 12%, transparent)`,
-                    border: `1px solid color-mix(in srgb, ${color} 30%, transparent)`,
-                  }}
-                >
-                  {role}
-                </span>
-              </div>
-            ))}
+            <RevisoresCards />
           </div>
         </section>
 
