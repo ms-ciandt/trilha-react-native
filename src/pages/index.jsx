@@ -230,7 +230,7 @@ export default function Home() {
           <div className={styles.contributorsList}>
             {[
               { name: 'Matheus Sales',             role: 'React Native', username: 'ms-ciandt', color: '#B4DCFA' },
-              { name: 'Diego Karol Gouvea Lana',   role: 'Architect',    username: null, avatar: '/trilha-react-native/img/lana.webp', color: '#242459' },
+              { name: 'Diego Karol Gouvea Lana',   role: 'Architect',    username: null, avatar: '/trilha-react-native/img/lana.webp', color: '#242459', textColor: '#ffffff' },
               { name: 'Guilherme Rovaron',         role: 'Web',          username: null, avatar: '/trilha-react-native/img/web-reviewer.jpg', color: '#FA5A50' },
               { name: 'Paulo Vitor Sato',          role: 'Android',      username: null, avatar: '/trilha-react-native/img/sato.webp', color: '#2db370' },
               { name: 'Gabriel Dos Santos Xavier', role: 'iOS',          username: null, avatar: '/trilha-react-native/img/gabriel-xavier.webp', color: '#690037', textColor: '#ffffff' },
