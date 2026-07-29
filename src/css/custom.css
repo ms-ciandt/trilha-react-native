@@ -160,19 +160,20 @@
 }
 
 /* ─── Navbar ─────────────────────────────────────────────────────────── */
+:root {
+  --ifm-navbar-link-color: rgba(255, 255, 255, 0.85);
+  --ifm-navbar-link-hover-color: #fff;
+}
+
 .navbar {
   padding: 0 1.5rem;
   font-size: 0.875rem;
   font-weight: 500;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  background: color-mix(in srgb, var(--ifm-navbar-background-color) 85%, transparent) !important;
-  border-bottom: 1px solid var(--ifm-toc-border-color);
-  box-shadow: none !important;
-}
-
-[data-theme='dark'] .navbar {
   background: color-mix(in srgb, #000050 88%, transparent) !important;
+  border-bottom: 1px solid rgba(57, 57, 115, 0.4);
+  box-shadow: none !important;
 }
 
 .navbar__brand {
@@ -194,17 +195,17 @@
   align-items: center;
 }
 
-/* Title — deep red */
+/* Title — coral sobre fundo navy */
 .navbar__title {
   font-weight: 800;
   font-size: 1.05rem;
   letter-spacing: -0.02em;
-  color: #690037;
+  color: #FA5A50;
   -webkit-text-fill-color: initial;
 }
 
 [data-theme='dark'] .navbar__title {
-  color: #D94A41;
+  color: #FA8982;
   -webkit-text-fill-color: initial;
 }
 
@@ -1295,13 +1296,9 @@ video {
   .navbar {
     padding: 0 0.875rem;
     font-size: 0.8125rem;
-    background: var(--ifm-navbar-background-color) !important;
+    background: #000050 !important;
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
-  }
-
-  [data-theme='dark'] .navbar {
-    background: #000050 !important;
   }
 
   .pagination-nav {
