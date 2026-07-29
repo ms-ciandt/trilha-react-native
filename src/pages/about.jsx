@@ -9,19 +9,11 @@ const CONTRIBUTORS = [
 ];
 
 const REVIEWERS = [
-<<<<<<< HEAD
-  { name: 'Matheus Sales',           role: 'React Native', username: 'ms-ciandt', avatar: null,                                        color: '#B4DCFA' },
-  { name: 'Diego Karol Gouvea Lana', role: 'Architect',    username: null,        avatar: '/trilha-react-native/img/lana.webp',        color: '#FA5A50' },
-  { name: 'Guilherme Rovaron',       role: 'Web',          username: null,        avatar: '/trilha-react-native/img/web-reviewer.jpg', color: '#FA5A50' },
-  { name: 'Paulo Vitor Sato',        role: 'Android',      username: null,        avatar: '/trilha-react-native/img/sato.webp',        color: '#2db370' },
-  { name: 'Reviewer',                role: 'iOS',          username: null,        avatar: null,                                        color: '#690037' },
-=======
-  { name: 'Matheus Sales',           role: 'React Native', username: 'ms-ciandt', avatar: null,                                        color: '#00d4ff' },
-  { name: 'Diego Karol Gouvea Lana', role: 'Architect',    username: null,        avatar: '/trilha-react-native/img/lana.webp',        color: '#7c3aed' },
-  { name: 'Guilherme Rovaron',       role: 'Web',          username: null,        avatar: '/trilha-react-native/img/web-reviewer.jpg', color: '#0284c7' },
-  { name: 'Paulo Vitor Sato',        role: 'Android',      username: null,        avatar: '/trilha-react-native/img/sato.webp',        color: '#3ddc84' },
-  { name: 'Gabriel Dos Santos Xavier', role: 'iOS',         username: null,        avatar: '/trilha-react-native/img/gabriel-xavier.webp', color: '#a855f7' },
->>>>>>> ab7281f7a83641013a1d498a7e2d8e27d8a5de91
+  { name: 'Matheus Sales',             role: 'React Native', username: 'ms-ciandt', avatar: null,                                             color: '#B4DCFA' },
+  { name: 'Diego Karol Gouvea Lana',   role: 'Architect',    username: null,        avatar: '/trilha-react-native/img/lana.webp',             color: '#FA5A50' },
+  { name: 'Guilherme Rovaron',         role: 'Web',          username: null,        avatar: '/trilha-react-native/img/web-reviewer.jpg',       color: '#FA5A50' },
+  { name: 'Paulo Vitor Sato',          role: 'Android',      username: null,        avatar: '/trilha-react-native/img/sato.webp',             color: '#2db370' },
+  { name: 'Gabriel Dos Santos Xavier', role: 'iOS',          username: null,        avatar: '/trilha-react-native/img/gabriel-xavier.webp',   color: '#690037' },
 ];
 
 const TOOLS = [
