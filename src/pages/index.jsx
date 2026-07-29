@@ -11,30 +11,34 @@ function GridBackground() {
 function ForkArrows() {
   return (
     <svg
-      viewBox="0 0 400 80"
+      viewBox="0 0 960 140"
       className={styles.arrows}
       aria-hidden="true"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <path className={styles.arrowCurve} d="M 200 0 C 196 28, 120 55, 88 74" />
-      <path className={styles.arrowCurve} d="M 200 0 C 204 28, 280 55, 312 74" style={{ animationDelay: '0.1s' }} />
-      <path className={styles.arrowHead} d="M 88 74 L 96 62 M 88 74 L 102 73" />
-      <path className={styles.arrowHead} d="M 312 74 L 298 73 M 312 74 L 304 62" style={{ animationDelay: '0.1s' }} />
+      <path className={styles.arrowCurve} d="M 480 0 C 420 50, 200 90, 160 128" />
+      <path className={styles.arrowCurve} d="M 480 0 L 480 128" style={{ animationDelay: '0.05s' }} />
+      <path className={styles.arrowCurve} d="M 480 0 C 540 50, 760 90, 800 128" style={{ animationDelay: '0.1s' }} />
+      <path className={styles.arrowHead} d="M 160 128 L 173 124 M 160 128 L 165 115" />
+      <path className={styles.arrowHead} d="M 480 128 L 472 116 M 480 128 L 488 116" style={{ animationDelay: '0.05s' }} />
+      <path className={styles.arrowHead} d="M 800 128 L 787 124 M 800 128 L 795 115" style={{ animationDelay: '0.1s' }} />
     </svg>
   );
 }
 
+
 function ConvergenceArrows() {
   return (
     <svg
-      viewBox="0 0 400 80"
+      viewBox="0 0 960 140"
       className={styles.arrows}
       aria-hidden="true"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <path className={styles.arrowCurve} d="M 88 4 C 120 24, 196 52, 200 66" />
-      <path className={styles.arrowCurve} d="M 312 4 C 280 24, 204 52, 200 66" style={{ animationDelay: '0.1s' }} />
-      <path className={styles.arrowHead} d="M 200 66 L 200 78 M 200 78 L 191 67 M 200 78 L 209 67" />
+      <path className={styles.arrowCurve} d="M 160 0 C 200 38, 460 78, 480 128" />
+      <path className={styles.arrowCurve} d="M 480 0 L 480 128" style={{ animationDelay: '0.05s' }} />
+      <path className={styles.arrowCurve} d="M 800 0 C 760 38, 500 78, 480 128" style={{ animationDelay: '0.1s' }} />
+      <path className={styles.arrowHead} d="M 480 128 L 472 116 M 480 128 L 488 116" style={{ animationDelay: '0.1s' }} />
     </svg>
   );
 }
@@ -134,9 +138,7 @@ export default function Home() {
           </div>
         </div>
 
-        <ForkArrows />
-
-        <p className={styles.forkCaption}>Choose your background: three paths, one destination</p>
+        <DotConnector />
 
         <section className={styles.tracks}>
           <div className={`${styles.trackCard} ${styles.trackCardWeb}`} style={{ animationDelay: '0.1s' }}>
@@ -155,6 +157,10 @@ export default function Home() {
             >
               Start
             </Link>
+            <div className={styles.cardRnNote}>
+              <img src="/trilha-react-native/img/react-native-logo.svg" alt="" width="14" height="14" />
+              One codebase: native apps on iOS &amp; Android
+            </div>
           </div>
 
           <div className={`${styles.trackCard} ${styles.trackCardAndroid}`} style={{ animationDelay: '0.2s' }}>
@@ -179,6 +185,10 @@ export default function Home() {
             >
               Start
             </Link>
+            <div className={styles.cardRnNote}>
+              <img src="/trilha-react-native/img/react-native-logo.svg" alt="" width="14" height="14" />
+              One codebase: native apps on iOS &amp; Android
+            </div>
           </div>
 
           <div className={`${styles.trackCard} ${styles.trackCardIos}`} style={{ animationDelay: '0.3s' }}>
@@ -197,23 +207,12 @@ export default function Home() {
             >
               Start
             </Link>
+            <div className={styles.cardRnNote}>
+              <img src="/trilha-react-native/img/react-native-logo.svg" alt="" width="14" height="14" />
+              One codebase: native apps on iOS &amp; Android
+            </div>
           </div>
         </section>
-
-        <ConvergenceArrows />
-
-        <div className={styles.goal}>
-          <div className={styles.goalGlow} />
-          <div className={styles.goalCardGlow} />
-          <span className={styles.goalLabel}>
-            <img src="/trilha-react-native/img/react-native-logo.svg" alt="" width="22" height="22" style={{verticalAlign: 'middle', marginRight: '8px', marginBottom: '2px'}} />
-            React Native
-          </span>
-          <p className={styles.goalDesc}>
-            One codebase: native apps on iOS and Android
-          </p>
-          <div className={styles.levelBadge}>Beginner · Intermediate</div>
-        </div>
 
         <DotConnector />
 
