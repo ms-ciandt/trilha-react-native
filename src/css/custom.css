@@ -238,16 +238,16 @@
   color: #FA8982;
 }
 
-/* Trilha Web — light blue */
+/* Trilha Web — coral */
 .navbar__link[href*="/trilha-web"]:hover,
 .navbar__link[href*="/trilha-web"].navbar__link--active {
-  background: color-mix(in srgb, #8CB3D9 12%, transparent);
-  color: #8CB3D9;
+  background: color-mix(in srgb, #FA5A50 12%, transparent);
+  color: #FA5A50;
 }
 [data-theme='dark'] .navbar__link[href*="/trilha-web"]:hover,
 [data-theme='dark'] .navbar__link[href*="/trilha-web"].navbar__link--active {
-  background: color-mix(in srgb, #B4DCFA 14%, transparent);
-  color: #B4DCFA;
+  background: color-mix(in srgb, #FA8982 14%, transparent);
+  color: #FA8982;
 }
 
 /* Trilha Nativo — darker coral */
@@ -274,16 +274,16 @@
   color: #3ddc84;
 }
 
-/* Trilha iOS — soft pink */
+/* Trilha iOS — coral */
 .navbar__link[href*="/trilha-ios"]:hover,
 .navbar__link[href*="/trilha-ios"].navbar__link--active {
-  background: color-mix(in srgb, #C785CC 12%, transparent);
-  color: #C785CC;
+  background: color-mix(in srgb, #FA5A50 12%, transparent);
+  color: #FA5A50;
 }
 [data-theme='dark'] .navbar__link[href*="/trilha-ios"]:hover,
 [data-theme='dark'] .navbar__link[href*="/trilha-ios"].navbar__link--active {
-  background: color-mix(in srgb, #FAB9FF 14%, transparent);
-  color: #FAB9FF;
+  background: color-mix(in srgb, #FA8982 14%, transparent);
+  color: #FA8982;
 }
 
 /* Masterclass — coral */
@@ -312,16 +312,16 @@
   --track-accent-border: color-mix(in srgb, #FA8982 25%, transparent);
 }
 
-/* Trilha Web — light blue */
+/* Trilha Web — coral */
 :root:has(.navbar__link[href*="/trilha-web"].navbar__link--active) {
-  --track-accent: #8CB3D9;
-  --track-accent-bg: color-mix(in srgb, #8CB3D9 8%, transparent);
-  --track-accent-border: color-mix(in srgb, #8CB3D9 30%, transparent);
+  --track-accent: #FA5A50;
+  --track-accent-bg: color-mix(in srgb, #FA5A50 8%, transparent);
+  --track-accent-border: color-mix(in srgb, #FA5A50 30%, transparent);
 }
 [data-theme='dark']:has(.navbar__link[href*="/trilha-web"].navbar__link--active) {
-  --track-accent: #B4DCFA;
-  --track-accent-bg: color-mix(in srgb, #B4DCFA 10%, transparent);
-  --track-accent-border: color-mix(in srgb, #B4DCFA 25%, transparent);
+  --track-accent: #FA8982;
+  --track-accent-bg: color-mix(in srgb, #FA8982 10%, transparent);
+  --track-accent-border: color-mix(in srgb, #FA8982 25%, transparent);
 }
 
 /* Trilha Android — verde */
@@ -336,16 +336,16 @@
   --track-accent-border: color-mix(in srgb, #3ddc84 25%, transparent);
 }
 
-/* Trilha iOS — soft pink */
+/* Trilha iOS — coral */
 :root:has(.navbar__link[href*="/trilha-ios"].navbar__link--active) {
-  --track-accent: #C785CC;
-  --track-accent-bg: color-mix(in srgb, #C785CC 8%, transparent);
-  --track-accent-border: color-mix(in srgb, #C785CC 30%, transparent);
+  --track-accent: #FA5A50;
+  --track-accent-bg: color-mix(in srgb, #FA5A50 8%, transparent);
+  --track-accent-border: color-mix(in srgb, #FA5A50 30%, transparent);
 }
 [data-theme='dark']:has(.navbar__link[href*="/trilha-ios"].navbar__link--active) {
-  --track-accent: #FAB9FF;
-  --track-accent-bg: color-mix(in srgb, #FAB9FF 10%, transparent);
-  --track-accent-border: color-mix(in srgb, #FAB9FF 25%, transparent);
+  --track-accent: #FA8982;
+  --track-accent-bg: color-mix(in srgb, #FA8982 10%, transparent);
+  --track-accent-border: color-mix(in srgb, #FA8982 25%, transparent);
 }
 
 /* Trilha Nativo — darker coral */
@@ -461,20 +461,20 @@
 /* Trilha Web */
 [class*='trilha-web'] [class*='sidebarLogo'] {
   background: var(--ifm-background-color);
-  border-left-color: #8CB3D9;
-  border-bottom-color: rgba(140, 179, 217, 0.25);
+  border-left-color: #FA5A50;
+  border-bottom-color: rgba(250, 90, 80, 0.25);
 }
 [class*='trilha-web'] [class*='sidebarLogo']::before {
   content: 'Trilha Web → React Native';
-  color: #8CB3D9;
+  color: #FA5A50;
 }
 [data-theme='dark'] [class*='trilha-web'] [class*='sidebarLogo'] {
   background: #000050;
-  border-left-color: #B4DCFA;
-  border-bottom-color: rgba(180, 220, 250, 0.2);
+  border-left-color: #FA8982;
+  border-bottom-color: rgba(250, 137, 130, 0.2);
 }
 [data-theme='dark'] [class*='trilha-web'] [class*='sidebarLogo']::before {
-  color: #B4DCFA;
+  color: #FA8982;
 }
 
 /* Trilha Android — verde */
@@ -496,23 +496,23 @@
   color: #3ddc84;
 }
 
-/* Trilha iOS — soft pink */
+/* Trilha iOS — coral */
 [class*='trilha-ios'] [class*='sidebarLogo'] {
   background: var(--ifm-background-color);
-  border-left-color: #C785CC;
-  border-bottom-color: rgba(199, 133, 204, 0.25);
+  border-left-color: #FA5A50;
+  border-bottom-color: rgba(250, 90, 80, 0.25);
 }
 [class*='trilha-ios'] [class*='sidebarLogo']::before {
   content: 'Trilha iOS → React Native';
-  color: #C785CC;
+  color: #FA5A50;
 }
 [data-theme='dark'] [class*='trilha-ios'] [class*='sidebarLogo'] {
   background: #000050;
-  border-left-color: #FAB9FF;
-  border-bottom-color: rgba(250, 185, 255, 0.2);
+  border-left-color: #FA8982;
+  border-bottom-color: rgba(250, 137, 130, 0.2);
 }
 [data-theme='dark'] [class*='trilha-ios'] [class*='sidebarLogo']::before {
-  color: #FAB9FF;
+  color: #FA8982;
 }
 
 /* Trilha Nativo — darker coral */
@@ -705,7 +705,7 @@ video {
 
 /* Trilha Web */
 [class*='trilha-web'] {
-  --module-accent: #8CB3D9;
+  --module-accent: #FA5A50;
 }
 
 /* Trilha Android */
@@ -715,7 +715,7 @@ video {
 
 /* Trilha iOS */
 [class*='trilha-ios'] {
-  --module-accent: #C785CC;
+  --module-accent: #FA5A50;
 }
 
 /* Trilha Nativo */
@@ -760,23 +760,23 @@ video {
   background: color-mix(in srgb, #D94A41 8%, transparent);
 }
 
-/* Trilha Web — sidebar light blue */
+/* Trilha Web — coral */
 [class*='trilha-web'] .menu__link--sublist {
-  color: #8CB3D9 !important;
+  color: #FA5A50 !important;
 }
 
 [data-theme='dark'] [class*='trilha-web'] .menu__link--sublist {
-  color: #B4DCFA !important;
+  color: #FA8982 !important;
 }
 
 [class*='trilha-web'] .menu__link--active {
-  background: color-mix(in srgb, #8CB3D9 10%, transparent) !important;
-  color: #8CB3D9 !important;
+  background: color-mix(in srgb, #FA5A50 10%, transparent) !important;
+  color: #FA5A50 !important;
 }
 
 [data-theme='dark'] [class*='trilha-web'] .menu__link--active {
-  background: color-mix(in srgb, #B4DCFA 10%, transparent) !important;
-  color: #B4DCFA !important;
+  background: color-mix(in srgb, #FA8982 10%, transparent) !important;
+  color: #FA8982 !important;
 }
 
 /* Trilha Android — sidebar verde */
@@ -798,23 +798,23 @@ video {
   color: #3ddc84 !important;
 }
 
-/* Trilha iOS — sidebar soft pink */
+/* Trilha iOS — coral */
 [class*='trilha-ios'] .menu__link--sublist {
-  color: #C785CC !important;
+  color: #FA5A50 !important;
 }
 
 [data-theme='dark'] [class*='trilha-ios'] .menu__link--sublist {
-  color: #FAB9FF !important;
+  color: #FA8982 !important;
 }
 
 [class*='trilha-ios'] .menu__link--active {
-  background: color-mix(in srgb, #C785CC 10%, transparent) !important;
-  color: #C785CC !important;
+  background: color-mix(in srgb, #FA5A50 10%, transparent) !important;
+  color: #FA5A50 !important;
 }
 
 [data-theme='dark'] [class*='trilha-ios'] .menu__link--active {
-  background: color-mix(in srgb, #FAB9FF 10%, transparent) !important;
-  color: #FAB9FF !important;
+  background: color-mix(in srgb, #FA8982 10%, transparent) !important;
+  color: #FA8982 !important;
 }
 
 /* Trilha Nativo — sidebar darker coral */
@@ -1149,7 +1149,7 @@ video {
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, transparent, #8CB3D9 50%, transparent);
+  background: linear-gradient(90deg, transparent, #FA5A50 50%, transparent);
   opacity: 0.5;
   pointer-events: none;
   z-index: 10;
@@ -1191,7 +1191,7 @@ video {
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, transparent, #C785CC 50%, transparent);
+  background: linear-gradient(90deg, transparent, #FA5A50 50%, transparent);
   opacity: 0.5;
   pointer-events: none;
   z-index: 10;

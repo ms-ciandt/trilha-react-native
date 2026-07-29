@@ -23,7 +23,7 @@ Sua vantagem: você já entende thread safety, renderização nativa e APIs de p
 
 </div>
 
-<div style="border: 2px solid #C785CC; border-radius: 12px; padding: 20px;">
+<div style="border: 2px solid #FA5A50; border-radius: 12px; padding: 20px;">
 
 ### Trilha iOS
 
@@ -35,7 +35,7 @@ Sua vantagem: você já entende renderização UIKit/SwiftUI, o ciclo de vida iO
 
 </div>
 
-<div style="border: 2px solid #8CB3D9; border-radius: 12px; padding: 20px;">
+<div style="border: 2px solid #FA5A50; border-radius: 12px; padding: 20px;">
 
 ### Trilha Web
 
