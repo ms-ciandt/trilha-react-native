@@ -229,12 +229,12 @@ export default function Home() {
           <span className={styles.contributorsLabel}>Revisores</span>
           <div className={styles.contributorsList}>
             {[
-              { name: 'Matheus Sales', role: 'React Native', username: 'ms-ciandt', color: '#00d4ff' },
-              { name: 'Diego Karol Gouvea Lana', role: 'Arquiteto', username: null, avatar: '/trilha-react-native/img/lana.webp', color: '#7c3aed' },
-              { name: 'Guilherme Rovaron',       role: 'Web',       username: null, avatar: '/trilha-react-native/img/web-reviewer.jpg', color: '#059669' },
-              { name: 'Paulo Vitor Sato',        role: 'Android',   username: null, avatar: '/trilha-react-native/img/sato.webp', color: '#d97706' },
-              { name: 'Gabriel Dos Santos Xavier', role: 'iOS', username: null, avatar: '/trilha-react-native/img/gabriel-xavier.webp', color: '#d97706' },
-            ].map(({ name, role, username, avatar, color }, i) => (
+              { name: 'Matheus Sales',             role: 'React Native', username: 'ms-ciandt', color: '#B4DCFA' },
+              { name: 'Diego Karol Gouvea Lana',   role: 'Arquiteto',    username: null, avatar: '/trilha-react-native/img/lana.webp', color: '#242459' },
+              { name: 'Guilherme Rovaron',         role: 'Web',          username: null, avatar: '/trilha-react-native/img/web-reviewer.jpg', color: '#FA5A50' },
+              { name: 'Paulo Vitor Sato',          role: 'Android',      username: null, avatar: '/trilha-react-native/img/sato.webp', color: '#2db370' },
+              { name: 'Gabriel Dos Santos Xavier', role: 'iOS',          username: null, avatar: '/trilha-react-native/img/gabriel-xavier.webp', color: '#690037', textColor: '#ffffff' },
+            ].map(({ name, role, username, avatar, color, textColor }, i) => (
               <div
                 key={role}
                 className={styles.contributorCard}
@@ -251,7 +251,7 @@ export default function Home() {
                   style={{ borderColor: color, boxShadow: `0 0 0 2px color-mix(in srgb, ${color} 20%, transparent)` }}
                 />
                 <span className={styles.contributorName}>{name}</span>
-                <span className={styles.contributorRole} style={{ color, background: `color-mix(in srgb, ${color} 12%, transparent)`, border: `1px solid color-mix(in srgb, ${color} 30%, transparent)` }}>{role}</span>
+                <span className={styles.contributorRole} style={{ color: textColor ?? color, background: `color-mix(in srgb, ${color} 12%, transparent)`, border: `1px solid color-mix(in srgb, ${color} 30%, transparent)` }}>{role}</span>
               </div>
             ))}
           </div>

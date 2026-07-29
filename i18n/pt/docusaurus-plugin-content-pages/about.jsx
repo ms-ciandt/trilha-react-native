@@ -9,11 +9,11 @@ const CONTRIBUTORS = [
 ];
 
 const REVIEWERS = [
-  { name: 'Matheus Sales',           role: 'React Native', username: 'ms-ciandt', avatar: null,                                        color: '#00d4ff' },
-  { name: 'Diego Karol Gouvea Lana', role: 'Arquiteto',    username: null,        avatar: '/trilha-react-native/img/lana.webp',        color: '#7c3aed' },
-  { name: 'Guilherme Rovaron',       role: 'Web',          username: null,        avatar: '/trilha-react-native/img/web-reviewer.jpg', color: '#0284c7' },
-  { name: 'Paulo Vitor Sato',        role: 'Android',      username: null,        avatar: '/trilha-react-native/img/sato.webp',        color: '#3ddc84' },
-  { name: 'Gabriel Dos Santos Xavier', role: 'iOS',         username: null,        avatar: '/trilha-react-native/img/gabriel-xavier.webp', color: '#a855f7' },
+  { name: 'Matheus Sales',             role: 'React Native', username: 'ms-ciandt', avatar: null,                                             color: '#B4DCFA' },
+  { name: 'Diego Karol Gouvea Lana',   role: 'Arquiteto',    username: null,        avatar: '/trilha-react-native/img/lana.webp',             color: '#242459' },
+  { name: 'Guilherme Rovaron',         role: 'Web',          username: null,        avatar: '/trilha-react-native/img/web-reviewer.jpg',       color: '#FA5A50' },
+  { name: 'Paulo Vitor Sato',          role: 'Android',      username: null,        avatar: '/trilha-react-native/img/sato.webp',             color: '#2db370' },
+  { name: 'Gabriel Dos Santos Xavier', role: 'iOS',          username: null,        avatar: '/trilha-react-native/img/gabriel-xavier.webp',   color: '#690037', textColor: '#ffffff' },
 ];
 
 const TOOLS = [
@@ -30,22 +30,22 @@ const TOOLS = [
 const TRACKS = [
   {
     label: 'Trilha Web',
-    color: '#0284c7',
+    color: '#FA5A50',
     desc: 'Para devs com background em React, HTML/CSS e JavaScript. Cobre a mudança de mentalidade do browser para o ambiente mobile.',
   },
   {
     label: 'Trilha Android',
-    color: '#3ddc84',
+    color: '#2db370',
     desc: 'Para devs Android vindos de Kotlin e Jetpack Compose. Mapeia conceitos do Compose — Composables, remember, NavHost — para os equivalentes em React Native.',
   },
   {
     label: 'Trilha iOS',
-    color: '#a855f7',
+    color: '#690037',
     desc: 'Para devs iOS vindos de Swift e SwiftUI. Mapeia conceitos do SwiftUI — Views, @State, NavigationStack — para o ecossistema React Native.',
   },
   {
     label: 'Trilha React Native MasterClass',
-    color: '#00d4ff',
+    color: '#8CB3D9',
     desc: 'Trilha avançada cobrindo integração Brownfield, TurboModules, Fabric, JSI, Performance e CI/CD.',
   },
 ];
@@ -145,7 +145,7 @@ export default function About() {
           <h2>Revisores</h2>
           <p>Cada trilha foi revisada por um especialista na plataforma correspondente.</p>
           <div className={styles.reviewers}>
-            {REVIEWERS.map(({ name, role, username, avatar, color }) => (
+            {REVIEWERS.map(({ name, role, username, avatar, color, textColor }) => (
               <div key={role} className={styles.reviewerCard}>
                 <img
                   src={avatar
@@ -161,7 +161,7 @@ export default function About() {
                 <span
                   className={styles.reviewerRole}
                   style={{
-                    color,
+                    color: textColor ?? color,
                     background: `color-mix(in srgb, ${color} 12%, transparent)`,
                     border: `1px solid color-mix(in srgb, ${color} 30%, transparent)`,
                   }}
