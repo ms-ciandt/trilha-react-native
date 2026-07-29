@@ -231,9 +231,9 @@ export default function Home() {
             {[
               { name: 'Matheus Sales', role: 'React Native', username: 'ms-ciandt', color: '#B4DCFA' },
               { name: 'Diego Karol Gouvea Lana', role: 'Architect', username: null, avatar: '/trilha-react-native/img/lana.webp', color: '#FA5A50' },
-              { name: 'Guilherme Rovaron',       role: 'Web',       username: null, avatar: '/trilha-react-native/img/web-reviewer.jpg', color: '#FA5A50' },
+              { name: 'Guilherme Rovaron',       role: 'Web',       username: null, avatar: '/trilha-react-native/img/web-reviewer.jpg', color: '#8CB3D9' },
               { name: 'Paulo Vitor Sato',        role: 'Android',   username: null, avatar: '/trilha-react-native/img/sato.webp', color: '#2db370' },
-              { name: 'Reviewer',      role: 'iOS',          username: null,             color: '#FA5A50' },
+              { name: 'Reviewer',      role: 'iOS',          username: null,             color: '#393973' },
             ].map(({ name, role, username, avatar, color }, i) => (
               <div
                 key={role}

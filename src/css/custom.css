@@ -194,22 +194,18 @@
   align-items: center;
 }
 
-/* Gradient title — vinho → coral */
+/* Title — deep red */
 .navbar__title {
   font-weight: 800;
   font-size: 1.05rem;
   letter-spacing: -0.02em;
-  background: linear-gradient(135deg, #690037 0%, #FA5A50 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #690037;
+  -webkit-text-fill-color: initial;
 }
 
 [data-theme='dark'] .navbar__title {
-  background: linear-gradient(135deg, #FA8982 0%, #FAB9FF 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #D94A41;
+  -webkit-text-fill-color: initial;
 }
 
 /* ─── Navbar trail pills ─────────────────────────────────────────────── */
@@ -238,16 +234,16 @@
   color: #FA8982;
 }
 
-/* Trilha Web — coral */
+/* Trilha Web — light blue */
 .navbar__link[href*="/trilha-web"]:hover,
 .navbar__link[href*="/trilha-web"].navbar__link--active {
-  background: color-mix(in srgb, #FA5A50 12%, transparent);
-  color: #FA5A50;
+  background: color-mix(in srgb, #8CB3D9 12%, transparent);
+  color: #8CB3D9;
 }
 [data-theme='dark'] .navbar__link[href*="/trilha-web"]:hover,
 [data-theme='dark'] .navbar__link[href*="/trilha-web"].navbar__link--active {
-  background: color-mix(in srgb, #FA8982 14%, transparent);
-  color: #FA8982;
+  background: color-mix(in srgb, #B4DCFA 14%, transparent);
+  color: #B4DCFA;
 }
 
 /* Trilha Nativo — darker coral */
@@ -274,16 +270,16 @@
   color: #3ddc84;
 }
 
-/* Trilha iOS — coral */
+/* Trilha iOS — navy blue */
 .navbar__link[href*="/trilha-ios"]:hover,
 .navbar__link[href*="/trilha-ios"].navbar__link--active {
-  background: color-mix(in srgb, #FA5A50 12%, transparent);
-  color: #FA5A50;
+  background: color-mix(in srgb, #242459 12%, transparent);
+  color: #242459;
 }
 [data-theme='dark'] .navbar__link[href*="/trilha-ios"]:hover,
 [data-theme='dark'] .navbar__link[href*="/trilha-ios"].navbar__link--active {
-  background: color-mix(in srgb, #FA8982 14%, transparent);
-  color: #FA8982;
+  background: color-mix(in srgb, #8CB3D9 14%, transparent);
+  color: #8CB3D9;
 }
 
 /* Masterclass — coral */
@@ -312,16 +308,16 @@
   --track-accent-border: color-mix(in srgb, #FA8982 25%, transparent);
 }
 
-/* Trilha Web — coral */
+/* Trilha Web — light blue */
 :root:has(.navbar__link[href*="/trilha-web"].navbar__link--active) {
-  --track-accent: #FA5A50;
-  --track-accent-bg: color-mix(in srgb, #FA5A50 8%, transparent);
-  --track-accent-border: color-mix(in srgb, #FA5A50 30%, transparent);
+  --track-accent: #8CB3D9;
+  --track-accent-bg: color-mix(in srgb, #8CB3D9 8%, transparent);
+  --track-accent-border: color-mix(in srgb, #8CB3D9 30%, transparent);
 }
 [data-theme='dark']:has(.navbar__link[href*="/trilha-web"].navbar__link--active) {
-  --track-accent: #FA8982;
-  --track-accent-bg: color-mix(in srgb, #FA8982 10%, transparent);
-  --track-accent-border: color-mix(in srgb, #FA8982 25%, transparent);
+  --track-accent: #B4DCFA;
+  --track-accent-bg: color-mix(in srgb, #B4DCFA 10%, transparent);
+  --track-accent-border: color-mix(in srgb, #B4DCFA 25%, transparent);
 }
 
 /* Trilha Android — verde */
@@ -336,16 +332,16 @@
   --track-accent-border: color-mix(in srgb, #3ddc84 25%, transparent);
 }
 
-/* Trilha iOS — coral */
+/* Trilha iOS — navy blue */
 :root:has(.navbar__link[href*="/trilha-ios"].navbar__link--active) {
-  --track-accent: #FA5A50;
-  --track-accent-bg: color-mix(in srgb, #FA5A50 8%, transparent);
-  --track-accent-border: color-mix(in srgb, #FA5A50 30%, transparent);
+  --track-accent: #242459;
+  --track-accent-bg: color-mix(in srgb, #242459 8%, transparent);
+  --track-accent-border: color-mix(in srgb, #242459 30%, transparent);
 }
 [data-theme='dark']:has(.navbar__link[href*="/trilha-ios"].navbar__link--active) {
-  --track-accent: #FA8982;
-  --track-accent-bg: color-mix(in srgb, #FA8982 10%, transparent);
-  --track-accent-border: color-mix(in srgb, #FA8982 25%, transparent);
+  --track-accent: #8CB3D9;
+  --track-accent-bg: color-mix(in srgb, #8CB3D9 10%, transparent);
+  --track-accent-border: color-mix(in srgb, #8CB3D9 25%, transparent);
 }
 
 /* Trilha Nativo — darker coral */
@@ -461,20 +457,20 @@
 /* Trilha Web */
 [class*='trilha-web'] [class*='sidebarLogo'] {
   background: var(--ifm-background-color);
-  border-left-color: #FA5A50;
-  border-bottom-color: rgba(250, 90, 80, 0.25);
+  border-left-color: #8CB3D9;
+  border-bottom-color: rgba(140, 179, 217, 0.25);
 }
 [class*='trilha-web'] [class*='sidebarLogo']::before {
   content: 'Trilha Web → React Native';
-  color: #FA5A50;
+  color: #8CB3D9;
 }
 [data-theme='dark'] [class*='trilha-web'] [class*='sidebarLogo'] {
   background: #000050;
-  border-left-color: #FA8982;
-  border-bottom-color: rgba(250, 137, 130, 0.2);
+  border-left-color: #B4DCFA;
+  border-bottom-color: rgba(180, 220, 250, 0.2);
 }
 [data-theme='dark'] [class*='trilha-web'] [class*='sidebarLogo']::before {
-  color: #FA8982;
+  color: #B4DCFA;
 }
 
 /* Trilha Android — verde */
@@ -496,23 +492,23 @@
   color: #3ddc84;
 }
 
-/* Trilha iOS — coral */
+/* Trilha iOS — navy blue */
 [class*='trilha-ios'] [class*='sidebarLogo'] {
   background: var(--ifm-background-color);
-  border-left-color: #FA5A50;
-  border-bottom-color: rgba(250, 90, 80, 0.25);
+  border-left-color: #393973;
+  border-bottom-color: rgba(57, 57, 115, 0.25);
 }
 [class*='trilha-ios'] [class*='sidebarLogo']::before {
   content: 'Trilha iOS → React Native';
-  color: #FA5A50;
+  color: #393973;
 }
 [data-theme='dark'] [class*='trilha-ios'] [class*='sidebarLogo'] {
   background: #000050;
-  border-left-color: #FA8982;
-  border-bottom-color: rgba(250, 137, 130, 0.2);
+  border-left-color: #8CB3D9;
+  border-bottom-color: rgba(140, 179, 217, 0.2);
 }
 [data-theme='dark'] [class*='trilha-ios'] [class*='sidebarLogo']::before {
-  color: #FA8982;
+  color: #8CB3D9;
 }
 
 /* Trilha Nativo — darker coral */
@@ -705,7 +701,7 @@ video {
 
 /* Trilha Web */
 [class*='trilha-web'] {
-  --module-accent: #FA5A50;
+  --module-accent: #8CB3D9;
 }
 
 /* Trilha Android */
@@ -715,7 +711,7 @@ video {
 
 /* Trilha iOS */
 [class*='trilha-ios'] {
-  --module-accent: #FA5A50;
+  --module-accent: #242459;
 }
 
 /* Trilha Nativo */
@@ -760,23 +756,23 @@ video {
   background: color-mix(in srgb, #D94A41 8%, transparent);
 }
 
-/* Trilha Web — coral */
+/* Trilha Web — light blue */
 [class*='trilha-web'] .menu__link--sublist {
-  color: #FA5A50 !important;
+  color: #8CB3D9 !important;
 }
 
 [data-theme='dark'] [class*='trilha-web'] .menu__link--sublist {
-  color: #FA8982 !important;
+  color: #B4DCFA !important;
 }
 
 [class*='trilha-web'] .menu__link--active {
-  background: color-mix(in srgb, #FA5A50 10%, transparent) !important;
-  color: #FA5A50 !important;
+  background: color-mix(in srgb, #8CB3D9 10%, transparent) !important;
+  color: #8CB3D9 !important;
 }
 
 [data-theme='dark'] [class*='trilha-web'] .menu__link--active {
-  background: color-mix(in srgb, #FA8982 10%, transparent) !important;
-  color: #FA8982 !important;
+  background: color-mix(in srgb, #B4DCFA 10%, transparent) !important;
+  color: #B4DCFA !important;
 }
 
 /* Trilha Android — sidebar verde */
@@ -798,23 +794,23 @@ video {
   color: #3ddc84 !important;
 }
 
-/* Trilha iOS — coral */
+/* Trilha iOS — navy blue */
 [class*='trilha-ios'] .menu__link--sublist {
-  color: #FA5A50 !important;
+  color: #393973 !important;
 }
 
 [data-theme='dark'] [class*='trilha-ios'] .menu__link--sublist {
-  color: #FA8982 !important;
+  color: #8CB3D9 !important;
 }
 
 [class*='trilha-ios'] .menu__link--active {
-  background: color-mix(in srgb, #FA5A50 10%, transparent) !important;
-  color: #FA5A50 !important;
+  background: color-mix(in srgb, #393973 10%, transparent) !important;
+  color: #393973 !important;
 }
 
 [data-theme='dark'] [class*='trilha-ios'] .menu__link--active {
-  background: color-mix(in srgb, #FA8982 10%, transparent) !important;
-  color: #FA8982 !important;
+  background: color-mix(in srgb, #8CB3D9 10%, transparent) !important;
+  color: #8CB3D9 !important;
 }
 
 /* Trilha Nativo — sidebar darker coral */
@@ -1149,7 +1145,7 @@ video {
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, transparent, #FA5A50 50%, transparent);
+  background: linear-gradient(90deg, transparent, #8CB3D9 50%, transparent);
   opacity: 0.5;
   pointer-events: none;
   z-index: 10;
@@ -1191,7 +1187,7 @@ video {
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, transparent, #FA5A50 50%, transparent);
+  background: linear-gradient(90deg, transparent, #393973 50%, transparent);
   opacity: 0.5;
   pointer-events: none;
   z-index: 10;
