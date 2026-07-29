@@ -756,6 +756,7 @@
   opacity: 0;
   animation: fadeUp 0.5s ease both;
   transition: transform 0.2s ease;
+  white-space: nowrap;
 }
 
 .contributorCard:hover {
