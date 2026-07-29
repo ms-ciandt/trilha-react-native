@@ -303,16 +303,28 @@
   margin-top: 0.25rem;
 }
 
-.trackCardWeb .trackLabel,
-.trackCardAndroid .trackLabel,
-.trackCardIos .trackLabel {
-  color: #FA5A50;
+.trackCardWeb .trackLabel {
+  color: #8CB3D9;
 }
 
-[data-theme='dark'] .trackCardWeb .trackLabel,
-[data-theme='dark'] .trackCardAndroid .trackLabel,
+.trackCardAndroid .trackLabel {
+  color: #2db370;
+}
+
+.trackCardIos .trackLabel {
+  color: #393973;
+}
+
+[data-theme='dark'] .trackCardWeb .trackLabel {
+  color: #B4DCFA;
+}
+
+[data-theme='dark'] .trackCardAndroid .trackLabel {
+  color: #3ddc84;
+}
+
 [data-theme='dark'] .trackCardIos .trackLabel {
-  color: #FA8982;
+  color: #8CB3D9;
 }
 
 .trackDesc {
@@ -335,17 +347,33 @@
   color: #fff !important;
 }
 
-.trackBtnWeb,
-.trackBtnAndroid,
-.trackBtnIos {
-  background: #690037;
+.trackBtnWeb {
+  background: #8CB3D9;
 }
 
-.trackBtnWeb:hover,
-.trackBtnAndroid:hover,
+.trackBtnWeb:hover {
+  background: #6B8FB3;
+  box-shadow: 0 4px 14px rgba(140, 179, 217, 0.4);
+  transform: translateY(-1px);
+}
+
+.trackBtnAndroid {
+  background: #2db370;
+}
+
+.trackBtnAndroid:hover {
+  background: #22956a;
+  box-shadow: 0 4px 14px rgba(45, 179, 112, 0.4);
+  transform: translateY(-1px);
+}
+
+.trackBtnIos {
+  background: #393973;
+}
+
 .trackBtnIos:hover {
-  background: #580030;
-  box-shadow: 0 4px 14px rgba(105, 0, 55, 0.4);
+  background: #242459;
+  box-shadow: 0 4px 14px rgba(57, 57, 115, 0.4);
   transform: translateY(-1px);
 }
 
