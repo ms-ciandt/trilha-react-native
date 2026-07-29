@@ -40,6 +40,7 @@ const sidebars = {
       collapsed: false,
       items: [
         'trilha-nativo/modulo-recursos-nativos/utilizando-recursos-nativos',
+        'trilha-nativo/modulo-recursos-nativos/xcassets-ios',
         'trilha-nativo/modulo-recursos-nativos/integracao-nativa-avancada',
       ],
     },
