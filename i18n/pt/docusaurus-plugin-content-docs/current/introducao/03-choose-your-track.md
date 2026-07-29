@@ -11,7 +11,7 @@ title: Escolha Sua Trilha
 
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-top: 32px;">
 
-<div style="border: 2px solid #3ddc84; border-radius: 12px; padding: 20px;">
+<div style="border: 2px solid #2db370; border-radius: 12px; padding: 20px;">
 
 ### Trilha Android
 
@@ -23,7 +23,7 @@ Sua vantagem: você já entende thread safety, renderização nativa e APIs de p
 
 </div>
 
-<div style="border: 2px solid #007aff; border-radius: 12px; padding: 20px;">
+<div style="border: 2px solid #C785CC; border-radius: 12px; padding: 20px;">
 
 ### Trilha iOS
 
@@ -35,7 +35,7 @@ Sua vantagem: você já entende renderização UIKit/SwiftUI, o ciclo de vida iO
 
 </div>
 
-<div style="border: 2px solid #25c2a0; border-radius: 12px; padding: 20px;">
+<div style="border: 2px solid #8CB3D9; border-radius: 12px; padding: 20px;">
 
 ### Trilha Web
 
@@ -47,7 +47,7 @@ Sua vantagem: os componentes do React Native funcionam exatamente como component
 
 </div>
 
-<div style="border: 2px solid #d4a017; border-radius: 12px; padding: 20px;">
+<div style="border: 2px solid #FA5A50; border-radius: 12px; padding: 20px;">
 
 ### Masterclass
 

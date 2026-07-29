@@ -11,7 +11,7 @@ title: Choose Your Trail
 
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-top: 32px;">
 
-<div style="border: 2px solid #3ddc84; border-radius: 12px; padding: 20px;">
+<div style="border: 2px solid #2db370; border-radius: 12px; padding: 20px;">
 
 ### Android Trail
 
@@ -23,7 +23,7 @@ Your advantage: you already understand thread safety, native rendering, and plat
 
 </div>
 
-<div style="border: 2px solid #007aff; border-radius: 12px; padding: 20px;">
+<div style="border: 2px solid #C785CC; border-radius: 12px; padding: 20px;">
 
 ### iOS Trail
 
@@ -35,7 +35,7 @@ Your advantage: you already understand UIKit/SwiftUI rendering, the iOS lifecycl
 
 </div>
 
-<div style="border: 2px solid #25c2a0; border-radius: 12px; padding: 20px;">
+<div style="border: 2px solid #8CB3D9; border-radius: 12px; padding: 20px;">
 
 ### Web Trail
 
@@ -47,7 +47,7 @@ Your advantage: React Native components work exactly like React components — h
 
 </div>
 
-<div style="border: 2px solid #d4a017; border-radius: 12px; padding: 20px;">
+<div style="border: 2px solid #FA5A50; border-radius: 12px; padding: 20px;">
 
 ### Masterclass
 
