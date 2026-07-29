@@ -232,6 +232,18 @@ const sidebars = {
     },
     {
       type: 'category',
+      label: 'Animations',
+      collapsed: false,
+      items: [
+        'trilha-masterclass/modulo-06-animations/threading-model',
+        'trilha-masterclass/modulo-06-animations/animated-api',
+        'trilha-masterclass/modulo-06-animations/reanimated-worklets',
+        'trilha-masterclass/modulo-06-animations/gesture-and-layout',
+        'trilha-masterclass/modulo-06-animations/animation-performance',
+      ],
+    },
+    {
+      type: 'category',
       label: 'RN Version Updates',
       collapsed: false,
       items: [
