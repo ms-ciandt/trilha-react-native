@@ -229,11 +229,11 @@ export default function Home() {
           <span className={styles.contributorsLabel}>Reviewers</span>
           <div className={styles.contributorsList}>
             {[
-              { name: 'Matheus Sales', role: 'React Native', username: 'ms-ciandt', color: '#00d4ff' },
-              { name: 'Diego Karol Gouvea Lana', role: 'Architect', username: null, avatar: '/trilha-react-native/img/lana.webp', color: '#7c3aed' },
-              { name: 'Guilherme Rovaron',       role: 'Web',       username: null, avatar: '/trilha-react-native/img/web-reviewer.jpg', color: '#059669' },
-              { name: 'Paulo Vitor Sato',        role: 'Android',   username: null, avatar: '/trilha-react-native/img/sato.webp', color: '#d97706' },
-              { name: 'Reviewer',      role: 'iOS',          username: null,             color: '#d97706' },
+              { name: 'Matheus Sales', role: 'React Native', username: 'ms-ciandt', color: '#FA5A50' },
+              { name: 'Diego Karol Gouvea Lana', role: 'Architect', username: null, avatar: '/trilha-react-native/img/lana.webp', color: '#690037' },
+              { name: 'Guilherme Rovaron',       role: 'Web',       username: null, avatar: '/trilha-react-native/img/web-reviewer.jpg', color: '#8CB3D9' },
+              { name: 'Paulo Vitor Sato',        role: 'Android',   username: null, avatar: '/trilha-react-native/img/sato.webp', color: '#D94A41' },
+              { name: 'Reviewer',      role: 'iOS',          username: null,             color: '#C785CC' },
             ].map(({ name, role, username, avatar, color }, i) => (
               <div
                 key={role}
