@@ -4,6 +4,11 @@ title: "Recreacao de Patches (patch-package)"
 
 # Recreacao de Patches (patch-package)
 
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc05_06_patches-recreation.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 > Patches no diretorio `patches/` sao divida tecnica com data de validade. Todo upgrade do RN e uma oportunidade de auditoria — alguns podem ser deletados (a correcao chegou upstream), outros precisam ser recriados, e alguns revelam que uma biblioteca foi abandonada.
 
 ---

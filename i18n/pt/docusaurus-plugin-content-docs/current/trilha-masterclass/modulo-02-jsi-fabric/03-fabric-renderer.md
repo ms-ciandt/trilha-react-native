@@ -4,6 +4,11 @@ title: "Fabric — Renderer & Shadow Tree"
 
 # Fabric — Novo Renderer
 
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc03_03_fabric-renderer.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 > **Modulo 03 — React Native Masterclass**
 > Publico-alvo: engenheiros senior que precisam entender como o RN 0.76+ renderiza componentes — de `setState` ate os pixels.
 > React Native 0.76+ — New Architecture (Fabric, Concurrent Rendering, Bridgeless).

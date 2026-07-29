@@ -4,6 +4,11 @@ title: "Mudancas em Configuracoes Nativas (Edge-to-Edge)"
 
 # Mudancas em Configuracoes Nativas (Edge-to-Edge)
 
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc05_09_native-settings.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 > Edge-to-edge e a mudanca mais visualmente impactante na historia recente do RN. Definir `targetSdk = 35` a ativa no Android 15 — e de repente o conteudo transborda para baixo da status bar e da barra de navegacao por gestos em todas as telas.
 
 ---

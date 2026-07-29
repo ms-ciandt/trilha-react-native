@@ -4,6 +4,11 @@ title: "JSI — JavaScript Interface"
 
 # JSI — JavaScript Interface
 
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc03_01_jsi-javascript-interface.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 > **Modulo 03 — React Native Masterclass**
 > Publico-alvo: engenheiros senior que querem entender como o JavaScript chama C++ sem uma fila de mensagens.
 > React Native 0.76+ — New Architecture (Bridgeless, JSI-first, Hermes).

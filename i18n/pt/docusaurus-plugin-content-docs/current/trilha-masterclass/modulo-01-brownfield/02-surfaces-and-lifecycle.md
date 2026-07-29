@@ -2,6 +2,11 @@
 title: Surfaces e Lifecycle
 ---
 
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc01_02_surfaces-and-lifecycle.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 ## 4. Múltiplas Surfaces do RN no Mesmo App
 
 Uma **surface** é uma entrada de `AppRegistry.registerComponent()` renderizada em uma view nativa. Você pode ter qualquer número de surfaces a partir do mesmo bundle JS, cada uma com sua própria árvore de componentes, props e estado React.

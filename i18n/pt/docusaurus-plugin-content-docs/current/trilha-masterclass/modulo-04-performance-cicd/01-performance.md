@@ -4,6 +4,13 @@ title: Performance
 
 # Performance
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc04_01_performance.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 > **Modulo 04 — React Native Masterclass**
 > Publico-alvo: engenheiros senior que publicam apps RN 0.76+ e precisam de melhorias de performance mensuráveis e prontas para produção — nao dicas isoladas, mas uma metodologia sistematica.
 

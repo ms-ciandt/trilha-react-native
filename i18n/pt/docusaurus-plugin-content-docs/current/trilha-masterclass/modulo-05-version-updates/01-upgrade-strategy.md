@@ -4,6 +4,11 @@ title: "Processo: Estrategia de Upgrade"
 
 # Processo: Estrategia de Upgrade
 
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc05_01_upgrade-strategy.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 > Atualizar o React Native nao e um unico comando. E uma migracao estruturada: diff, aplicar, validar, repetir. Os desenvolvedores que fazem isso corretamente tratam o processo como um refactor planejado — nao como uma simples atualizacao de dependencia.
 
 ---
