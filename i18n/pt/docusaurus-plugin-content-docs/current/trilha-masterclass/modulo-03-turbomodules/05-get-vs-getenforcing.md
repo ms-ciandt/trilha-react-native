@@ -4,6 +4,11 @@ title: "TurboModuleRegistry: get vs getEnforcing"
 
 # TurboModuleRegistry: `get` vs `getEnforcing`
 
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc02_05_get-vs-getenforcing.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 > Esta é a decisão de API mais consequente que você toma por módulo. A escolha errada ou causa crash silencioso (null ignorado) ou crash ruidoso no momento errado (`getEnforcing` incorreto). Conheça as semânticas exatas.
 
 ---

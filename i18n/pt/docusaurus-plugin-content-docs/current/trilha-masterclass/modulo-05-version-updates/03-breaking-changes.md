@@ -4,6 +4,11 @@ title: Analise de Breaking Changes
 
 # Analise de Breaking Changes
 
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc05_03_breaking-changes.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 > Breaking changes no React Native ocorrem em tres camadas de forma independente: a superficie da API JavaScript, o sistema de build nativo do Android e o sistema de build nativo do iOS. Uma mudanca pode quebrar o iOS sem tocar no Android. Ler apenas o changelog de JS nao e suficiente.
 
 ---

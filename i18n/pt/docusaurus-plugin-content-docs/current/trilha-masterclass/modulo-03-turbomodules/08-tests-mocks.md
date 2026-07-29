@@ -4,6 +4,11 @@ title: Testes e Mocks para Módulos Nativos
 
 # Testes e Mocks para Módulos Nativos
 
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc02_08_tests-mocks.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 > Quando o Jest executa, não há runtime nativo. Qualquer chamada a `TurboModuleRegistry.getEnforcing()` sem um mock lança imediatamente. Este tópico cobre quatro estratégias, da mais simples à mais robusta.
 
 ---

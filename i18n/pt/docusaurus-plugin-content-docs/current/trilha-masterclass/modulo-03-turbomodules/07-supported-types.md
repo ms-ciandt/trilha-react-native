@@ -4,6 +4,11 @@ title: Tipos Suportados e Serialização
 
 # Tipos Suportados e Serialização
 
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc02_07_supported-types.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 > O Codegen valida tipos em **tempo de build**. Tipos inválidos são erros do Codegen, não crashes em tempo de execução. Esta é uma das maiores melhorias de segurança em relação à bridge antiga — incompatibilidades de tipo se tornam falhas de CI, não incidentes em produção.
 
 ---

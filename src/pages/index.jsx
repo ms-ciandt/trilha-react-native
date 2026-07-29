@@ -233,7 +233,7 @@ export default function Home() {
               { name: 'Diego Karol Gouvea Lana', role: 'Architect', username: null, avatar: '/trilha-react-native/img/lana.webp', color: '#FA5A50' },
               { name: 'Guilherme Rovaron',       role: 'Web',       username: null, avatar: '/trilha-react-native/img/web-reviewer.jpg', color: '#8CB3D9' },
               { name: 'Paulo Vitor Sato',        role: 'Android',   username: null, avatar: '/trilha-react-native/img/sato.webp', color: '#2db370' },
-              { name: 'Reviewer',      role: 'iOS',          username: null,             color: '#690037' },
+              { name: 'Gabriel Dos Santos Xavier', role: 'iOS', username: null, avatar: '/trilha-react-native/img/gabriel-xavier.webp', color: '#690037' },
             ].map(({ name, role, username, avatar, color }, i) => (
               <div
                 key={role}

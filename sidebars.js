@@ -105,6 +105,7 @@ const sidebars = {
         'trilha-ios/modulo-recursos-nativos/storage-and-keychain',
         'trilha-ios/modulo-recursos-nativos/sensors-and-device-apis',
         'trilha-ios/modulo-recursos-nativos/turbomodule-swift',
+        'trilha-ios/modulo-recursos-nativos/xcassets-ios',
       ],
     },
     {

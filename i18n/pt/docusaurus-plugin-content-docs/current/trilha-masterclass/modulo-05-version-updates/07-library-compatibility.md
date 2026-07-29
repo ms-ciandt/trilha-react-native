@@ -4,6 +4,11 @@ title: Compatibilidade de Bibliotecas de Terceiros
 
 # Compatibilidade de Bibliotecas de Terceiros
 
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc05_07_library-compatibility.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 > A maior fonte de atrito em upgrades sao bibliotecas de terceiros que nao migraram para a Nova Arquitetura. Antes de se comprometer com um cronograma de upgrade, faca o inventario das suas dependencias primeiro.
 
 ---
