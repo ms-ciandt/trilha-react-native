@@ -159,6 +159,17 @@
   --ifm-color-emphasis-300: #393973;
 }
 
+/* ─── Color mode toggle ──────────────────────────────────────────────── */
+button[class*='colorModeToggle'] svg {
+  fill: rgba(255, 255, 255, 0.85) !important;
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+
+button[class*='colorModeToggle']:hover svg {
+  fill: #fff !important;
+  color: #fff !important;
+}
+
 /* ─── Navbar ─────────────────────────────────────────────────────────── */
 :root {
   --ifm-navbar-link-color: rgba(255, 255, 255, 0.85);
