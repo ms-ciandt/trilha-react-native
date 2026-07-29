@@ -1,0 +1,486 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:04.280
+In 2012, Facebook faced a serious engineering problem.
+
+2
+00:00:04.280 --> 00:00:06.720
+The consumer internet was shifting to mobile,
+
+3
+00:00:06.720 --> 00:00:09.880
+but the hardware landscape was incredibly fragmented.
+
+4
+00:00:09.880 --> 00:00:12.480
+Building entirely separate native code bases
+
+5
+00:00:12.480 --> 00:00:16.120
+for thousands of distinct devices was a logistical nightmare,
+
+6
+00:00:16.120 --> 00:00:19.280
+so Facebook relied on an HTML5 mobile web app
+
+7
+00:00:19.280 --> 00:00:21.040
+to deliver its newsfeed.
+
+8
+00:00:21.040 --> 00:00:23.400
+The performance was painfully slow.
+
+9
+00:00:23.400 --> 00:00:25.400
+Engineers attempted a compromise.
+
+10
+00:00:25.400 --> 00:00:27.400
+They took their existing web application
+
+11
+00:00:27.400 --> 00:00:31.080
+and wrapped it inside a native mobile container, a web view,
+
+12
+00:00:31.080 --> 00:00:33.000
+hoping to extract native performance
+
+13
+00:00:33.000 --> 00:00:34.880
+without rewriting the code base.
+
+14
+00:00:34.880 --> 00:00:37.480
+The result remained sluggish and felt out of place
+
+15
+00:00:37.480 --> 00:00:38.680
+on a smartphone.
+
+16
+00:00:38.680 --> 00:00:40.560
+Development teams across the industry
+
+17
+00:00:40.560 --> 00:00:42.720
+were trapped in a strict dichotomy.
+
+18
+00:00:42.720 --> 00:00:44.800
+They could either build for the web, allowing them
+
+19
+00:00:44.800 --> 00:00:47.160
+to iterate quickly and deploy instantly,
+
+20
+00:00:47.160 --> 00:00:50.160
+or they could spend the time and money writing custom native code
+
+21
+00:00:50.160 --> 00:00:53.600
+for iOS and Android to achieve fluid performance.
+
+22
+00:00:53.600 --> 00:00:55.800
+Choosing between developer velocity
+
+23
+00:00:55.800 --> 00:00:59.600
+and a responsive user experience was a zero-sum game,
+
+24
+00:00:59.600 --> 00:01:02.640
+creating an existential threat for major platforms
+
+25
+00:01:02.640 --> 00:01:05.600
+that relied on high-speed user engagement.
+
+26
+00:01:05.600 --> 00:01:08.280
+During a 2013 Facebook hackathon,
+
+27
+00:01:08.280 --> 00:01:10.440
+engineers Jordan Walk, who had already
+
+28
+00:01:10.440 --> 00:01:13.440
+built React for the web, and Christopher Chodot,
+
+29
+00:01:13.440 --> 00:01:16.280
+started experimenting with a completely different approach
+
+30
+00:01:16.280 --> 00:01:18.360
+to mobile user interfaces.
+
+31
+00:01:18.360 --> 00:01:20.720
+They arrived at a structural insight.
+
+32
+00:01:20.720 --> 00:01:24.440
+They could write the application's logic entirely in JavaScript,
+
+33
+00:01:24.480 --> 00:01:27.040
+but instruct the device's native rendering layer
+
+34
+00:01:27.040 --> 00:01:29.400
+to draw the actual visual elements.
+
+35
+00:01:29.400 --> 00:01:32.560
+This experiment evolved into React native.
+
+36
+00:01:32.560 --> 00:01:36.080
+At the 2015 F8 conference, Facebook open sourced
+
+37
+00:01:36.080 --> 00:01:39.680
+the framework, operating under a highly appealing philosophy,
+
+38
+00:01:39.680 --> 00:01:41.960
+learn once, write anywhere.
+
+39
+00:01:41.960 --> 00:01:45.080
+The engineering community adopted it immediately.
+
+40
+00:01:45.080 --> 00:01:48.200
+Startups and tech giants alike integrated the framework
+
+41
+00:01:48.200 --> 00:01:50.000
+into their production environments,
+
+42
+00:01:50.000 --> 00:01:53.120
+with companies like Microsoft, Shopify, Discord,
+
+43
+00:01:53.120 --> 00:01:56.080
+and Walmart building highly complex applications
+
+44
+00:01:56.080 --> 00:01:57.720
+on the new system.
+
+45
+00:01:57.720 --> 00:02:01.240
+By separating the underlying logic from the rendering process,
+
+46
+00:02:01.240 --> 00:02:04.320
+React native gave engineers the rapid iteration speeds
+
+47
+00:02:04.320 --> 00:02:07.400
+of web development while outputting genuine native UI
+
+48
+00:02:07.400 --> 00:02:11.160
+elements, like an actual U-button on an iPhone.
+
+49
+00:02:11.160 --> 00:02:13.320
+The engine that made this separation possible
+
+50
+00:02:13.320 --> 00:02:16.360
+was a system known internally as the bridge.
+
+51
+00:02:16.360 --> 00:02:20.160
+This diagram illustrates the mechanical flaw in that system.
+
+52
+00:02:20.160 --> 00:02:22.800
+Every single interaction, drawing a pixel,
+
+53
+00:02:22.800 --> 00:02:25.960
+responding to a swipe, or measuring a block of text,
+
+54
+00:02:25.960 --> 00:02:29.040
+had to be serialized into a JSON text message,
+
+55
+00:02:29.040 --> 00:02:32.680
+sent across a divide, and decoded by the native side.
+
+56
+00:02:32.680 --> 00:02:35.560
+Because this communication was strictly asynchronous,
+
+57
+00:02:35.560 --> 00:02:39.240
+it was mathematically impossible to call native code synchronously.
+
+58
+00:02:39.240 --> 00:02:42.720
+Even a simple request to read the width of a layout box
+
+59
+00:02:42.720 --> 00:02:45.080
+meant sending a message across the bridge
+
+60
+00:02:45.080 --> 00:02:47.720
+and waiting for a callback, while other messages
+
+61
+00:02:47.720 --> 00:02:49.600
+were piling up in a queue.
+
+62
+00:02:49.600 --> 00:02:52.680
+As applications grew larger and user interfaces
+
+63
+00:02:52.680 --> 00:02:56.120
+demanded higher frame rates, this original workaround
+
+64
+00:02:56.120 --> 00:02:59.360
+devolved into a severe structural bottleneck.
+
+65
+00:02:59.360 --> 00:03:01.800
+Users felt this bottleneck directly.
+
+66
+00:03:01.800 --> 00:03:05.200
+High-frequency operations like complex screen transitions
+
+67
+00:03:05.200 --> 00:03:09.040
+or scroll-driven animations would stutter and drop frames,
+
+68
+00:03:09.040 --> 00:03:12.600
+imposing a hard ceiling on application performance.
+
+69
+00:03:12.600 --> 00:03:15.800
+This legacy structure was also completely incompatible
+
+70
+00:03:15.800 --> 00:03:17.680
+with newer web advancements.
+
+71
+00:03:17.680 --> 00:03:20.000
+Features like React's concurrent mode,
+
+72
+00:03:20.000 --> 00:03:21.720
+which allow the framework to pause
+
+73
+00:03:21.720 --> 00:03:24.360
+and prioritize rendering tasks in the background,
+
+74
+00:03:24.360 --> 00:03:28.360
+simply could not function over a slow asynchronous bridge.
+
+75
+00:03:28.360 --> 00:03:31.040
+Rather than trying to patch the system again,
+
+76
+00:03:31.040 --> 00:03:35.160
+meta and Microsoft made a drastic decision in 2022.
+
+77
+00:03:35.160 --> 00:03:36.960
+They chose to abandon the bridge
+
+78
+00:03:36.960 --> 00:03:41.000
+and initiate a total rewrite of the frameworks internal foundation.
+
+79
+00:03:41.000 --> 00:03:43.360
+The engineering stakes were massive.
+
+80
+00:03:43.360 --> 00:03:46.080
+They had to rip out and rebuild the core engine
+
+81
+00:03:46.080 --> 00:03:48.640
+of the most popular mobile framework in the world,
+
+82
+00:03:48.640 --> 00:03:50.520
+entirely behind the scenes.
+
+83
+00:03:50.520 --> 00:03:53.120
+Without breaking the millions of active applications
+
+84
+00:03:53.120 --> 00:03:54.560
+relying on it.
+
+85
+00:03:54.560 --> 00:03:57.200
+After years of incremental internal work,
+
+86
+00:03:57.200 --> 00:04:00.080
+this rewrite, known as the new architecture,
+
+87
+00:04:00.080 --> 00:04:02.640
+shipped as the default standard in React Native
+
+88
+00:04:02.640 --> 00:04:06.640
+version 0.76 in October 2024.
+
+89
+00:04:06.640 --> 00:04:09.240
+This diagram outlines the new mechanics.
+
+90
+00:04:09.240 --> 00:04:13.040
+The first pillar is JSI or the JavaScript interface.
+
+91
+00:04:13.040 --> 00:04:15.960
+It eliminates JSON serialization completely,
+
+92
+00:04:15.960 --> 00:04:18.000
+creating direct synchronous bindings
+
+93
+00:04:18.000 --> 00:04:21.400
+between JavaScript and C++ memory spaces.
+
+94
+00:04:21.400 --> 00:04:23.200
+The second pillar is Fabric.
+
+95
+00:04:23.200 --> 00:04:25.280
+By bypassing the old bottleneck,
+
+96
+00:04:25.280 --> 00:04:27.720
+this new shared C++ rendering engine
+
+97
+00:04:27.720 --> 00:04:29.920
+handles layout measurements synchronously
+
+98
+00:04:29.920 --> 00:04:32.960
+and enables React to process UI rendering concurrently
+
+99
+00:04:32.960 --> 00:04:35.240
+without freezing the main device thread.
+
+100
+00:04:35.240 --> 00:04:37.320
+The third pillar is Turbo Modules.
+
+101
+00:04:37.320 --> 00:04:40.120
+Instead of forcing an application to initialize
+
+102
+00:04:40.120 --> 00:04:43.320
+every native feature, like Bluetooth or the camera,
+
+103
+00:04:43.320 --> 00:04:46.960
+during startup, Turbo Modules lazily load these tools
+
+104
+00:04:46.960 --> 00:04:49.360
+only at the exact moment they are requested
+
+105
+00:04:49.360 --> 00:04:52.640
+by the JavaScript layer, cutting down startup times.
+
+106
+00:04:52.640 --> 00:04:55.560
+These three pillars allow React Native to operate
+
+107
+00:04:55.560 --> 00:04:58.880
+as a low-level engine, removing the need for a bridge
+
+108
+00:04:58.880 --> 00:05:01.000
+and integrating the logic layer directly
+
+109
+00:05:01.000 --> 00:05:02.600
+into the native runtime.
+
+110
+00:05:02.600 --> 00:05:05.480
+Today, complex, gesture-driven animations
+
+111
+00:05:05.480 --> 00:05:09.520
+run at 120 frames per second directly on the UI thread.
+
+112
+00:05:09.520 --> 00:05:12.280
+The performance gap between React Native and pure native
+
+113
+00:05:12.280 --> 00:05:15.640
+development is functionally negligible for most applications,
+
+114
+00:05:15.640 --> 00:05:17.560
+supported by tools like Expo.
+
+115
+00:05:17.560 --> 00:05:21.240
+The framework is now used by Shopify, Meta and Microsoft
+
+116
+00:05:21.240 --> 00:05:23.400
+to power their flagship applications,
+
+117
+00:05:23.400 --> 00:05:25.160
+providing a standardized environment
+
+118
+00:05:25.160 --> 00:05:27.240
+for production scale mobile code.
+
+119
+00:05:27.240 --> 00:05:29.320
+10 years after the first prototype,
+
+120
+00:05:29.320 --> 00:05:31.760
+the framework delivers the speed of web development
+
+121
+00:05:31.760 --> 00:05:34.600
+alongside the execution of native mobile software.
+
