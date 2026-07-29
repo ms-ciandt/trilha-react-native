@@ -4,6 +4,11 @@ title: SPECS em TypeScript
 
 # SPECS em TypeScript
 
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc02_02_specs-typescript.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 > O arquivo de spec é a **fonte única de verdade** para a interface de um TurboModule. O Codegen o lê em tempo de build para gerar código nativo tipado. Tudo que vem depois — a classe abstrata Java gerada, o protocolo ObjC++, o header JSI em C++ — deriva deste arquivo.
 
 ---

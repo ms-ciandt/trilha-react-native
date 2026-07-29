@@ -4,6 +4,11 @@ title: "Codegen: Interfaces Nativas Tipadas"
 
 # Codegen: Interfaces Nativas Tipadas
 
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc02_03_codegen.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 > O Codegen é um compilador de tempo de build. Ele lê sua spec TypeScript e escreve o boilerplate nativo — as classes abstratas, protocolos e tabelas de despacho JSI — para que você nunca precise escrever código de bridging manualmente.
 
 ---

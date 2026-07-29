@@ -35,7 +35,7 @@ Your advantage: you already understand UIKit/SwiftUI rendering, the iOS lifecycl
 
 </div>
 
-<div style="border: 2px solid #8CB3D9; border-radius: 12px; padding: 20px;">
+<div style="border: 2px solid #FA5A50; border-radius: 12px; padding: 20px;">
 
 ### Web Trail
 
@@ -47,7 +47,7 @@ Your advantage: React Native components work exactly like React components — h
 
 </div>
 
-<div style="border: 2px solid #FA5A50; border-radius: 12px; padding: 20px;">
+<div style="border: 2px solid #8CB3D9; border-radius: 12px; padding: 20px;">
 
 ### Masterclass
 

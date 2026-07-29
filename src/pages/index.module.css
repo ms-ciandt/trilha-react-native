@@ -200,8 +200,8 @@
 }
 
 .trackCardWeb:hover {
-  border-color: #8CB3D9;
-  box-shadow: 0 8px 30px rgba(140, 179, 217, 0.15);
+  border-color: #FA5A50;
+  box-shadow: 0 8px 30px rgba(250, 90, 80, 0.15);
 }
 
 .trackCardAndroid:hover {
@@ -229,7 +229,7 @@
 }
 
 .trackCardWeb .cardGlow {
-  background: #8CB3D9;
+  background: #FA5A50;
 }
 
 .trackCardAndroid .cardGlow {
@@ -261,9 +261,9 @@
 }
 
 .trackCardWeb .cardBadge {
-  background: color-mix(in srgb, #8CB3D9 12%, transparent);
-  color: #8CB3D9;
-  border: 1px solid color-mix(in srgb, #8CB3D9 30%, transparent);
+  background: color-mix(in srgb, #FA5A50 12%, transparent);
+  color: #FA5A50;
+  border: 1px solid color-mix(in srgb, #FA5A50 30%, transparent);
 }
 
 .trackCardAndroid .cardBadge {
@@ -285,9 +285,9 @@
 }
 
 [data-theme='dark'] .trackCardWeb .cardBadge {
-  color: #B4DCFA;
-  background: color-mix(in srgb, #8CB3D9 15%, transparent);
-  border-color: color-mix(in srgb, #8CB3D9 35%, transparent);
+  color: #FA8982;
+  background: color-mix(in srgb, #FA5A50 15%, transparent);
+  border-color: color-mix(in srgb, #FA5A50 35%, transparent);
 }
 
 [data-theme='dark'] .trackCardIos .cardBadge {
@@ -304,7 +304,7 @@
 }
 
 .trackCardWeb .trackLabel {
-  color: #8CB3D9;
+  color: #FA5A50;
 }
 
 .trackCardAndroid .trackLabel {
@@ -316,7 +316,7 @@
 }
 
 [data-theme='dark'] .trackCardWeb .trackLabel {
-  color: #B4DCFA;
+  color: #FA8982;
 }
 
 [data-theme='dark'] .trackCardAndroid .trackLabel {
@@ -348,12 +348,12 @@
 }
 
 .trackBtnWeb {
-  background: #8CB3D9;
+  background: #FA5A50;
 }
 
 .trackBtnWeb:hover {
-  background: #6B8FB3;
-  box-shadow: 0 4px 14px rgba(140, 179, 217, 0.4);
+  background: #D94A41;
+  box-shadow: 0 4px 14px rgba(250, 90, 80, 0.4);
   transform: translateY(-1px);
 }
 
@@ -560,7 +560,7 @@
   position: relative;
   width: 100%;
   max-width: 680px;
-  border: 1px dashed color-mix(in srgb, #FA5A50 40%, transparent);
+  border: 1px dashed color-mix(in srgb, #8CB3D9 40%, transparent);
   border-radius: 16px;
   padding: 1.75rem 1.75rem;
   background: var(--ifm-background-surface-color);
@@ -572,15 +572,15 @@
 
 .masterclass:hover {
   opacity: 1;
-  border-color: #FA5A50;
+  border-color: #8CB3D9;
   box-shadow:
-    0 0 0 1px rgba(250, 90, 80, 0.2),
-    0 8px 32px rgba(250, 90, 80, 0.15),
-    0 0 60px rgba(250, 90, 80, 0.08);
+    0 0 0 1px rgba(140, 179, 217, 0.2),
+    0 8px 32px rgba(140, 179, 217, 0.15),
+    0 0 60px rgba(140, 179, 217, 0.08);
   transform: translateY(-2px);
 }
 
-/* glow coral */
+/* glow light blue */
 .masterclassGlow {
   position: absolute;
   bottom: -60px;
@@ -588,7 +588,7 @@
   width: 200px;
   height: 200px;
   border-radius: 50%;
-  background: #D94A41;
+  background: #8CB3D9;
   filter: blur(60px);
   opacity: 0.1;
   pointer-events: none;
@@ -599,7 +599,7 @@
   opacity: 0.2;
 }
 
-/* glow pink */
+/* glow light blue 2 */
 .masterclassCyanGlow {
   position: absolute;
   top: -40px;
@@ -607,7 +607,7 @@
   width: 150px;
   height: 150px;
   border-radius: 50%;
-  background: #FAB9FF;
+  background: #B4DCFA;
   filter: blur(60px);
   opacity: 0.06;
   pointer-events: none;
@@ -630,12 +630,12 @@
   height: 64px;
   border-radius: 14px;
   flex-shrink: 0;
-  filter: drop-shadow(0 0 12px rgba(250, 90, 80, 0.3));
+  filter: drop-shadow(0 0 12px rgba(140, 179, 217, 0.3));
   transition: filter 0.3s ease, transform 0.3s ease;
 }
 
 .masterclass:hover .masterclassIcon {
-  filter: drop-shadow(0 0 20px rgba(250, 90, 80, 0.5));
+  filter: drop-shadow(0 0 20px rgba(140, 179, 217, 0.5));
   transform: scale(1.05);
 }
 
@@ -660,9 +660,9 @@
   text-transform: uppercase;
   padding: 0.15rem 0.5rem;
   border-radius: 999px;
-  background: color-mix(in srgb, #C785CC 10%, transparent);
-  color: #C785CC;
-  border: 1px solid color-mix(in srgb, #C785CC 30%, transparent);
+  background: color-mix(in srgb, #B4DCFA 10%, transparent);
+  color: #B4DCFA;
+  border: 1px solid color-mix(in srgb, #B4DCFA 30%, transparent);
 }
 
 .masterclassBadge {
@@ -674,17 +674,17 @@
   text-transform: uppercase;
   padding: 0.15rem 0.5rem;
   border-radius: 999px;
-  background: color-mix(in srgb, #D94A41 15%, transparent);
-  color: #FA5A50;
-  border: 1px solid color-mix(in srgb, #D94A41 40%, transparent);
+  background: color-mix(in srgb, #8CB3D9 15%, transparent);
+  color: #8CB3D9;
+  border: 1px solid color-mix(in srgb, #8CB3D9 40%, transparent);
 }
 
 .masterclassLabel {
   font-size: 1.125rem;
   font-weight: 700;
   letter-spacing: -0.01em;
-  color: #FA5A50;
-  text-shadow: 0 0 20px rgba(250, 90, 80, 0.3);
+  color: #8CB3D9;
+  text-shadow: 0 0 20px rgba(140, 179, 217, 0.3);
 }
 
 .masterclassDesc {
@@ -704,12 +704,12 @@
   font-weight: 600;
   text-decoration: none !important;
   color: #000050 !important;
-  background: linear-gradient(135deg, #FA5A50, #D94A41);
+  background: linear-gradient(135deg, #8CB3D9, #B4DCFA);
   transition: box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
 
 .masterclassBtn:hover {
-  box-shadow: 0 4px 14px rgba(250, 90, 80, 0.5);
+  box-shadow: 0 4px 14px rgba(140, 179, 217, 0.5);
   transform: translateY(-1px);
   opacity: 0.9;
 }

@@ -69,8 +69,8 @@
 }
 
 .pagefind-ui__result:has(a[href*="/trilha-masterclass"]) {
-  border-left-color: #FA5A50 !important;
-  background: color-mix(in srgb, #FA5A50 5%, transparent) !important;
+  border-left-color: #8CB3D9 !important;
+  background: color-mix(in srgb, #8CB3D9 5%, transparent) !important;
 }
 
 .pagefind-ui__result:has(a[href*="/trilha-android"]) {
@@ -101,12 +101,12 @@
 }
 
 .pagefind-ui__result:has(a[href*="/trilha-web"]) {
-  border-left-color: #8CB3D9 !important;
-  background: color-mix(in srgb, #8CB3D9 5%, transparent) !important;
+  border-left-color: #FA5A50 !important;
+  background: color-mix(in srgb, #FA5A50 5%, transparent) !important;
 }
 [data-theme='dark'] .pagefind-ui__result:has(a[href*="/trilha-web"]) {
-  border-left-color: #B4DCFA !important;
-  background: color-mix(in srgb, #B4DCFA 5%, transparent) !important;
+  border-left-color: #FA8982 !important;
+  background: color-mix(in srgb, #FA8982 5%, transparent) !important;
 }
 
 .pagefind-ui__result:has(a[href*="/introducao"]) {
@@ -234,16 +234,16 @@
   color: #FA8982;
 }
 
-/* Trilha Web — light blue */
+/* Trilha Web — coral */
 .navbar__link[href*="/trilha-web"]:hover,
 .navbar__link[href*="/trilha-web"].navbar__link--active {
-  background: color-mix(in srgb, #8CB3D9 12%, transparent);
-  color: #8CB3D9;
+  background: color-mix(in srgb, #FA5A50 12%, transparent);
+  color: #FA5A50;
 }
 [data-theme='dark'] .navbar__link[href*="/trilha-web"]:hover,
 [data-theme='dark'] .navbar__link[href*="/trilha-web"].navbar__link--active {
-  background: color-mix(in srgb, #B4DCFA 14%, transparent);
-  color: #B4DCFA;
+  background: color-mix(in srgb, #FA8982 14%, transparent);
+  color: #FA8982;
 }
 
 /* Trilha Nativo — darker coral */
@@ -282,16 +282,16 @@
   color: #802655;
 }
 
-/* Masterclass — coral */
+/* Masterclass — light blue */
 .navbar__link[href*="/trilha-masterclass"]:hover,
 .navbar__link[href*="/trilha-masterclass"].navbar__link--active {
-  background: color-mix(in srgb, #FA5A50 12%, transparent);
-  color: #D94A41;
+  background: color-mix(in srgb, #8CB3D9 12%, transparent);
+  color: #8CB3D9;
 }
 [data-theme='dark'] .navbar__link[href*="/trilha-masterclass"]:hover,
 [data-theme='dark'] .navbar__link[href*="/trilha-masterclass"].navbar__link--active {
-  background: color-mix(in srgb, #FA5A50 14%, transparent);
-  color: #FA5A50;
+  background: color-mix(in srgb, #B4DCFA 14%, transparent);
+  color: #B4DCFA;
 }
 
 /* ─── Track themes — sidebar + content accent ────────────────────────── */
@@ -308,16 +308,16 @@
   --track-accent-border: color-mix(in srgb, #FA8982 25%, transparent);
 }
 
-/* Trilha Web — light blue */
+/* Trilha Web — coral */
 :root:has(.navbar__link[href*="/trilha-web"].navbar__link--active) {
-  --track-accent: #8CB3D9;
-  --track-accent-bg: color-mix(in srgb, #8CB3D9 8%, transparent);
-  --track-accent-border: color-mix(in srgb, #8CB3D9 30%, transparent);
+  --track-accent: #FA5A50;
+  --track-accent-bg: color-mix(in srgb, #FA5A50 8%, transparent);
+  --track-accent-border: color-mix(in srgb, #FA5A50 30%, transparent);
 }
 [data-theme='dark']:has(.navbar__link[href*="/trilha-web"].navbar__link--active) {
-  --track-accent: #B4DCFA;
-  --track-accent-bg: color-mix(in srgb, #B4DCFA 10%, transparent);
-  --track-accent-border: color-mix(in srgb, #B4DCFA 25%, transparent);
+  --track-accent: #FA8982;
+  --track-accent-bg: color-mix(in srgb, #FA8982 10%, transparent);
+  --track-accent-border: color-mix(in srgb, #FA8982 25%, transparent);
 }
 
 /* Trilha Android — verde */
@@ -356,16 +356,16 @@
   --track-accent-border: color-mix(in srgb, #FA8982 25%, transparent);
 }
 
-/* Masterclass — coral */
+/* Masterclass — light blue */
 :root:has(.navbar__link[href*="/trilha-masterclass"].navbar__link--active) {
-  --track-accent: #D94A41;
-  --track-accent-bg: color-mix(in srgb, #FA5A50 8%, transparent);
-  --track-accent-border: color-mix(in srgb, #FA5A50 30%, transparent);
+  --track-accent: #8CB3D9;
+  --track-accent-bg: color-mix(in srgb, #8CB3D9 8%, transparent);
+  --track-accent-border: color-mix(in srgb, #8CB3D9 30%, transparent);
 }
 [data-theme='dark']:has(.navbar__link[href*="/trilha-masterclass"].navbar__link--active) {
-  --track-accent: #FA5A50;
-  --track-accent-bg: color-mix(in srgb, #FA5A50 10%, transparent);
-  --track-accent-border: color-mix(in srgb, #FA5A50 25%, transparent);
+  --track-accent: #B4DCFA;
+  --track-accent-bg: color-mix(in srgb, #B4DCFA 10%, transparent);
+  --track-accent-border: color-mix(in srgb, #B4DCFA 25%, transparent);
 }
 
 /* Apply accent to sidebar active link + indicator */
@@ -437,40 +437,40 @@
 
 /* Masterclass */
 [data-theme='dark'] [class*='trilha-masterclass'] [class*='sidebarLogo'] {
-  background: #0a0028;
-  border-left-color: #FA5A50;
-  border-bottom-color: rgba(250, 90, 80, 0.2);
+  background: #001a33;
+  border-left-color: #B4DCFA;
+  border-bottom-color: rgba(180, 220, 250, 0.2);
 }
 [data-theme='light'] [class*='trilha-masterclass'] [class*='sidebarLogo'] {
   background: var(--ifm-background-color);
-  border-left-color: #D94A41;
-  border-bottom-color: rgba(217, 74, 65, 0.2);
+  border-left-color: #8CB3D9;
+  border-bottom-color: rgba(140, 179, 217, 0.2);
 }
 [data-theme='light'] [class*='trilha-masterclass'] [class*='sidebarLogo']::before {
-  color: #D94A41;
+  color: #8CB3D9;
 }
 [class*='trilha-masterclass'] [class*='sidebarLogo']::before {
   content: 'Masterclass → React Native';
-  color: #FA5A50;
+  color: #B4DCFA;
 }
 
 /* Trilha Web */
 [class*='trilha-web'] [class*='sidebarLogo'] {
   background: var(--ifm-background-color);
-  border-left-color: #8CB3D9;
-  border-bottom-color: rgba(140, 179, 217, 0.25);
+  border-left-color: #FA5A50;
+  border-bottom-color: rgba(250, 90, 80, 0.25);
 }
 [class*='trilha-web'] [class*='sidebarLogo']::before {
   content: 'Trilha Web → React Native';
-  color: #8CB3D9;
+  color: #FA5A50;
 }
 [data-theme='dark'] [class*='trilha-web'] [class*='sidebarLogo'] {
   background: #000050;
-  border-left-color: #B4DCFA;
-  border-bottom-color: rgba(180, 220, 250, 0.2);
+  border-left-color: #FA8982;
+  border-bottom-color: rgba(250, 137, 130, 0.2);
 }
 [data-theme='dark'] [class*='trilha-web'] [class*='sidebarLogo']::before {
-  color: #B4DCFA;
+  color: #FA8982;
 }
 
 /* Trilha Android — verde */
@@ -696,12 +696,12 @@ video {
 
 /* Masterclass */
 [class*='trilha-masterclass'] {
-  --module-accent: #FA5A50;
+  --module-accent: #8CB3D9;
 }
 
 /* Trilha Web */
 [class*='trilha-web'] {
-  --module-accent: #8CB3D9;
+  --module-accent: #FA5A50;
 }
 
 /* Trilha Android */
@@ -726,53 +726,53 @@ video {
 
 /* Masterclass — fundo escuro na área de conteúdo (apenas dark) */
 [data-theme='dark'] [class*='trilha-masterclass'] .theme-doc-sidebar-container {
-  background: #0a0028;
-  border-right-color: rgba(250, 90, 80, 0.2) !important;
+  background: #001a33;
+  border-right-color: rgba(140, 179, 217, 0.2) !important;
 }
 
 [data-theme='dark'] [class*='trilha-masterclass'] .menu__link--sublist {
-  color: #FA5A50 !important;
-}
-
-[data-theme='dark'] [class*='trilha-masterclass'] .menu__link--active {
-  background: color-mix(in srgb, #FA5A50 10%, transparent) !important;
-  color: #FA5A50 !important;
-}
-
-[data-theme='dark'] [class*='trilha-masterclass'] .menu__link:hover {
-  background: color-mix(in srgb, #FA5A50 8%, transparent);
-}
-
-[data-theme='light'] [class*='trilha-masterclass'] .menu__link--sublist {
-  color: #D94A41 !important;
-}
-
-[data-theme='light'] [class*='trilha-masterclass'] .menu__link--active {
-  background: color-mix(in srgb, #D94A41 10%, transparent) !important;
-  color: #D94A41 !important;
-}
-
-[data-theme='light'] [class*='trilha-masterclass'] .menu__link:hover {
-  background: color-mix(in srgb, #D94A41 8%, transparent);
-}
-
-/* Trilha Web — light blue */
-[class*='trilha-web'] .menu__link--sublist {
-  color: #8CB3D9 !important;
-}
-
-[data-theme='dark'] [class*='trilha-web'] .menu__link--sublist {
   color: #B4DCFA !important;
 }
 
-[class*='trilha-web'] .menu__link--active {
+[data-theme='dark'] [class*='trilha-masterclass'] .menu__link--active {
+  background: color-mix(in srgb, #8CB3D9 10%, transparent) !important;
+  color: #B4DCFA !important;
+}
+
+[data-theme='dark'] [class*='trilha-masterclass'] .menu__link:hover {
+  background: color-mix(in srgb, #8CB3D9 8%, transparent);
+}
+
+[data-theme='light'] [class*='trilha-masterclass'] .menu__link--sublist {
+  color: #8CB3D9 !important;
+}
+
+[data-theme='light'] [class*='trilha-masterclass'] .menu__link--active {
   background: color-mix(in srgb, #8CB3D9 10%, transparent) !important;
   color: #8CB3D9 !important;
 }
 
+[data-theme='light'] [class*='trilha-masterclass'] .menu__link:hover {
+  background: color-mix(in srgb, #8CB3D9 8%, transparent);
+}
+
+/* Trilha Web — coral */
+[class*='trilha-web'] .menu__link--sublist {
+  color: #FA5A50 !important;
+}
+
+[data-theme='dark'] [class*='trilha-web'] .menu__link--sublist {
+  color: #FA8982 !important;
+}
+
+[class*='trilha-web'] .menu__link--active {
+  background: color-mix(in srgb, #FA5A50 10%, transparent) !important;
+  color: #FA5A50 !important;
+}
+
 [data-theme='dark'] [class*='trilha-web'] .menu__link--active {
-  background: color-mix(in srgb, #B4DCFA 10%, transparent) !important;
-  color: #B4DCFA !important;
+  background: color-mix(in srgb, #FA8982 10%, transparent) !important;
+  color: #FA8982 !important;
 }
 
 /* Trilha Android — sidebar verde */
@@ -849,7 +849,7 @@ video {
   margin: -1rem -1rem 2rem;
   border-radius: 12px;
   background: var(--ifm-background-surface-color);
-  border: 1px dashed color-mix(in srgb, #D94A41 40%, transparent);
+  border: 1px dashed color-mix(in srgb, #8CB3D9 40%, transparent);
   overflow: hidden;
 }
 
@@ -861,7 +861,7 @@ video {
   width: 200px;
   height: 200px;
   border-radius: 50%;
-  background: #D94A41;
+  background: #8CB3D9;
   filter: blur(60px);
   opacity: 0.12;
   pointer-events: none;
@@ -875,7 +875,7 @@ video {
   width: 150px;
   height: 150px;
   border-radius: 50%;
-  background: #FAB9FF;
+  background: #B4DCFA;
   filter: blur(60px);
   opacity: 0.06;
   pointer-events: none;
@@ -895,9 +895,9 @@ video {
   text-transform: uppercase;
   padding: 0.15rem 0.5rem;
   border-radius: 999px;
-  background: color-mix(in srgb, #D94A41 15%, transparent);
-  color: #FA5A50;
-  border: 1px solid color-mix(in srgb, #D94A41 40%, transparent);
+  background: color-mix(in srgb, #8CB3D9 15%, transparent);
+  color: #8CB3D9;
+  border: 1px solid color-mix(in srgb, #8CB3D9 40%, transparent);
 }
 
 .mc-level-badge {
@@ -907,9 +907,9 @@ video {
   text-transform: uppercase;
   padding: 0.15rem 0.5rem;
   border-radius: 999px;
-  background: color-mix(in srgb, #C785CC 10%, transparent);
-  color: #C785CC;
-  border: 1px solid color-mix(in srgb, #C785CC 30%, transparent);
+  background: color-mix(in srgb, #B4DCFA 10%, transparent);
+  color: #B4DCFA;
+  border: 1px solid color-mix(in srgb, #B4DCFA 30%, transparent);
 }
 
 .mc-title {
@@ -917,8 +917,8 @@ video {
   font-weight: 700 !important;
   letter-spacing: -0.02em !important;
   margin: 0 0 0.25rem !important;
-  color: #FA5A50 !important;
-  text-shadow: 0 0 30px rgba(250, 90, 80, 0.25);
+  color: #8CB3D9 !important;
+  text-shadow: 0 0 30px rgba(140, 179, 217, 0.25);
 }
 
 .mc-subtitle {
@@ -935,9 +935,9 @@ video {
   text-transform: uppercase;
   padding: 0.15rem 0.5rem;
   border-radius: 999px;
-  background: color-mix(in srgb, #D94A41 12%, transparent);
-  color: #FA5A50;
-  border: 1px solid color-mix(in srgb, #D94A41 35%, transparent);
+  background: color-mix(in srgb, #8CB3D9 12%, transparent);
+  color: #8CB3D9;
+  border: 1px solid color-mix(in srgb, #8CB3D9 35%, transparent);
   margin-top: 0.25rem;
 }
 
@@ -1041,7 +1041,7 @@ video {
   padding: 2rem 2rem 1.75rem;
   border-radius: 12px;
   background: var(--ifm-background-surface-color);
-  border: 1px dashed color-mix(in srgb, #D94A41 45%, transparent);
+  border: 1px dashed color-mix(in srgb, #8CB3D9 45%, transparent);
   overflow: hidden;
   text-align: center;
 }
@@ -1053,7 +1053,7 @@ video {
   width: 160px;
   height: 160px;
   border-radius: 50%;
-  background: #D94A41;
+  background: #8CB3D9;
   filter: blur(55px);
   opacity: 0.12;
   pointer-events: none;
@@ -1066,7 +1066,7 @@ video {
   width: 130px;
   height: 130px;
   border-radius: 50%;
-  background: #FAB9FF;
+  background: #B4DCFA;
   filter: blur(55px);
   opacity: 0.07;
   pointer-events: none;
@@ -1078,10 +1078,10 @@ video {
 .mc-feedback-title {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #FA5A50;
+  color: #8CB3D9;
   letter-spacing: -0.01em;
   margin: 0 0 0.4rem;
-  text-shadow: 0 0 24px rgba(250, 90, 80, 0.2);
+  text-shadow: 0 0 24px rgba(140, 179, 217, 0.2);
 }
 .mc-feedback-sub {
   font-size: 0.875rem;
@@ -1092,7 +1092,7 @@ video {
   display: inline-block;
   padding: 0.6rem 1.75rem;
   border-radius: 8px;
-  background: #FA5A50;
+  background: #8CB3D9;
   color: #000050 !important;
   font-weight: 700;
   font-size: 0.9rem;
@@ -1131,7 +1131,7 @@ video {
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, transparent, #FA5A50 30%, #FAB9FF 70%, transparent);
+  background: linear-gradient(90deg, transparent, #8CB3D9 30%, #B4DCFA 70%, transparent);
   opacity: 0.6;
   pointer-events: none;
   z-index: 10;
@@ -1145,7 +1145,7 @@ video {
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, transparent, #8CB3D9 50%, transparent);
+  background: linear-gradient(90deg, transparent, #FA5A50 50%, transparent);
   opacity: 0.5;
   pointer-events: none;
   z-index: 10;

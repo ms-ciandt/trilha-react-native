@@ -4,6 +4,11 @@ title: "Requisitos de Ambiente (Node, Xcode, SDKs)"
 
 # Requisitos de Ambiente (Node, Xcode, SDKs)
 
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc05_08_environment-requirements.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 > Uma versao incorreta do ambiente causa as falhas de build mais crípticas — erros que nao tem nada a ver com o seu codigo. Corrija o ambiente primeiro, antes de tocar no `package.json`.
 
 ---

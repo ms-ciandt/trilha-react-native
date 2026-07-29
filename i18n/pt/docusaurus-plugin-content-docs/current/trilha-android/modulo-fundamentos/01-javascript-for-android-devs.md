@@ -6,6 +6,13 @@ sidebar_position: 1
 
 ## Video Overview
 
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_android/fund_01_javascript.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+## Video Overview
+
 > Video para este tópico em breve.
 
 ## Voce Ja Sabe Escrever Software

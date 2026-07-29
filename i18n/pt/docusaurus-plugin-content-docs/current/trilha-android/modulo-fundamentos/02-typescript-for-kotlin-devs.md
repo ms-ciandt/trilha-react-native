@@ -6,6 +6,13 @@ sidebar_position: 2
 
 ## Video Overview
 
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_android/fund_02_typescript.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+## Video Overview
+
 > Video para este tópico em breve.
 
 ## TypeScript é JavaScript com o Sistema de Tipos do Kotlin

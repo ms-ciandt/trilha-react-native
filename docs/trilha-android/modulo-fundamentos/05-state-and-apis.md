@@ -6,6 +6,13 @@ sidebar_position: 5
 
 ## Video Overview
 
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_android/fund_05_state_and_apis.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+## Video Overview
+
 > Video for this topic coming soon.
 
 ## Mapping Android Architecture to React Native

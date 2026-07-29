@@ -4,6 +4,11 @@ title: Roadmap e Caminho de Upgrade Recomendado
 
 # Roadmap e Caminho de Upgrade Recomendado
 
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc05_04_upgrade-roadmap.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 > A meta-pergunta antes de qualquer upgrade: *para onde estamos indo e por que agora?* Upgrades feitos de forma reativa ("a biblioteca que precisamos exige a 0.76") sao mais dificeis do que upgrades feitos proativamente como parte de um roadmap planejado.
 
 ---
