@@ -6,6 +6,13 @@ sidebar_position: 4
 
 ## Video Overview
 
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_android/fund_04_styling_stylesheet.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+## Video Overview
+
 > Vídeo para este tópico em breve.
 
 ## Sem XML, Sem Arquivos CSS
