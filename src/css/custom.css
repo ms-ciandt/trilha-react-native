@@ -160,24 +160,15 @@
 }
 
 /* ─── Color mode toggle ──────────────────────────────────────────────── */
-[data-theme='dark'] button[class*='colorModeToggle'] svg {
+/* Navbar is always navy regardless of theme — icon must always be light */
+button[class*='colorModeToggle'] svg {
   fill: rgba(255, 255, 255, 0.85) !important;
   color: rgba(255, 255, 255, 0.85) !important;
 }
 
-[data-theme='dark'] button[class*='colorModeToggle']:hover svg {
+button[class*='colorModeToggle']:hover svg {
   fill: #fff !important;
   color: #fff !important;
-}
-
-[data-theme='light'] button[class*='colorModeToggle'] svg {
-  fill: rgba(0, 0, 80, 0.7) !important;
-  color: rgba(0, 0, 80, 0.7) !important;
-}
-
-[data-theme='light'] button[class*='colorModeToggle']:hover svg {
-  fill: #000050 !important;
-  color: #000050 !important;
 }
 
 /* ─── Navbar ─────────────────────────────────────────────────────────── */
