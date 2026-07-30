@@ -160,13 +160,13 @@
 }
 
 /* ─── Color mode toggle ──────────────────────────────────────────────── */
-/* Navbar is always navy regardless of theme — icon must always be light */
-button[class*='colorModeToggle'] svg {
+/* colorModeToggle class is on the wrapper div, not the button — selector must omit "button" */
+[class*='colorModeToggle'] svg {
   fill: rgba(255, 255, 255, 0.85) !important;
   color: rgba(255, 255, 255, 0.85) !important;
 }
 
-button[class*='colorModeToggle']:hover svg {
+[class*='colorModeToggle']:hover svg {
   fill: #fff !important;
   color: #fff !important;
 }
