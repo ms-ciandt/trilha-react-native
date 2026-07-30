@@ -160,19 +160,19 @@
 }
 
 /* ─── Color mode toggle ──────────────────────────────────────────────── */
-button[class*='colorModeToggle'] svg {
+[data-theme='dark'] button[class*='colorModeToggle'] svg {
   fill: rgba(255, 255, 255, 0.85) !important;
   color: rgba(255, 255, 255, 0.85) !important;
 }
 
-button[class*='colorModeToggle']:hover svg {
+[data-theme='dark'] button[class*='colorModeToggle']:hover svg {
   fill: #fff !important;
   color: #fff !important;
 }
 
 [data-theme='light'] button[class*='colorModeToggle'] svg {
-  fill: rgba(0, 0, 80, 0.65) !important;
-  color: rgba(0, 0, 80, 0.65) !important;
+  fill: rgba(0, 0, 80, 0.7) !important;
+  color: rgba(0, 0, 80, 0.7) !important;
 }
 
 [data-theme='light'] button[class*='colorModeToggle']:hover svg {
