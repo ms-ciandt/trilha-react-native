@@ -10,11 +10,11 @@ const CONTRIBUTORS = [
 ];
 
 const REVIEWERS = [
-  { name: 'Matheus Sales',             role: 'React Native', username: 'ms-ciandt', avatar: null,                                             color: '#B4DCFA' },
-  { name: 'Diego Karol Gouvea Lana',   role: 'Architect',    username: null,        avatar: '/trilha-react-native/img/lana.webp',             color: '#242459', darkColor: '#393973', textColor: '#ffffff' },
-  { name: 'Guilherme Rovaron',         role: 'Web',          username: null,        avatar: '/trilha-react-native/img/web-reviewer.jpg',       color: '#FA5A50' },
-  { name: 'Paulo Vitor Sato',          role: 'Android',      username: null,        avatar: '/trilha-react-native/img/sato.webp',             color: '#2db370' },
-  { name: 'Gabriel Dos Santos Xavier', role: 'iOS',          username: null,        avatar: '/trilha-react-native/img/gabriel-xavier.webp',   color: '#690037', darkColor: '#A63832', textColor: '#ffffff' },
+  { name: 'Matheus Sales',             role: 'React Native', username: 'ms-ciandt', avatar: null,                                             color: '#B4DCFA',  darkColor: null,     lightTextColor: '#5a8ab8', darkTextColor: '#B4DCFA' },
+  { name: 'Diego Karol Gouvea Lana',   role: 'Architect',    username: null,        avatar: '/trilha-react-native/img/lana.webp',             color: '#242459',  darkColor: '#393973', lightTextColor: '#242459', darkTextColor: '#B4DCFA' },
+  { name: 'Guilherme Rovaron',         role: 'Web',          username: null,        avatar: '/trilha-react-native/img/web-reviewer.jpg',       color: '#FA5A50',  darkColor: null,     lightTextColor: '#c43c33', darkTextColor: '#FA8982' },
+  { name: 'Paulo Vitor Sato',          role: 'Android',      username: null,        avatar: '/trilha-react-native/img/sato.webp',             color: '#2db370',  darkColor: null,     lightTextColor: '#1e8a55', darkTextColor: '#3ddc84' },
+  { name: 'Gabriel Dos Santos Xavier', role: 'iOS',          username: null,        avatar: '/trilha-react-native/img/gabriel-xavier.webp',   color: '#690037',  darkColor: '#A63832', lightTextColor: '#690037', darkTextColor: '#FAB9FF' },
 ];
 
 const TOOLS = [
@@ -62,8 +62,9 @@ const STACK = [
 function ReviewersCards() {
   const { colorMode } = useColorMode();
   const isDark = colorMode === 'dark';
-  return REVIEWERS.map(({ name, role, username, avatar, color, darkColor, textColor }) => {
+  return REVIEWERS.map(({ name, role, username, avatar, color, darkColor, lightTextColor, darkTextColor }) => {
     const c = (isDark && darkColor) ? darkColor : color;
+    const textColor = isDark ? darkTextColor : lightTextColor;
     return (
       <div key={role} className={styles.reviewerCard}>
         <img
