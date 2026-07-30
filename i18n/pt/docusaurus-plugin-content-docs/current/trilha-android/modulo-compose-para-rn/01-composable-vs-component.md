@@ -4,6 +4,13 @@ sidebar_label: "@Composable vs Componente"
 sidebar_position: 1
 ---
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_android/compose_01_composable_vs_component.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 ## Visão Geral em Vídeo
 
 > Vídeo deste tópico em breve.

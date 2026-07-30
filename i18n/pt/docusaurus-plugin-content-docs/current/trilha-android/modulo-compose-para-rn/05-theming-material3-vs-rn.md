@@ -4,6 +4,13 @@ sidebar_label: "Theming"
 sidebar_position: 5
 ---
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_android/compose_05_theming_material3_vs_rn.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 ## Visão Geral em Vídeo
 
 > Vídeo deste tópico em breve.
