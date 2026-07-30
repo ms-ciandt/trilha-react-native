@@ -6,6 +6,13 @@ sidebar_position: 3
 
 ## Video Overview
 
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_android/compose_03_layout_column_row_vs_flexbox.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+## Video Overview
+
 > Video for this topic coming soon.
 
 ## Layout Systems Side by Side
