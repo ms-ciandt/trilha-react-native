@@ -80,20 +80,23 @@ export default function SearchBar() {
 
     const candidates = [bundlePath];
 
-    // pagefind derives baseUrl from import.meta.url of pagefind.js.
-    // In some browser/caching scenarios this can resolve to a wrong value
-    // (e.g. /trilha-react-native/pt/ instead of /trilha-react-native/), causing
-    // stored paths like /pt/foo/ to become /trilha-react-native/pt/pt/foo/.
-    // We override it explicitly via pagefind_options to guarantee the correct baseUrl.
-    // The MutationObserver is kept as a safety net for any remaining edge cases.
+    // Pagefind stores paths like /pt/foo in the index. When the UI resolves them
+    // against the current page URL while on a PT page (/trilha-react-native/pt/…),
+    // it can produce double-locale paths like /trilha-react-native/pt/pt/foo.
+    // fixLinks corrects this in two passes:
+    //   1. Ensure the base prefix (/trilha-react-native) is present.
+    //   2. Collapse any duplicated locale segment (e.g. /pt/pt/ → /pt/).
     const fixLinks = (root) => {
       root.querySelectorAll('a[href]').forEach((a) => {
         try {
           const url = new URL(a.href);
+          // Pass 1: add base if missing
           if (!url.pathname.startsWith(base + '/')) {
             url.pathname = base + url.pathname;
-            a.href = url.toString();
           }
+          // Pass 2: collapse doubled locale segments (e.g. /pt/pt/ → /pt/)
+          url.pathname = url.pathname.replace(/(\/[a-z]{2})\1(\/|$)/, '$1$2');
+          a.href = url.toString();
         } catch (_) {}
       });
     };
@@ -119,9 +122,13 @@ export default function SearchBar() {
               },
             });
 
-            // Safety net: fix any links that still lack the base prefix.
+            // Fix links whenever Pagefind renders new results.
             const observer = new MutationObserver(() => fixLinks(containerRef.current));
             observer.observe(containerRef.current, { childList: true, subtree: true });
+
+            // Also fix at click time — Pagefind occasionally updates href just
+            // before the click fires, after the MutationObserver batch has run.
+            containerRef.current.addEventListener('click', () => fixLinks(containerRef.current));
 
             setStatus('ready');
             return;
