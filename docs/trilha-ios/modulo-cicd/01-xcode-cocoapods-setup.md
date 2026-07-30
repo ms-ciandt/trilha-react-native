@@ -4,6 +4,11 @@ title: Xcode and CocoaPods Setup for React Native
 
 # Xcode and CocoaPods Setup for React Native
 
+<video width="100%" controls style="border-radius: 8px; margin: 16px 0;">
+  <source src="/trilha-react-native/assets/videos/trilha_ios/cicd_01_xcode_cocoapods_setup.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 As an iOS developer, you already know Xcode, provisioning profiles, and CocoaPods. React Native builds directly on that knowledge — the `ios/` folder is a full Xcode project, and every native dependency flows through CocoaPods. This document maps what you already know to how React Native uses these tools.
 
 ## The ios/ Folder Structure

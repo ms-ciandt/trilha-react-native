@@ -4,6 +4,11 @@ title: Xcode and CocoaPods Setup for React Native
 
 # Configuracao do Xcode e CocoaPods para React Native
 
+<video width="100%" controls style="border-radius: 8px; margin: 16px 0;">
+  <source src="/trilha-react-native/assets/videos/trilha_ios/cicd_01_xcode_cocoapods_setup.mp4" type="video/mp4">
+  Seu navegador não suporta o elemento de vídeo.
+</video>
+
 Como desenvolvedor iOS, voce ja conhece Xcode, provisioning profiles e CocoaPods. O React Native se baseia exatamente nesse conhecimento — a pasta `ios/` e um projeto Xcode completo, e toda dependencia nativa passa pelo CocoaPods. Este documento mapeia o que voce ja sabe para como o React Native utiliza esses recursos.
 
 ## Estrutura da Pasta ios/
