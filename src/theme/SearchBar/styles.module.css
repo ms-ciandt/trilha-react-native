@@ -5,8 +5,8 @@
   gap: 0.4rem;
   padding: 0.25rem 0.625rem;
   border-radius: 6px;
-  border: 1px solid var(--ifm-toc-border-color);
-  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.07);
   color: var(--ifm-navbar-link-color);
   font-size: 0.8125rem;
   font-family: var(--ifm-font-family-base);
@@ -18,8 +18,8 @@
 }
 
 .trigger:hover {
-  border-color: var(--ifm-color-primary);
-  background: color-mix(in srgb, var(--ifm-color-primary) 7%, transparent);
+  border-color: rgba(255, 255, 255, 0.45);
+  background: rgba(255, 255, 255, 0.13);
 }
 
 .label {

@@ -170,8 +170,23 @@ button[class*='colorModeToggle']:hover svg {
   color: #fff !important;
 }
 
+[data-theme='light'] button[class*='colorModeToggle'] svg {
+  fill: rgba(0, 0, 80, 0.65) !important;
+  color: rgba(0, 0, 80, 0.65) !important;
+}
+
+[data-theme='light'] button[class*='colorModeToggle']:hover svg {
+  fill: #000050 !important;
+  color: #000050 !important;
+}
+
 /* ─── Navbar ─────────────────────────────────────────────────────────── */
 :root {
+  --ifm-navbar-link-color: rgba(255, 255, 255, 0.85);
+  --ifm-navbar-link-hover-color: #fff;
+}
+
+[data-theme='light'] {
   --ifm-navbar-link-color: rgba(255, 255, 255, 0.85);
   --ifm-navbar-link-hover-color: #fff;
 }
@@ -237,8 +252,8 @@ button[class*='colorModeToggle']:hover svg {
 /* Introdução — vinho */
 .navbar__link[href*="/introducao"]:hover,
 .navbar__link[href*="/introducao"].navbar__link--active {
-  background: color-mix(in srgb, #690037 12%, transparent);
-  color: #690037;
+  background: color-mix(in srgb, #B8849A 14%, transparent);
+  color: #FAD4D2;
 }
 [data-theme='dark'] .navbar__link[href*="/introducao"]:hover,
 [data-theme='dark'] .navbar__link[href*="/introducao"].navbar__link--active {
@@ -285,13 +300,13 @@ button[class*='colorModeToggle']:hover svg {
 /* Trilha iOS — deep red */
 .navbar__link[href*="/trilha-ios"]:hover,
 .navbar__link[href*="/trilha-ios"].navbar__link--active {
-  background: color-mix(in srgb, #690037 12%, transparent);
-  color: #690037;
+  background: color-mix(in srgb, #C785CC 14%, transparent);
+  color: #FAB9FF;
 }
 [data-theme='dark'] .navbar__link[href*="/trilha-ios"]:hover,
 [data-theme='dark'] .navbar__link[href*="/trilha-ios"].navbar__link--active {
-  background: color-mix(in srgb, #802655 14%, transparent);
-  color: #802655;
+  background: color-mix(in srgb, #C785CC 14%, transparent);
+  color: #FAB9FF;
 }
 
 /* Masterclass — light blue */
@@ -1216,8 +1231,7 @@ video {
 
 /* ─── Go To Top button ───────────────────────────────────────────────── */
 .go-to-top {
-  --_from: var(--btn-from, #690037);
-  --_to:   var(--btn-to,   #FA5A50);
+  --_color: var(--ifm-color-primary);
 
   position: fixed;
   bottom: 2rem;
@@ -1230,16 +1244,14 @@ video {
   width: 42px;
   height: 42px;
   border-radius: 50%;
-  border: none;
+  border: 1px solid color-mix(in srgb, var(--_color) 40%, transparent);
   padding: 0;
   cursor: pointer;
 
-  background: linear-gradient(135deg, var(--_from) 0%, var(--_to) 100%);
-  color: #fff;
+  background: var(--ifm-background-surface-color);
+  color: var(--_color);
 
-  box-shadow:
-    0 4px 14px color-mix(in srgb, var(--_from) 35%, transparent),
-    0 0 0 1px color-mix(in srgb, var(--_from) 30%, transparent);
+  box-shadow: 0 2px 10px color-mix(in srgb, var(--_color) 20%, transparent);
 
   opacity: 0;
   transform: translateY(14px) scale(0.85);
@@ -1247,7 +1259,8 @@ video {
   transition:
     opacity 0.28s ease,
     transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1),
-    box-shadow 0.22s ease;
+    box-shadow 0.22s ease,
+    background 0.15s ease;
 }
 
 .go-to-top--visible {
@@ -1257,17 +1270,15 @@ video {
 }
 
 .go-to-top:hover {
-  box-shadow:
-    0 8px 28px color-mix(in srgb, var(--_from) 50%, transparent),
-    0 0 0 1px color-mix(in srgb, var(--_from) 45%, transparent);
+  background: var(--_color);
+  color: #fff;
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--_color) 35%, transparent);
   transform: translateY(-3px) scale(1.08);
 }
 
 .go-to-top:active {
   transform: translateY(0) scale(0.96);
-  box-shadow:
-    0 3px 10px color-mix(in srgb, var(--_from) 30%, transparent),
-    0 0 0 1px color-mix(in srgb, var(--_from) 25%, transparent);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--_color) 25%, transparent);
 }
 
 /* ─── Responsive ─────────────────────────────────────────────────────── */
