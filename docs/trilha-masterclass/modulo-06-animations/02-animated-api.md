@@ -2,6 +2,13 @@
 title: "Animated API — New Architecture"
 ---
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/anim_02_animated_api.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 # Animated API — New Architecture
 
 > The `Animated` API ships with React Native core and covers the majority of UI transitions without additional dependencies. This document covers its internals under New Architecture, where the bridge is gone and JSI makes the setup path synchronous.

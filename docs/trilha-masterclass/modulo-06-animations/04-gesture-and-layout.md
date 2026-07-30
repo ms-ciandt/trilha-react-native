@@ -2,6 +2,13 @@
 title: "Gesture Handler + Layout Animations"
 ---
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/anim_04_gesture_and_layout.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 # Gesture Handler + Layout Animations
 
 > Gesture-driven animations and layout transitions represent the most complex animation work in a React Native app. This document covers Gesture Handler 2 with Reanimated integration, and Reanimated 3's layout animation system under Fabric.

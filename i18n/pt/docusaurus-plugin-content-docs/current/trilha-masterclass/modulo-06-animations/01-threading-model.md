@@ -2,6 +2,13 @@
 title: "Thread JS vs Thread UI"
 ---
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/anim_01_threading_model.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 # Thread JS vs Thread UI
 
 > **Módulo 06 — Animações**

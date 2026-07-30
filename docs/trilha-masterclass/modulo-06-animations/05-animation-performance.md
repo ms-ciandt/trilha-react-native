@@ -2,6 +2,13 @@
 title: "Animation Performance & Profiling"
 ---
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/anim_05_animation_performance.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 # Animation Performance & Profiling
 
 > Smooth animation at 60/120 FPS is a constraint, not a goal. This document covers the exact failure modes that produce frame drops in animated React Native apps, and the profiling workflow to diagnose and fix them in production-grade builds.

@@ -2,6 +2,13 @@
 title: "Performance e Profiling de Animações"
 ---
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/anim_05_animation_performance.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 # Performance e Profiling de Animações
 
 > Animação suave a 60/120 FPS é uma restrição, não um objetivo. Este documento cobre os modos de falha exatos que produzem frames perdidos em apps React Native com animações, e o fluxo de profiling para diagnosticar e corrigir esses problemas em builds de produção.
