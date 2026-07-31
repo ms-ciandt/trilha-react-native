@@ -2,6 +2,13 @@
 title: "Animated API — New Architecture"
 ---
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/anim_02_animated_api.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 # Animated API — New Architecture
 
 > A API `Animated` faz parte do core do React Native e cobre a maioria das transições de UI sem dependências adicionais. Este documento aborda seus internos na New Architecture, onde a bridge foi substituída e o JSI torna o setup síncrono.

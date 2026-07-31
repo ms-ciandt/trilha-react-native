@@ -2,6 +2,13 @@
 title: "Reanimated 3 — Worklets e Shared Values"
 ---
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_masterclass/anim_03_reanimated_worklets.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 # Reanimated 3 — Worklets e Shared Values
 
 > Reanimated 3 é o padrão de produção para animações baseadas em gestos e a 120 FPS no React Native 0.76+. Seu modelo é arquiteturalmente diferente da API `Animated`: em vez de descrever animações declarativamente e entregá-las ao nativo, os worklets executam JavaScript real na thread UI via um segundo runtime Hermes.
