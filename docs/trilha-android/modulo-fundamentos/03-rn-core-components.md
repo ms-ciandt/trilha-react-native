@@ -11,10 +11,6 @@ sidebar_position: 3
   Your browser does not support the video tag.
 </video>
 
-## Video Overview
-
-> Video for this topic coming soon.
-
 ## There Is No XML Here
 
 In Android you write layout XML and inflate it. In React Native there is no XML, no `LayoutInflater`, no `R.layout.*`. Every UI element is a JavaScript component that compiles to the platform's native view.

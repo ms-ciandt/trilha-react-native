@@ -11,10 +11,6 @@ sidebar_position: 1
   Your browser does not support the video tag.
 </video>
 
-## Video Overview
-
-> Video para este tópico em breve.
-
 ## Voce Ja Sabe Escrever Software
 
 JavaScript vai parecer estranho no começo — não porque seja difícil, mas porque quebra suposições que você construiu ao longo de anos desenvolvendo em Kotlin. Este arquivo mapeia cada conceito central do JS para o que você já conhece do Kotlin, para que você pule a fase do "o que isso faz mesmo?" e vá direto para construir.

@@ -11,10 +11,6 @@ sidebar_position: 2
   Your browser does not support the video tag.
 </video>
 
-## Video Overview
-
-> Video for this topic coming soon.
-
 ## What You Already Know
 
 In Compose, state is created with `remember { mutableStateOf(value) }`. The `remember` block keeps the value alive across recompositions; `mutableStateOf` wraps it so Compose can observe changes and trigger recomposition.

@@ -11,10 +11,6 @@ sidebar_position: 4
   Your browser does not support the video tag.
 </video>
 
-## Video Overview
-
-> Video for this topic coming soon.
-
 ## What You Already Know
 
 Navigation Compose gives you a `NavController`, a `NavHost` with a composable graph, typed routes (or string routes), and back-stack management. React Navigation 7 covers the same surface: a navigator container, typed route definitions, a stack, tabs, drawers, and programmatic navigation via a hook.

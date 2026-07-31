@@ -11,10 +11,6 @@ sidebar_position: 2
   Your browser does not support the video tag.
 </video>
 
-## Video Overview
-
-> Video for this topic coming soon.
-
 ## TypeScript is JavaScript With Kotlin's Type System
 
 If you loved Kotlin's type system — data classes, sealed classes, nullable types, generics — you'll feel at home in TypeScript. The philosophy is identical: catch bugs at compile time, not runtime.

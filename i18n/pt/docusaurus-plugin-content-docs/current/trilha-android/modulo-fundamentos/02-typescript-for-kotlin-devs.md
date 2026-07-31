@@ -11,10 +11,6 @@ sidebar_position: 2
   Your browser does not support the video tag.
 </video>
 
-## Video Overview
-
-> Video para este tópico em breve.
-
 ## TypeScript é JavaScript com o Sistema de Tipos do Kotlin
 
 Se você amou o sistema de tipos do Kotlin — data classes, sealed classes, tipos anuláveis, generics — você vai se sentir em casa no TypeScript. A filosofia é idêntica: capturar bugs em tempo de compilação, não em tempo de execução.

@@ -11,10 +11,6 @@ sidebar_position: 3
   Your browser does not support the video tag.
 </video>
 
-## Video Overview
-
-> Video for this topic coming soon.
-
 ## Layout Systems Side by Side
 
 Jetpack Compose layouts are named and explicit: `Column` for vertical, `Row` for horizontal, `Box` for stacked/overlay. React Native uses a single unified Flexbox system for everything — but the defaults are tuned so that the common patterns translate cleanly.

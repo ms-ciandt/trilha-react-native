@@ -11,10 +11,6 @@ sidebar_position: 1
   Your browser does not support the video tag.
 </video>
 
-## Video Overview
-
-> Video for this topic coming soon.
-
 ## You Already Know How to Write Software
 
 JavaScript will feel strange at first — not because it's hard, but because it breaks assumptions you built over years of Kotlin development. This file maps every core JS concept onto what you already know from Kotlin, so you can skip the "what does this even do?" phase and get to building.

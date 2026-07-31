@@ -11,10 +11,6 @@ sidebar_position: 5
   Your browser does not support the video tag.
 </video>
 
-## Video Overview
-
-> Video for this topic coming soon.
-
 ## The Problem Both Solve
 
 Jetpack Compose's Material3 gives you a structured, token-based design system: color roles (primary, surface, onSurface…), typography scale, shape tokens, and dark mode support baked into `MaterialTheme`. All components read from these tokens automatically.
