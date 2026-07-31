@@ -11,10 +11,6 @@ sidebar_position: 4
   Your browser does not support the video tag.
 </video>
 
-## Video Overview
-
-> Video for this topic coming soon.
-
 ## No XML, No CSS Files
 
 In Android you write layout XML with attributes like `android:textColor`, `android:padding`, `android:background`. In React Native there are no XML files and no CSS — styles are JavaScript objects.

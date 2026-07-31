@@ -11,10 +11,6 @@ sidebar_position: 1
   Your browser does not support the video tag.
 </video>
 
-## Video Overview
-
-> Video for this topic coming soon.
-
 ## The Paradigm You Already Know
 
 If you have written Jetpack Compose, you already understand the declarative UI model that React Native is built on. The mental jump is smaller than most Android developers expect — but the terminology and runtime differ significantly.

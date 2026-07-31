@@ -11,10 +11,6 @@ sidebar_position: 5
   Your browser does not support the video tag.
 </video>
 
-## Video Overview
-
-> Video for this topic coming soon.
-
 ## Mapping Android Architecture to React Native
 
 You already know how Android architecture works: `ViewModel` holds UI state, `Repository` abstracts data sources, `Flow`/`LiveData` streams updates to the UI layer. React Native has direct equivalents for all of it.
