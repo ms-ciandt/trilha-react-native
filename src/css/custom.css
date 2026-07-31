@@ -160,24 +160,15 @@
 }
 
 /* ─── Color mode toggle ──────────────────────────────────────────────── */
-button[class*='colorModeToggle'] svg {
+/* colorModeToggle class is on the wrapper div, not the button — selector must omit "button" */
+[class*='colorModeToggle'] svg {
   fill: rgba(255, 255, 255, 0.85) !important;
   color: rgba(255, 255, 255, 0.85) !important;
 }
 
-button[class*='colorModeToggle']:hover svg {
+[class*='colorModeToggle']:hover svg {
   fill: #fff !important;
   color: #fff !important;
-}
-
-[data-theme='light'] button[class*='colorModeToggle'] svg {
-  fill: rgba(0, 0, 80, 0.65) !important;
-  color: rgba(0, 0, 80, 0.65) !important;
-}
-
-[data-theme='light'] button[class*='colorModeToggle']:hover svg {
-  fill: #000050 !important;
-  color: #000050 !important;
 }
 
 /* ─── Navbar ─────────────────────────────────────────────────────────── */
