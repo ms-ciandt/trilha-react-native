@@ -10,7 +10,7 @@ sidebar_position: 10
 ## Video Overview
 
 <video width="100%" controls>
-  <source src="/trilha-react-native/assets/videos/trilha_nativo_10_navegacao_en.mp4" type="video/mp4">
+  <source src="/trilha-react-native/assets/videos/trilha_nativo/fund_09_navegacao.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
 
