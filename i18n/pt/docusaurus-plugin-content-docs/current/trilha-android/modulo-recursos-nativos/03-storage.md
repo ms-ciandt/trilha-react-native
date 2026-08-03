@@ -6,7 +6,10 @@ sidebar_position: 3
 
 ## Video Overview
 
-> Video para este tópico em breve.
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_android/rec_03_storage.mp4" type="video/mp4">
+  Seu navegador não suporta o elemento de vídeo.
+</video>
 
 ## Opções de Storage Mapeadas do Android
 

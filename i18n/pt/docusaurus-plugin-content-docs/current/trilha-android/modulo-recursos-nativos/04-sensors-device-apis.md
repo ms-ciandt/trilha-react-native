@@ -6,7 +6,10 @@ sidebar_position: 4
 
 ## Video Overview
 
-> Video para este tópico em breve.
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_android/rec_04_sensors.mp4" type="video/mp4">
+  Seu navegador não suporta o elemento de vídeo.
+</video>
 
 ## Android Sensor Framework → Expo Sensors
 
