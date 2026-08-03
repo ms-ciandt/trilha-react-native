@@ -96,6 +96,9 @@ export default function SearchBar() {
           }
           // Pass 2: collapse doubled locale segments (e.g. /pt/pt/ → /pt/)
           url.pathname = url.pathname.replace(/(\/[a-z]{2})\1(\/|$)/, '$1$2');
+          if (url.pathname?.includes('.html')) {
+            url.pathname = url.pathname.replace(/\.html/, '');
+          }
           a.href = url.toString();
         } catch (_) {}
       });
@@ -111,9 +114,7 @@ export default function SearchBar() {
             new window.PagefindUI({
               element: containerRef.current,
               bundlePath: path,
-              // Explicitly set baseUrl so pagefind never derives a wrong value
-              // from import.meta.url (e.g. /trilha-react-native/pt/ on locale pages).
-              pagefind_options: { baseUrl: base + '/' },
+              baseUrl: base + '/',
               showImages: false,
               showSubResults: true,
               translations: {
