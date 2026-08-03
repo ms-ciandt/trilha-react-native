@@ -6,7 +6,10 @@ sidebar_position: 2
 
 ## Video Overview
 
-> Vídeo para este tópico em breve.
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_android/rec_02_camera.mp4" type="video/mp4">
+  Seu navegador não suporta o elemento de vídeo.
+</video>
 
 ## CameraX vs Bibliotecas de Camera no React Native
 
