@@ -361,9 +361,9 @@
   --track-accent-border: color-mix(in srgb, #690037 30%, transparent);
 }
 [data-theme='dark']:has(.navbar__link[href*="/trilha-ios"].navbar__link--active) {
-  --track-accent: #802655;
-  --track-accent-bg: color-mix(in srgb, #802655 10%, transparent);
-  --track-accent-border: color-mix(in srgb, #802655 25%, transparent);
+  --track-accent: #FAB9FF;
+  --track-accent-bg: color-mix(in srgb, #FAB9FF 10%, transparent);
+  --track-accent-border: color-mix(in srgb, #FAB9FF 25%, transparent);
 }
 
 /* Trilha Nativo — darker coral */
@@ -526,11 +526,11 @@
 }
 [data-theme='dark'] [class*='trilha-ios'] [class*='sidebarLogo'] {
   background: #000050;
-  border-left-color: #802655;
-  border-bottom-color: rgba(128, 38, 85, 0.2);
+  border-left-color: #FAB9FF;
+  border-bottom-color: rgba(250, 185, 255, 0.2);
 }
 [data-theme='dark'] [class*='trilha-ios'] [class*='sidebarLogo']::before {
-  color: #802655;
+  color: #FAB9FF;
 }
 
 /* Trilha Nativo — darker coral */
@@ -822,7 +822,7 @@ video {
 }
 
 [data-theme='dark'] [class*='trilha-ios'] .menu__link--sublist {
-  color: #802655 !important;
+  color: #FAB9FF !important;
 }
 
 [class*='trilha-ios'] .menu__link--active {
@@ -831,8 +831,8 @@ video {
 }
 
 [data-theme='dark'] [class*='trilha-ios'] .menu__link--active {
-  background: color-mix(in srgb, #802655 10%, transparent) !important;
-  color: #802655 !important;
+  background: color-mix(in srgb, #FAB9FF 10%, transparent) !important;
+  color: #FAB9FF !important;
 }
 
 /* Trilha Nativo — sidebar darker coral */
