@@ -455,7 +455,7 @@
 }
 
 /* Masterclass */
-[data-theme='dark'] [class*='trilha-masterclass'] [class*='sidebarLogo'] {
+[data-theme='dark'][class*='trilha-masterclass'] [class*='sidebarLogo'] {
   background: #001a33;
   border-left-color: #B4DCFA;
   border-bottom-color: rgba(180, 220, 250, 0.2);
@@ -483,12 +483,12 @@
   content: 'Trilha Web → React Native';
   color: #FA5A50;
 }
-[data-theme='dark'] [class*='trilha-web'] [class*='sidebarLogo'] {
+[data-theme='dark'][class*='trilha-web'] [class*='sidebarLogo'] {
   background: #000050;
   border-left-color: #FA8982;
   border-bottom-color: rgba(250, 137, 130, 0.2);
 }
-[data-theme='dark'] [class*='trilha-web'] [class*='sidebarLogo']::before {
+[data-theme='dark'][class*='trilha-web'] [class*='sidebarLogo']::before {
   color: #FA8982;
 }
 
@@ -502,12 +502,12 @@
   content: 'Trilha Android → React Native';
   color: #2db370;
 }
-[data-theme='dark'] [class*='trilha-android'] [class*='sidebarLogo'] {
+[data-theme='dark'][class*='trilha-android'] [class*='sidebarLogo'] {
   background: #000050;
   border-left-color: #3ddc84;
   border-bottom-color: rgba(61, 220, 132, 0.2);
 }
-[data-theme='dark'] [class*='trilha-android'] [class*='sidebarLogo']::before {
+[data-theme='dark'][class*='trilha-android'] [class*='sidebarLogo']::before {
   color: #3ddc84;
 }
 
@@ -521,12 +521,12 @@
   content: 'Trilha iOS → React Native';
   color: #690037;
 }
-[data-theme='dark'] [class*='trilha-ios'] [class*='sidebarLogo'] {
+[data-theme='dark'][class*='trilha-ios'] [class*='sidebarLogo'] {
   background: #000050;
   border-left-color: #FAB9FF;
   border-bottom-color: rgba(250, 185, 255, 0.2);
 }
-[data-theme='dark'] [class*='trilha-ios'] [class*='sidebarLogo']::before {
+[data-theme='dark'][class*='trilha-ios'] [class*='sidebarLogo']::before {
   color: #FAB9FF;
 }
 
@@ -540,12 +540,12 @@
   content: 'Trilha Nativo → React Native';
   color: #D94A41;
 }
-[data-theme='dark'] [class*='trilha-nativo'] [class*='sidebarLogo'] {
+[data-theme='dark'][class*='trilha-nativo'] [class*='sidebarLogo'] {
   background: #000050;
   border-left-color: #FA8982;
   border-bottom-color: rgba(250, 137, 130, 0.2);
 }
-[data-theme='dark'] [class*='trilha-nativo'] [class*='sidebarLogo']::before {
+[data-theme='dark'][class*='trilha-nativo'] [class*='sidebarLogo']::before {
   color: #FA8982;
 }
 
@@ -559,7 +559,7 @@
   content: 'Introdução → React Native';
   color: var(--ifm-color-primary);
 }
-[data-theme='dark'] [class*='introducao'] [class*='sidebarLogo'] {
+[data-theme='dark'][class*='introducao'] [class*='sidebarLogo'] {
   background: #000050;
 }
 
@@ -733,7 +733,7 @@ video {
   --module-accent: #690037;
 }
 
-[data-theme='dark'] [class*='trilha-ios'] {
+[data-theme='dark'][class*='trilha-ios'] {
   --module-accent: #FAB9FF;
 }
 
@@ -748,21 +748,21 @@ video {
 }
 
 /* Masterclass — fundo escuro na área de conteúdo (apenas dark) */
-[data-theme='dark'] [class*='trilha-masterclass'] .theme-doc-sidebar-container {
+[data-theme='dark'][class*='trilha-masterclass'] .theme-doc-sidebar-container {
   background: #001a33;
   border-right-color: rgba(140, 179, 217, 0.2) !important;
 }
 
-[data-theme='dark'] [class*='trilha-masterclass'] .menu__link--sublist {
+[data-theme='dark'][class*='trilha-masterclass'] .menu__link--sublist {
   color: #B4DCFA !important;
 }
 
-[data-theme='dark'] [class*='trilha-masterclass'] .menu__link--active {
+[data-theme='dark'][class*='trilha-masterclass'] .menu__link--active {
   background: color-mix(in srgb, #8CB3D9 10%, transparent) !important;
   color: #B4DCFA !important;
 }
 
-[data-theme='dark'] [class*='trilha-masterclass'] .menu__link:hover {
+[data-theme='dark'][class*='trilha-masterclass'] .menu__link:hover {
   background: color-mix(in srgb, #8CB3D9 8%, transparent);
 }
 
@@ -784,7 +784,7 @@ video {
   color: #FA5A50 !important;
 }
 
-[data-theme='dark'] [class*='trilha-web'] .menu__link--sublist {
+[data-theme='dark'][class*='trilha-web'] .menu__link--sublist {
   color: #FA8982 !important;
 }
 
@@ -793,7 +793,7 @@ video {
   color: #FA5A50 !important;
 }
 
-[data-theme='dark'] [class*='trilha-web'] .menu__link--active {
+[data-theme='dark'][class*='trilha-web'] .menu__link--active {
   background: color-mix(in srgb, #FA8982 10%, transparent) !important;
   color: #FA8982 !important;
 }
@@ -803,7 +803,7 @@ video {
   color: #2db370 !important;
 }
 
-[data-theme='dark'] [class*='trilha-android'] .menu__link--sublist {
+[data-theme='dark'][class*='trilha-android'] .menu__link--sublist {
   color: #3ddc84 !important;
 }
 
@@ -812,7 +812,7 @@ video {
   color: #2db370 !important;
 }
 
-[data-theme='dark'] [class*='trilha-android'] .menu__link--active {
+[data-theme='dark'][class*='trilha-android'] .menu__link--active {
   background: color-mix(in srgb, #3ddc84 10%, transparent) !important;
   color: #3ddc84 !important;
 }
@@ -822,7 +822,7 @@ video {
   color: #690037 !important;
 }
 
-[data-theme='dark'] [class*='trilha-ios'] .menu__link--sublist {
+[data-theme='dark'][class*='trilha-ios'] .menu__link--sublist {
   color: #FAB9FF !important;
 }
 
@@ -831,7 +831,7 @@ video {
   color: #690037 !important;
 }
 
-[data-theme='dark'] [class*='trilha-ios'] .menu__link--active {
+[data-theme='dark'][class*='trilha-ios'] .menu__link--active {
   background: color-mix(in srgb, #FAB9FF 10%, transparent) !important;
   color: #FAB9FF !important;
 }
@@ -841,7 +841,7 @@ video {
   color: #D94A41 !important;
 }
 
-[data-theme='dark'] [class*='trilha-nativo'] .menu__link--sublist {
+[data-theme='dark'][class*='trilha-nativo'] .menu__link--sublist {
   color: #FA8982 !important;
 }
 
@@ -850,7 +850,7 @@ video {
   color: #D94A41 !important;
 }
 
-[data-theme='dark'] [class*='trilha-nativo'] .menu__link--active {
+[data-theme='dark'][class*='trilha-nativo'] .menu__link--active {
   background: color-mix(in srgb, #FA8982 10%, transparent) !important;
   color: #FA8982 !important;
 }
@@ -1216,7 +1216,7 @@ video {
   z-index: 10;
 }
 
-[data-theme='dark'] [class*='trilha-ios'] .theme-doc-markdown::before {
+[data-theme='dark'][class*='trilha-ios'] .theme-doc-markdown::before {
   background: linear-gradient(90deg, transparent, #FAB9FF 50%, transparent);
 }
 
