@@ -111,6 +111,8 @@ npm run build
 
 Se falhar com "These sidebar document ids do not exist", o build mostra os IDs disponíveis. Use o ID exato listado e corrija o `sidebars.js`. Repita até passar.
 
+> **Se o tópico envolver edição de `src/pages/` (index.jsx, about.jsx ou seus espelhos PT-BR):** rodar também `npm test` antes de abrir o PR. Strings literais nesses arquivos são verificadas por testes unitários — alterar headings, nomes de cards, hrefs ou nomes de revisores sem atualizar o teste correspondente em `src/__tests__/pages/` quebra a pipeline.
+
 ---
 
 ## 6. Atualizar o CLAUDE.md do módulo

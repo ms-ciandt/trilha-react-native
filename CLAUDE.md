@@ -104,6 +104,45 @@ Todo código de exemplo, snippet, explicação e referência de API deve usar ex
 - Expo SDK 56+ como ambiente de referência (já usa New Architecture por padrão)
 - Se precisar mencionar a arquitetura legada, fazê-lo apenas como contexto histórico de comparação, nunca como caminho recomendado
 
+## Testes unitários
+
+O projeto usa **Vitest + React Testing Library** para testar as páginas JSX em `src/pages/` e seus espelhos PT-BR.
+
+### O que é testado
+
+| Arquivo de teste | Componente coberto |
+|---|---|
+| `src/__tests__/pages/index.test.jsx` | `src/pages/index.jsx` (home EN) |
+| `src/__tests__/pages/index.pt.test.jsx` | `i18n/pt/docusaurus-plugin-content-pages/index.jsx` (home PT-BR) |
+| `src/__tests__/pages/about.test.jsx` | `src/pages/about.jsx` (about EN) |
+| `src/__tests__/pages/about.pt.test.jsx` | `i18n/pt/docusaurus-plugin-content-pages/about.jsx` (about PT-BR) |
+
+### Strings "frozen" — não alterar sem atualizar o teste
+
+Os testes verificam strings literais presentes no JSX. Alterar qualquer um dos itens abaixo **sem atualizar o teste correspondente quebra a pipeline**:
+
+- Headings H1 (`React Native Trail`, `Trilha React Native`, `About This Course`, `Sobre Este Curso`)
+- Nomes dos cards de trilha (`Web dev trail`, `Android native trail`, `iOS native trail`, `React Native Masterclass Trail`, `Trilha Web`, `Trilha Android`, `Trilha iOS`, `Trilha React Native MasterClass`)
+- Hrefs dos botões Start/Começar e links de masterclass
+- Nomes e `alt` text dos contribuidores e revisores
+- Tags da stack de referência (`React Native 0.76+`, `Expo SDK 56`, `New Architecture (default)` / `New Architecture (padrão)`, etc.)
+- Textos de roles (`Architect` em EN, `Arquiteto` em PT-BR)
+
+### Regra obrigatória ao editar `src/pages/`
+
+Sempre que editar `src/pages/index.jsx`, `src/pages/about.jsx` ou seus espelhos PT-BR:
+
+1. Atualizar o(s) teste(s) correspondente(s) em `src/__tests__/pages/`
+2. Rodar `npm test` localmente antes de abrir o PR
+3. A pipeline (`deploy.yml`) roda `npm test` antes do build — PR com teste falhando não passa
+
+### Rodar os testes
+
+```bash
+npm test          # roda todos os testes
+npm test -- --watch   # modo watch durante desenvolvimento
+```
+
 ## Site (Docusaurus)
 
 - Gerador: **Docusaurus 3** com tema Classic
