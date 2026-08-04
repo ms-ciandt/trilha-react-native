@@ -1,16 +1,26 @@
-﻿---
+---
 title: Navigation
 ---
 
 # Navigation
 
-iOS navigation is one of the most mature paradigms in mobile development. UIKit's `UINavigationController`, `UITabBarController`, and modal presentation system have years of convention behind them. React Navigation 7 maps closely to these patterns — once you see the correspondence, the mental model transfers quickly.
+SwiftUI's `NavigationStack` and React Navigation share the same declarative philosophy: you describe the structure of your navigation tree, and the framework manages the transitions. This is a fundamental difference from UIKit's imperative `pushViewController` model — and it means the mental model transfers almost directly from SwiftUI to React Navigation.
 
-## UINavigationController → Stack Navigator
+## NavigationStack → Stack Navigator
 
-In UIKit, you push and pop view controllers onto a navigation stack managed by `UINavigationController`. React Navigation's Stack Navigator is the direct equivalent.
+In SwiftUI, a `NavigationStack` wraps your content and manages the push/pop stack:
 
-Install the dependencies:
+```swift
+struct RootView: View {
+    var body: some View {
+        NavigationStack {
+            HomeView()
+        }
+    }
+}
+```
+
+React Navigation's native stack navigator is the direct equivalent. Install the dependencies:
 
 ```bash
 npm install @react-navigation/native @react-navigation/native-stack
@@ -38,25 +48,49 @@ export default function App() {
 }
 ```
 
-This is the Swift equivalent of defining your storyboard's initial navigation controller with a root view controller and segues to child controllers.
+---
 
-## push/pop → navigate/goBack
+## NavigationLink / navigationDestination → navigate / goBack
 
-| UIKit | React Navigation |
+In SwiftUI, you trigger navigation declaratively with `NavigationLink` or programmatically via a `NavigationPath`:
+
+```swift
+// Declarative
+NavigationLink("Open Detail", value: product)
+
+// Programmatic
+path.append(product)
+path.removeLast()
+```
+
+In React Navigation, all navigation is programmatic via the `navigation` object:
+
+| SwiftUI | React Navigation |
 |---|---|
-| `navigationController?.pushViewController(vc, animated: true)` | `navigation.navigate('Detail')` |
-| `navigationController?.popViewController(animated: true)` | `navigation.goBack()` |
-| `navigationController?.popToRootViewController(animated: true)` | `navigation.popToTop()` |
-| `navigationController?.setViewControllers([vc], animated: true)` | `navigation.reset({ index: 0, routes: [{ name: 'Home' }] })` |
+| `path.append(product)` | `navigation.navigate('Detail', { productId: product.id })` |
+| `path.removeLast()` | `navigation.goBack()` |
+| `path.removeLast(path.count)` | `navigation.popToTop()` |
+| `path = NavigationPath()` (reset) | `navigation.reset({ index: 0, routes: [{ name: 'Home' }] })` |
 
-## Segue Parameters → route.params
+---
 
-In UIKit, you pass data forward using `prepare(for:sender:)` and backward using delegation or closures. React Navigation passes parameters through the route object.
+## navigationDestination(for:) → route.params
 
-Passing parameters forward:
+SwiftUI's `navigationDestination(for:)` binds a destination view to a data type:
+
+```swift
+NavigationStack {
+    ProductListView()
+        .navigationDestination(for: Product.self) { product in
+            ProductDetailView(product: product)
+        }
+}
+```
+
+React Navigation passes data through `route.params`. The receiving screen reads from `route.params` the same way your SwiftUI destination reads from the bound value:
 
 ```tsx
-// Departing screen
+// Navigating screen
 navigation.navigate('Detail', {
   productId: '42',
   productName: 'Running Shoes',
@@ -70,19 +104,15 @@ function DetailScreen({ route }) {
 }
 ```
 
-This replaces the `prepare(for segue: UIStoryboardSegue, sender: Any?)` pattern where you cast `segue.destination` to the target type and set its properties.
-
-Passing data back is handled differently — there is no delegate protocol. Instead, use navigation params on the previous route:
+Passing data back has no delegate protocol equivalent. Use a callback param instead:
 
 ```tsx
-// List screen sets a callback param
+// List screen
 navigation.navigate('Filter', {
-  onApply: (filters) => {
-    setActiveFilters(filters);
-  },
+  onApply: (filters) => setActiveFilters(filters),
 });
 
-// Filter screen calls it
+// Filter screen
 function FilterScreen({ route }) {
   const { onApply } = route.params;
 
@@ -98,9 +128,11 @@ function FilterScreen({ route }) {
 }
 ```
 
-## Typed Routes (SwiftUI NavigationStack Pattern)
+---
 
-SwiftUI's `NavigationStack` with `navigationDestination(for:)` introduced type-safe navigation. React Navigation 7's static API offers a similar guarantee through TypeScript path param inference.
+## Type-safe navigation
+
+SwiftUI's `navigationDestination(for:)` is type-safe by design — the compiler ensures the destination matches the value type. React Navigation 7 provides the same guarantee through TypeScript.
 
 Define your param list:
 
@@ -112,7 +144,7 @@ type RootStackParamList = {
 };
 ```
 
-With the static API, TypeScript infers param types from your screen definitions when you use `useNavigation` with a typed navigator hook:
+Then type the navigation hook:
 
 ```tsx
 import { useNavigation } from '@react-navigation/native';
@@ -132,11 +164,24 @@ function HomeScreen() {
 }
 ```
 
-TypeScript will error if you omit required params or pass the wrong type — the same safety guarantee as SwiftUI's `navigationDestination(for:)`.
+TypeScript will error if you omit required params or pass the wrong type — the same guarantee SwiftUI gives at compile time.
 
-## UITabBarController → Tab Navigator
+---
 
-`UITabBarController` maps directly to `createBottomTabNavigator`:
+## TabView → Tab Navigator
+
+SwiftUI's `TabView` maps directly to `createBottomTabNavigator`:
+
+```swift
+TabView {
+    FeedView()
+        .tabItem { Label("Feed", systemImage: "house") }
+    SearchView()
+        .tabItem { Label("Search", systemImage: "magnifyingglass") }
+    ProfileView()
+        .tabItem { Label("Profile", systemImage: "person") }
+}
+```
 
 ```tsx
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -148,7 +193,7 @@ const TabNavigator = createBottomTabNavigator({
       options: {
         tabBarLabel: 'Feed',
         tabBarIcon: ({ color, size }) => (
-          <Icon name="home" color={color} size={size} />
+          <Icon name="house" color={color} size={size} />
         ),
       },
     },
@@ -157,7 +202,7 @@ const TabNavigator = createBottomTabNavigator({
       options: {
         tabBarLabel: 'Search',
         tabBarIcon: ({ color, size }) => (
-          <Icon name="search" color={color} size={size} />
+          <Icon name="magnifyingglass" color={color} size={size} />
         ),
       },
     },
@@ -174,67 +219,71 @@ const TabNavigator = createBottomTabNavigator({
 });
 ```
 
-Tab navigators are typically nested inside a stack navigator at the root, mirroring how UIKit apps embed `UITabBarController` as the root and push additional view controllers on top of it.
+---
 
-## UIModalPresentationStyle → Modal Stack and Bottom Sheets
+## .sheet / .fullScreenCover → Modal presentations
 
-UIKit's `.sheet`, `.fullScreen`, and `.pageSheet` have equivalents in React Navigation through presentation modes on the native stack:
+SwiftUI's sheet and full-screen cover modifiers have direct equivalents in the native stack's `presentation` option:
+
+```swift
+.sheet(isPresented: $showFilter) { FilterView() }
+.fullScreenCover(isPresented: $showCreate) { CreatePostView() }
+```
 
 ```tsx
 const RootStack = createNativeStackNavigator({
   screens: {
     Main: MainScreen,
-    // Full screen modal — equivalent to .fullScreen
+    // Equivalent to .fullScreenCover
     CreatePost: {
       screen: CreatePostScreen,
-      options: {
-        presentation: 'fullScreenModal',
-      },
+      options: { presentation: 'fullScreenModal' },
     },
-    // Sheet — equivalent to .pageSheet / .sheet
+    // Equivalent to .sheet / .pageSheet
     FilterSheet: {
       screen: FilterSheetScreen,
-      options: {
-        presentation: 'formSheet',
-      },
+      options: { presentation: 'formSheet' },
     },
   },
 });
 ```
 
-The `formSheet` presentation on iOS renders the native sheet interaction with swipe-to-dismiss, identical to `UIModalPresentationStyle.pageSheet`.
+`formSheet` renders the native iOS sheet with swipe-to-dismiss, identical to SwiftUI's `.sheet`. For custom bottom sheets with snap points and detents (equivalent to `UISheetPresentationController` with custom detents), use `@gorhom/bottom-sheet`.
 
-For custom bottom sheets with snap points and gesture control, use `@gorhom/bottom-sheet` — it provides behavior similar to `UISheetPresentationController` detents.
+---
 
-## UINavigationBar Customization → screenOptions headerStyle
+## .navigationTitle / .toolbar → screenOptions and navigation.setOptions
 
-In UIKit, you customize the navigation bar via `navigationController?.navigationBar.standardAppearance`. In React Navigation, this is done through `screenOptions` at the navigator level or `options` at the screen level.
+SwiftUI sets the navigation bar title and toolbar items via view modifiers:
 
-Navigator-level defaults (equivalent to setting appearance on the `UINavigationController`):
+```swift
+ProductDetailView()
+    .navigationTitle("Product Detail")
+    .navigationBarTitleDisplayMode(.large)
+    .toolbar {
+        ToolbarItem(placement: .topBarTrailing) {
+            Button("Share") { handleShare() }
+        }
+    }
+```
+
+React Navigation uses `screenOptions` for navigator-level defaults and `navigation.setOptions` for per-screen dynamic configuration:
 
 ```tsx
+// Navigator-level defaults
 const RootStack = createNativeStackNavigator({
   screenOptions: {
-    headerStyle: {
-      backgroundColor: '#1C1C1E',
-    },
+    headerStyle: { backgroundColor: '#1C1C1E' },
     headerTintColor: '#FFFFFF',
-    headerTitleStyle: {
-      fontWeight: '600',
-      fontSize: 17,
-    },
-    headerLargeTitle: true, // Equivalent to prefersLargeTitles = true
+    headerLargeTitle: true,  // Equivalent to .navigationBarTitleDisplayMode(.large)
   },
   screens: {
     Home: HomeScreen,
     Detail: DetailScreen,
   },
 });
-```
 
-Per-screen overrides (equivalent to modifying `navigationItem` inside a `UIViewController`):
-
-```tsx
+// Per-screen dynamic options — equivalent to .navigationTitle + .toolbar
 function DetailScreen({ navigation }) {
   useEffect(() => {
     navigation.setOptions({
@@ -242,7 +291,6 @@ function DetailScreen({ navigation }) {
       headerRight: () => (
         <Button title="Share" onPress={handleShare} />
       ),
-      headerBackTitle: 'Back',
     });
   }, [navigation]);
 
@@ -250,13 +298,27 @@ function DetailScreen({ navigation }) {
 }
 ```
 
-`headerLargeTitle` activates iOS's large title behavior, collapsing to the standard inline title on scroll — the same as `prefersLargeTitles` on `UINavigationController`.
+---
 
-## Programmatic Navigation from ViewModels → useNavigation Hook
+## Programmatic navigation from ViewModels
 
-iOS developers using MVVM often trigger navigation from a ViewModel or Coordinator by calling methods on a delegate or using closures. In React Native, the `useNavigation` hook gives any component access to the navigation object without prop drilling.
+In SwiftUI, you drive navigation from a ViewModel by publishing a path or a binding:
 
-This is the equivalent of injecting a coordinator or using `NotificationCenter` to trigger navigation from a non-view layer:
+```swift
+@Observable
+final class CheckoutViewModel {
+    var path = NavigationPath()
+
+    func processPayment(cart: Cart) async {
+        let result = await paymentService.charge(cart)
+        if result.success {
+            path.append(ConfirmationRoute(orderId: result.orderId))
+        }
+    }
+}
+```
+
+In React Native, the `useNavigation` hook gives any component — or custom hook — access to the navigation object without prop drilling:
 
 ```tsx
 import { useNavigation } from '@react-navigation/native';
@@ -278,7 +340,7 @@ function useCheckout() {
 }
 ```
 
-`useNavigation` can only be called inside a component or a custom hook called from a component inside the navigation tree. For navigation outside the tree (background tasks, push notification handlers), use a navigation ref:
+For navigation outside the component tree — push notification handlers, background tasks — use a navigation ref:
 
 ```tsx
 import { createNavigationContainerRef } from '@react-navigation/native';
@@ -292,19 +354,36 @@ export const navigationRef = createNavigationContainerRef<RootStackParamList>();
 navigationRef.navigate('Notification', { id: notifId });
 ```
 
-This is the equivalent of keeping a weak reference to the root `UINavigationController` in your AppDelegate or SceneDelegate.
+---
 
-## Authentication Flow — Root Switch Pattern
+## Authentication flow — conditional navigator
 
-A common iOS pattern uses different root view controllers depending on auth state, swapping the window's `rootViewController`. React Navigation handles this with conditional navigator rendering:
+SwiftUI handles auth state by conditionally rendering different root views:
+
+```swift
+@main
+struct MyApp: App {
+    @State private var authState = AuthState()
+
+    var body: some Scene {
+        WindowGroup {
+            if authState.isAuthenticated {
+                AppRootView()
+            } else {
+                LoginView()
+            }
+        }
+    }
+}
+```
+
+React Navigation mirrors this pattern exactly with conditional navigator rendering:
 
 ```tsx
 function RootNavigator() {
   const { isAuthenticated, isLoading } = useAuth();
 
-  if (isLoading) {
-    return <SplashScreen />;
-  }
+  if (isLoading) return <SplashScreen />;
 
   return isAuthenticated ? <AppNavigator /> : <AuthNavigator />;
 }
@@ -327,31 +406,32 @@ const AppTabs = createBottomTabNavigator({
 });
 ```
 
-When `isAuthenticated` changes, React Navigation smoothly swaps the navigator — no manual root controller replacement needed.
+When `isAuthenticated` changes, React Navigation swaps the navigator — no manual root replacement needed.
 
-## Deep Linking: Universal Links → Linking Config
+---
 
-iOS Universal Links are configured in `apple-app-site-association` files and handled in `AppDelegate`. React Navigation provides a `linking` config that replaces this with declarative URL-to-screen mapping.
+## Deep Linking → Linking config
+
+SwiftUI handles deep links through `.onOpenURL` and `NavigationPath` manipulation. React Navigation provides a `linking` config that maps URLs to screens declaratively:
 
 ```tsx
 import { LinkingOptions } from '@react-navigation/native';
 
 const linking: LinkingOptions<RootStackParamList> = {
   prefixes: [
-    'myapp://',                         // Custom URL scheme
-    'https://myapp.com',                // Universal Links domain
+    'myapp://',
+    'https://myapp.com',
   ],
   config: {
     screens: {
-      Home: '',                          // myapp:// or https://myapp.com/
-      Detail: 'product/:productId',      // myapp://product/42
+      Home: '',
+      Detail: 'product/:productId',
       Profile: {
         path: 'user/:username',
         parse: {
           username: (username) => username.toLowerCase(),
         },
       },
-      Settings: 'settings',
     },
   },
 };
@@ -365,68 +445,22 @@ export default function App() {
 }
 ```
 
-React Navigation automatically reads `Linking.getInitialURL()` for cold starts and subscribes to `Linking.addEventListener` for foreground opens — the same events you handle in `AppDelegate.application(_:open:options:)` and `AppDelegate.application(_:continue:restorationHandler:)`.
+React Navigation automatically reads `Linking.getInitialURL()` for cold starts and subscribes to URL events for foreground opens. Universal Links still require the `apple-app-site-association` file on your domain and the associated domains entitlement in Xcode — React Navigation handles only the JavaScript-side routing.
 
-For Universal Links to work, you still need the `apple-app-site-association` file hosted on your domain and the associated domains entitlement in Xcode. React Navigation handles only the JavaScript-side routing; the system-level link interception is unchanged.
+---
 
-## navigationOptions vs screenOptions
+## Nesting navigators
 
-Early React Navigation versions used `static navigationOptions` on screen components. This API was removed. The current approach:
+The typical iOS app structure — tab bar with independent navigation stacks per tab — maps directly to nested navigators. This mirrors the SwiftUI pattern of embedding `NavigationStack` inside each `TabView` tab:
 
-- `screenOptions` on the navigator — applies to all screens (navigator-level defaults)
-- `options` on a screen definition — applies to one screen (static, known at mount time)
-- `navigation.setOptions()` inside a screen — applies to the current screen dynamically
-
-```tsx
-// Static options on the navigator
-const Stack = createNativeStackNavigator({
-  screenOptions: {
-    animation: 'slide_from_right',  // Default iOS push animation
-  },
-  screens: {
-    Home: {
-      screen: HomeScreen,
-      options: {
-        title: 'Home',              // Static title
-        headerLargeTitle: true,
-      },
-    },
-    Detail: {
-      screen: DetailScreen,
-      options: ({ route }) => ({
-        title: route.params.productName,  // Derived from params
-      }),
-    },
-  },
-});
-```
-
-## Static API vs Dynamic API
-
-React Navigation 7 introduced the static API as the recommended approach. The older dynamic API (using hooks like `createNativeStackNavigator()` and JSX navigator composition) still works but the static API is preferred for new projects.
-
-Dynamic API (still valid, useful for conditional screens):
-
-```tsx
-const Stack = createNativeStackNavigator();
-
-function AppNavigator() {
-  const { theme } = useTheme();
-
-  return (
-    <Stack.Navigator screenOptions={{ headerStyle: { backgroundColor: theme.primary } }}>
-      <Stack.Screen name="Home" component={HomeScreen} />
-      <Stack.Screen name="Detail" component={DetailScreen} />
-    </Stack.Navigator>
-  );
+```swift
+TabView {
+    NavigationStack { FeedListView() }
+        .tabItem { Label("Feed", systemImage: "house") }
+    NavigationStack { SearchHomeView() }
+        .tabItem { Label("Search", systemImage: "magnifyingglass") }
 }
 ```
-
-Use the dynamic API when your screen list is conditional or data-driven at runtime. Use the static API for fixed screen sets — it offers better TypeScript inference and performance.
-
-## Nesting Navigators
-
-The typical iOS app structure — tab bar with stacks inside each tab — maps directly to nested navigators:
 
 ```tsx
 const FeedStack = createNativeStackNavigator({
@@ -452,4 +486,46 @@ const RootTabs = createBottomTabNavigator({
 });
 ```
 
-Navigating between tabs from inside a nested stack uses `navigation.navigate('Search')` — React Navigation resolves the target tab automatically, mirroring `tabBarController?.selectedIndex = 1` in UIKit.
+Navigating to another tab from inside a nested stack uses `navigation.navigate('Search')` — React Navigation resolves the target tab automatically.
+
+---
+
+## Static API vs Dynamic API
+
+React Navigation 7 introduced the static API as the recommended approach. The older dynamic API still works and is useful when your screen list is conditional or data-driven at runtime:
+
+```tsx
+const Stack = createNativeStackNavigator();
+
+function AppNavigator() {
+  const { theme } = useTheme();
+
+  return (
+    <Stack.Navigator screenOptions={{ headerStyle: { backgroundColor: theme.primary } }}>
+      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="Detail" component={DetailScreen} />
+    </Stack.Navigator>
+  );
+}
+```
+
+Use the static API for fixed screen sets — better TypeScript inference and performance. Use the dynamic API when screens are added or removed based on runtime conditions.
+
+---
+
+## Summary
+
+| SwiftUI | React Navigation |
+|---|---|
+| `NavigationStack` | `createNativeStackNavigator` |
+| `NavigationLink(value:)` | `navigation.navigate('Screen', params)` |
+| `path.removeLast()` | `navigation.goBack()` |
+| `navigationDestination(for:)` | `route.params` on receiving screen |
+| `TabView` | `createBottomTabNavigator` |
+| `.sheet` | `presentation: 'formSheet'` |
+| `.fullScreenCover` | `presentation: 'fullScreenModal'` |
+| `.navigationTitle` | `title` in `screenOptions` / `setOptions` |
+| `.toolbar` | `headerRight` / `headerLeft` in options |
+| Conditional root view (auth) | Conditional navigator rendering |
+| `.onOpenURL` | `linking` config on `NavigationContainer` |
+| `NavigationPath` in ViewModel | `useNavigation` hook in custom hook |
