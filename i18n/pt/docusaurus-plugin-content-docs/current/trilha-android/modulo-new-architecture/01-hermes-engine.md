@@ -6,7 +6,10 @@ sidebar_position: 1
 
 ## Video Overview
 
-> Video para este tópico em breve.
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_android/na_01_hermes.mp4" type="video/mp4">
+  Seu navegador não suporta o elemento de vídeo.
+</video>
 
 ## O Que é o Hermes — e Por Que o Android Tem Mais Benefício
 
