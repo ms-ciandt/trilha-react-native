@@ -392,22 +392,19 @@
 
 /* Apply accent to sidebar active link + indicator */
 .menu__link--active {
-  color: var(--track-accent, var(--ifm-color-primary)) !important;
-  background: var(--track-accent-bg, color-mix(in srgb, var(--ifm-color-primary) 8%, transparent)) !important;
+  color: var(--module-accent, var(--ifm-color-primary)) !important;
+  background: color-mix(in srgb, var(--module-accent, var(--ifm-color-primary)) 10%, transparent) !important;
 }
 
 /* Thin colored bar on the left of the doc content area */
 .theme-doc-markdown {
-  border-left: 3px solid var(--track-accent-border, transparent);
+  border-left: 3px solid color-mix(in srgb, var(--module-accent, transparent) 30%, transparent);
   padding-left: 1.25rem;
 }
 
 /* Category label color in sidebar */
 .menu__link--sublist {
-  color: var(--track-accent, var(--ifm-color-primary-dark)) !important;
-}
-[data-theme='dark'] .menu__link--sublist {
-  color: var(--track-accent, var(--ifm-color-primary-light)) !important;
+  color: var(--module-accent, var(--ifm-color-primary-dark)) !important;
 }
 
 
