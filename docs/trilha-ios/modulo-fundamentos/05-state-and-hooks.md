@@ -51,13 +51,16 @@ Key differences to internalize:
 
 ---
 
-## @ObservableObject / @Published → useRef and custom hooks
+## @Observable → useRef and custom hooks
 
-In SwiftUI, when state lives outside a single view, you reach for `ObservableObject` with `@Published` properties:
+In modern SwiftUI (iOS 17+), when state lives outside a single view, you use the `@Observable` macro from the Observation framework. It replaces `ObservableObject` with a simpler model — no `@Published` needed, every stored property is automatically tracked:
 
 ```swift
-class TimerViewModel: ObservableObject {
-    @Published var elapsed: Int = 0
+import Observation
+
+@Observable
+final class TimerViewModel {
+    var elapsed: Int = 0
     private var timer: Timer?
 
     func start() {
@@ -71,6 +74,24 @@ class TimerViewModel: ObservableObject {
     }
 }
 ```
+
+To own the ViewModel in a view, `@State` is enough — the same wrapper you use for simple local values. There is no longer a `@StateObject` / `@ObservedObject` distinction:
+
+```swift
+struct TimerView: View {
+    @State private var viewModel = TimerViewModel()
+
+    var body: some View {
+        VStack {
+            Text("\(viewModel.elapsed)s")
+            Button("Start") { viewModel.start() }
+            Button("Stop")  { viewModel.stop() }
+        }
+    }
+}
+```
+
+SwiftUI tracks only the specific properties each view actually reads — not the entire object — so re-renders are more granular than with `ObservableObject`. For projects still supporting iOS 13–16, the older `ObservableObject` + `@Published` + `@StateObject`/`@ObservedObject` pattern still applies.
 
 React separates this concern into two primitives: `useRef` for mutable values that do not trigger re-renders, and custom hooks for reusable stateful logic.
 
@@ -153,7 +174,7 @@ function TimerScreen() {
 }
 ```
 
-This pattern replaces the `@StateObject` / `@ObservedObject` + ViewModel pattern entirely. The hook is the ViewModel; it owns state and business logic; the component is purely presentational.
+This pattern replaces the `@State` + `@Observable` ViewModel pattern. The hook is the ViewModel; it owns state and business logic; the component is purely presentational.
 
 ---
 
@@ -209,20 +230,27 @@ async function fetchResults(q: string): Promise<string[]> {
 
 ## useEffect cleanup → deinit / cancellables
 
-In Swift, you release resources in `deinit` or by cancelling Combine subscriptions stored in `Set<AnyCancellable>`:
+In Swift, you release resources in `deinit` or by cancelling async tasks. With `@Observable` and Swift Concurrency the pattern is to store a `Task` and cancel it on cleanup:
 
 ```swift
-class LocationViewModel: ObservableObject {
-    private var cancellables = Set<AnyCancellable>()
+import Observation
 
-    init() {
-        locationPublisher
-            .sink { self.location = $0 }
-            .store(in: &cancellables)
+@Observable
+final class LocationViewModel {
+    var location: CLLocation?
+    private var task: Task<Void, Never>?
+
+    func startUpdating() {
+        task = Task {
+            for await loc in locationStream() {
+                location = loc
+            }
+        }
     }
 
-    deinit {
-        cancellables.removeAll()
+    func stopUpdating() {
+        task?.cancel()
+        task = nil
     }
 }
 ```
@@ -437,16 +465,17 @@ The ESLint plugin `eslint-plugin-react-hooks` enforces correct dependency arrays
 
 | Swift / SwiftUI | React hook |
 |---|---|
-| `@State` | `useState` |
+| `@State` (local value) | `useState` |
 | `@State` on non-rendering value | `useRef` |
-| `ObservableObject` / ViewModel | custom hook |
+| `@Observable` + `@State` ViewModel (iOS 17+) | custom hook |
+| `ObservableObject` + `@StateObject` (legacy) | custom hook |
 | `.onAppear` | `useEffect(() => {}, [])` |
 | `.onDisappear` | cleanup return from `useEffect` |
 | `.onChange(of:)` | `useEffect(() => {}, [value])` |
 | `.task` | `useEffect` with internal async IIFE |
-| `deinit` / `cancellables` | cleanup return from `useEffect` |
+| `Task.cancel()` / `deinit` | cleanup return from `useEffect` |
 | `lazy var` / computed caching | `useMemo` |
 | stable closure reference | `useCallback` |
-| Combine subscription | `useEffect` subscribe/unsubscribe pattern |
+| AsyncStream / Combine subscription | `useEffect` subscribe/unsubscribe pattern |
 
-Hooks are the entire state and lifecycle story in React. There is no class-based alternative in modern React Native — every ViewModel pattern you built with `ObservableObject` maps cleanly to a custom hook. Once this mental model clicks, the rest of React's component model follows naturally.
+Hooks are the entire state and lifecycle story in React. There is no class-based alternative in modern React Native — every ViewModel pattern you built with `@Observable` maps cleanly to a custom hook. Once this mental model clicks, the rest of React's component model follows naturally.

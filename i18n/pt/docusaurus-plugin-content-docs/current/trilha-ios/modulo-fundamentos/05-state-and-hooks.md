@@ -51,13 +51,16 @@ Diferenças fundamentais para internalizar:
 
 ---
 
-## @ObservableObject / @Published → useRef e hooks customizados
+## @Observable → useRef e hooks customizados
 
-No SwiftUI, quando o estado vive fora de uma única view, você recorre a `ObservableObject` com propriedades `@Published`:
+No SwiftUI moderno (iOS 17+), quando o estado vive fora de uma única view, você usa a macro `@Observable` do framework Observation. Ela substitui `ObservableObject` com um modelo mais simples — sem necessidade de `@Published`, toda propriedade armazenada é rastreada automaticamente:
 
 ```swift
-class TimerViewModel: ObservableObject {
-    @Published var elapsed: Int = 0
+import Observation
+
+@Observable
+final class TimerViewModel {
+    var elapsed: Int = 0
     private var timer: Timer?
 
     func start() {
@@ -71,6 +74,24 @@ class TimerViewModel: ObservableObject {
     }
 }
 ```
+
+Para instanciar o ViewModel em uma view, `@State` é suficiente — o mesmo wrapper que você usa para valores locais simples. Não há mais distinção entre `@StateObject` e `@ObservedObject`:
+
+```swift
+struct TimerView: View {
+    @State private var viewModel = TimerViewModel()
+
+    var body: some View {
+        VStack {
+            Text("\(viewModel.elapsed)s")
+            Button("Start") { viewModel.start() }
+            Button("Stop")  { viewModel.stop() }
+        }
+    }
+}
+```
+
+O SwiftUI rastreia apenas as propriedades específicas que cada view realmente lê — não o objeto inteiro — então as re-renderizações são mais granulares do que com `ObservableObject`. Para projetos que ainda suportam iOS 13–16, o padrão antigo de `ObservableObject` + `@Published` + `@StateObject`/`@ObservedObject` ainda se aplica.
 
 O React separa essa responsabilidade em dois primitivos: `useRef` para valores mutáveis que não disparam re-renderizações, e hooks customizados para lógica stateful reutilizável.
 
@@ -153,7 +174,7 @@ function TimerScreen() {
 }
 ```
 
-Esse padrão substitui completamente o padrão `@StateObject` / `@ObservedObject` + ViewModel. O hook é o ViewModel; ele possui o estado e a lógica de negócio; o componente é puramente apresentacional.
+Esse padrão substitui o padrão `@State` + `@Observable` ViewModel. O hook é o ViewModel; ele possui o estado e a lógica de negócio; o componente é puramente apresentacional.
 
 ---
 
@@ -209,20 +230,27 @@ async function fetchResults(q: string): Promise<string[]> {
 
 ## Limpeza do useEffect → deinit / cancellables
 
-Em Swift, você libera recursos no `deinit` ou cancelando assinaturas Combine armazenadas em `Set<AnyCancellable>`:
+Em Swift, você libera recursos no `deinit` ou cancelando tasks assíncronas. Com `@Observable` e Swift Concurrency o padrão é armazenar uma `Task` e cancelá-la na limpeza:
 
 ```swift
-class LocationViewModel: ObservableObject {
-    private var cancellables = Set<AnyCancellable>()
+import Observation
 
-    init() {
-        locationPublisher
-            .sink { self.location = $0 }
-            .store(in: &cancellables)
+@Observable
+final class LocationViewModel {
+    var location: CLLocation?
+    private var task: Task<Void, Never>?
+
+    func startUpdating() {
+        task = Task {
+            for await loc in locationStream() {
+                location = loc
+            }
+        }
     }
 
-    deinit {
-        cancellables.removeAll()
+    func stopUpdating() {
+        task?.cancel()
+        task = nil
     }
 }
 ```
@@ -437,16 +465,17 @@ O plugin ESLint `eslint-plugin-react-hooks` impõe arrays de dependências corre
 
 | Swift / SwiftUI | Hook React |
 |---|---|
-| `@State` | `useState` |
+| `@State` (valor local) | `useState` |
 | `@State` em valor que não re-renderiza | `useRef` |
-| `ObservableObject` / ViewModel | hook customizado |
+| `@Observable` + `@State` ViewModel (iOS 17+) | hook customizado |
+| `ObservableObject` + `@StateObject` (legado) | hook customizado |
 | `.onAppear` | `useEffect(() => {}, [])` |
 | `.onDisappear` | retorno de limpeza do `useEffect` |
 | `.onChange(of:)` | `useEffect(() => {}, [value])` |
 | `.task` | `useEffect` com IIFE async interna |
-| `deinit` / `cancellables` | retorno de limpeza do `useEffect` |
+| `Task.cancel()` / `deinit` | retorno de limpeza do `useEffect` |
 | `lazy var` / cache de computado | `useMemo` |
 | referência estável de closure | `useCallback` |
-| assinatura Combine | padrão subscribe/unsubscribe com `useEffect` |
+| AsyncStream / assinatura Combine | padrão subscribe/unsubscribe com `useEffect` |
 
-Hooks são toda a história de estado e ciclo de vida no React. Não existe alternativa baseada em classes no React Native moderno — todo padrão de ViewModel que você construiu com `ObservableObject` se encaixa perfeitamente em um hook customizado. Assim que esse modelo mental se consolida, o restante do modelo de componentes do React se torna natural.
+Hooks são toda a história de estado e ciclo de vida no React. Não existe alternativa baseada em classes no React Native moderno — todo padrão de ViewModel que você construiu com `@Observable` se encaixa perfeitamente em um hook customizado. Assim que esse modelo mental se consolida, o restante do modelo de componentes do React se torna natural.
