@@ -4,22 +4,28 @@ title: Jest Unit Tests for iOS Developers
 
 # Jest Unit Tests for iOS Developers
 
-If you have been writing Swift tests with XCTest, you already understand the mental model behind unit testing: isolate a piece of behavior, assert it produces the expected result, and repeat. Jest works the same way. The vocabulary is different, the tooling is JavaScript-native, and a few async patterns require a small adjustment in thinking — but nothing here is conceptually new.
+If you have been writing Swift tests with Swift Testing, you already understand the mental model behind unit testing: isolate a piece of behavior, assert it produces the expected result, and repeat. Jest works the same way. The vocabulary is different, the tooling is JavaScript-native, and a few patterns require a small adjustment in thinking — but nothing here is conceptually new.
 
-This page maps your XCTest knowledge directly onto Jest so you can be productive immediately.
+Swift Testing (introduced in Xcode 16 / Swift 6) is the modern replacement for XCTest. Its macro-based API — `@Suite`, `@Test`, `#expect` — is structurally closer to Jest than XCTest ever was, which makes the mapping especially direct.
+
+This page maps your Swift Testing knowledge onto Jest so you can be productive immediately.
 
 ---
 
-## Test file structure: XCTestCase vs describe/it blocks
+## Test file structure: @Suite/@Test vs describe/it blocks
 
-In Swift you subclass `XCTestCase` and write methods prefixed with `test`. Jest uses free functions — `describe`, `it`, and `test` — that you call inside a plain `.test.ts` or `.spec.ts` file. There is no class to subclass.
+In Swift Testing you mark a struct or class with `@Suite` and annotate each test function with `@Test`. Jest uses free functions — `describe`, `it`, and `test` — inside a plain `.test.ts` or `.spec.ts` file. There is no class to subclass in either framework.
 
 ```swift
-// Swift — XCTest
-class CartCalculatorTests: XCTestCase {
-    func testTotalWithDiscount() {
+// Swift — Swift Testing
+import Testing
+
+@Suite("CartCalculator")
+struct CartCalculatorTests {
+    @Test("applies discount to the total")
+    func totalWithDiscount() {
         let result = CartCalculator.total(items: [10.0, 20.0], discount: 0.1)
-        XCTAssertEqual(result, 27.0)
+        #expect(result == 27.0)
     }
 }
 ```
@@ -36,9 +42,22 @@ describe('CartCalculator', () => {
 });
 ```
 
-`describe` groups related tests — equivalent to the class name in XCTest. `it` and `test` are identical aliases; `it` reads more naturally for behavior-focused descriptions, while `test` reads well for direct function names. Use whichever your team prefers and be consistent.
+`describe` groups related tests — equivalent to `@Suite`. `it` and `test` are identical aliases; `it` reads more naturally for behavior-focused descriptions, while `test` reads well for direct function names. Use whichever your team prefers and be consistent.
 
-Nesting `describe` blocks is valid and mirrors the nested `XCTestCase` pattern some teams use for sub-scenarios:
+Nesting `describe` blocks is valid and mirrors nesting `@Suite` types for sub-scenarios:
+
+```swift
+// Swift Testing — nested suites
+@Suite("CartCalculator")
+struct CartCalculatorTests {
+    @Suite("when the cart is empty")
+    struct EmptyCart {
+        @Test func returnsZero() {
+            #expect(CartCalculator.total(items: [], discount: 0) == 0)
+        }
+    }
+}
+```
 
 ```typescript
 describe('CartCalculator', () => {
@@ -58,19 +77,20 @@ describe('CartCalculator', () => {
 
 ---
 
-## Assertions: XCTAssert* vs expect matchers
+## Assertions: #expect/#require vs expect matchers
 
-XCTest has a family of `XCTAssert*` functions. Jest centralizes everything through a single `expect(value)` call followed by a matcher method.
+Swift Testing replaced the `XCTAssert*` family with two macros: `#expect` for soft assertions (test continues on failure) and `#require` for hard assertions (test stops immediately). Jest centralizes everything through a single `expect(value)` call followed by a matcher method.
 
-| XCTest | Jest |
+| Swift Testing | Jest |
 |---|---|
-| `XCTAssertEqual(a, b)` | `expect(a).toBe(b)` for primitives, `expect(a).toEqual(b)` for objects/arrays |
-| `XCTAssertNotEqual(a, b)` | `expect(a).not.toBe(b)` |
-| `XCTAssertTrue(x)` | `expect(x).toBeTruthy()` |
-| `XCTAssertFalse(x)` | `expect(x).toBeFalsy()` |
-| `XCTAssertNil(x)` | `expect(x).toBeNull()` or `expect(x).toBeUndefined()` |
-| `XCTAssertNotNil(x)` | `expect(x).toBeDefined()` |
-| `XCTAssertThrowsError(try f())` | `expect(() => f()).toThrow()` |
+| `#expect(a == b)` | `expect(a).toBe(b)` for primitives, `expect(a).toEqual(b)` for objects/arrays |
+| `#expect(a != b)` | `expect(a).not.toBe(b)` |
+| `#expect(x)` | `expect(x).toBeTruthy()` |
+| `#expect(!x)` | `expect(x).toBeFalsy()` |
+| `#expect(x == nil)` | `expect(x).toBeNull()` or `expect(x).toBeUndefined()` |
+| `#expect(x != nil)` | `expect(x).toBeDefined()` |
+| `#expect(throws: MyError.self) { try f() }` | `expect(() => f()).toThrow()` |
+| `try #require(x)` (stops test on nil/failure) | No direct equivalent — Jest continues on failure |
 
 The distinction between `toBe` and `toEqual` matters. `toBe` uses `Object.is` — strict reference equality for objects. `toEqual` performs a deep structural comparison, which is what you want when comparing two object literals or arrays.
 
@@ -99,24 +119,22 @@ expect(user).toMatchObject({ name: 'Alice' });
 
 ---
 
-## setUp and tearDown: beforeEach / afterEach
+## setUp and tearDown: init/deinit vs beforeEach / afterEach
 
-XCTest's `setUp` and `tearDown` lifecycle methods run before and after each test in the class. Jest provides `beforeEach`, `afterEach`, `beforeAll`, and `afterAll` as top-level functions inside a `describe` block.
+Swift Testing does not have `setUp`/`tearDown` override methods. Instead, it leverages Swift's own initializer lifecycle: because `@Suite` structs get a **fresh instance per test**, placing setup in `init()` is equivalent to `beforeEach`. Each test runs in isolation automatically.
 
 ```swift
-// Swift
-class UserServiceTests: XCTestCase {
-    var service: UserService!
+// Swift Testing — init() runs before each @Test function
+import Testing
 
-    override func setUp() {
-        super.setUp()
+@Suite
+struct UserServiceTests {
+    var service: UserService
+
+    init() {
         service = UserService(environment: .test)
     }
-
-    override func tearDown() {
-        service = nil
-        super.tearDown()
-    }
+    // No tearDown needed for structs — instance is discarded after each test
 }
 ```
 
@@ -141,32 +159,78 @@ describe('UserService', () => {
 });
 ```
 
-`beforeAll` and `afterAll` run once for the entire `describe` block — equivalent to `setUpClass` if you use that pattern in XCTest. Use these for expensive setup that is safe to share across tests, such as initializing a database connection or parsing a large fixture file.
+When you need teardown logic (e.g. cancelling a task or closing a connection), declare the `@Suite` as a `class` or `actor` to gain access to `deinit`:
+
+```swift
+@Suite
+final class UserServiceTests {
+    var service: UserService
+
+    init() {
+        service = UserService(environment: .test)
+    }
+
+    deinit {
+        service.destroy() // equivalent to afterEach
+    }
+}
+```
+
+`beforeAll` / `afterAll` — shared once-per-suite setup — has no direct Swift Testing equivalent for structs. The idiom is to compute expensive shared state as a `static let` or to move it outside the suite entirely.
 
 Hooks respect `describe` scope: a `beforeEach` inside a nested `describe` runs after the outer `beforeEach`. This layering lets you set up shared state at the top level and specialize it in sub-groups.
 
 ---
 
-## Async testing: XCTestExpectation vs Jest async patterns
+## Async testing: @Test async throws vs Jest async/await
 
-In XCTest you use `XCTestExpectation` with `waitForExpectations(timeout:)` to pause a test until an async operation completes. Jest offers two cleaner alternatives: the `done` callback and native `async/await`.
-
-### done callback — closest to XCTestExpectation
+Swift Testing fully supports Swift Concurrency natively. Mark a `@Test` function as `async throws` and `await` your async calls directly — no `XCTestExpectation` or `waitForExpectations` needed. Jest works identically: mark the test function `async` and `await` Promises.
 
 ```swift
-// Swift — XCTestExpectation
-func testFetchUser() {
-    let expectation = self.expectation(description: "fetch user")
-    service.fetchUser(id: "42") { user, error in
-        XCTAssertNotNil(user)
-        expectation.fulfill()
-    }
-    waitForExpectations(timeout: 5)
+// Swift Testing — async throws, no XCTestExpectation needed
+@Test
+func fetchUser() async throws {
+    let user = try await service.fetchUser(id: "42")
+    #expect(user.id == "42")
+    #expect(user.name != nil)
 }
 ```
 
 ```typescript
-// TypeScript — done callback
+// TypeScript — Jest async/await
+it('fetches a user', async () => {
+  const user = await fetchUser('42');
+  expect(user.id).toBe('42');
+  expect(user.name).toBeDefined();
+});
+```
+
+Both frameworks fail the test automatically if the `async` function throws an uncaught error — no manual signaling needed.
+
+### Asserting on thrown errors
+
+```swift
+// Swift Testing
+@Test
+func fetchUserNotFound() async {
+    await #expect(throws: UserNotFoundError.self) {
+        try await service.fetchUser(id: "nonexistent")
+    }
+}
+```
+
+```typescript
+// Jest
+it('throws when the user is not found', async () => {
+  await expect(fetchUser('nonexistent')).rejects.toThrow('User not found');
+});
+```
+
+### The done callback — legacy pattern
+
+If you maintain older callback-based code that predates async/await, Jest still supports the `done` callback. It is the closest equivalent to `XCTestExpectation` from XCTest, but you will rarely need it in modern React Native code:
+
+```typescript
 it('fetches a user', (done) => {
   fetchUser('42', (user, error) => {
     expect(user).toBeDefined();
@@ -175,55 +239,45 @@ it('fetches a user', (done) => {
 });
 ```
 
-If `done` is never called, the test times out and fails — the same behavior as a non-fulfilled `XCTestExpectation`.
-
-### async/await — preferred for Promise-based code
-
-Most React Native code is Promise-based, so `async/await` is the idiomatic choice:
-
-```typescript
-it('fetches a user', async () => {
-  const user = await fetchUser('42');
-  expect(user.id).toBe('42');
-  expect(user.name).toBeDefined();
-});
-```
-
-To assert that a Promise rejects, wrap it with `expect(...).rejects`:
-
-```typescript
-it('throws when the user is not found', async () => {
-  await expect(fetchUser('nonexistent')).rejects.toThrow('User not found');
-});
-```
-
-Do not mix `async/await` with `done` — if your test function is `async`, returning a rejected Promise is sufficient to fail the test. Jest detects the rejection automatically.
+If `done` is never called, the test times out and fails. Do not mix `async/await` with `done` — Jest detects the rejection from a rejected Promise automatically.
 
 ---
 
 ## Mocking: jest.mock() vs Swift protocol injection
 
-Swift encourages testability through protocol injection: define a protocol, implement a mock conformance, and pass it into the class under test. Jest has a different mechanism — it intercepts the module system.
+Swift Testing encourages testability through protocol injection: define a protocol, implement a mock conformance as a lightweight struct, and pass it into the type under test. Jest has a different mechanism — it intercepts the module system.
 
 ```swift
-// Swift — protocol injection
+// Swift Testing — protocol injection with struct mock
+import Testing
+
 protocol NetworkClient {
     func get(url: URL) async throws -> Data
 }
 
-class MockNetworkClient: NetworkClient {
-    var stubbedResponse: Data = Data()
-    func get(url: URL) async throws -> Data { stubbedResponse }
+struct MockNetworkClient: NetworkClient {
+    var stubbedData: Data = Data()
+    func get(url: URL) async throws -> Data { stubbedData }
 }
 
-class UserRepository {
+struct UserRepository {
     let client: NetworkClient
-    init(client: NetworkClient) { self.client = client }
 }
 
-// In test:
-let mock = MockNetworkClient()
-let repo = UserRepository(client: mock)
+@Suite
+struct UserRepositoryTests {
+    var repo: UserRepository
+
+    init() {
+        repo = UserRepository(client: MockNetworkClient())
+    }
+
+    @Test
+    func fetchUser() async throws {
+        let user = try await repo.fetchUser("42")
+        #expect(user.name == "Alice")
+    }
+}
 ```
 
 ```typescript
@@ -269,6 +323,37 @@ module.exports = {
   restoreMocks: true, // restore spied-on methods after each test
 };
 ```
+
+---
+
+## Parameterized tests: @Test(arguments:) vs it.each
+
+Swift Testing has built-in support for parameterized tests via `@Test(arguments:)`. Jest offers the same through `it.each`. Both let you run the same assertion logic against multiple inputs without duplicating test code.
+
+```swift
+// Swift Testing — @Test(arguments:)
+@Test(arguments: [
+    (items: [10.0, 20.0], discount: 0.1, expected: 27.0),
+    (items: [],            discount: 0.5, expected: 0.0),
+    (items: [50.0],        discount: 2.0, expected: 0.0),
+])
+func totalCalculation(items: [Double], discount: Double, expected: Double) {
+    #expect(CartCalculator.total(items: items, discount: discount) == expected)
+}
+```
+
+```typescript
+// Jest — it.each
+it.each([
+  { items: [10.0, 20.0], discount: 0.1, expected: 27.0 },
+  { items: [],            discount: 0.5, expected: 0.0  },
+  { items: [50.0],        discount: 2.0, expected: 0.0  },
+])('calculates total: $items with $discount% discount', ({ items, discount, expected }) => {
+  expect(calculateTotal(items, discount)).toBe(expected);
+});
+```
+
+Each argument set runs as an independent test case in both frameworks, with its own pass/fail result in the test report.
 
 ---
 
@@ -400,17 +485,20 @@ Avoid snapshots for:
 
 ## Summary
 
-| XCTest concept | Jest equivalent |
+| Swift Testing concept | Jest equivalent |
 |---|---|
-| `XCTestCase` subclass | `describe` block |
-| `func testFoo()` | `it('foo', ...)` or `test('foo', ...)` |
-| `XCTAssertEqual(a, b)` | `expect(a).toBe(b)` / `.toEqual(b)` |
-| `XCTAssertTrue(x)` | `expect(x).toBeTruthy()` |
-| `XCTAssertNil(x)` | `expect(x).toBeNull()` |
-| `setUp()` | `beforeEach(() => ...)` |
-| `tearDown()` | `afterEach(() => ...)` |
-| `XCTestExpectation` | `async/await` or `done` callback |
-| Protocol mock conformance | `jest.mock()` or `jest.spyOn()` |
+| `@Suite` struct/class | `describe` block |
+| `@Test func foo()` | `it('foo', ...)` or `test('foo', ...)` |
+| `#expect(a == b)` | `expect(a).toBe(b)` / `.toEqual(b)` |
+| `#expect(x)` | `expect(x).toBeTruthy()` |
+| `#expect(x == nil)` | `expect(x).toBeNull()` |
+| `try #require(x)` | No direct equivalent (Jest continues on failure) |
+| `init()` of `@Suite` struct | `beforeEach(() => ...)` |
+| `deinit` of `@Suite` class | `afterEach(() => ...)` |
+| `@Test async throws` (native) | `async/await` in test function |
+| `#expect(throws:)` | `expect(() => f()).toThrow()` / `.rejects.toThrow()` |
+| `@Test(arguments:)` | `it.each([...])` |
+| Protocol mock struct conformance | `jest.mock()` or `jest.spyOn()` |
 | UI test baseline image | Snapshot test |
 
-The test structure, assertion model, and async patterns all have clear analogues in what you already know. The primary adjustment is thinking in module-level mocking rather than dependency injection, and learning `@testing-library/react-native` for anything that involves rendering components.
+The test structure, assertion model, and async patterns all have clear analogues in what you already know from Swift Testing. The primary adjustment is thinking in module-level mocking rather than protocol injection, and learning `@testing-library/react-native` for anything that involves rendering components.
