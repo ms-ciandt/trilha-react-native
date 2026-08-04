@@ -15,7 +15,7 @@ describe('Home page (PT-BR)', () => {
 
   it('shows the PT-BR hero title and subtitle', () => {
     render(<Home />);
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Trilha React Native');
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('React Native Academy');
     expect(screen.getByText(/um código, duas plataformas/i)).toBeInTheDocument();
   });
 
@@ -68,6 +68,6 @@ describe('Home page (PT-BR)', () => {
   it('renders correctly in dark mode', () => {
     useColorMode.mockReturnValue({ colorMode: 'dark', setColorMode: vi.fn() });
     render(<Home />);
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Trilha React Native');
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('React Native Academy');
   });
 });

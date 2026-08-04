@@ -15,7 +15,7 @@ describe('Home page (EN)', () => {
 
   it('shows the hero title and subtitle', () => {
     render(<Home />);
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('React Native Trail');
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('React Native Academy');
     expect(screen.getByText(/one codebase, two platforms/i)).toBeInTheDocument();
   });
 
@@ -76,6 +76,6 @@ describe('Home page (EN)', () => {
   it('renders correctly in dark mode', () => {
     useColorMode.mockReturnValue({ colorMode: 'dark', setColorMode: vi.fn() });
     render(<Home />);
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('React Native Trail');
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('React Native Academy');
   });
 });

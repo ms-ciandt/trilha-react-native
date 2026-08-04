@@ -212,18 +212,22 @@
   align-items: center;
 }
 
-/* Title — coral sobre fundo navy */
+/* Title — gradient azul → violeta, igual ao heroTitle */
 .navbar__title {
   font-weight: 800;
   font-size: 1.05rem;
   letter-spacing: -0.02em;
-  color: #FA5A50;
-  -webkit-text-fill-color: initial;
+  background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 [data-theme='dark'] .navbar__title {
-  color: #FA8982;
-  -webkit-text-fill-color: initial;
+  background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 /* ─── Navbar trail pills ─────────────────────────────────────────────── */
@@ -357,9 +361,9 @@
   --track-accent-border: color-mix(in srgb, #690037 30%, transparent);
 }
 [data-theme='dark']:has(.navbar__link[href*="/trilha-ios"].navbar__link--active) {
-  --track-accent: #802655;
-  --track-accent-bg: color-mix(in srgb, #802655 10%, transparent);
-  --track-accent-border: color-mix(in srgb, #802655 25%, transparent);
+  --track-accent: #FAB9FF;
+  --track-accent-bg: color-mix(in srgb, #FAB9FF 10%, transparent);
+  --track-accent-border: color-mix(in srgb, #FAB9FF 25%, transparent);
 }
 
 /* Trilha Nativo — darker coral */
@@ -388,22 +392,19 @@
 
 /* Apply accent to sidebar active link + indicator */
 .menu__link--active {
-  color: var(--track-accent, var(--ifm-color-primary)) !important;
-  background: var(--track-accent-bg, color-mix(in srgb, var(--ifm-color-primary) 8%, transparent)) !important;
+  color: var(--module-accent, var(--ifm-color-primary)) !important;
+  background: color-mix(in srgb, var(--module-accent, var(--ifm-color-primary)) 10%, transparent) !important;
 }
 
 /* Thin colored bar on the left of the doc content area */
 .theme-doc-markdown {
-  border-left: 3px solid var(--track-accent-border, transparent);
+  border-left: 3px solid color-mix(in srgb, var(--module-accent, transparent) 30%, transparent);
   padding-left: 1.25rem;
 }
 
 /* Category label color in sidebar */
 .menu__link--sublist {
-  color: var(--track-accent, var(--ifm-color-primary-dark)) !important;
-}
-[data-theme='dark'] .menu__link--sublist {
-  color: var(--track-accent, var(--ifm-color-primary-light)) !important;
+  color: var(--module-accent, var(--ifm-color-primary-dark)) !important;
 }
 
 
@@ -454,7 +455,7 @@
 }
 
 /* Masterclass */
-[data-theme='dark'] [class*='trilha-masterclass'] [class*='sidebarLogo'] {
+[data-theme='dark'][class*='trilha-masterclass'] [class*='sidebarLogo'] {
   background: #001a33;
   border-left-color: #B4DCFA;
   border-bottom-color: rgba(180, 220, 250, 0.2);
@@ -482,12 +483,12 @@
   content: 'Trilha Web → React Native';
   color: #FA5A50;
 }
-[data-theme='dark'] [class*='trilha-web'] [class*='sidebarLogo'] {
+[data-theme='dark'][class*='trilha-web'] [class*='sidebarLogo'] {
   background: #000050;
   border-left-color: #FA8982;
   border-bottom-color: rgba(250, 137, 130, 0.2);
 }
-[data-theme='dark'] [class*='trilha-web'] [class*='sidebarLogo']::before {
+[data-theme='dark'][class*='trilha-web'] [class*='sidebarLogo']::before {
   color: #FA8982;
 }
 
@@ -501,12 +502,12 @@
   content: 'Trilha Android → React Native';
   color: #2db370;
 }
-[data-theme='dark'] [class*='trilha-android'] [class*='sidebarLogo'] {
+[data-theme='dark'][class*='trilha-android'] [class*='sidebarLogo'] {
   background: #000050;
   border-left-color: #3ddc84;
   border-bottom-color: rgba(61, 220, 132, 0.2);
 }
-[data-theme='dark'] [class*='trilha-android'] [class*='sidebarLogo']::before {
+[data-theme='dark'][class*='trilha-android'] [class*='sidebarLogo']::before {
   color: #3ddc84;
 }
 
@@ -520,13 +521,13 @@
   content: 'Trilha iOS → React Native';
   color: #690037;
 }
-[data-theme='dark'] [class*='trilha-ios'] [class*='sidebarLogo'] {
+[data-theme='dark'][class*='trilha-ios'] [class*='sidebarLogo'] {
   background: #000050;
-  border-left-color: #802655;
-  border-bottom-color: rgba(128, 38, 85, 0.2);
+  border-left-color: #FAB9FF;
+  border-bottom-color: rgba(250, 185, 255, 0.2);
 }
-[data-theme='dark'] [class*='trilha-ios'] [class*='sidebarLogo']::before {
-  color: #802655;
+[data-theme='dark'][class*='trilha-ios'] [class*='sidebarLogo']::before {
+  color: #FAB9FF;
 }
 
 /* Trilha Nativo — darker coral */
@@ -539,12 +540,12 @@
   content: 'Trilha Nativo → React Native';
   color: #D94A41;
 }
-[data-theme='dark'] [class*='trilha-nativo'] [class*='sidebarLogo'] {
+[data-theme='dark'][class*='trilha-nativo'] [class*='sidebarLogo'] {
   background: #000050;
   border-left-color: #FA8982;
   border-bottom-color: rgba(250, 137, 130, 0.2);
 }
-[data-theme='dark'] [class*='trilha-nativo'] [class*='sidebarLogo']::before {
+[data-theme='dark'][class*='trilha-nativo'] [class*='sidebarLogo']::before {
   color: #FA8982;
 }
 
@@ -558,7 +559,7 @@
   content: 'Introdução → React Native';
   color: var(--ifm-color-primary);
 }
-[data-theme='dark'] [class*='introducao'] [class*='sidebarLogo'] {
+[data-theme='dark'][class*='introducao'] [class*='sidebarLogo'] {
   background: #000050;
 }
 
@@ -732,6 +733,10 @@ video {
   --module-accent: #690037;
 }
 
+[data-theme='dark'][class*='trilha-ios'] {
+  --module-accent: #FAB9FF;
+}
+
 /* Trilha Nativo */
 [class*='trilha-nativo'] {
   --module-accent: #D94A41;
@@ -743,21 +748,21 @@ video {
 }
 
 /* Masterclass — fundo escuro na área de conteúdo (apenas dark) */
-[data-theme='dark'] [class*='trilha-masterclass'] .theme-doc-sidebar-container {
+[data-theme='dark'][class*='trilha-masterclass'] .theme-doc-sidebar-container {
   background: #001a33;
   border-right-color: rgba(140, 179, 217, 0.2) !important;
 }
 
-[data-theme='dark'] [class*='trilha-masterclass'] .menu__link--sublist {
+[data-theme='dark'][class*='trilha-masterclass'] .menu__link--sublist {
   color: #B4DCFA !important;
 }
 
-[data-theme='dark'] [class*='trilha-masterclass'] .menu__link--active {
+[data-theme='dark'][class*='trilha-masterclass'] .menu__link--active {
   background: color-mix(in srgb, #8CB3D9 10%, transparent) !important;
   color: #B4DCFA !important;
 }
 
-[data-theme='dark'] [class*='trilha-masterclass'] .menu__link:hover {
+[data-theme='dark'][class*='trilha-masterclass'] .menu__link:hover {
   background: color-mix(in srgb, #8CB3D9 8%, transparent);
 }
 
@@ -779,7 +784,7 @@ video {
   color: #FA5A50 !important;
 }
 
-[data-theme='dark'] [class*='trilha-web'] .menu__link--sublist {
+[data-theme='dark'][class*='trilha-web'] .menu__link--sublist {
   color: #FA8982 !important;
 }
 
@@ -788,7 +793,7 @@ video {
   color: #FA5A50 !important;
 }
 
-[data-theme='dark'] [class*='trilha-web'] .menu__link--active {
+[data-theme='dark'][class*='trilha-web'] .menu__link--active {
   background: color-mix(in srgb, #FA8982 10%, transparent) !important;
   color: #FA8982 !important;
 }
@@ -798,7 +803,7 @@ video {
   color: #2db370 !important;
 }
 
-[data-theme='dark'] [class*='trilha-android'] .menu__link--sublist {
+[data-theme='dark'][class*='trilha-android'] .menu__link--sublist {
   color: #3ddc84 !important;
 }
 
@@ -807,7 +812,7 @@ video {
   color: #2db370 !important;
 }
 
-[data-theme='dark'] [class*='trilha-android'] .menu__link--active {
+[data-theme='dark'][class*='trilha-android'] .menu__link--active {
   background: color-mix(in srgb, #3ddc84 10%, transparent) !important;
   color: #3ddc84 !important;
 }
@@ -817,8 +822,8 @@ video {
   color: #690037 !important;
 }
 
-[data-theme='dark'] [class*='trilha-ios'] .menu__link--sublist {
-  color: #802655 !important;
+[data-theme='dark'][class*='trilha-ios'] .menu__link--sublist {
+  color: #FAB9FF !important;
 }
 
 [class*='trilha-ios'] .menu__link--active {
@@ -826,9 +831,9 @@ video {
   color: #690037 !important;
 }
 
-[data-theme='dark'] [class*='trilha-ios'] .menu__link--active {
-  background: color-mix(in srgb, #802655 10%, transparent) !important;
-  color: #802655 !important;
+[data-theme='dark'][class*='trilha-ios'] .menu__link--active {
+  background: color-mix(in srgb, #FAB9FF 10%, transparent) !important;
+  color: #FAB9FF !important;
 }
 
 /* Trilha Nativo — sidebar darker coral */
@@ -836,7 +841,7 @@ video {
   color: #D94A41 !important;
 }
 
-[data-theme='dark'] [class*='trilha-nativo'] .menu__link--sublist {
+[data-theme='dark'][class*='trilha-nativo'] .menu__link--sublist {
   color: #FA8982 !important;
 }
 
@@ -845,7 +850,7 @@ video {
   color: #D94A41 !important;
 }
 
-[data-theme='dark'] [class*='trilha-nativo'] .menu__link--active {
+[data-theme='dark'][class*='trilha-nativo'] .menu__link--active {
   background: color-mix(in srgb, #FA8982 10%, transparent) !important;
   color: #FA8982 !important;
 }
@@ -1209,6 +1214,10 @@ video {
   opacity: 0.5;
   pointer-events: none;
   z-index: 10;
+}
+
+[data-theme='dark'][class*='trilha-ios'] .theme-doc-markdown::before {
+  background: linear-gradient(90deg, transparent, #FAB9FF 50%, transparent);
 }
 
 /* ─── TOC (right sidebar) ────────────────────────────────────────────── */

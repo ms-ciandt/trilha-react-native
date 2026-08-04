@@ -3,6 +3,10 @@ import Layout from '@theme/Layout';
 import { useColorMode } from '@docusaurus/theme-common';
 import styles from './about.module.css';
 
+function GridBackground() {
+  return <div className={styles.grid} aria-hidden="true" />;
+}
+
 const CONTRIBUTORS = [
   { username: 'ms-ciandt', name: 'Matheus Sales' },
   { username: 'gbonin-ciandt',  name: 'Gabriel Bonin' },
@@ -95,13 +99,14 @@ function ReviewersCards() {
 
 export default function About() {
   return (
-    <Layout title="About" description="About the React Native Trail course">
+    <Layout title="About" description="About the React Native Academy">
       <main className={styles.main}>
+        <GridBackground />
 
         <section className={styles.hero}>
           <h1>About This Course</h1>
           <p>
-            React Native Trail is a free, open-source course for developers who already know
+            React Native Academy is a free, open-source course for developers who already know
             how to build software, either on mobile (Android/iOS) or on the web (React),
             and want to master React Native with the New Architecture.
           </p>
@@ -113,8 +118,8 @@ export default function About() {
             {TRACKS.map((track) => (
               <div
                 key={track.label}
-                className={styles.toolCard}
-                style={{ borderLeft: `3px solid ${track.color}` }}
+                className={styles.trackCard}
+                style={{ borderLeftColor: track.color }}
               >
                 <h3 style={{ color: track.color }}>{track.label}</h3>
                 <p>{track.desc}</p>
@@ -191,7 +196,7 @@ export default function About() {
             corrections, and new topics are welcome.
           </p>
           <a
-            href="https://github.com/AlimuraMatheus/trilha-react-native"
+            href="https://github.com/ms-ciandt/trilha-react-native"
             target="_blank"
             rel="noopener noreferrer"
             className={styles.button}
