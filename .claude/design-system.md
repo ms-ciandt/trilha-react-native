@@ -371,6 +371,14 @@ i18n/pt/docusaurus-plugin-content-pages/
 npm run start -- --locale pt
 ```
 
+**Testes unitários — obrigatório ao editar páginas existentes:**
+
+`index.jsx` e `about.jsx` (EN e PT-BR) têm testes unitários que verificam strings literais. Ao editar qualquer um desses arquivos, atualizar o teste correspondente em `src/__tests__/pages/` e rodar `npm test` antes de abrir o PR. A pipeline bloqueia o deploy se os testes falharem.
+
+```bash
+npm test
+```
+
 ---
 
 ## Referências de implementação
