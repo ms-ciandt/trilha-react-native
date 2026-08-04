@@ -220,6 +220,11 @@
   box-shadow: 0 8px 30px rgba(105, 0, 55, 0.2);
 }
 
+[data-theme='dark'] .trackCardIos:hover {
+  border-color: #FAB9FF;
+  box-shadow: 0 8px 30px rgba(250, 185, 255, 0.15);
+}
+
 /* glow blob no canto */
 .cardGlow {
   position: absolute;
@@ -244,6 +249,10 @@
 
 .trackCardIos .cardGlow {
   background: #690037;
+}
+
+[data-theme='dark'] .trackCardIos .cardGlow {
+  background: #FAB9FF;
 }
 
 .trackCard:hover .cardGlow {
@@ -381,6 +390,16 @@
   background: #580030;
   box-shadow: 0 4px 14px rgba(105, 0, 55, 0.4);
   transform: translateY(-1px);
+}
+
+[data-theme='dark'] .trackBtnIos {
+  background: #FAB9FF;
+  color: #000050 !important;
+}
+
+[data-theme='dark'] .trackBtnIos:hover {
+  background: #e8a0f0;
+  box-shadow: 0 4px 14px rgba(250, 185, 255, 0.4);
 }
 
 /* ─── RN note inside track cards ───────────────────────────── */
