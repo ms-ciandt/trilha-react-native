@@ -28,7 +28,10 @@
     "pagefind": "^1.5.2",
     "vitest": "^4.1.10"
   },
+  "overrides": {
+    "@noble/hashes": "^2.2.0"
+  },
   "engines": {
-    "node": ">=18.0"
+    "node": ">=22.0"
   }
 }
