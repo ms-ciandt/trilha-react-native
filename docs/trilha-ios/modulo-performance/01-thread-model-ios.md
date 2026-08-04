@@ -77,6 +77,41 @@ Animated.timing(opacity, {
 
 When `useNativeDriver` is `false` (the default for layout properties like `width` and `height`), every frame requires a round trip through the JS thread. At 60fps that is 16ms per frame. At 120fps ProMotion it is 8ms. Any JS thread work that takes longer than the frame budget causes dropped frames, even if the main thread itself is idle.
 
+## @MainActor → UI thread guarantees
+
+Swift Concurrency introduced `@MainActor` as the canonical way to declare that a function or type must execute on the main thread. It replaces the ad-hoc `DispatchQueue.main.async` pattern with a compile-time guarantee:
+
+```swift
+@MainActor
+func updateLabel(text: String) {
+    myLabel.text = text // compiler guarantees this runs on main thread
+}
+
+@Observable @MainActor
+final class CounterViewModel {
+    var count = 0
+
+    func increment() {
+        count += 1 // always on main thread — safe to read from SwiftUI body
+    }
+}
+```
+
+React Native does not have a direct syntactic equivalent — JavaScript is single-threaded by design, so your component code always runs on the JS thread without any annotation. The equivalent contracts are enforced at a different layer:
+
+| Swift Concurrency | React Native |
+|---|---|
+| `@MainActor` function | Any function called from a component's render path (already on JS thread) |
+| `@MainActor` ViewModel property | `useState` / `useReducer` value (reads are always on JS thread) |
+| `await MainActor.run { }` | `runOnUI(() => { 'worklet'; ... })()` in Reanimated |
+| `Task { @MainActor in ... }` | Callback passed to `Animated` completion or `InteractionManager` |
+
+The key mental shift: in Swift you annotate code to *pull it onto* the main thread from a concurrent context. In React Native the JS thread is your "main actor" for state and rendering — the challenge runs in the opposite direction, *pushing* work off it onto native threads (worklets, `useNativeDriver`, TurboModule async methods) to keep the frame budget free.
+
+One practical consequence: Swift code marked `@MainActor` will crash or warn if called from a background actor without `await`. React Native has no equivalent compile-time check — calling an expensive synchronous operation from a component body (sorting a 100k-item array, parsing a large JSON string) silently stalls the JS thread without any warning. The equivalent discipline is manual: keep render functions and event handlers free of heavy computation, and defer it to async tasks or background TurboModule methods.
+
+---
+
 ## Blocking the Main Thread — Same Symptoms as UIKit
 
 Every iOS developer knows the consequences of blocking the main thread: the UI freezes, touch events queue up unanswered, and the system watchdog eventually terminates the process if the block persists beyond a few seconds. React Native's main thread is the same thread with the same consequences.
@@ -158,6 +193,8 @@ The shadow thread, when visible, appears as `com.facebook.react.ShadowQueue` or 
 | Background `DispatchQueue` | JS thread (Hermes, your JavaScript code) |
 | Layout pass before `drawRect:` | Fabric shadow thread Yoga layout commit |
 | `DispatchQueue.main.async { }` | `runOnUI()` in Reanimated |
+| `@MainActor` function / ViewModel | JS thread component code (implicit — no annotation needed) |
+| `await MainActor.run { }` | `runOnUI(() => { 'worklet'; ... })()` |
 | `CABasicAnimation` on main thread | `useNativeDriver: true` Animated |
 | `asyncAfter` to defer post-transition work | `InteractionManager.runAfterInteractions()` |
 | ARC deterministic deallocation | Hermes GC with occasional compact pauses |
