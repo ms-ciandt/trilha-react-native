@@ -212,18 +212,22 @@
   align-items: center;
 }
 
-/* Title — coral sobre fundo navy */
+/* Title — gradient azul → violeta, igual ao heroTitle */
 .navbar__title {
   font-weight: 800;
   font-size: 1.05rem;
   letter-spacing: -0.02em;
-  color: #FA5A50;
-  -webkit-text-fill-color: initial;
+  background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 [data-theme='dark'] .navbar__title {
-  color: #FA8982;
-  -webkit-text-fill-color: initial;
+  background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 /* ─── Navbar trail pills ─────────────────────────────────────────────── */

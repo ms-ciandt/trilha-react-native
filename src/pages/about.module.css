@@ -1,20 +1,56 @@
+/* ─── Layout ────────────────────────────────────────────────── */
 .main {
+  position: relative;
   max-width: 860px;
   margin: 0 auto;
   padding: 3rem 1.5rem 6rem;
+  overflow: hidden;
 }
 
+/* ─── Grid background ───────────────────────────────────────── */
+.grid {
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, var(--ifm-color-emphasis-200) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--ifm-color-emphasis-200) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 30%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 30%, transparent 100%);
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: 0;
+}
+
+[data-theme='dark'] .grid {
+  opacity: 0.18;
+}
+
+/* ─── Hero ─────────────────────────────────────────────────── */
 .hero {
+  position: relative;
   margin-bottom: 3rem;
   padding-bottom: 2rem;
   border-bottom: 1px solid var(--ifm-toc-border-color);
+  animation: fadeUp 0.6s ease both;
 }
 
 .hero h1 {
   font-size: 2.25rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  font-weight: 800;
+  letter-spacing: -0.04em;
   margin-bottom: 0.75rem;
+  background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+[data-theme='dark'] .hero h1 {
+  background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .hero p {
@@ -24,11 +60,22 @@
   max-width: 640px;
 }
 
+/* ─── Sections ──────────────────────────────────────────────── */
 .section {
+  position: relative;
   margin-bottom: 3rem;
   padding-bottom: 3rem;
   border-bottom: 1px solid var(--ifm-toc-border-color);
+  animation: fadeUp 0.6s ease both;
 }
+
+.section:nth-child(2) { animation-delay: 0.1s; }
+.section:nth-child(3) { animation-delay: 0.2s; }
+.section:nth-child(4) { animation-delay: 0.3s; }
+.section:nth-child(5) { animation-delay: 0.4s; }
+.section:nth-child(6) { animation-delay: 0.5s; }
+.section:nth-child(7) { animation-delay: 0.6s; }
+.section:nth-child(8) { animation-delay: 0.7s; }
 
 .section:last-child {
   border-bottom: none;
@@ -37,6 +84,7 @@
 .section h2 {
   font-size: 1.375rem;
   font-weight: 600;
+  letter-spacing: -0.02em;
   margin-bottom: 1rem;
 }
 
@@ -45,6 +93,7 @@
   color: var(--ifm-color-emphasis-700);
 }
 
+/* ─── Cards (toolCard / trackCard) ─────────────────────────── */
 .tools {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -53,10 +102,19 @@
 }
 
 .toolCard {
-  padding: 1.25rem;
-  border-radius: var(--ifm-global-radius);
-  border: 1px solid var(--ifm-toc-border-color);
+  position: relative;
+  padding: 1.5rem 1.25rem;
+  border-radius: 16px;
+  border: 1px solid var(--ifm-color-emphasis-200);
   background: var(--ifm-background-surface-color);
+  overflow: hidden;
+  transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.toolCard:hover {
+  transform: translateY(-3px);
+  border-color: var(--ifm-color-emphasis-400);
+  box-shadow: 0 8px 30px color-mix(in srgb, var(--ifm-color-emphasis-400) 12%, transparent);
 }
 
 .toolCard h3 {
@@ -69,14 +127,73 @@
   font-size: 0.875rem;
   margin: 0;
   line-height: 1.6;
+  color: var(--ifm-color-emphasis-600);
 }
 
+/* ─── Track cards (colored accent) ─────────────────────────── */
+.trackCard {
+  position: relative;
+  padding: 1.5rem 1.25rem;
+  border-radius: 16px;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-left: 3px solid;
+  background: var(--ifm-background-surface-color);
+  overflow: hidden;
+  transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.trackCard:hover {
+  transform: translateY(-3px);
+}
+
+.trackCard h3 {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem;
+}
+
+.trackCard p {
+  font-size: 0.875rem;
+  margin: 0;
+  line-height: 1.6;
+  color: var(--ifm-color-emphasis-600);
+}
+
+/* ─── Stack tags ────────────────────────────────────────────── */
+.stackTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.stackTag {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  background: var(--ifm-background-surface-color);
+  color: var(--ifm-color-emphasis-600);
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.stackTag:hover {
+  border-color: var(--ifm-color-emphasis-400);
+  color: var(--ifm-color-emphasis-800);
+}
+
+/* ─── Note ──────────────────────────────────────────────────── */
 .note {
   font-size: 0.875rem;
-  opacity: 0.7;
+  color: var(--ifm-color-emphasis-500);
   font-style: italic;
+  margin-top: 1rem;
 }
 
+/* ─── Contributors ──────────────────────────────────────────── */
 .contributors {
   display: flex;
   flex-wrap: wrap;
@@ -89,63 +206,45 @@
   flex-direction: column;
   align-items: center;
   gap: 10px;
-  text-decoration: none;
+  text-decoration: none !important;
   color: inherit;
   font-size: 0.875rem;
   font-weight: 500;
-  transition: opacity 0.15s;
+  transition: transform 0.2s ease;
+  animation: fadeUp 0.5s ease both;
 }
 
 .contributor:hover {
-  opacity: 0.75;
+  transform: translateY(-4px);
   text-decoration: none;
 }
 
+.contributor span {
+  color: var(--ifm-color-emphasis-600);
+  transition: color 0.2s ease;
+}
+
+.contributor:hover span {
+  color: var(--ifm-color-primary);
+}
+
+/* ─── Avatars ───────────────────────────────────────────────── */
 .avatar {
   width: 80px;
   height: 80px;
   border-radius: 50%;
   object-fit: cover;
   display: block;
+  border: 2px solid var(--ifm-color-emphasis-200);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.button {
-  display: inline-block;
-  margin-top: 1rem;
-  padding: 0.6rem 1.25rem;
-  border-radius: var(--ifm-global-radius);
-  border: 1px solid var(--ifm-color-primary);
-  color: var(--ifm-color-primary);
-  font-size: 0.875rem;
-  font-weight: 600;
-  text-decoration: none;
-  transition: background 0.15s, color 0.15s;
+.contributor:hover .avatar {
+  border-color: var(--ifm-color-primary-lighter);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ifm-color-primary) 15%, transparent);
 }
 
-.button:hover {
-  background: var(--ifm-color-primary);
-  color: #fff;
-  text-decoration: none;
-}
-
-.stackTags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 1rem;
-}
-
-.stackTag {
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  padding: 0.25rem 0.65rem;
-  border-radius: 999px;
-  border: 1px solid var(--ifm-toc-border-color);
-  background: var(--ifm-background-surface-color);
-  color: var(--ifm-color-emphasis-600);
-}
-
+/* ─── Reviewers ─────────────────────────────────────────────── */
 .reviewers {
   display: flex;
   flex-wrap: wrap;
@@ -159,6 +258,7 @@
   align-items: center;
   gap: 0.5rem;
   white-space: nowrap;
+  animation: fadeUp 0.5s ease both;
 }
 
 .reviewerName {
@@ -170,15 +270,40 @@
 .reviewerRole {
   font-size: 0.62rem;
   font-weight: 700;
-  letter-spacing: 0.07em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  padding: 0.1rem 0.45rem;
+  padding: 0.15rem 0.5rem;
   border-radius: 999px;
+}
+
+/* ─── Button ────────────────────────────────────────────────── */
+.button {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.4rem 1.25rem;
+  border-radius: 999px;
+  background: var(--ifm-color-primary);
+  color: #fff !important;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-decoration: none !important;
+  transition: box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
+}
+
+.button:hover {
+  opacity: 0.88;
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--ifm-color-primary) 40%, transparent);
+  transform: translateY(-1px);
+}
+
+/* ─── Animations ────────────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 /* ─── Responsive ────────────────────────────────────────────── */
 
-/* Tablet (≤768px) */
 @media (max-width: 768px) {
   .main {
     padding: 2rem 1.25rem 4rem;
@@ -207,7 +332,6 @@
   }
 }
 
-/* Mobile (≤540px) */
 @media (max-width: 540px) {
   .main {
     padding: 1.5rem 1rem 3.5rem;

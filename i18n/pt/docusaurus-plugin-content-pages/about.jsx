@@ -3,6 +3,10 @@ import Layout from '@theme/Layout';
 import { useColorMode } from '@docusaurus/theme-common';
 import styles from '@site/src/pages/about.module.css';
 
+function GridBackground() {
+  return <div className={styles.grid} aria-hidden="true" />;
+}
+
 const CONTRIBUTORS = [
   { username: 'ms-ciandt', name: 'Matheus Sales' },
   { username: 'gbonin-ciandt',  name: 'Gabriel Bonin' },
@@ -95,13 +99,14 @@ function RevisoresCards() {
 
 export default function About() {
   return (
-    <Layout title="Sobre" description="Sobre o curso React Native Trail">
+    <Layout title="Sobre" description="Sobre o React Native Academy">
       <main className={styles.main}>
+        <GridBackground />
 
         <section className={styles.hero}>
           <h1>Sobre Este Curso</h1>
           <p>
-            React Native Trail é um curso gratuito e open source para desenvolvedores que já
+            React Native Academy é um curso gratuito e open source para desenvolvedores que já
             sabem construir software, seja no mobile (Android/iOS) ou na web (React), e
             querem dominar o React Native com a New Architecture.
           </p>
@@ -113,8 +118,8 @@ export default function About() {
             {TRACKS.map((track) => (
               <div
                 key={track.label}
-                className={styles.toolCard}
-                style={{ borderLeft: `3px solid ${track.color}` }}
+                className={styles.trackCard}
+                style={{ borderLeftColor: track.color }}
               >
                 <h3 style={{ color: track.color }}>{track.label}</h3>
                 <p>{track.desc}</p>
@@ -191,7 +196,7 @@ export default function About() {
             Contribuições, correções e novos tópicos são bem-vindos.
           </p>
           <a
-            href="https://github.com/AlimuraMatheus/trilha-react-native"
+            href="https://github.com/ms-ciandt/trilha-react-native"
             target="_blank"
             rel="noopener noreferrer"
             className={styles.button}

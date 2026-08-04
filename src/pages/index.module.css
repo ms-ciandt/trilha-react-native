@@ -53,12 +53,18 @@
   font-weight: 800;
   letter-spacing: -0.04em;
   line-height: 1.1;
-  color: #690037;
+  background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   margin-bottom: 0.75rem;
 }
 
 [data-theme='dark'] .heroTitle {
-  color: #D94A41;
+  background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .heroSubtitle {
@@ -153,12 +159,12 @@
 }
 
 .introBtnStyle {
-  background: #690037;
+  background: var(--ifm-color-primary);
 }
 
 .introBtnStyle:hover {
-  background: #580030;
-  box-shadow: 0 4px 14px rgba(105, 0, 55, 0.4);
+  background: var(--ifm-color-primary-dark);
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--ifm-color-primary) 40%, transparent);
   transform: translateY(-1px);
 }
 
@@ -291,7 +297,7 @@
 }
 
 [data-theme='dark'] .trackCardIos .cardBadge {
-  color: #802655;
+  color: #FAB9FF;
   background: color-mix(in srgb, #690037 20%, transparent);
   border-color: color-mix(in srgb, #690037 45%, transparent);
 }
@@ -324,7 +330,7 @@
 }
 
 [data-theme='dark'] .trackCardIos .trackLabel {
-  color: #802655;
+  color: #FAB9FF;
 }
 
 .trackDesc {
