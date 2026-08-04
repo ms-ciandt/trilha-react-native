@@ -736,6 +736,10 @@ video {
   --module-accent: #690037;
 }
 
+[data-theme='dark'] [class*='trilha-ios'] {
+  --module-accent: #FAB9FF;
+}
+
 /* Trilha Nativo */
 [class*='trilha-nativo'] {
   --module-accent: #D94A41;
@@ -1213,6 +1217,10 @@ video {
   opacity: 0.5;
   pointer-events: none;
   z-index: 10;
+}
+
+[data-theme='dark'] [class*='trilha-ios'] .theme-doc-markdown::before {
+  background: linear-gradient(90deg, transparent, #FAB9FF 50%, transparent);
 }
 
 /* ─── TOC (right sidebar) ────────────────────────────────────────────── */
