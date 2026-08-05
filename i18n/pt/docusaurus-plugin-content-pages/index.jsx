@@ -109,7 +109,7 @@ export default function Home() {
         <GridBackground />
 
         <header className={styles.hero}>
-          <h1 className={styles.heroTitle}>Trilha React Native</h1>
+          <h1 className={styles.heroTitle}>React Native Academy</h1>
           <p className={styles.heroSubtitle}>
             A próxima onda: um código, duas plataformas
           </p>

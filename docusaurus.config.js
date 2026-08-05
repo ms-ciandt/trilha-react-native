@@ -2,7 +2,7 @@
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'React Native Trail',
+  title: 'React Native Academy',
   tagline: 'From zero to React Native — tracks for native and web devs',
   url: 'https://ms-ciandt.github.io',
   baseUrl: '/trilha-react-native/',
@@ -56,7 +56,7 @@ const config = {
       },
       navbar: {
         hideOnScroll: true,
-        title: 'React Native Trail',
+        title: 'React Native Academy',
         logo: undefined,
         items: [
           {
