@@ -38,7 +38,7 @@ describe('Home page (PT-BR)', () => {
     const hrefs = links.map((l) => l.getAttribute('href'));
     expect(hrefs).toContain('/trilha-web/modulo-fundamentos/adaptando-js-ts');
     expect(hrefs).toContain('/trilha-android/modulo-compose-para-rn/composable-vs-component');
-    expect(hrefs).toContain('/trilha-ios/modulo-fundamentos/swift-to-javascript');
+    expect(hrefs).toContain('/trilha-ios/modulo-fundamentos/ios-project-setup');
   });
 
   it('renders the Masterclass section with PT-BR label', () => {

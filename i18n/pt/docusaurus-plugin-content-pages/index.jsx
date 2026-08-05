@@ -204,7 +204,7 @@ export default function Home() {
             </p>
             <Link
               className={`${styles.trackBtn} ${styles.trackBtnIos}`}
-              to="/trilha-ios/modulo-fundamentos/swift-to-javascript"
+              to="/trilha-ios/modulo-fundamentos/ios-project-setup"
             >
               Começar
             </Link>
