@@ -1,85 +1,85 @@
-﻿---
-title: Permissions e Info.plist
+---
+title: Permissions and Info.plist
 ---
 
-# Permissions e Info.plist
+# Permissions and Info.plist
 
-Se você vem do desenvolvimento iOS nativo com Swift, sabe que permissões são gerenciadas em dois lugares: o `Info.plist` (declaração estática de intenção) e as APIs de runtime como `AVCaptureDevice.requestAccess` ou `CLLocationManager.requestWhenInUseAuthorization`. No React Native, o modelo é idêntico — você ainda precisa do `Info.plist` e ainda chama APIs de runtime — mas a camada de JavaScript abstrai parte do processo. Este documento cobre tudo que você precisa saber.
+If you come from native iOS development with Swift, you know that permissions are managed in two places: `Info.plist` (a static declaration of intent) and runtime APIs like `AVCaptureDevice.requestAccess` or `CLLocationManager.requestWhenInUseAuthorization`. In React Native, the model is identical — you still need the `Info.plist` and you still call runtime APIs — but the JavaScript layer abstracts part of the process. This document covers everything you need to know.
 
 ---
 
 ## Info.plist: NSUsageDescription keys
 
-O sistema iOS exige que todo app declare, no `Info.plist`, uma string de propósito (`NSUsageDescription`) para cada categoria de recurso protegido que o app acessar. A ausência de qualquer uma dessas strings causa crash em runtime com a mensagem `This app has crashed because it attempted to access privacy-sensitive data without a usage description`. O App Store Connect também rejeita binários sem as strings adequadas.
+The iOS system requires every app to declare, in `Info.plist`, a purpose string (`NSUsageDescription`) for each category of protected resource the app accesses. The absence of any of these strings causes a runtime crash with the message `This app has crashed because it attempted to access privacy-sensitive data without a usage description`. App Store Connect also rejects binaries without appropriate strings.
 
-A seguir, cada chave relevante para um app React Native típico:
+Below are the relevant keys for a typical React Native app:
 
-### Câmera
+### Camera
 
 ```xml
 <key>NSCameraUsageDescription</key>
 <string>This app uses the camera to let you scan QR codes and capture photos for your profile.</string>
 ```
 
-Ativada quando qualquer código (JS ou módulo nativo) tenta inicializar uma sessão `AVCaptureSession`. No RN, isso ocorre ao usar `expo-camera`, `react-native-camera` ou qualquer biblioteca que acesse `AVCaptureDevice`.
+Triggered when any code (JS or native module) attempts to initialize an `AVCaptureSession`. In RN, this occurs when using `expo-camera`, `react-native-camera`, or any library that accesses `AVCaptureDevice`.
 
-### Microfone
+### Microphone
 
 ```xml
 <key>NSMicrophoneUsageDescription</key>
 <string>This app uses the microphone to record audio messages.</string>
 ```
 
-Necessária mesmo quando a câmera é o foco principal — se a sessão de captura incluir áudio (configuração padrão de `expo-camera`), ambas as strings são obrigatórias.
+Required even when the camera is the primary focus — if the capture session includes audio (the default configuration of `expo-camera`), both strings are mandatory.
 
-### Biblioteca de fotos (leitura)
+### Photo library (reading)
 
 ```xml
 <key>NSPhotoLibraryUsageDescription</key>
 <string>This app reads your photo library to let you choose a profile picture.</string>
 ```
 
-Ativada quando o app lê imagens existentes via `PHPhotoLibrary` (por exemplo, ao usar `expo-image-picker` com `mediaTypes: ImagePicker.MediaTypeOptions.Images`).
+Triggered when the app reads existing images via `PHPhotoLibrary` (for example, when using `expo-image-picker` with `mediaTypes: ImagePicker.MediaTypeOptions.Images`).
 
-### Biblioteca de fotos (escrita)
+### Photo library (writing)
 
 ```xml
 <key>NSPhotoLibraryAddUsageDescription</key>
 <string>This app saves photos to your library after you capture them.</string>
 ```
 
-Separada da chave de leitura desde iOS 11. Necessária apenas quando o app grava na biblioteca — salvar fotos ou vídeos. Se o app só lê, esta chave é desnecessária.
+Separate from the read key since iOS 11. Required only when the app writes to the library — saving photos or videos. If the app only reads, this key is unnecessary.
 
-### Localização em uso
+### Location when in use
 
 ```xml
 <key>NSLocationWhenInUseUsageDescription</key>
 <string>This app uses your location to show nearby places.</string>
 ```
 
-Chave mínima para qualquer acesso de localização. Cobre o uso enquanto o app está em foreground.
+The minimum key for any location access. Covers use while the app is in the foreground.
 
-### Localização sempre (background)
+### Location always (background)
 
 ```xml
 <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 <string>This app tracks your location in the background to log your running routes.</string>
 ```
 
-Necessária quando o app solicita `Always` authorization. O iOS exige que `NSLocationWhenInUseUsageDescription` também esteja presente — as duas coexistem.
+Required when the app requests `Always` authorization. iOS requires `NSLocationWhenInUseUsageDescription` to also be present — both coexist.
 
-> Nota: `NSLocationAlwaysUsageDescription` (sem "AndWhenInUse") foi depreciada no iOS 11 e ignorada a partir do iOS 13. Use somente a chave combinada.
+> Note: `NSLocationAlwaysUsageDescription` (without "AndWhenInUse") was deprecated in iOS 11 and ignored from iOS 13 onwards. Use only the combined key.
 
-### Contatos
+### Contacts
 
 ```xml
 <key>NSContactsUsageDescription</key>
 <string>This app accesses your contacts to help you find friends already using the app.</string>
 ```
 
-Qualquer acesso ao framework `Contacts` — inclusive leitura somente.
+Any access to the `Contacts` framework — including read-only.
 
-### Calendário e lembretes
+### Calendar and reminders
 
 ```xml
 <key>NSCalendarsUsageDescription</key>
@@ -91,7 +91,7 @@ Qualquer acesso ao framework `Contacts` — inclusive leitura somente.
 <string>This app creates reminders for your upcoming tasks.</string>
 ```
 
-São chaves separadas — acessar `EKEntityTypeEvent` requer a primeira, `EKEntityTypeReminder` requer a segunda.
+These are separate keys — accessing `EKEntityTypeEvent` requires the first, `EKEntityTypeReminder` requires the second.
 
 ### Bluetooth
 
@@ -100,16 +100,16 @@ São chaves separadas — acessar `EKEntityTypeEvent` requer a primeira, `EKEnti
 <string>This app uses Bluetooth to connect to your fitness device.</string>
 ```
 
-Obrigatória desde iOS 13 para qualquer uso de `CoreBluetooth`, mesmo em foreground. A chave antiga `NSBluetoothPeripheralUsageDescription` ainda existe mas é considerada legada.
+Mandatory since iOS 13 for any use of `CoreBluetooth`, even in the foreground. The old `NSBluetoothPeripheralUsageDescription` key still exists but is considered legacy.
 
-### Movimento e pedômetro
+### Motion and pedometer
 
 ```xml
 <key>NSMotionUsageDescription</key>
 <string>This app uses motion data to count your steps.</string>
 ```
 
-Necessária para acesso ao `CMMotionActivityManager` ou `CMPedometer` via `CoreMotion`.
+Required for access to `CMMotionActivityManager` or `CMPedometer` via `CoreMotion`.
 
 ### Face ID
 
@@ -118,17 +118,17 @@ Necessária para acesso ao `CMMotionActivityManager` ou `CMPedometer` via `CoreM
 <string>This app uses Face ID to authenticate securely without a password.</string>
 ```
 
-Necessária para chamar `LAContext.evaluatePolicy`. Diferente das outras — a ausência não causa crash imediato, mas o sistema recusa a autenticação e retorna erro `LAErrorBiometryNotAvailable`.
+Required to call `LAContext.evaluatePolicy`. Unlike the others — the absence does not cause an immediate crash, but the system refuses authentication and returns the `LAErrorBiometryNotAvailable` error.
 
 ---
 
-## Expo Config Plugins: injeção automática no Info.plist
+## Expo Config Plugins: automatic Info.plist injection
 
-Em projetos Expo com Managed Workflow ou Bare Workflow usando `expo-prebuild`, você não edita o `Info.plist` manualmente. Em vez disso, as bibliotecas fornecem Config Plugins que injetam as chaves automaticamente durante `npx expo prebuild`.
+In Expo projects using Managed Workflow or Bare Workflow with `expo-prebuild`, you do not edit `Info.plist` manually. Instead, libraries provide Config Plugins that automatically inject the keys during `npx expo prebuild`.
 
-### Como funciona o padrão `withInfoPlist`
+### How the `withInfoPlist` pattern works
 
-Um Config Plugin é uma função que recebe a configuração Expo e retorna a configuração modificada. O modificador `withInfoPlist` lê e escreve o `Info.plist`:
+A Config Plugin is a function that receives the Expo configuration and returns the modified configuration. The `withInfoPlist` modifier reads and writes the `Info.plist`:
 
 ```js
 // plugin/withCameraPermission.js
@@ -147,9 +147,9 @@ const withCameraPermission = (config, { cameraPermission, microphonePermission }
 module.exports = withCameraPermission;
 ```
 
-### Configuração via app.json / app.config.js
+### Configuration via app.json / app.config.js
 
-A maioria das bibliotecas Expo aceita as strings diretamente no `app.json`:
+Most Expo libraries accept the strings directly in `app.json`:
 
 ```json
 {
@@ -181,36 +181,36 @@ A maioria das bibliotecas Expo aceita as strings diretamente no `app.json`:
 }
 ```
 
-Após alterar as strings, rode `npx expo prebuild --clean` para regenerar os arquivos nativos. O `Info.plist` em `ios/<AppName>/Info.plist` refletirá as mudanças.
+After changing the strings, run `npx expo prebuild --clean` to regenerate the native files. The `Info.plist` at `ios/<AppName>/Info.plist` will reflect the changes.
 
-> Nunca edite o `Info.plist` gerado manualmente em projetos que usam prebuild — suas alterações serão sobrescritas na próxima execução.
+> Never manually edit the generated `Info.plist` in projects that use prebuild — your changes will be overwritten on the next run.
 
 ---
 
-## Bare Workflow: edição manual do Info.plist
+## Bare Workflow: manual Info.plist editing
 
-Em projetos Bare Workflow sem Config Plugins (ou ao adicionar uma biblioteca que não fornece plugin), você edita o `Info.plist` diretamente.
+In Bare Workflow projects without Config Plugins (or when adding a library that does not provide a plugin), you edit the `Info.plist` directly.
 
-### Localização do arquivo
+### File location
 
 ```
 ios/
   <AppName>/
-    Info.plist    ← editar aqui
+    Info.plist    ← edit here
   <AppName>.xcworkspace
 ```
 
-### Via Xcode (recomendado)
+### Via Xcode (recommended)
 
-1. Abra `<AppName>.xcworkspace` no Xcode.
-2. No Project Navigator, selecione `<AppName>/Info.plist`.
-3. Clique em `+` em qualquer linha para adicionar uma nova key.
-4. Digite o nome da chave — o Xcode autocompleta e exibe o nome legível ("Privacy - Camera Usage Description").
-5. Na coluna "Value", insira a string de propósito.
+1. Open `<AppName>.xcworkspace` in Xcode.
+2. In the Project Navigator, select `<AppName>/Info.plist`.
+3. Click `+` on any row to add a new key.
+4. Type the key name — Xcode autocompletes and displays the human-readable name ("Privacy - Camera Usage Description").
+5. In the "Value" column, enter the purpose string.
 
-Editar via Xcode reduz o risco de erro de digitação no nome da chave.
+Editing via Xcode reduces the risk of typos in key names.
 
-### Via editor de texto (XML direto)
+### Via text editor (direct XML)
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -218,7 +218,7 @@ Editar via Xcode reduz o risco de erro de digitação no nome da chave.
   "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-  <!-- ... outras chaves do app ... -->
+  <!-- ... other app keys ... -->
 
   <key>NSCameraUsageDescription</key>
   <string>This app uses the camera to capture photos.</string>
@@ -233,23 +233,23 @@ Editar via Xcode reduz o risco de erro de digitação no nome da chave.
 </plist>
 ```
 
-### Erros comuns que causam rejeição no App Store
+### Common errors that cause App Store rejection
 
-- **Nome de chave incorreto**: `NSCameraPermission` em vez de `NSCameraUsageDescription` — a chave errada é silenciosamente ignorada pelo sistema; o app passa nos testes internos mas é rejeitado na revisão.
-- **String vazia ou genérica**: `"This app needs access."` — a Apple exige que a string explique o uso específico. Strings vagas são rejeitadas sob a diretriz 5.1.1 (Data Collection and Storage).
-- **Chave presente mas recurso não declarado na PrivacyInfo**: a partir de iOS 17, a ausência do `PrivacyInfo.xcprivacy` para APIs que o exigem pode causar rejeição automatizada.
+- **Incorrect key name**: `NSCameraPermission` instead of `NSCameraUsageDescription` — the wrong key is silently ignored by the system; the app passes internal tests but is rejected during review.
+- **Empty or generic string**: `"This app needs access."` — Apple requires the string to explain the specific use. Vague strings are rejected under guideline 5.1.1 (Data Collection and Storage).
+- **Key present but resource not declared in PrivacyInfo**: from iOS 17, the absence of `PrivacyInfo.xcprivacy` for APIs that require it can cause automated rejection.
 
 ---
 
-## Runtime permission flow: modelo iOS vs Android
+## Runtime permission flow: iOS vs Android model
 
-### O modelo one-shot do iOS
+### iOS's one-shot model
 
-No iOS, o sistema exibe o diálogo de permissão uma única vez. Se o usuário negar, o app nunca mais pode solicitar — o diálogo não reaparece. Para usar o recurso, o usuário precisa ir manualmente em Ajustes > Privacidade e conceder acesso. Isso é fundamentalmente diferente do Android, onde o app pode solicitar novamente (com `shouldShowRequestPermissionRationale` como guia).
+On iOS, the system displays the permission dialog exactly once. If the user denies, the app can never request again — the dialog does not reappear. To use the feature, the user must manually go to Settings > Privacy and grant access. This is fundamentally different from Android, where the app can request again (using `shouldShowRequestPermissionRationale` as a guide).
 
-**Implicação de UX**: em iOS, você tem uma única chance de apresentar o contexto antes do diálogo do sistema aparecer. A estratégia recomendada é exibir uma tela de "pré-autorização" (custom) explicando o valor da funcionalidade, e só então disparar `requestPermissionsAsync`. Isso aumenta significativamente a taxa de concessão.
+**UX implication**: on iOS, you have a single chance to present context before the system dialog appears. The recommended strategy is to display a custom "pre-authorization" screen explaining the value of the feature, and only then trigger `requestPermissionsAsync`. This significantly increases the grant rate.
 
-### Comparação Swift nativo vs React Native
+### Comparison: native Swift vs React Native
 
 **Swift (UIKit):**
 
@@ -311,13 +311,13 @@ export function CameraButton() {
 }
 ```
 
-O padrão é equivalente ao Swift: verificar status, solicitar se `undetermined`, redirecionar a Ajustes caso `denied`.
+The pattern is equivalent to Swift: check status, request if `undetermined`, redirect to Settings if `denied`.
 
 ---
 
 ## expo-modules-core: requestPermissionsAsync pattern
 
-Para bibliotecas baseadas em `expo-modules-core`, a API de permissões segue um padrão consistente:
+For libraries based on `expo-modules-core`, the permissions API follows a consistent pattern:
 
 ```tsx
 import * as Location from 'expo-location';
@@ -325,7 +325,7 @@ import * as Contacts from 'expo-contacts';
 import { Linking } from 'react-native';
 
 async function requestLocationPermission() {
-  // Verificar status atual sem solicitar
+  // Check current status without requesting
   const { status: existingStatus } = await Location.getForegroundPermissionsAsync();
 
   if (existingStatus === 'granted') {
@@ -333,12 +333,12 @@ async function requestLocationPermission() {
   }
 
   if (existingStatus === 'denied') {
-    // iOS: única opção é redirecionar para Ajustes
+    // iOS: the only option is to redirect to Settings
     await Linking.openSettings();
     return false;
   }
 
-  // existingStatus === 'undetermined' — solicitar
+  // existingStatus === 'undetermined' — request
   const { status } = await Location.requestForegroundPermissionsAsync();
   return status === 'granted';
 }
@@ -349,28 +349,28 @@ async function requestContactsPermission() {
 }
 ```
 
-### Máquina de estados de permissão
+### Permission state machine
 
 ```
 undetermined
     │
     │  requestPermissionsAsync()
     │
-    ├──── (usuário aceita) ──── granted
+    ├──── (user accepts) ──── granted
     │
-    └──── (usuário recusa) ──── denied
-                                    │
-                                    │  Linking.openSettings()
-                                    │
-                               [usuário vai em Ajustes
-                                e concede manualmente]
-                                    │
-                                    ▼
-                                 granted
-                          (verificar na volta ao app)
+    └──── (user denies) ──── denied
+                                 │
+                                 │  Linking.openSettings()
+                                 │
+                            [user goes to Settings
+                             and grants manually]
+                                 │
+                                 ▼
+                              granted
+                       (check on return to app)
 ```
 
-Para detectar quando o usuário volta de Ajustes e pode ter alterado a permissão, use o evento `AppState`:
+To detect when the user returns from Settings and may have changed the permission, use the `AppState` event:
 
 ```tsx
 import { AppState } from 'react-native';
@@ -392,7 +392,7 @@ function usePermissionRefresh(onForeground: () => void) {
   }, [onForeground]);
 }
 
-// Uso:
+// Usage:
 usePermissionRefresh(async () => {
   const { granted } = await Camera.getCameraPermissionsAsync();
   setHasPermission(granted);
@@ -403,35 +403,35 @@ usePermissionRefresh(async () => {
 
 ## PrivacyInfo.xcprivacy (iOS 17+)
 
-A partir de iOS 17 e obrigatório para submissões ao App Store desde maio de 2024, o Apple exige que apps e SDKs de terceiros declarem o uso de "Required Reason APIs" em um arquivo `PrivacyInfo.xcprivacy`.
+From iOS 17 and mandatory for App Store submissions since May 2024, Apple requires apps and third-party SDKs to declare the use of "Required Reason APIs" in a `PrivacyInfo.xcprivacy` file.
 
-### O que são Required Reason APIs
+### What are Required Reason APIs
 
-São categorias de APIs que podem ser usadas para fingerprinting de dispositivo. A Apple mantém a lista em: [developer.apple.com/documentation/bundleresources/privacy_manifest_files/describing_use_of_required_reason_api](https://developer.apple.com/documentation/bundleresources/privacy_manifest_files/describing_use_of_required_reason_api)
+These are API categories that can be used for device fingerprinting. Apple maintains the list at: [developer.apple.com/documentation/bundleresources/privacy_manifest_files/describing_use_of_required_reason_api](https://developer.apple.com/documentation/bundleresources/privacy_manifest_files/describing_use_of_required_reason_api)
 
-Exemplos relevantes para apps RN:
-- `NSFileSystemFreeSize` / `NSFileSystemSize` — usado internamente por Hermes e algumas libs
-- `UserDefaults` — usado por `@react-native-async-storage/async-storage`
-- `NSUserDefaults` — `expo-constants` e outros módulos
-- Timestamps do sistema de arquivos (`NSURLContentModificationDateKey`)
+Relevant examples for RN apps:
+- `NSFileSystemFreeSize` / `NSFileSystemSize` — used internally by Hermes and some libs
+- `UserDefaults` — used by `@react-native-async-storage/async-storage`
+- `NSUserDefaults` — `expo-constants` and other modules
+- File system timestamps (`NSURLContentModificationDateKey`)
 
-### O que o Expo SDK 56 / RN 0.76 gerencia automaticamente
+### What Expo SDK 56 / RN 0.76 manages automatically
 
-O Expo SDK 56 inclui `PrivacyInfo.xcprivacy` nos módulos que integra (expo-file-system, expo-constants, etc.). O React Native 0.76 também inclui o manifesto para o core framework. Você não precisa declarar as APIs usadas por essas bibliotecas — cada pacote declara o próprio manifesto.
+Expo SDK 56 includes `PrivacyInfo.xcprivacy` in the modules it integrates (expo-file-system, expo-constants, etc.). React Native 0.76 also includes the manifest for the core framework. You do not need to declare APIs used by these libraries — each package declares its own manifest.
 
-### O que você deve adicionar manualmente
+### What you must add manually
 
-Se o seu app diretamente chama qualquer Required Reason API (não através de uma biblioteca que já declara), ou se usa uma biblioteca de terceiros sem manifesto de privacidade, você precisa adicionar ou complementar o `PrivacyInfo.xcprivacy`.
+If your app directly calls any Required Reason API (not through a library that already declares it), or if it uses a third-party library without a privacy manifest, you need to add or supplement the `PrivacyInfo.xcprivacy`.
 
-**Localização do arquivo:**
+**File location:**
 
 ```
 ios/
   <AppName>/
-    PrivacyInfo.xcprivacy    ← criar aqui se não existir
+    PrivacyInfo.xcprivacy    ← create here if it doesn't exist
 ```
 
-**Estrutura do arquivo:**
+**File structure:**
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -468,49 +468,49 @@ ios/
 </plist>
 ```
 
-Os códigos de razão (como `CA92.1`) vêm da documentação oficial da Apple para cada categoria de API. Usar um código incorreto ou ausente resulta em rejeição automatizada pelo App Store Connect.
+The reason codes (such as `CA92.1`) come from Apple's official documentation for each API category. Using an incorrect or missing code results in automated rejection by App Store Connect.
 
 ---
 
-## App Store Review: evitando rejeições
+## App Store Review: avoiding rejections
 
-### Diretriz 5.1.1 — Data Collection and Storage
+### Guideline 5.1.1 — Data Collection and Storage
 
-A Apple rejeita apps quando:
+Apple rejects apps when:
 
-1. **NSUsageDescription está ausente**: o binário usa uma API protegida mas não declarou a string correspondente. O sistema automatizado de revisão detecta o uso de frameworks privados no binário e cruza com o `Info.plist`.
+1. **NSUsageDescription is missing**: the binary uses a protected API but has not declared the corresponding string. The automated review system detects the use of private frameworks in the binary and cross-references with `Info.plist`.
 
-2. **String genérica ou enganosa**: strings como `"Required for app functionality"` são rejeitadas. A string deve especificar o dado coletado e o motivo — preferencialmente mencionando a funcionalidade concreta que o usuário reconhecerá.
+2. **Generic or misleading string**: strings like `"Required for app functionality"` are rejected. The string must specify the data collected and the reason — preferably mentioning the concrete feature that the user will recognize.
 
-3. **Permissão solicitada sem uso correspondente**: solicitar acesso à câmera em um app que não tem nenhuma funcionalidade de câmera visível ao usuário resulta em rejeição por coleta desnecessária de dados.
+3. **Permission requested without corresponding use**: requesting camera access in an app that has no camera feature visible to the user results in rejection for unnecessary data collection.
 
-### Boas práticas para strings de permissão
+### Best practices for permission strings
 
-| Chave | Exemplo ruim | Exemplo bom |
+| Key | Bad example | Good example |
 |---|---|---|
 | NSCameraUsageDescription | "App needs camera" | "Scan product barcodes and capture photos for your order" |
 | NSLocationWhenInUseUsageDescription | "Location access required" | "Show your current position on the delivery map" |
 | NSContactsUsageDescription | "Access to contacts" | "Find friends already using the app by matching phone numbers" |
 
-### Checklist antes de submeter
+### Checklist before submitting
 
-- Toda `NSUsageDescription` key está presente para cada API usada (verificar todas as bibliotecas de terceiros)
-- Nenhuma string está vazia ou genérica
-- `PrivacyInfo.xcprivacy` está presente e declara as Required Reason APIs utilizadas
-- Permissões de background location (`NSLocationAlwaysAndWhenInUseUsageDescription`) só estão presentes se o app realmente usa localização em background
-- O fluxo de pré-autorização explica o valor da funcionalidade antes de disparar o diálogo do sistema
-- O app redireciona corretamente para Ajustes quando a permissão está negada, sem travar o usuário
+- Every `NSUsageDescription` key is present for each API used (check all third-party libraries)
+- No string is empty or generic
+- `PrivacyInfo.xcprivacy` is present and declares the Required Reason APIs used
+- Background location permissions (`NSLocationAlwaysAndWhenInUseUsageDescription`) are only present if the app actually uses background location
+- The pre-authorization flow explains the value of the feature before triggering the system dialog
+- The app correctly redirects to Settings when permission is denied, without locking the user
 
 ---
 
-## Referência rápida: biblioteca → chave(s) necessária(s)
+## Quick reference: library → required key(s)
 
-| Biblioteca | Chaves obrigatórias |
+| Library | Required keys |
 |---|---|
-| expo-camera (foto) | NSCameraUsageDescription |
-| expo-camera (vídeo) | NSCameraUsageDescription, NSMicrophoneUsageDescription |
-| expo-image-picker (leitura) | NSPhotoLibraryUsageDescription |
-| expo-image-picker (salvar) | NSPhotoLibraryAddUsageDescription |
+| expo-camera (photo) | NSCameraUsageDescription |
+| expo-camera (video) | NSCameraUsageDescription, NSMicrophoneUsageDescription |
+| expo-image-picker (read) | NSPhotoLibraryUsageDescription |
+| expo-image-picker (save) | NSPhotoLibraryAddUsageDescription |
 | expo-location (foreground) | NSLocationWhenInUseUsageDescription |
 | expo-location (background) | NSLocationWhenInUseUsageDescription, NSLocationAlwaysAndWhenInUseUsageDescription |
 | expo-contacts | NSContactsUsageDescription |
@@ -521,4 +521,4 @@ A Apple rejeita apps quando:
 
 ---
 
-O próximo arquivo desta trilha cobre módulos nativos com TurboModules e como expor APIs Swift diretamente ao JavaScript.
+The next file in this trail covers native modules with TurboModules and how to expose Swift APIs directly to JavaScript.

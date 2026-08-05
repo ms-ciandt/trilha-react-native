@@ -1,14 +1,14 @@
-﻿---
-title: GitHub Actions para Builds iOS
+---
+title: GitHub Actions for iOS Builds
 ---
 
-# GitHub Actions para Builds iOS
+# GitHub Actions for iOS Builds
 
-Configurar um pipeline de CI/CD para iOS no GitHub Actions exige atenção a alguns pontos que diferem do Android: o Xcode só existe em runners macOS, o code signing é feito por certificados provisionados pela Apple e o CocoaPods adiciona uma camada de dependências nativas que precisa de cache dedicado.
+Setting up a CI/CD pipeline for iOS on GitHub Actions requires attention to a few points that differ from Android: Xcode only exists on macOS runners, code signing is handled by Apple-provisioned certificates, and CocoaPods adds a layer of native dependencies that needs dedicated caching.
 
-## Por que macOS é obrigatório
+## Why macOS is mandatory
 
-O Xcode e todas as ferramentas de build iOS (`xcodebuild`, `xcrun`, `simctl`) são exclusivos do macOS. Runners Linux ou Windows não conseguem compilar um `.ipa`. Para especificar o runner correto:
+Xcode and all iOS build tools (`xcodebuild`, `xcrun`, `simctl`) are exclusive to macOS. Linux or Windows runners cannot compile an `.ipa`. To specify the correct runner:
 
 ```yaml
 jobs:
@@ -16,7 +16,7 @@ jobs:
     runs-on: macos-latest
 ```
 
-O `macos-latest` aponta para a versão de macOS mais recente suportada pelo GitHub Actions e inclui múltiplas versões do Xcode pré-instaladas. Para fixar uma versão específica:
+`macos-latest` points to the most recent macOS version supported by GitHub Actions and includes multiple pre-installed Xcode versions. To pin a specific version:
 
 ```yaml
     runs-on: macos-15
@@ -25,13 +25,13 @@ O `macos-latest` aponta para a versão de macOS mais recente suportada pelo GitH
         run: sudo xcode-select -s /Applications/Xcode_16.3.app
 ```
 
-Fixar a versão do Xcode evita que atualizações automáticas do runner quebrem builds por mudanças de API ou comportamento do compilador.
+Pinning the Xcode version prevents automatic runner updates from breaking builds due to API or compiler behavior changes.
 
-## Estratégias de cache
+## Caching strategies
 
-Runners macOS são significativamente mais caros em minutos de CI do que Linux. Cache bem configurado reduz o tempo de build de 20-30 minutos para 8-12 minutos nas execuções subsequentes.
+macOS runners are significantly more expensive in CI minutes than Linux. Well-configured caching reduces build time from 20–30 minutes to 8–12 minutes on subsequent runs.
 
-### Cache de node_modules
+### Cache node_modules
 
 ```yaml
       - name: Cache node_modules
@@ -43,11 +43,11 @@ Runners macOS são significativamente mais caros em minutos de CI do que Linux. 
             ${{ runner.os }}-node-
 ```
 
-A chave usa o hash do `package-lock.json` para invalidar o cache quando as dependências mudam.
+The key uses the hash of `package-lock.json` to invalidate the cache when dependencies change.
 
-### Cache de CocoaPods
+### Cache CocoaPods
 
-O diretório `ios/Pods` contém as dependências nativas e pode ocupar 500 MB ou mais em projetos maiores. A chave deve considerar o `Podfile.lock`, que registra as versões exatas de cada pod resolvido:
+The `ios/Pods` directory contains native dependencies and can occupy 500 MB or more in larger projects. The key should account for `Podfile.lock`, which records the exact versions of each resolved pod:
 
 ```yaml
       - name: Cache CocoaPods
@@ -61,11 +61,11 @@ O diretório `ios/Pods` contém as dependências nativas e pode ocupar 500 MB ou
             ${{ runner.os }}-pods-
 ```
 
-Usar `~/.cocoapods` no path inclui o repositório de specs do CocoaPods, evitando o download do índice completo a cada run.
+Including `~/.cocoapods` in the path caches the CocoaPods spec repository, avoiding downloading the full index on every run.
 
-### Cache de binários Hermes pré-compilados
+### Cache pre-built Hermes binaries
 
-O React Native 0.76+ usa Hermes como engine padrão. Os binários do Hermes são baixados como artefatos durante o `pod install` e podem ser cacheados separadamente:
+React Native 0.76+ uses Hermes as the default engine. Hermes binaries are downloaded as artifacts during `pod install` and can be cached separately:
 
 ```yaml
       - name: Cache Hermes prebuilt binaries
@@ -77,31 +77,31 @@ O React Native 0.76+ usa Hermes como engine padrão. Os binários do Hermes são
           key: ${{ runner.os }}-hermes-${{ hashFiles('node_modules/react-native/sdks/.hermesversion') }}
 ```
 
-O arquivo `.hermesversion` dentro do pacote `react-native` determina qual binário do Hermes será utilizado, tornando-o a chave de invalidação correta.
+The `.hermesversion` file inside the `react-native` package determines which Hermes binary will be used, making it the correct invalidation key.
 
-## Code signing em CI
+## Code signing in CI
 
-Code signing é a parte mais complexa do CI/CD para iOS. Existem duas abordagens principais: Fastlane Match (recomendado para times) e importação manual de certificados.
+Code signing is the most complex part of iOS CI/CD. There are two main approaches: Fastlane Match (recommended for teams) and manual certificate import.
 
 ### Fastlane Match
 
-O Match gerencia certificados e provisioning profiles em um repositório Git privado (ou bucket S3), criptografado com senha. Em CI, ele baixa e instala automaticamente os assets de signing:
+Match manages certificates and provisioning profiles in a private Git repository (or S3 bucket), encrypted with a password. In CI, it automatically downloads and installs the signing assets:
 
-Secrets necessários no GitHub:
-- `MATCH_PASSWORD`: senha de criptografia do repositório Match
-- `MATCH_GIT_URL`: URL do repositório Git privado com os certificados
-- `MATCH_GIT_BASIC_AUTHORIZATION`: token de acesso em Base64 para o repositório Match
-- `APP_STORE_CONNECT_API_KEY_KEY_ID`: ID da chave da API App Store Connect
-- `APP_STORE_CONNECT_API_KEY_ISSUER_ID`: Issuer ID da API
-- `APP_STORE_CONNECT_API_KEY_KEY`: conteúdo da chave privada `.p8`
+Required secrets in GitHub:
+- `MATCH_PASSWORD`: encryption password for the Match repository
+- `MATCH_GIT_URL`: URL of the private Git repository with certificates
+- `MATCH_GIT_BASIC_AUTHORIZATION`: Base64-encoded access token for the Match repository
+- `APP_STORE_CONNECT_API_KEY_KEY_ID`: App Store Connect API key ID
+- `APP_STORE_CONNECT_API_KEY_ISSUER_ID`: API Issuer ID
+- `APP_STORE_CONNECT_API_KEY_KEY`: contents of the `.p8` private key
 
-`Fastfile` com lanes para TestFlight e App Store:
+`Fastfile` with lanes for TestFlight and App Store:
 
 ```ruby
 default_platform(:ios)
 
 platform :ios do
-  desc "Build e upload para TestFlight"
+  desc "Build and upload to TestFlight"
   lane :beta do
     api_key = app_store_connect_api_key(
       key_id: ENV["APP_STORE_CONNECT_API_KEY_KEY_ID"],
@@ -131,7 +131,7 @@ platform :ios do
     )
   end
 
-  desc "Build e upload para App Store (release)"
+  desc "Build and upload to App Store (release)"
   lane :release do
     api_key = app_store_connect_api_key(
       key_id: ENV["APP_STORE_CONNECT_API_KEY_KEY_ID"],
@@ -164,9 +164,9 @@ platform :ios do
 end
 ```
 
-### Importação manual de certificados
+### Manual certificate import
 
-Para projetos que não usam Match, é possível importar certificados e profiles diretamente via secrets:
+For projects that do not use Match, it is possible to import certificates and profiles directly via secrets:
 
 ```yaml
       - name: Install Apple certificate
@@ -197,9 +197,9 @@ Para projetos que não usam Match, é possível importar certificados e profiles
           cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
 ```
 
-## Workflow completo
+## Complete workflow
 
-### Trigger: push para main vai para TestFlight; tag vai para App Store
+### Trigger: push to main goes to TestFlight; tag goes to App Store
 
 ```yaml
 name: iOS CI/CD
@@ -216,7 +216,7 @@ on:
 
 jobs:
   build-ios:
-    name: Build e Deploy iOS
+    name: Build and Deploy iOS
     runs-on: macos-15
     if: github.event_name == 'push'
 
@@ -265,14 +265,14 @@ jobs:
         working-directory: ios
         run: pod install --repo-update
 
-      - name: Setup Ruby e Fastlane
+      - name: Setup Ruby and Fastlane
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.3'
           bundler-cache: true
           working-directory: ios
 
-      - name: Run Fastlane Match e Build para TestFlight
+      - name: Run Fastlane Match and Build for TestFlight
         if: github.ref == 'refs/heads/main'
         working-directory: ios
         env:
@@ -284,7 +284,7 @@ jobs:
           APP_STORE_CONNECT_API_KEY_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY_KEY }}
         run: bundle exec fastlane beta
 
-      - name: Run Fastlane Match e Build para App Store
+      - name: Run Fastlane Match and Build for App Store
         if: startsWith(github.ref, 'refs/tags/v')
         working-directory: ios
         env:
@@ -296,7 +296,7 @@ jobs:
           APP_STORE_CONNECT_API_KEY_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY_KEY }}
         run: bundle exec fastlane release
 
-      - name: Upload IPA como artefato
+      - name: Upload IPA as artifact
         uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -305,9 +305,9 @@ jobs:
           retention-days: 7
 ```
 
-## Jobs paralelos: iOS e Android
+## Parallel jobs: iOS and Android
 
-Quando o repositório mantém apps iOS e Android no mesmo monorepo, é possível executar os builds em paralelo, reduzindo o tempo total de CI:
+When the repository maintains iOS and Android apps in the same monorepo, it is possible to run builds in parallel, reducing total CI time:
 
 ```yaml
 name: Mobile CI/CD
@@ -383,38 +383,38 @@ jobs:
           ANDROID_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
 ```
 
-Os dois jobs rodam simultaneamente. O GitHub Actions aloca runners independentes para cada job, e o iOS job não precisa aguardar o Android terminar.
+Both jobs run simultaneously. GitHub Actions allocates independent runners for each job, and the iOS job does not need to wait for Android to finish.
 
 ## GitHub Actions vs Xcode Cloud
 
-| Critério | GitHub Actions | Xcode Cloud |
+| Criterion | GitHub Actions | Xcode Cloud |
 |---|---|---|
-| Integração com repositório | Qualquer host Git | GitHub, Bitbucket, GitLab |
-| Custo | Pago por minuto de runner macOS (~10x Linux) | Incluído no plano Apple Developer (25h/mês grátis) |
-| Configuração | YAML no repositório | Interface gráfica no Xcode / App Store Connect |
-| Controle de ambiente | Total (escolha de SO, Xcode, ferramentas) | Limitado às versões suportadas pela Apple |
-| Suporte Android | Sim (runners Linux) | Nao (apenas Apple platforms) |
-| Secrets e variáveis | GitHub Secrets nativo | Variáveis de ambiente no App Store Connect |
-| Notificações | GitHub Checks, Slack, email | App Store Connect, TestFlight |
-| Fastlane | Compatível e amplamente usado | Parcialmente suportado (sem `gym`; usa `xcodebuild` internamente) |
-| Artefatos de build | `actions/upload-artifact` | Armazenamento gerenciado pela Apple |
+| Repository integration | Any Git host | GitHub, Bitbucket, GitLab |
+| Cost | Paid per macOS runner minute (~10x Linux) | Included in Apple Developer plan (25h/month free) |
+| Configuration | YAML in repository | Graphical interface in Xcode / App Store Connect |
+| Environment control | Full (choose OS, Xcode, tools) | Limited to Apple-supported versions |
+| Android support | Yes (Linux runners) | No (Apple platforms only) |
+| Secrets and variables | GitHub Secrets native | Environment variables in App Store Connect |
+| Notifications | GitHub Checks, Slack, email | App Store Connect, TestFlight |
+| Fastlane | Compatible and widely used | Partially supported (no `gym`; uses `xcodebuild` internally) |
+| Build artifacts | `actions/upload-artifact` | Apple-managed storage |
 
-Para times que desenvolvem apenas para plataformas Apple e usam Xcode como IDE principal, o Xcode Cloud simplifica a configuração e elimina o gerenciamento de runners. Para times cross-platform com Android + iOS no mesmo repositório, o GitHub Actions oferece um pipeline unificado com maior flexibilidade.
+For teams developing exclusively for Apple platforms and using Xcode as the primary IDE, Xcode Cloud simplifies configuration and eliminates runner management. For cross-platform teams with Android + iOS in the same repository, GitHub Actions offers a unified pipeline with greater flexibility.
 
-## Solução de problemas comuns
+## Common troubleshooting
 
-**Code signing falha com "No signing certificate found"**
+**Code signing fails with "No signing certificate found"**
 
-Verificar se o Match foi executado com `readonly: false` ao menos uma vez para criar os certificados no repositório de destino. Em CI, usar sempre `readonly: true`.
+Check that Match was run with `readonly: false` at least once to create the certificates in the target repository. In CI, always use `readonly: true`.
 
-**Pod install falha com "CDN: trunk Repo update failed"**
+**Pod install fails with "CDN: trunk Repo update failed"**
 
-Adicionar `--repo-update` ao comando `pod install` ou forçar o uso do repositório de specs local via `source 'https://cdn.cocoapods.org/'` no `Podfile`.
+Add `--repo-update` to the `pod install` command or force the use of the local specs repository via `source 'https://cdn.cocoapods.org/'` in the `Podfile`.
 
-**Build demora mais de 30 minutos mesmo com cache**
+**Build takes more than 30 minutes even with cache**
 
-Verificar se o cache de CocoaPods está sendo restaurado corretamente. Se o `Podfile.lock` mudar frequentemente, considerar separar o cache de `~/.cocoapods` (specs do repositório) do cache de `ios/Pods` (dependências compiladas), pois o repositório de specs muda com muito menos frequência.
+Check that the CocoaPods cache is being restored correctly. If `Podfile.lock` changes frequently, consider separating the cache for `~/.cocoapods` (specs repository) from `ios/Pods` (compiled dependencies), since the specs repository changes much less frequently.
 
-**Xcode Cloud não encontra o scheme**
+**Xcode Cloud cannot find the scheme**
 
-O scheme precisa estar marcado como "Shared" no Xcode (`Product > Scheme > Manage Schemes > Shared`). Schemes não compartilhados existem apenas na máquina local e não são commitados no repositório.
+The scheme needs to be marked as "Shared" in Xcode (`Product > Scheme > Manage Schemes > Shared`). Non-shared schemes only exist on the local machine and are not committed to the repository.

@@ -1,16 +1,16 @@
-﻿---
-title: SwiftUI para React — Mapeamento de Conceitos
+---
+title: SwiftUI to React — Concept Mapping
 ---
 
-Se você já desenvolve com SwiftUI, os conceitos do React vão soar familiares: ambos são declarativos, orientados a componentes e reagem a mudanças de estado automaticamente. A diferença está na linguagem e nas convenções — não no paradigma.
+If you already develop with SwiftUI, React's concepts will feel familiar: both are declarative, component-oriented, and react to state changes automatically. The difference lies in the language and conventions — not in the paradigm.
 
-Este documento mapeia cada padrão SwiftUI para o equivalente em React/React Native, com exemplos lado a lado.
+This document maps each SwiftUI pattern to its React/React Native equivalent, with side-by-side examples.
 
 ---
 
 ## View struct → Function Component
 
-No SwiftUI, uma `View` é uma struct que implementa o protocolo `View` e expõe a propriedade computada `body`. No React, o equivalente é uma função que retorna JSX.
+In SwiftUI, a `View` is a struct that implements the `View` protocol and exposes the computed property `body`. In React, the equivalent is a function that returns JSX.
 
 **SwiftUI**
 
@@ -45,14 +45,14 @@ export function GreetingView({ name }: GreetingProps) {
 ```
 
 :::info body property → return JSX
-A propriedade `body` do SwiftUI é equivalente ao bloco `return` de um componente React. Ambos descrevem a árvore de UI que o framework deve renderizar. Você nunca imperativamente monta a tela — você descreve o que ela deve exibir dado o estado atual.
+SwiftUI's `body` property is equivalent to the `return` block of a React component. Both describe the UI tree that the framework should render. You never imperatively mount the screen — you describe what it should display given the current state.
 :::
 
 ---
 
 ## @State → useState
 
-`@State` no SwiftUI é uma fonte de verdade local para a view. Quando muda, a view rerenderiza. O equivalente direto no React é o hook `useState`.
+`@State` in SwiftUI is a local source of truth for the view. When it changes, the view re-renders. The direct equivalent in React is the `useState` hook.
 
 **SwiftUI**
 
@@ -89,15 +89,15 @@ export function CounterView() {
 }
 ```
 
-:::info Imutabilidade no React
-Diferente do SwiftUI onde você pode atribuir diretamente ao `@State` (`count += 1`), no React você nunca muta o estado diretamente. Sempre use o setter retornado pelo `useState`. Isso permite ao React detectar a mudança e agendar a rerenderização.
+:::info Immutability in React
+Unlike SwiftUI where you can assign directly to `@State` (`count += 1`), in React you never mutate state directly. Always use the setter returned by `useState`. This allows React to detect the change and schedule a re-render.
 :::
 
 ---
 
 ## @Binding → props + callback
 
-`@Binding` cria um link bidirecional entre a view pai e a filha — a filha pode ler e modificar o estado do pai. No React, esse padrão é implementado passando o valor e uma função de atualização como props separadas.
+`@Binding` creates a two-way link between a parent and child view — the child can read and modify the parent's state. In React, this pattern is implemented by passing the value and an update function as separate props.
 
 **SwiftUI**
 
@@ -145,15 +145,15 @@ export function ParentView() {
 }
 ```
 
-:::info Fluxo unidirecional de dados
-No SwiftUI, `@Binding` mascara o fato de que os dados fluem do pai. No React esse fluxo é explícito: o pai passa `value` e `onChange`, a filha chama `onChange` quando quer atualizar. Isso é chamado de "controlled component" e é um padrão central no React.
+:::info Unidirectional data flow
+In SwiftUI, `@Binding` masks the fact that data flows from the parent. In React this flow is explicit: the parent passes `value` and `onChange`, and the child calls `onChange` when it wants to update. This is called a "controlled component" and is a central pattern in React.
 :::
 
 ---
 
-## @ObservableObject → Zustand (ou useContext)
+## @ObservableObject → Zustand (or useContext)
 
-`@ObservableObject` com `@Published` encapsula estado compartilhado em uma classe observável. No React Native, o equivalente mais próximo para estado global simples é o Zustand; para estado de escopo médio, `useContext` com `useReducer`.
+`@ObservableObject` with `@Published` encapsulates shared state in an observable class. In React Native, the closest equivalent for simple global state is Zustand; for medium-scope state, `useContext` with `useReducer`.
 
 **SwiftUI**
 
@@ -177,7 +177,7 @@ struct CartView: View {
 }
 ```
 
-**React Native com Zustand (TSX)**
+**React Native with Zustand (TSX)**
 
 ```tsx
 import { create } from 'zustand';
@@ -206,15 +206,15 @@ export function CartView() {
 }
 ```
 
-:::info Por que Zustand?
-`@ObservableObject` é uma classe com identidade — você a instancia e passa para as views. O Zustand segue a mesma ideia: uma store centralizada com estado e ações. A diferença é que o Zustand é baseado em closures e hooks, sem a necessidade de classes ou decorators.
+:::info Why Zustand?
+`@ObservableObject` is a class with identity — you instantiate it and pass it to views. Zustand follows the same idea: a centralized store with state and actions. The difference is that Zustand is based on closures and hooks, without the need for classes or decorators.
 :::
 
 ---
 
 ## @EnvironmentObject → React Context
 
-`@EnvironmentObject` injeta um objeto compartilhado na hierarquia de views sem passá-lo explicitamente por cada nível. O equivalente no React é o `Context`.
+`@EnvironmentObject` injects a shared object into the view hierarchy without explicitly passing it through each level. The equivalent in React is `Context`.
 
 **SwiftUI**
 
@@ -276,9 +276,9 @@ function ContentView() {
 
 ---
 
-## ViewModifier → StyleSheet ou Styled Components
+## ViewModifier → StyleSheet or Styled Components
 
-No SwiftUI, `ViewModifier` encapsula um conjunto de modificações visuais reutilizáveis. No React Native, o equivalente é um objeto de estilo no `StyleSheet.create` ou uma função que retorna estilos compostos.
+In SwiftUI, `ViewModifier` encapsulates a reusable set of visual modifications. In React Native, the equivalent is a style object in `StyleSheet.create` or a function that returns composed styles.
 
 **SwiftUI**
 
@@ -341,7 +341,7 @@ export function MyCard() {
 
 ## Conditional Rendering
 
-O SwiftUI usa `if/else` dentro do `body`. O React usa operadores JavaScript diretamente no JSX.
+SwiftUI uses `if/else` inside the `body`. React uses JavaScript operators directly in JSX.
 
 **SwiftUI**
 
@@ -379,7 +379,7 @@ export function StatusView({ isLoggedIn }: StatusViewProps) {
 }
 ```
 
-Para renderizar algo apenas quando uma condição é verdadeira, use `&&`:
+To render something only when a condition is true, use `&&`:
 
 ```tsx
 {isLoggedIn && <Text>Welcome back!</Text>}
@@ -389,7 +389,7 @@ Para renderizar algo apenas quando uma condição é verdadeira, use `&&`:
 
 ## ForEach → Array.map()
 
-O SwiftUI tem `ForEach` para iterar sobre coleções dentro do `body`. No React, você usa `.map()` nativo do JavaScript.
+SwiftUI has `ForEach` to iterate over collections inside `body`. In React, you use JavaScript's native `.map()`.
 
 **SwiftUI**
 
@@ -423,11 +423,11 @@ export function FruitList() {
 }
 ```
 
-:::info A prop key
-Assim como o parâmetro `id` no `ForEach` do SwiftUI identifica cada item para o framework, a prop `key` no React serve ao mesmo propósito: permite ao reconciliador identificar quais itens mudaram, foram adicionados ou removidos sem recriar toda a lista.
+:::info The key prop
+Just as the `id` parameter in SwiftUI's `ForEach` identifies each item for the framework, the `key` prop in React serves the same purpose: it allows the reconciler to identify which items changed, were added, or removed without recreating the entire list.
 :::
 
-Para listas longas, prefira `FlatList` no React Native, que virtualiza os itens e economiza memória — análogo ao `LazyVStack` com `ForEach`:
+For long lists, prefer `FlatList` in React Native, which virtualizes items and saves memory — analogous to `LazyVStack` with `ForEach`:
 
 ```tsx
 import { FlatList, Text } from 'react-native';
@@ -445,9 +445,9 @@ export function FruitList() {
 
 ---
 
-## onChange → useEffect com dependency array
+## onChange → useEffect with dependency array
 
-O modificador `.onChange(of:)` do SwiftUI executa uma ação quando um valor específico muda. O `useEffect` com dependency array faz o mesmo no React.
+SwiftUI's `.onChange(of:)` modifier runs an action when a specific value changes. `useEffect` with a dependency array does the same in React.
 
 **SwiftUI**
 
@@ -464,7 +464,7 @@ struct SearchView: View {
     }
 
     func fetchResults(for query: String) {
-        // busca assíncrona
+        // async search
     }
 }
 ```
@@ -497,13 +497,13 @@ export function SearchView() {
 }
 
 async function fetchResults(query: string): Promise<string[]> {
-  // busca assíncrona
+  // async search
   return [];
 }
 ```
 
-:::info Limpeza de efeito
-Se `.onChange` no SwiftUI disparar uma operação assíncrona que precisa ser cancelada quando o valor mudar novamente, o `useEffect` suporta isso através de uma função de limpeza. Retorne uma função do `useEffect` para cancelar tarefas pendentes — equivalente a usar `Task` e chamar `task.cancel()` no Swift.
+:::info Effect cleanup
+If `.onChange` in SwiftUI triggers an async operation that needs to be cancelled when the value changes again, `useEffect` supports this through a cleanup function. Return a function from `useEffect` to cancel pending tasks — equivalent to using `Task` and calling `task.cancel()` in Swift.
 :::
 
 ```tsx
@@ -522,9 +522,9 @@ useEffect(() => {
 
 ---
 
-## Computed Properties para Subviews → Helper Components
+## Computed Properties for Subviews → Helper Components
 
-No SwiftUI, é comum extrair partes da `body` em propriedades computadas para organizar o código. No React, o equivalente é extrair em funções ou componentes auxiliares.
+In SwiftUI, it is common to extract parts of `body` into computed properties to organize code. In React, the equivalent is extracting into helper functions or components.
 
 **SwiftUI**
 
@@ -543,7 +543,7 @@ struct ProfileView: View {
     var body: some View {
         ScrollView {
             header
-            // restante do conteúdo
+            // remaining content
         }
     }
 }
@@ -570,21 +570,21 @@ export function ProfileView({ username, bio }: ProfileViewProps) {
   return (
     <ScrollView>
       <ProfileHeader username={username} bio={bio} />
-      {/* restante do conteúdo */}
+      {/* remaining content */}
     </ScrollView>
   );
 }
 ```
 
-:::info Componente vs propriedade computada
-No SwiftUI, propriedades computadas que retornam `some View` são avaliadas inline e não têm estado próprio. No React, componentes separados têm seu próprio ciclo de vida e podem ter `useState` independente. Se o helper não precisa de estado, pode também ser uma função regular chamada dentro do `return` — mas a convenção do React é preferir componentes separados para facilitar testes e reuso.
+:::info Component vs computed property
+In SwiftUI, computed properties returning `some View` are evaluated inline and have no state of their own. In React, separate components have their own lifecycle and can have independent `useState`. If the helper needs no state, it can also be a regular function called inside `return` — but the React convention is to prefer separate components for easier testing and reuse.
 :::
 
 ---
 
 ## Previews → React DevTools
 
-O SwiftUI tem `#Preview` para visualizar componentes em tempo real no Xcode. No React Native, o equivalente é o React DevTools combinado com hot reload no Expo Go ou Metro.
+SwiftUI has `#Preview` to visualize components in real time in Xcode. In React Native, the equivalent is React DevTools combined with hot reload in Expo Go or Metro.
 
 **SwiftUI**
 
@@ -600,9 +600,9 @@ O SwiftUI tem `#Preview` para visualizar componentes em tempo real no Xcode. No 
 npx expo start
 ```
 
-Abra o Expo Go no dispositivo ou emulador. Toda mudança salva é refletida instantaneamente via Fast Refresh — o estado do componente é preservado quando possível, assim como os previews do SwiftUI mantêm o estado entre compilações.
+Open Expo Go on the device or emulator. Every saved change is reflected instantly via Fast Refresh — component state is preserved when possible, just as SwiftUI previews maintain state between compilations.
 
-Para isolar componentes visualmente, ferramentas como **Storybook for React Native** oferecem uma experiência próxima aos previews do Xcode:
+To isolate components visually, tools like **Storybook for React Native** provide an experience close to Xcode previews:
 
 ```bash
 npx storybook@latest init
@@ -610,21 +610,21 @@ npx storybook@latest init
 
 ---
 
-## Resumo do Mapeamento
+## Concept Mapping Summary
 
 | SwiftUI | React Native |
 |---|---|
 | `struct MyView: View` | `function MyView()` |
 | `body: some View` | `return (<JSX />)` |
 | `@State` | `useState` |
-| `@Binding` | prop + callback `onChange` |
+| `@Binding` | prop + `onChange` callback |
 | `@ObservableObject` | Zustand store |
 | `@EnvironmentObject` | `useContext` |
-| `ViewModifier` | `StyleSheet` ou componente wrapper |
-| `ForEach` | `Array.map()` ou `FlatList` |
+| `ViewModifier` | `StyleSheet` or wrapper component |
+| `ForEach` | `Array.map()` or `FlatList` |
 | `.onChange(of:)` | `useEffect([dep])` |
-| Propriedade computada de view | Helper component ou função |
-| `if/else` no body | Ternário `? :` ou `&&` |
+| Computed view property | Helper component or function |
+| `if/else` in body | Ternary `? :` or `&&` |
 | `#Preview` | React DevTools + Fast Refresh |
 
-O paradigma declarativo é o mesmo. A principal adaptação é pensar em termos de JavaScript e hooks em vez de structs e property wrappers — mas a lógica de composição e reatividade que você já domina no SwiftUI transfere diretamente.
+The declarative paradigm is the same. The main adjustment is thinking in terms of JavaScript and hooks instead of structs and property wrappers — but the composition and reactivity logic you already master in SwiftUI transfers directly.

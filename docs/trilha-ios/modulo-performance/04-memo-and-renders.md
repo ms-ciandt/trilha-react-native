@@ -1,18 +1,18 @@
-﻿---
-title: Memo e Otimização de Renders
+---
+title: Memo and Render Optimization
 ---
 
-# Memo e Otimização de Renders
+# Memo and Render Optimization
 
-React renderiza um componente sempre que seu estado ou props mudam. Na maior parte das vezes isso é rápido o suficiente para não importar. Mas em listas longas, animações ou telas com muitos componentes aninhados, renderizações desnecessárias se acumulam e o frame rate cai visivelmente.
+React renders a component whenever its state or props change. Most of the time this is fast enough not to matter. But in long lists, animations, or screens with many nested components, unnecessary re-renders accumulate and the frame rate drops visibly.
 
-Este módulo traduz os padrões de otimização que você já usa em SwiftUI e Swift para o equivalente em React — e, mais importante, ensina quando não aplicar nenhum deles.
+This module translates the optimization patterns you already use in SwiftUI and Swift to their React equivalents — and, more importantly, teaches you when to apply none of them.
 
 ---
 
-## SwiftUI Equatable Body e React.memo
+## SwiftUI Equatable Body and React.memo
 
-Em SwiftUI, quando uma view conforma ao protocolo `Equatable`, o framework pode pular a re-avaliação do `body` se os valores que ela depende não mudaram:
+In SwiftUI, when a view conforms to the `Equatable` protocol, the framework can skip re-evaluating `body` if the values it depends on have not changed:
 
 ```swift
 struct PriceCard: View, Equatable {
@@ -29,9 +29,9 @@ struct PriceCard: View, Equatable {
 }
 ```
 
-O compilador pode invocar `.equatableView()` automaticamente quando detecta que as props são `Equatable`, evitando recálculo do `body` sem necessidade.
+The compiler can invoke `.equatableView()` automatically when it detects that props are `Equatable`, avoiding unnecessary recalculation of `body`.
 
-React tem o equivalente exato: `React.memo`. Ele envolve um componente funcional e só permite re-renderização quando as props mudaram — comparação rasa (shallow) por padrão, exatamente como o `==` padrão do SwiftUI para structs.
+React has the exact equivalent: `React.memo`. It wraps a functional component and only allows re-rendering when props have changed — shallow comparison by default, exactly like SwiftUI's default `==` for structs.
 
 ```tsx
 import React from 'react';
@@ -53,11 +53,11 @@ const PriceCard = React.memo(({ price, currency }: PriceCardProps) => {
 export default PriceCard;
 ```
 
-Quando o componente pai re-renderiza, `PriceCard` só re-renderiza se `price` ou `currency` mudaram. Se os valores forem os mesmos objetos ou primitivos iguais, o React reutiliza o resultado anterior.
+When the parent component re-renders, `PriceCard` only re-renders if `price` or `currency` changed. If the values are the same objects or equal primitives, React reuses the previous result.
 
-### Comparação personalizada com React.memo
+### Custom comparison with React.memo
 
-Assim como você implementa `Equatable` manualmente para structs complexas, `React.memo` aceita um segundo argumento — uma função de comparação:
+Just as you implement `Equatable` manually for complex structs, `React.memo` accepts a second argument — a comparison function:
 
 ```tsx
 const ProductCard = React.memo(
@@ -70,8 +70,8 @@ const ProductCard = React.memo(
     );
   },
   (prevProps, nextProps) => {
-    // retorna true se as props são IGUAIS (pular re-render)
-    // retorna false se as props MUDARAM (re-renderizar)
+    // returns true if props are EQUAL (skip re-render)
+    // returns false if props CHANGED (re-render)
     return (
       prevProps.product.id === nextProps.product.id &&
       prevProps.product.price === nextProps.product.price
@@ -82,9 +82,9 @@ const ProductCard = React.memo(
 
 ---
 
-## SwiftUI Computed Properties e useMemo
+## SwiftUI Computed Properties and useMemo
 
-Em Swift e SwiftUI, você usa propriedades computadas para derivar valores sem armazená-los redundantemente. O compilador não recalcula a propriedade a cada frame — apenas quando os valores base mudam:
+In Swift and SwiftUI, you use computed properties to derive values without storing them redundantly. The compiler does not recalculate the property every frame — only when the base values change:
 
 ```swift
 struct OrderSummary: View {
@@ -100,7 +100,7 @@ struct OrderSummary: View {
 }
 ```
 
-`totalPrice` só é recalculado quando `items` muda. Em React, toda função dentro de um componente funcional é recriada a cada renderização — não há equivalente automático de propriedade computada. É para isso que serve o `useMemo`:
+`totalPrice` is only recalculated when `items` changes. In React, every function inside a functional component is recreated on every render — there is no automatic computed property equivalent. That is what `useMemo` is for:
 
 ```tsx
 import React, { useMemo } from 'react';
@@ -121,11 +121,11 @@ const OrderSummary = ({ items }: OrderSummaryProps) => {
 };
 ```
 
-O array `[items]` é a lista de dependências — análogo a dizer "recalcule apenas quando `items` mudar". Se `items` for a mesma referência de array entre renderizações, `totalPrice` retorna o valor em cache.
+The `[items]` array is the dependency list — analogous to saying "recalculate only when `items` changes". If `items` is the same array reference between renders, `totalPrice` returns the cached value.
 
-### useMemo para valores referenciados por outros hooks
+### useMemo for values referenced by other hooks
 
-`useMemo` também é necessário quando você precisa de estabilidade de referência para um objeto ou array que será passado como prop ou dependência de outro hook:
+`useMemo` is also necessary when you need reference stability for an object or array that will be passed as a prop or as a dependency of another hook:
 
 ```tsx
 const filters = useMemo(() => ({
@@ -134,34 +134,34 @@ const filters = useMemo(() => ({
   category: selectedCategory,
 }), [priceRange, selectedCategory]);
 
-// filters tem referência estável entre renders se as dependências não mudarem
+// filters has a stable reference between renders if dependencies haven't changed
 useEffect(() => {
   fetchProducts(filters);
 }, [filters]);
 ```
 
-Sem o `useMemo`, um objeto literal `{}` sempre cria uma nova referência a cada render, fazendo o `useEffect` disparar em loop.
+Without `useMemo`, an object literal `{}` always creates a new reference on every render, causing `useEffect` to fire in a loop.
 
 ---
 
-## Swift Stored Function Properties e useCallback
+## Swift Stored Function Properties and useCallback
 
-Em Swift, você pode armazenar uma closure como propriedade para que ela não seja recriada a cada vez que o método é chamado:
+In Swift, you can store a closure as a property so it is not recreated every time the method is called:
 
 ```swift
 class ProductViewModel: ObservableObject {
     var onAddToCart: ((Product) -> Void)?
 
-    // a closure é armazenada e tem identidade estável
+    // the closure is stored and has stable identity
     func configure(handler: @escaping (Product) -> Void) {
         self.onAddToCart = handler
     }
 }
 ```
 
-Em componentes React, funções definidas dentro do corpo do componente são recriadas a cada renderização. Quando passadas como props para componentes filhos que usam `React.memo`, isso cancela a memoização — o filho recebe uma "nova" função e re-renderiza de qualquer forma.
+In React components, functions defined inside the component body are recreated on every render. When passed as props to child components that use `React.memo`, this cancels the memoization — the child receives a "new" function and re-renders anyway.
 
-`useCallback` retorna uma versão memoizada da função que só muda quando as dependências mudam:
+`useCallback` returns a memoized version of the function that only changes when its dependencies change:
 
 ```tsx
 import React, { useCallback, useState } from 'react';
@@ -172,7 +172,7 @@ const ProductList = ({ products }: { products: Product[] }) => {
 
   const handleAddToCart = useCallback((product: Product) => {
     setCart(prev => [...prev, product]);
-  }, []); // sem dependências — setCart é estável por garantia do React
+  }, []); // no dependencies — setCart is stable by React's guarantee
 
   return (
     <FlatList
@@ -186,68 +186,68 @@ const ProductList = ({ products }: { products: Product[] }) => {
 };
 ```
 
-Sem `useCallback`, cada render de `ProductList` criaria uma nova função `handleAddToCart`, o que faria cada `ProductCard` memoizado re-renderizar mesmo sem mudança nos dados do produto.
+Without `useCallback`, every render of `ProductList` would create a new `handleAddToCart` function, causing every memoized `ProductCard` to re-render even without changes in the product data.
 
 ---
 
-## Quando Não Memoizar — Otimização Prematura
+## When Not to Memoize — Premature Optimization
 
-Em Swift você não aplica `lazy` em toda propriedade por padrão — só quando o custo de computação justifica. A mesma lógica se aplica aqui.
+In Swift you do not apply `lazy` to every property by default — only when the computation cost justifies it. The same logic applies here.
 
-`React.memo`, `useMemo` e `useCallback` têm custo: o React precisa armazenar os valores anteriores, comparar dependências e gerenciar o cache. Para a maioria dos componentes simples, esse overhead supera o benefício de evitar uma re-renderização barata.
+`React.memo`, `useMemo`, and `useCallback` have a cost: React needs to store previous values, compare dependencies, and manage the cache. For most simple components, this overhead outweighs the benefit of avoiding a cheap re-render.
 
-Não memoize quando:
+Do not memoize when:
 
-- O componente renderiza apenas elementos primitivos simples (texto, ícone estático)
-- O cálculo dentro do `useMemo` é trivial (soma de dois números)
-- O componente quase sempre recebe props diferentes a cada render de qualquer forma
-- Você ainda não mediu e não tem evidência de problema de performance
+- The component renders only simple primitive elements (text, static icon)
+- The calculation inside `useMemo` is trivial (sum of two numbers)
+- The component almost always receives different props on every render anyway
+- You have not measured and have no evidence of a performance problem
 
-Memoize quando:
+Memoize when:
 
-- Há evidência via profiler de renderizações desnecessárias que causam jank
-- O componente é renderizado frequentemente dentro de uma lista longa
-- O cálculo memoizado é genuinamente caro (filtro de grande array, formatação complexa)
-- A referência estável é necessária para evitar efeitos colaterais em `useEffect`
+- There is profiler evidence of unnecessary renders causing jank
+- The component renders frequently inside a long list
+- The memoized calculation is genuinely expensive (large array filter, complex formatting)
+- The stable reference is needed to prevent side effects in `useEffect`
 
-A regra é a mesma que você já conhece em iOS: meça primeiro, otimize depois.
+The rule is the same one you already know in iOS: measure first, optimize later.
 
 ---
 
 ## React DevTools Profiler — Flame Chart
 
-O Profiler do React DevTools é o equivalente ao Instruments Time Profiler, mas focado especificamente em renderizações de componentes.
+The React DevTools Profiler is equivalent to Instruments Time Profiler, but focused specifically on component renders.
 
-Para usar com React Native:
+To use with React Native:
 
-1. Instale o aplicativo standalone React DevTools: `npx react-devtools`
-2. Inicie sua aplicação no simulador ou dispositivo
-3. Vá para a aba "Profiler"
-4. Clique em "Record", interaja com a tela e clique em "Stop"
+1. Install the standalone React DevTools app: `npx react-devtools`
+2. Start your application in the simulator or device
+3. Go to the "Profiler" tab
+4. Click "Record", interact with the screen, and click "Stop"
 
-O flame chart mostra cada commit de renderização. Para cada commit, você vê:
+The flame chart shows each render commit. For each commit, you see:
 
-- Quais componentes foram renderizados (em cores — cinza significa "não renderizou neste commit")
-- Quanto tempo cada componente levou para renderizar
-- Por que o componente renderizou (props changed, state changed, parent re-rendered)
+- Which components rendered (in colors — gray means "did not render in this commit")
+- How long each component took to render
+- Why the component rendered (props changed, state changed, parent re-rendered)
 
-A coluna "Why did this render?" é o ponto de partida para identificar renderizações desnecessárias. Se um componente mostra "parent re-rendered" mas suas props não mudaram, ele é candidato a `React.memo`.
+The "Why did this render?" column is the starting point for identifying unnecessary renders. If a component shows "parent re-rendered" but its props did not change, it is a candidate for `React.memo`.
 
-Para ler o flame chart: componentes mais ao topo da pilha são os pais; barras mais largas significam mais tempo. Diferente do Instruments, o eixo X não é tempo absoluto — é hierarquia de componente no commit.
+To read the flame chart: components higher up the stack are the parents; wider bars mean more time. Unlike Instruments, the X axis is not absolute time — it is component hierarchy in the commit.
 
 ---
 
-## Biblioteca why-did-you-render
+## why-did-you-render library
 
-O `React DevTools Profiler` mostra o que renderizou. A biblioteca `why-did-you-render` (WDYR) mostra por que renderizou, com detalhes de qual prop ou estado mudou — incluindo quando a mudança é desnecessária (mesmo valor, referência diferente).
+The `React DevTools Profiler` shows what rendered. The `why-did-you-render` (WDYR) library shows why it rendered, with details about which prop or state changed — including when the change is unnecessary (same value, different reference).
 
-Instalação:
+Installation:
 
 ```bash
 npm install @welldone-software/why-did-you-render
 ```
 
-Configuração em um arquivo de bootstrap (ex.: `wdyr.ts`), importado antes de tudo no entry point:
+Setup in a bootstrap file (e.g. `wdyr.ts`), imported before everything else in the entry point:
 
 ```ts
 import React from 'react';
@@ -262,7 +262,7 @@ if (__DEV__) {
 }
 ```
 
-Para monitorar um componente específico:
+To monitor a specific component:
 
 ```tsx
 const ProductCard = ({ product, onPress }: ProductCardProps) => {
@@ -278,24 +278,24 @@ ProductCard.whyDidYouRender = true;
 export default React.memo(ProductCard);
 ```
 
-A biblioteca imprimirá no console quando `ProductCard` re-renderizar e qual prop causou a re-renderização — mesmo que o valor seja o mesmo objeto reconstituído. Isso expõe exatamente os casos onde `useCallback` e `useMemo` são necessários.
+The library will print to the console when `ProductCard` re-renders and which prop caused the re-render — even if the value is the same reconstituted object. This exposes exactly the cases where `useCallback` and `useMemo` are needed.
 
 ---
 
-## Divisão de Componentes para Minimizar Escopo de Re-render
+## Component splitting to minimize re-render scope
 
-Em SwiftUI, você divide views em subviews menores não apenas por organização, mas porque o compilador consegue invalidar e re-renderizar subviews individuais sem recalcular toda a view pai. A mesma estratégia funciona em React.
+In SwiftUI, you split views into smaller subviews not only for organization, but because the compiler can invalidate and re-render individual subviews without recalculating the entire parent view. The same strategy works in React.
 
-Se um componente grande gerencia vários estados independentes, uma mudança em qualquer estado re-renderiza tudo. A solução é extrair as partes que dependem de estado específico para componentes filhos:
+If a large component manages several independent states, a change in any state re-renders everything. The solution is to extract the parts that depend on specific state into child components:
 
 ```tsx
-// Antes: um componente grande com múltiplos estados
+// Before: one large component with multiple states
 const ProductScreen = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [cartCount, setCartCount] = useState(0);
   const [filters, setFilters] = useState(defaultFilters);
 
-  // Qualquer mudança re-renderiza SearchBar, CartBadge e FilterPanel juntos
+  // Any change re-renders SearchBar, CartBadge and FilterPanel together
   return (
     <View>
       <SearchBar value={searchQuery} onChange={setSearchQuery} />
@@ -306,7 +306,7 @@ const ProductScreen = () => {
   );
 };
 
-// Depois: estado movido para baixo, cada parte re-renderiza independentemente
+// After: state moved down, each part re-renders independently
 const SearchSection = ({ onQueryChange }: { onQueryChange: (q: string) => void }) => {
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -319,18 +319,18 @@ const SearchSection = ({ onQueryChange }: { onQueryChange: (q: string) => void }
 };
 ```
 
-A regra: mova o estado para o componente mais próximo que precisa dele. Não centralize estado na raiz da tela a menos que múltiplos componentes independentes realmente precisem compartilhá-lo.
+The rule: move state to the closest component that needs it. Do not centralize state at the screen root unless multiple independent components genuinely need to share it.
 
 ---
 
-## Estabilidade de Valor em Context — useMemo para Context Value
+## Context value stability — useMemo for Context Value
 
-O Context API do React tem uma armadilha clássica: quando o provedor re-renderiza, todos os consumidores re-renderizam, independente de quais valores do context eles usam.
+React's Context API has a classic pitfall: when the provider re-renders, all consumers re-render, regardless of which context values they use.
 
-O problema típico:
+The typical problem:
 
 ```tsx
-// Problema: novo objeto criado a cada render do AuthProvider
+// Problem: new object created on every render of AuthProvider
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -343,9 +343,9 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 };
 ```
 
-`{ user, isLoading, setUser }` é um objeto literal novo a cada render do `AuthProvider`. Qualquer componente que consome `AuthContext` re-renderiza, mesmo que `user` e `isLoading` não tenham mudado.
+`{ user, isLoading, setUser }` is a new object literal on every render of `AuthProvider`. Any component that consumes `AuthContext` re-renders, even if `user` and `isLoading` have not changed.
 
-A correção com `useMemo`:
+The fix with `useMemo`:
 
 ```tsx
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -356,7 +356,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     user,
     isLoading,
     setUser,
-  }), [user, isLoading]); // setUser é estável — não precisa ser dependência
+  }), [user, isLoading]); // setUser is stable — no need to be a dependency
 
   return (
     <AuthContext.Provider value={contextValue}>
@@ -366,19 +366,19 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 };
 ```
 
-Agora o objeto do context só muda de referência quando `user` ou `isLoading` mudam, reduzindo significativamente re-renderizações de consumidores.
+Now the context object only changes reference when `user` or `isLoading` change, significantly reducing consumer re-renders.
 
 ---
 
-## useState vs useReducer para Estado Complexo
+## useState vs useReducer for complex state
 
-Em Swift, quando o estado de uma tela tem múltiplas propriedades relacionadas e transições que dependem do estado atual, você tende a modelar com um `enum` ou uma struct de estado imutável com um método de transição. `useReducer` segue a mesma lógica.
+In Swift, when a screen's state has multiple related properties and transitions that depend on the current state, you tend to model it with an `enum` or an immutable state struct with a transition method. `useReducer` follows the same logic.
 
-Prefira `useReducer` quando:
+Prefer `useReducer` when:
 
-- Há múltiplos valores de estado que mudam juntos de forma coordenada
-- A próxima transição depende do estado atual
-- A lógica de atualização de estado é complexa o suficiente para merecer teste isolado
+- There are multiple state values that change together in a coordinated way
+- The next transition depends on the current state
+- The state update logic is complex enough to deserve isolated testing
 
 ```tsx
 type FetchState<T> =
@@ -425,13 +425,13 @@ const ProductList = () => {
 };
 ```
 
-Além da clareza, `dispatch` tem referência estável entre renders — pode ser passado como prop ou colocado em `useEffect` sem precisar de `useCallback`.
+Beyond clarity, `dispatch` has a stable reference between renders — it can be passed as a prop or placed in `useEffect` without needing `useCallback`.
 
 ---
 
 ## React 18 Concurrent Features — startTransition
 
-Em iOS, você separa trabalho por prioridade. Tarefas urgentes vão na main thread; processamento pesado vai em `DispatchQueue.global(qos: .background)`:
+On iOS, you separate work by priority. Urgent tasks go on the main thread; heavy processing goes on `DispatchQueue.global(qos: .background)`:
 
 ```swift
 DispatchQueue.global(qos: .userInitiated).async {
@@ -442,7 +442,7 @@ DispatchQueue.global(qos: .userInitiated).async {
 }
 ```
 
-O React 18 introduz um mecanismo equivalente de priorização de atualizações de estado: `startTransition`. Ele marca uma atualização de estado como não urgente — o React pode interrompê-la para processar interações de maior prioridade como input do usuário.
+React 18 introduces an equivalent mechanism for prioritizing state updates: `startTransition`. It marks a state update as non-urgent — React can interrupt it to process higher-priority interactions like user input.
 
 ```tsx
 import React, { useState, useTransition } from 'react';
@@ -454,10 +454,10 @@ const SearchScreen = () => {
   const [isPending, startTransition] = useTransition();
 
   const handleSearch = (text: string) => {
-    // Atualização urgente — campo de input responde imediatamente
+    // Urgent update — the input field responds immediately
     setQuery(text);
 
-    // Atualização não urgente — pode ser interrompida se o usuário digitar novamente
+    // Non-urgent update — can be interrupted if the user types again
     startTransition(() => {
       const filtered = allProducts.filter(p =>
         p.name.toLowerCase().includes(text.toLowerCase())
@@ -476,21 +476,21 @@ const SearchScreen = () => {
 };
 ```
 
-`isPending` indica que há uma transição em andamento — use para mostrar um indicador de carregamento sem bloquear o input. O campo de texto sempre responde com latência zero; a lista atualiza assim que o React tiver tempo disponível.
+`isPending` indicates that a transition is in progress — use it to show a loading indicator without blocking the input. The text field always responds with zero latency; the list updates as soon as React has time available.
 
-`startTransition` não é um substituto para `useCallback` ou `React.memo` — cada um resolve um problema diferente. `startTransition` prioriza o que renderiza; `React.memo` evita renderizações desnecessárias; `useMemo` e `useCallback` mantêm estabilidade de referência.
+`startTransition` is not a replacement for `useCallback` or `React.memo` — each solves a different problem. `startTransition` prioritizes what renders; `React.memo` avoids unnecessary renders; `useMemo` and `useCallback` maintain reference stability.
 
 ---
 
-## Resumo de Equivalências
+## Equivalence Summary
 
 | Swift / SwiftUI | React Native |
 |---|---|
 | `View: Equatable` + `.equatableView()` | `React.memo(Component)` |
-| Propriedade computada | `useMemo(() => value, [deps])` |
-| Closure armazenada como propriedade | `useCallback(() => fn, [deps])` |
-| `DispatchQueue.global` para trabalho de baixa prioridade | `startTransition(() => setState(...))` |
-| `enum` de estado + método de transição | `useReducer(reducer, initialState)` |
-| Time Profiler no Instruments | React DevTools Profiler (flame chart) |
+| Computed property | `useMemo(() => value, [deps])` |
+| Closure stored as property | `useCallback(() => fn, [deps])` |
+| `DispatchQueue.global` for low-priority work | `startTransition(() => setState(...))` |
+| `enum` state + transition method | `useReducer(reducer, initialState)` |
+| Time Profiler in Instruments | React DevTools Profiler (flame chart) |
 
-O princípio subjacente é o mesmo em ambas as plataformas: entenda o modelo de renderização, meça antes de otimizar, e aplique as ferramentas cirurgicamente onde os dados mostram que há problema.
+The underlying principle is the same on both platforms: understand the rendering model, measure before optimizing, and apply the tools surgically where data shows there is a problem.
