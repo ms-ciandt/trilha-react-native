@@ -4,22 +4,28 @@ title: Jest Unit Tests for iOS Developers
 
 # Testes Unitários com Jest para Desenvolvedores iOS
 
-Se você já escreveu testes Swift com XCTest, você já entende o modelo mental por trás dos testes unitários: isole um comportamento, verifique se ele produz o resultado esperado e repita. Jest funciona da mesma forma. O vocabulário é diferente, o ferramental é nativo de JavaScript, e alguns padrões assíncronos exigem um pequeno ajuste de raciocínio — mas nada aqui é conceitualmente novo.
+Se você já escreveu testes Swift com Swift Testing, você já entende o modelo mental por trás dos testes unitários: isole um comportamento, verifique se ele produz o resultado esperado e repita. Jest funciona da mesma forma. O vocabulário é diferente, o ferramental é nativo de JavaScript, e alguns padrões exigem um pequeno ajuste de raciocínio — mas nada aqui é conceitualmente novo.
 
-Esta página mapeia seu conhecimento de XCTest diretamente para Jest, para que você possa ser produtivo imediatamente.
+Swift Testing (introduzido no Xcode 16 / Swift 6) é o substituto moderno do XCTest. Sua API baseada em macros — `@Suite`, `@Test`, `#expect` — é estruturalmente mais próxima do Jest do que o XCTest jamais foi, o que torna o mapeamento especialmente direto.
+
+Esta página mapeia seu conhecimento de Swift Testing para Jest, para que você possa ser produtivo imediatamente.
 
 ---
 
-## Estrutura de arquivo de teste: XCTestCase vs blocos describe/it
+## Estrutura de arquivo de teste: @Suite/@Test vs blocos describe/it
 
-Em Swift você cria uma subclasse de `XCTestCase` e escreve métodos com o prefixo `test`. Jest usa funções livres — `describe`, `it` e `test` — que você chama dentro de um arquivo `.test.ts` ou `.spec.ts` simples. Não há classe para ser subclassificada.
+No Swift Testing você marca uma struct ou classe com `@Suite` e anota cada função de teste com `@Test`. Jest usa funções livres — `describe`, `it` e `test` — dentro de um arquivo `.test.ts` ou `.spec.ts` simples. Não há classe para ser subclassificada em nenhum dos dois frameworks.
 
 ```swift
-// Swift — XCTest
-class CartCalculatorTests: XCTestCase {
-    func testTotalWithDiscount() {
+// Swift — Swift Testing
+import Testing
+
+@Suite("CartCalculator")
+struct CartCalculatorTests {
+    @Test("applies discount to the total")
+    func totalWithDiscount() {
         let result = CartCalculator.total(items: [10.0, 20.0], discount: 0.1)
-        XCTAssertEqual(result, 27.0)
+        #expect(result == 27.0)
     }
 }
 ```
@@ -36,9 +42,22 @@ describe('CartCalculator', () => {
 });
 ```
 
-`describe` agrupa testes relacionados — equivalente ao nome da classe no XCTest. `it` e `test` são aliases idênticos; `it` se lê de forma mais natural para descrições orientadas a comportamento, enquanto `test` lê bem para nomes diretos de funções. Use o que sua equipe preferir e seja consistente.
+`describe` agrupa testes relacionados — equivalente a `@Suite`. `it` e `test` são aliases idênticos; `it` se lê de forma mais natural para descrições orientadas a comportamento, enquanto `test` lê bem para nomes diretos de funções. Use o que sua equipe preferir e seja consistente.
 
-Aninhar blocos `describe` é válido e espelha o padrão de `XCTestCase` aninhado que algumas equipes usam para sub-cenários:
+Aninhar blocos `describe` é válido e espelha o aninhamento de tipos `@Suite` para sub-cenários:
+
+```swift
+// Swift Testing — suites aninhadas
+@Suite("CartCalculator")
+struct CartCalculatorTests {
+    @Suite("when the cart is empty")
+    struct EmptyCart {
+        @Test func returnsZero() {
+            #expect(CartCalculator.total(items: [], discount: 0) == 0)
+        }
+    }
+}
+```
 
 ```typescript
 describe('CartCalculator', () => {
@@ -58,19 +77,20 @@ describe('CartCalculator', () => {
 
 ---
 
-## Asserções: XCTAssert* vs matchers do expect
+## Asserções: #expect/#require vs matchers do expect
 
-XCTest tem uma família de funções `XCTAssert*`. Jest centraliza tudo por meio de uma única chamada `expect(value)` seguida de um método matcher.
+O Swift Testing substituiu a família `XCTAssert*` por duas macros: `#expect` para asserções suaves (o teste continua em caso de falha) e `#require` para asserções rígidas (o teste para imediatamente). Jest centraliza tudo por meio de uma única chamada `expect(value)` seguida de um método matcher.
 
-| XCTest | Jest |
+| Swift Testing | Jest |
 |---|---|
-| `XCTAssertEqual(a, b)` | `expect(a).toBe(b)` para primitivos, `expect(a).toEqual(b)` para objetos/arrays |
-| `XCTAssertNotEqual(a, b)` | `expect(a).not.toBe(b)` |
-| `XCTAssertTrue(x)` | `expect(x).toBeTruthy()` |
-| `XCTAssertFalse(x)` | `expect(x).toBeFalsy()` |
-| `XCTAssertNil(x)` | `expect(x).toBeNull()` ou `expect(x).toBeUndefined()` |
-| `XCTAssertNotNil(x)` | `expect(x).toBeDefined()` |
-| `XCTAssertThrowsError(try f())` | `expect(() => f()).toThrow()` |
+| `#expect(a == b)` | `expect(a).toBe(b)` para primitivos, `expect(a).toEqual(b)` para objetos/arrays |
+| `#expect(a != b)` | `expect(a).not.toBe(b)` |
+| `#expect(x)` | `expect(x).toBeTruthy()` |
+| `#expect(!x)` | `expect(x).toBeFalsy()` |
+| `#expect(x == nil)` | `expect(x).toBeNull()` ou `expect(x).toBeUndefined()` |
+| `#expect(x != nil)` | `expect(x).toBeDefined()` |
+| `#expect(throws: MyError.self) { try f() }` | `expect(() => f()).toThrow()` |
+| `try #require(x)` (para o teste em nil/falha) | Sem equivalente direto — Jest continua em caso de falha |
 
 A distinção entre `toBe` e `toEqual` é importante. `toBe` usa `Object.is` — igualdade de referência estrita para objetos. `toEqual` realiza uma comparação estrutural profunda, que é o que você quer ao comparar dois literais de objeto ou arrays.
 
@@ -99,24 +119,22 @@ expect(user).toMatchObject({ name: 'Alice' });
 
 ---
 
-## setUp e tearDown: beforeEach / afterEach
+## setUp e tearDown: init/deinit vs beforeEach / afterEach
 
-Os métodos de ciclo de vida `setUp` e `tearDown` do XCTest são executados antes e depois de cada teste na classe. Jest fornece `beforeEach`, `afterEach`, `beforeAll` e `afterAll` como funções de nível superior dentro de um bloco `describe`.
+O Swift Testing não possui métodos de override `setUp`/`tearDown`. Em vez disso, ele aproveita o ciclo de vida de inicializadores do próprio Swift: como structs `@Suite` recebem uma **instância fresca por teste**, colocar a configuração no `init()` é equivalente a `beforeEach`. Cada teste roda em isolamento automaticamente.
 
 ```swift
-// Swift
-class UserServiceTests: XCTestCase {
-    var service: UserService!
+// Swift Testing — init() é executado antes de cada função @Test
+import Testing
 
-    override func setUp() {
-        super.setUp()
+@Suite
+struct UserServiceTests {
+    var service: UserService
+
+    init() {
         service = UserService(environment: .test)
     }
-
-    override func tearDown() {
-        service = nil
-        super.tearDown()
-    }
+    // Sem tearDown necessário para structs — a instância é descartada após cada teste
 }
 ```
 
@@ -141,32 +159,78 @@ describe('UserService', () => {
 });
 ```
 
-`beforeAll` e `afterAll` são executados uma vez para todo o bloco `describe` — equivalente a `setUpClass` se você usa esse padrão no XCTest. Use-os para configurações custosas que são seguras de compartilhar entre testes, como inicializar uma conexão de banco de dados ou interpretar um arquivo de fixture grande.
+Quando você precisa de lógica de teardown (ex.: cancelar uma task ou fechar uma conexão), declare o `@Suite` como `class` ou `actor` para ter acesso ao `deinit`:
+
+```swift
+@Suite
+final class UserServiceTests {
+    var service: UserService
+
+    init() {
+        service = UserService(environment: .test)
+    }
+
+    deinit {
+        service.destroy() // equivalente a afterEach
+    }
+}
+```
+
+`beforeAll` / `afterAll` — configuração compartilhada executada uma vez por suite — não tem equivalente direto no Swift Testing para structs. O idioma é calcular o estado compartilhado custoso como `static let` ou movê-lo para fora da suite.
 
 Os hooks respeitam o escopo do `describe`: um `beforeEach` dentro de um `describe` aninhado é executado após o `beforeEach` externo. Esse encadeamento permite configurar estado compartilhado no nível superior e especializá-lo em sub-grupos.
 
 ---
 
-## Testes assíncronos: XCTestExpectation vs padrões assíncronos do Jest
+## Testes assíncronos: @Test async throws vs async/await do Jest
 
-No XCTest você usa `XCTestExpectation` com `waitForExpectations(timeout:)` para pausar um teste até que uma operação assíncrona seja concluída. Jest oferece duas alternativas mais limpas: o callback `done` e o `async/await` nativo.
-
-### Callback done — mais próximo do XCTestExpectation
+O Swift Testing suporta Swift Concurrency nativamente. Marque uma função `@Test` como `async throws` e use `await` diretamente — sem `XCTestExpectation` ou `waitForExpectations` necessários. Jest funciona de forma idêntica: marque a função de teste como `async` e aguarde Promises.
 
 ```swift
-// Swift — XCTestExpectation
-func testFetchUser() {
-    let expectation = self.expectation(description: "fetch user")
-    service.fetchUser(id: "42") { user, error in
-        XCTAssertNotNil(user)
-        expectation.fulfill()
-    }
-    waitForExpectations(timeout: 5)
+// Swift Testing — async throws, sem XCTestExpectation
+@Test
+func fetchUser() async throws {
+    let user = try await service.fetchUser(id: "42")
+    #expect(user.id == "42")
+    #expect(user.name != nil)
 }
 ```
 
 ```typescript
-// TypeScript — callback done
+// TypeScript — Jest async/await
+it('fetches a user', async () => {
+  const user = await fetchUser('42');
+  expect(user.id).toBe('42');
+  expect(user.name).toBeDefined();
+});
+```
+
+Ambos os frameworks reprovam o teste automaticamente se a função `async` lança um erro não capturado — sem sinalização manual necessária.
+
+### Verificando erros lançados
+
+```swift
+// Swift Testing
+@Test
+func fetchUserNotFound() async {
+    await #expect(throws: UserNotFoundError.self) {
+        try await service.fetchUser(id: "nonexistent")
+    }
+}
+```
+
+```typescript
+// Jest
+it('throws when the user is not found', async () => {
+  await expect(fetchUser('nonexistent')).rejects.toThrow('User not found');
+});
+```
+
+### O callback done — padrão legado
+
+Se você mantém código mais antigo baseado em callbacks que antecede o async/await, Jest ainda suporta o callback `done`. É o equivalente mais próximo ao `XCTestExpectation` do XCTest, mas raramente será necessário em código React Native moderno:
+
+```typescript
 it('fetches a user', (done) => {
   fetchUser('42', (user, error) => {
     expect(user).toBeDefined();
@@ -175,55 +239,45 @@ it('fetches a user', (done) => {
 });
 ```
 
-Se `done` nunca for chamado, o teste expira e falha — o mesmo comportamento de um `XCTestExpectation` não satisfeito.
-
-### async/await — preferível para código baseado em Promise
-
-A maior parte do código React Native é baseada em Promises, então `async/await` é a escolha idiomática:
-
-```typescript
-it('fetches a user', async () => {
-  const user = await fetchUser('42');
-  expect(user.id).toBe('42');
-  expect(user.name).toBeDefined();
-});
-```
-
-Para verificar que uma Promise é rejeitada, encapsule-a com `expect(...).rejects`:
-
-```typescript
-it('throws when the user is not found', async () => {
-  await expect(fetchUser('nonexistent')).rejects.toThrow('User not found');
-});
-```
-
-Não misture `async/await` com `done` — se sua função de teste é `async`, retornar uma Promise rejeitada é suficiente para reprovar o teste. Jest detecta a rejeição automaticamente.
+Se `done` nunca for chamado, o teste expira e falha. Não misture `async/await` com `done` — Jest detecta a rejeição de uma Promise rejeitada automaticamente.
 
 ---
 
 ## Mocking: jest.mock() vs injeção de protocolo em Swift
 
-Swift incentiva a testabilidade por meio da injeção de protocolo: defina um protocolo, implemente uma conformância mock e passe-o para a classe em teste. Jest tem um mecanismo diferente — ele intercepta o sistema de módulos.
+O Swift Testing incentiva a testabilidade por meio da injeção de protocolo: defina um protocolo, implemente uma conformância mock como uma struct leve e passe-a para o tipo em teste. Jest tem um mecanismo diferente — ele intercepta o sistema de módulos.
 
 ```swift
-// Swift — injeção de protocolo
+// Swift Testing — injeção de protocolo com struct mock
+import Testing
+
 protocol NetworkClient {
     func get(url: URL) async throws -> Data
 }
 
-class MockNetworkClient: NetworkClient {
-    var stubbedResponse: Data = Data()
-    func get(url: URL) async throws -> Data { stubbedResponse }
+struct MockNetworkClient: NetworkClient {
+    var stubbedData: Data = Data()
+    func get(url: URL) async throws -> Data { stubbedData }
 }
 
-class UserRepository {
+struct UserRepository {
     let client: NetworkClient
-    init(client: NetworkClient) { self.client = client }
 }
 
-// No teste:
-let mock = MockNetworkClient()
-let repo = UserRepository(client: mock)
+@Suite
+struct UserRepositoryTests {
+    var repo: UserRepository
+
+    init() {
+        repo = UserRepository(client: MockNetworkClient())
+    }
+
+    @Test
+    func fetchUser() async throws {
+        let user = try await repo.fetchUser("42")
+        #expect(user.name == "Alice")
+    }
+}
 ```
 
 ```typescript
@@ -269,6 +323,37 @@ module.exports = {
   restoreMocks: true, // restaura os métodos espionados após cada teste
 };
 ```
+
+---
+
+## Testes parametrizados: @Test(arguments:) vs it.each
+
+O Swift Testing tem suporte nativo a testes parametrizados via `@Test(arguments:)`. Jest oferece o equivalente por meio de `it.each`. Ambos permitem executar a mesma lógica de asserção contra múltiplos inputs sem duplicar código de teste.
+
+```swift
+// Swift Testing — @Test(arguments:)
+@Test(arguments: [
+    (items: [10.0, 20.0], discount: 0.1, expected: 27.0),
+    (items: [],            discount: 0.5, expected: 0.0),
+    (items: [50.0],        discount: 2.0, expected: 0.0),
+])
+func totalCalculation(items: [Double], discount: Double, expected: Double) {
+    #expect(CartCalculator.total(items: items, discount: discount) == expected)
+}
+```
+
+```typescript
+// Jest — it.each
+it.each([
+  { items: [10.0, 20.0], discount: 0.1, expected: 27.0 },
+  { items: [],            discount: 0.5, expected: 0.0  },
+  { items: [50.0],        discount: 2.0, expected: 0.0  },
+])('calcula total: $items com desconto $discount%', ({ items, discount, expected }) => {
+  expect(calculateTotal(items, discount)).toBe(expected);
+});
+```
+
+Cada conjunto de argumentos roda como um caso de teste independente em ambos os frameworks, com seu próprio resultado de aprovação/reprovação no relatório de testes.
 
 ---
 
@@ -400,17 +485,20 @@ Evite snapshots para:
 
 ## Resumo
 
-| Conceito XCTest | Equivalente Jest |
+| Conceito Swift Testing | Equivalente Jest |
 |---|---|
-| Subclasse de `XCTestCase` | Bloco `describe` |
-| `func testFoo()` | `it('foo', ...)` ou `test('foo', ...)` |
-| `XCTAssertEqual(a, b)` | `expect(a).toBe(b)` / `.toEqual(b)` |
-| `XCTAssertTrue(x)` | `expect(x).toBeTruthy()` |
-| `XCTAssertNil(x)` | `expect(x).toBeNull()` |
-| `setUp()` | `beforeEach(() => ...)` |
-| `tearDown()` | `afterEach(() => ...)` |
-| `XCTestExpectation` | `async/await` ou callback `done` |
-| Conformância de mock por protocolo | `jest.mock()` ou `jest.spyOn()` |
+| Struct/classe `@Suite` | Bloco `describe` |
+| `@Test func foo()` | `it('foo', ...)` ou `test('foo', ...)` |
+| `#expect(a == b)` | `expect(a).toBe(b)` / `.toEqual(b)` |
+| `#expect(x)` | `expect(x).toBeTruthy()` |
+| `#expect(x == nil)` | `expect(x).toBeNull()` |
+| `try #require(x)` | Sem equivalente direto (Jest continua em caso de falha) |
+| `init()` da struct `@Suite` | `beforeEach(() => ...)` |
+| `deinit` da classe `@Suite` | `afterEach(() => ...)` |
+| `@Test async throws` (nativo) | `async/await` na função de teste |
+| `#expect(throws:)` | `expect(() => f()).toThrow()` / `.rejects.toThrow()` |
+| `@Test(arguments:)` | `it.each([...])` |
+| Conformância de mock por protocolo (struct) | `jest.mock()` ou `jest.spyOn()` |
 | Imagem de baseline de UI test | Teste de snapshot |
 
-A estrutura de testes, o modelo de asserção e os padrões assíncronos têm analogias claras com o que você já conhece. O principal ajuste é pensar em mocking no nível de módulo em vez de injeção de dependência, e aprender `@testing-library/react-native` para qualquer coisa que envolva renderização de componentes.
+A estrutura de testes, o modelo de asserção e os padrões assíncronos têm analogias claras com o que você já conhece do Swift Testing. O principal ajuste é pensar em mocking no nível de módulo em vez de injeção de protocolo, e aprender `@testing-library/react-native` para qualquer coisa que envolva renderização de componentes.

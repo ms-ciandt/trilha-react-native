@@ -83,6 +83,7 @@ const sidebars = {
       label: 'Fundamentals',
       collapsed: false,
       items: [
+        'trilha-ios/modulo-fundamentos/ios-project-setup',
         'trilha-ios/modulo-fundamentos/swift-to-javascript',
         'trilha-ios/modulo-fundamentos/typescript-for-swift-devs',
         'trilha-ios/modulo-fundamentos/swiftui-to-react',
@@ -106,6 +107,7 @@ const sidebars = {
         'trilha-ios/modulo-recursos-nativos/sensors-and-device-apis',
         'trilha-ios/modulo-recursos-nativos/turbomodule-swift',
         'trilha-ios/modulo-recursos-nativos/xcassets-ios',
+        'trilha-ios/modulo-recursos-nativos/push-notifications',
       ],
     },
     {

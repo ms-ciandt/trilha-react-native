@@ -1,66 +1,66 @@
-﻿---
-title: Fabric no iOS — Shadow Tree, CALayer e Componentes Customizados
+---
+title: Fabric on iOS — Shadow Tree, CALayer and Custom Components
 ---
 
-# Fabric no iOS — Shadow Tree, CALayer e Componentes Customizados
+# Fabric on iOS — Shadow Tree, CALayer and Custom Components
 
-Como desenvolvedor Swift/UIKit, você já sabe que toda view no iOS é respaldada por uma `CALayer`. O Fabric, renderer do React Native na New Architecture, foi projetado com esse modelo em mente: ele gerencia uma shadow tree em C++ que se traduz diretamente para a hierarquia de `UIView`/`CALayer` que você conhece, sem os saltos assíncronos do renderer antigo.
-
----
-
-## O renderer antigo: threads, bridge e layout assíncrono
-
-No renderer legado, o pipeline de renderização atravessava três territórios separados:
-
-1. **JavaScript thread** — produzia uma descrição da árvore de componentes.
-2. **Shadow thread** (Yoga, em C++) — calculava o layout e gerava um conjunto de operações de mutação de view.
-3. **Main thread** — recebia essas operações via bridge serializada (JSON), criava ou atualizava `UIView`s e confirmava as mudanças de layout em um `CATransaction`.
-
-Cada fronteira era assíncrona. Uma atualização de estado no JS disparava uma série de mensagens serializadas; o main thread só sabia do resultado depois que tudo isso percorria a fila. Para você, como desenvolvedor iOS, isso significava que:
-
-- Não havia como garantir que um frame de animação e uma atualização de view do React Native fossem confirmados no mesmo `CATransaction`.
-- Toques podiam chegar ao main thread enquanto a árvore de views ainda refletia um estado anterior.
-- Coordenar animações nativas com transições React Native exigia hacks com `InteractionManager` ou `Animated.event` com `useNativeDriver`.
+As a Swift/UIKit developer, you already know that every view on iOS is backed by a `CALayer`. Fabric, React Native's renderer in the New Architecture, was designed with that model in mind: it manages a shadow tree in C++ that translates directly to the `UIView`/`CALayer` hierarchy you know, without the async hops of the old renderer.
 
 ---
 
-## Fabric: shadow tree síncrona em C++
+## The old renderer: threads, bridge, and async layout
 
-O Fabric elimina a bridge serializada entre o shadow thread e o main thread. A shadow tree agora vive em C++ compartilhado entre o runtime JS (via JSI) e o main thread, com acesso síncrono de ambos os lados.
+In the legacy renderer, the rendering pipeline crossed three separate territories:
 
-O pipeline com Fabric:
+1. **JavaScript thread** — produced a description of the component tree.
+2. **Shadow thread** (Yoga, in C++) — calculated layout and generated a set of view mutation operations.
+3. **Main thread** — received those operations via the serialized bridge (JSON), created or updated `UIView`s, and committed layout changes in a `CATransaction`.
 
-1. **JS thread** chama a reconciliação React (Concurrent Mode). O resultado é uma nova árvore de elementos React.
-2. **C++ Fabric renderer** percorre essa árvore e constrói ou atualiza nós da shadow tree — objetos `ShadowNode` fortemente tipados em C++.
-3. **Yoga (embutido no Fabric)** calcula o layout diretamente nos `ShadowNode`s, ainda em C++.
-4. **Commit síncrono no main thread** — o `UIManager` aplica as mutações à hierarquia de `UIView`/`CALayer` dentro de um único `CATransaction`, garantindo consistência visual por frame.
+Every boundary was asynchronous. A state update in JS fired a series of serialized messages; the main thread only learned the result after all of that traversed the queue. For you as an iOS developer, this meant:
 
-A ausência de serialização JSON significa que uma atualização de estado iniciada do Swift (via um módulo nativo) pode completar o ciclo JS → shadow tree → UIView dentro do mesmo run-loop tick — algo impossível com a bridge legada.
-
----
-
-## Shadow nodes e a hierarquia UIView/CALayer
-
-Cada componente React Native mapeado pelo Fabric possui um `ShadowNode` correspondente em C++. Esse nó carrega:
-
-- **Props**: valores tipados vindos do JS (cor, tamanho, texto, callbacks).
-- **State**: dados que o lado nativo pode atualizar e que o JS observa (por exemplo, tamanho medido de um scroll view).
-- **Layout result**: posição e dimensões calculadas pelo Yoga.
-
-No momento do commit, o Fabric itera a árvore de `ShadowNode`s e produz uma lista de mutações (`Create`, `Insert`, `Update`, `Delete`). O `MountingCoordinator` no iOS processa essas mutações criando ou atualizando `UIView`s.
-
-Do ponto de vista do UIKit, cada `ShadowNode` que representa uma view visível termina em uma `UIView` concreta. Essa `UIView` tem, como toda view UIKit, uma `CALayer` por baixo. O Fabric respeita o modelo de compositing do Core Animation: propriedades como `opacity`, `transform` e `backgroundColor` são aplicadas à layer, e o commit acontece dentro de um `CATransaction` controlado pelo `RCTSurfacePresenter`.
+- There was no way to guarantee that an animation frame and a React Native view update would be committed in the same `CATransaction`.
+- Touches could arrive at the main thread while the view tree still reflected a previous state.
+- Coordinating native animations with React Native transitions required hacks with `InteractionManager` or `Animated.event` with `useNativeDriver`.
 
 ---
 
-## RCTFabricSurface e RCTSurfacePresenter
+## Fabric: synchronous C++ shadow tree
 
-### Substituindo RCTRootView
+Fabric eliminates the serialized bridge between the shadow thread and the main thread. The shadow tree now lives in C++ shared between the JS runtime (via JSI) and the main thread, with synchronous access from both sides.
 
-No renderer legado, você adicionava um `RCTRootView` à hierarquia do seu app para hospedar o React Native. Com Fabric, o equivalente é `RCTFabricSurface` (ou `RCTSurface` em apps que usam a surface API unificada).
+The pipeline with Fabric:
+
+1. **JS thread** calls React reconciliation (Concurrent Mode). The result is a new React element tree.
+2. **C++ Fabric renderer** traverses that tree and builds or updates shadow tree nodes — strongly-typed `ShadowNode` objects in C++.
+3. **Yoga (embedded in Fabric)** calculates layout directly on `ShadowNode`s, still in C++.
+4. **Synchronous commit on the main thread** — the `UIManager` applies mutations to the `UIView`/`CALayer` hierarchy within a single `CATransaction`, guaranteeing visual consistency per frame.
+
+The absence of JSON serialization means a state update initiated from Swift (via a native module) can complete the JS → shadow tree → UIView cycle within the same run-loop tick — something impossible with the legacy bridge.
+
+---
+
+## Shadow nodes and the UIView/CALayer hierarchy
+
+Every React Native component mapped by Fabric has a corresponding `ShadowNode` in C++. This node carries:
+
+- **Props**: typed values from JS (color, size, text, callbacks).
+- **State**: data that the native side can update and that JS observes (e.g. measured size of a scroll view).
+- **Layout result**: position and dimensions calculated by Yoga.
+
+At commit time, Fabric iterates the `ShadowNode` tree and produces a list of mutations (`Create`, `Insert`, `Update`, `Delete`). The `MountingCoordinator` on iOS processes these mutations by creating or updating `UIView`s.
+
+From UIKit's perspective, each `ShadowNode` representing a visible view ends up as a concrete `UIView`. That `UIView` has, like every UIKit view, a `CALayer` underneath. Fabric respects Core Animation's compositing model: properties like `opacity`, `transform`, and `backgroundColor` are applied to the layer, and the commit happens within a `CATransaction` controlled by the `RCTSurfacePresenter`.
+
+---
+
+## RCTFabricSurface and RCTSurfacePresenter
+
+### Replacing RCTRootView
+
+In the legacy renderer, you added an `RCTRootView` to your app's hierarchy to host React Native. With Fabric, the equivalent is `RCTFabricSurface` (or `RCTSurface` in apps using the unified surface API).
 
 ```swift
-// AppDelegate.swift — inicialização com Fabric
+// AppDelegate.swift — initialization with Fabric
 import React
 import ReactAppDependencyProvider
 
@@ -77,7 +77,7 @@ class AppDelegate: RCTAppDelegate {
 }
 ```
 
-O `RCTAppDelegate` já configura o `RCTSurfacePresenter` internamente quando a New Architecture está ativada. Se você precisar hospedar React Native em um `UIViewController` específico, use `RCTFabricSurface` diretamente:
+`RCTAppDelegate` already configures the `RCTSurfacePresenter` internally when the New Architecture is enabled. If you need to host React Native in a specific `UIViewController`, use `RCTFabricSurface` directly:
 
 ```swift
 import React
@@ -107,38 +107,38 @@ class ReactViewController: UIViewController {
 }
 ```
 
-### RCTSurfacePresenter e CALayer transactions
+### RCTSurfacePresenter and CALayer transactions
 
-O `RCTSurfacePresenter` é o coordenador central do Fabric no iOS. Ele:
+`RCTSurfacePresenter` is Fabric's central coordinator on iOS. It:
 
-- Recebe o conjunto de mutações do `MountingCoordinator` após cada commit.
-- Agrupa todas as criações e atualizações de view em um único `CATransaction`.
-- Garante que nenhuma view seja apresentada parcialmente atualizada — o equivalente nativo de uma operação atômica de UI.
+- Receives the set of mutations from `MountingCoordinator` after each commit.
+- Groups all view creations and updates in a single `CATransaction`.
+- Guarantees that no view is presented partially updated — the native equivalent of an atomic UI operation.
 
-Do ponto de vista de performance, isso resolve um problema clássico de apps React Native legados: frames onde algumas views refletiam o estado novo e outras ainda mostravam o estado antigo (o "tearing" de UI).
-
----
-
-## RCTViewComponentView — a base dos componentes Fabric customizados
-
-No renderer legado, você criava componentes nativos implementando `RCTViewManager` (ObjC) e exportando props via macros `RCT_EXPORT_VIEW_PROPERTY`. Com Fabric, a unidade de trabalho é a `RCTViewComponentView`.
-
-`RCTViewComponentView` é uma subclasse de `UIView` que implementa o protocolo `RCTComponentViewProtocol`. Ela é responsável por:
-
-- Receber atualizações de props vindas da shadow tree (`updateProps`).
-- Receber atualizações de estado (`updateState`).
-- Disparar eventos de volta para o JS via `EventEmitter`.
-- Participar do ciclo de montagem/desmontagem do Fabric.
-
-A analogia com UIKit: se `UIView` é o building block visual, `RCTViewComponentView` é o building block de um componente React Native nativo no Fabric.
+From a performance perspective, this solves a classic problem in legacy React Native apps: frames where some views reflected the new state while others still showed the old state (UI "tearing").
 
 ---
 
-## Escrevendo um componente Fabric customizado em ObjC++
+## RCTViewComponentView — the base for custom Fabric components
 
-Um componente Fabric completo envolve quatro peças em C++/ObjC++ e uma view UIKit.
+In the legacy renderer, you created native components by implementing `RCTViewManager` (ObjC) and exporting props via `RCT_EXPORT_VIEW_PROPERTY` macros. With Fabric, the unit of work is `RCTViewComponentView`.
 
-### 1. Especificação de props em C++
+`RCTViewComponentView` is a subclass of `UIView` that implements the `RCTComponentViewProtocol` protocol. It is responsible for:
+
+- Receiving prop updates coming from the shadow tree (`updateProps`).
+- Receiving state updates (`updateState`).
+- Firing events back to JS via `EventEmitter`.
+- Participating in Fabric's mount/unmount lifecycle.
+
+The UIKit analogy: if `UIView` is the visual building block, `RCTViewComponentView` is the building block of a native React Native component in Fabric.
+
+---
+
+## Writing a custom Fabric component in ObjC++
+
+A complete Fabric component involves four pieces in C++/ObjC++ and one UIKit view.
+
+### 1. Props specification in C++
 
 ```cpp
 // RNSignaturePadProps.h
@@ -180,7 +180,7 @@ using RNSignaturePadComponentDescriptor =
 } // namespace facebook::react
 ```
 
-### 3. ShadowNode com EventEmitter
+### 3. ShadowNode with EventEmitter
 
 ```cpp
 // RNSignaturePadShadowNode.h
@@ -203,7 +203,7 @@ using RNSignaturePadShadowNode = ConcreteViewShadowNode<
 } // namespace facebook::react
 ```
 
-### 4. RCTViewComponentView em ObjC++
+### 4. RCTViewComponentView in ObjC++
 
 ```objc
 // RNSignaturePadComponentView.mm
@@ -213,7 +213,7 @@ using RNSignaturePadShadowNode = ConcreteViewShadowNode<
 #import <react/renderer/components/RNSignaturePad/ComponentDescriptors.h>
 #import <react/renderer/components/RNSignaturePad/EventEmitters.h>
 #import <react/renderer/components/RNSignaturePad/Props.h>
-#import "RNSignaturePadView.h" // UIView customizada em Swift
+#import "RNSignaturePadView.h" // Swift custom UIView
 
 using namespace facebook::react;
 
@@ -261,7 +261,7 @@ using namespace facebook::react;
     const auto &emitter =
         static_cast<const RNSignaturePadEventEmitter &>(*_eventEmitter);
     RNSignaturePadEventEmitter::OnStrokeEnd event{};
-    // preencher campos do evento conforme a spec
+    // fill event fields according to the spec
     emitter.onStrokeEnd(event);
 }
 
@@ -273,9 +273,9 @@ Class<RCTComponentViewProtocol> RNSignaturePadCls(void) {
 
 ---
 
-## UIView customizada em Swift — o padrão helper
+## Custom UIView in Swift — the helper pattern
 
-A lógica de desenho e gesto fica em uma `UIView` Swift pura. O `RCTViewComponentView` em ObjC++ delega para ela. Esse padrão mantém seu código Swift limpo e testável isoladamente de qualquer detalhe do Fabric.
+Drawing and gesture logic lives in a pure Swift `UIView`. The ObjC++ `RCTViewComponentView` delegates to it. This pattern keeps your Swift code clean and independently testable from any Fabric detail.
 
 ```swift
 // RNSignaturePadView.swift
@@ -335,20 +335,20 @@ import UIKit
 }
 ```
 
-A separação de responsabilidades aqui espelha o que você faria em qualquer componente UIKit reutilizável: a view Swift cuida do desenho e dos gestos; o `RCTViewComponentView` em ObjC++ cuida da integração com o Fabric (props, estado, eventos).
+The separation of responsibilities here mirrors what you would do in any reusable UIKit component: the Swift view handles drawing and gestures; the ObjC++ `RCTViewComponentView` handles Fabric integration (props, state, events).
 
 ---
 
-## Layout no main thread e CALayer transactions
+## Layout on the main thread and CALayer transactions
 
-Como mencionado, o Fabric processa o commit de mutações no main thread dentro de um `CATransaction` explícito. Para o seu componente `UIView` Swift, isso significa:
+As mentioned, Fabric processes the mutation commit on the main thread within an explicit `CATransaction`. For your Swift `UIView` component, this means:
 
-- Você pode aplicar animações Core Animation diretamente no `updateProps` sem precisar de `dispatch_async` para o main thread — o Fabric já garante que `updateProps` é chamado na main queue.
-- Se você precisar que uma animação de layer coincida com uma transição React Native, use `CATransaction.begin()` / `CATransaction.commit()` dentro do `updateProps` com a duração de animação desejada.
-- Evite `DispatchQueue.main.async` dentro de `updateProps` — isso adia a atualização para depois do commit do Fabric, quebrando a atomicidade.
+- You can apply Core Animation animations directly in `updateProps` without needing `dispatch_async` to the main thread — Fabric already guarantees that `updateProps` is called on the main queue.
+- If you need a layer animation to coincide with a React Native transition, use `CATransaction.begin()` / `CATransaction.commit()` inside `updateProps` with the desired animation duration.
+- Avoid `DispatchQueue.main.async` inside `updateProps` — this defers the update to after Fabric's commit, breaking atomicity.
 
 ```swift
-// Dentro de updateProps (chamado pelo ObjC++ wrapper):
+// Inside updateProps (called by the ObjC++ wrapper):
 func applyAnimatedColor(_ color: UIColor) {
     CATransaction.begin()
     CATransaction.setAnimationDuration(0.25)
@@ -359,21 +359,21 @@ func applyAnimatedColor(_ color: UIColor) {
 
 ---
 
-## Registro do componente
+## Component registration
 
-Para que o Fabric encontre seu componente, registre-o via `RCTFabricComponentsPlugins`:
+For Fabric to find your component, register it via `RCTFabricComponentsPlugins`:
 
 ```objc
-// RNSignaturePadComponentView.mm (ao final do arquivo)
+// RNSignaturePadComponentView.mm (at the end of the file)
 Class<RCTComponentViewProtocol> RNSignaturePadCls(void) {
     return RNSignaturePadComponentView.class;
 }
 ```
 
-E no arquivo de registro do app:
+And in the app's registration file:
 
 ```objc
-// RCTFabricComponentsPlugins.mm (gerado ou mantido manualmente)
+// RCTFabricComponentsPlugins.mm (generated or maintained manually)
 #import <React/RCTFabricComponentsPlugins.h>
 
 Class<RCTComponentViewProtocol> RNSignaturePadCls(void);
@@ -383,27 +383,27 @@ void RCTRegisterFabricComponentsPlugins(RCTFabricComponentsPluginsRegistry regis
 }
 ```
 
-Em projetos Expo com módulos nativos via `expo-modules-core`, o registro é feito via `ExpoFabricView` e `modules.json`, que automatiza esse boilerplate.
+In Expo projects with native modules via `expo-modules-core`, registration is done via `ExpoFabricView` and `modules.json`, which automates this boilerplate.
 
 ---
 
-## Diferenças-chave em relação ao renderer legado
+## Key differences from the legacy renderer
 
-| Aspecto | Renderer legado | Fabric |
+| Aspect | Legacy renderer | Fabric |
 |---|---|---|
-| Cálculo de layout | Shadow thread assíncrono | C++ síncrono na shadow tree |
-| Aplicação de mutations | Via bridge JSON no main thread | Commit direto no main thread |
-| Base de componente customizado | `RCTViewManager` + `RCTView` | `RCTViewComponentView` |
-| Acesso a props | Macros `RCT_EXPORT_VIEW_PROPERTY` | Structs C++ fortemente tipadas |
-| Eventos para JS | `RCTBubblingEventBlock` | `EventEmitter` C++ tipado |
-| Coordenação de animação | Necessário `useNativeDriver` explícito | `CATransaction` no commit síncrono |
+| Layout calculation | Async shadow thread | Synchronous C++ in shadow tree |
+| Applying mutations | Via JSON bridge on main thread | Direct commit on main thread |
+| Custom component base | `RCTViewManager` + `RCTView` | `RCTViewComponentView` |
+| Props access | `RCT_EXPORT_VIEW_PROPERTY` macros | Strongly-typed C++ structs |
+| Events to JS | `RCTBubblingEventBlock` | Typed C++ `EventEmitter` |
+| Animation coordination | Explicit `useNativeDriver` required | `CATransaction` in synchronous commit |
 
 ---
 
-## Ir mais fundo
+## Go deeper
 
-Os tópicos abordados aqui — shadow tree em C++, `ComponentDescriptor`, `EventEmitter` tipado e integração com `RCTSurfacePresenter` — são o núcleo do Fabric no iOS. A Trilha Masterclass aprofunda cada uma dessas camadas:
+The topics covered here — C++ shadow tree, `ComponentDescriptor`, typed `EventEmitter`, and `RCTSurfacePresenter` integration — are the core of Fabric on iOS. The Masterclass trail deepens each of these layers:
 
-- **Modulo 03 — Fabric e JSI**: implementação completa de `ShadowNode` com state, medição customizada (Yoga measure function) e interoperabilidade Swift/C++ via `@_silgen_name`.
-- **Modulo 02 — TurboModules**: o lado de módulos (não views) da mesma arquitetura síncrona, com codegen e specs TypeScript gerando o ObjC++/Swift automaticamente.
-- **Modulo 04 — Performance e CI/CD**: como medir o impacto do Fabric com Instruments, identificar commits lentos e configurar pipelines que validam performance em cada PR.
+- **Module 03 — Fabric and JSI**: complete implementation of `ShadowNode` with state, custom measurement (Yoga measure function), and Swift/C++ interoperability via `@_silgen_name`.
+- **Module 02 — TurboModules**: the module (not view) side of the same synchronous architecture, with codegen and TypeScript specs generating ObjC++/Swift automatically.
+- **Module 04 — Performance and CI/CD**: how to measure Fabric's impact with Instruments, identify slow commits, and configure pipelines that validate performance on every PR.

@@ -1,19 +1,19 @@
-﻿---
-title: Styling — StyleSheet, Platform e Sombras
+---
+title: Styling — StyleSheet, Platform and Shadows
 ---
 
-# Styling — StyleSheet, Platform e Sombras
+# Styling — StyleSheet, Platform and Shadows
 
-O sistema de estilo do React Native tem uma filosofia diferente do CSS tradicional e do SwiftUI. Não existe herança de estilos em cascata, não existe seletor de classe, e todo layout usa Flexbox por padrão. Para um desenvolvedor Swift, a analogia mais próxima é criar um `ViewModifier` para cada componente — isolado, explícito e sem efeitos colaterais em outros componentes.
+React Native's styling system has a different philosophy from traditional CSS and SwiftUI. There is no cascading style inheritance, no class selectors, and all layout uses Flexbox by default. For a Swift developer, the closest analogy is creating a `ViewModifier` for each component — isolated, explicit, and with no side effects on other components.
 
 ---
 
 ## SwiftUI ViewModifier → StyleSheet.create()
 
-Em SwiftUI você encadeia modificadores diretamente na view:
+In SwiftUI you chain modifiers directly on the view:
 
 ```swift
-Text("Olá")
+Text("Hello")
     .font(.headline)
     .foregroundColor(.blue)
     .padding(16)
@@ -21,7 +21,7 @@ Text("Olá")
     .cornerRadius(8)
 ```
 
-Em React Native você define estilos em um objeto e os aplica via prop `style`:
+In React Native you define styles in an object and apply them via the `style` prop:
 
 ```tsx
 import { Text, View, StyleSheet } from 'react-native';
@@ -29,7 +29,7 @@ import { Text, View, StyleSheet } from 'react-native';
 export default function Card() {
   return (
     <View style={styles.container}>
-      <Text style={styles.titulo}>Olá</Text>
+      <Text style={styles.title}>Hello</Text>
     </View>
   );
 }
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 16,
   },
-  titulo: {
+  title: {
     fontSize: 17,
     fontWeight: '600',
     color: '#007AFF',
@@ -48,64 +48,64 @@ const styles = StyleSheet.create({
 });
 ```
 
-`StyleSheet.create()` não é obrigatório — você pode passar objetos literais — mas ele valida as propriedades em desenvolvimento e permite que o runtime otimize o envio dos estilos para a thread nativa. Prefira sempre usá-lo.
+`StyleSheet.create()` is not mandatory — you can pass object literals — but it validates properties in development and allows the runtime to optimize sending styles to the native thread. Always prefer using it.
 
 ---
 
-## UIColor / SwiftUI Color → Formatos de cor no RN
+## UIColor / SwiftUI Color → Color formats in RN
 
-React Native aceita quatro formatos de cor em qualquer propriedade que espere cor:
+React Native accepts four color formats in any property that expects a color:
 
-| Formato | Exemplo |
+| Format | Example |
 |---|---|
 | Hexadecimal | `'#007AFF'` |
-| Hex com alpha | `'#007AFF99'` |
+| Hex with alpha | `'#007AFF99'` |
 | `rgba()` | `'rgba(0, 122, 255, 0.6)'` |
 | Named colors (CSS) | `'tomato'`, `'dodgerblue'` |
 
 ```tsx
 const styles = StyleSheet.create({
-  primario: { color: '#007AFF' },
-  secundario: { color: 'rgba(0, 122, 255, 0.6)' },
-  fundo: { backgroundColor: '#F2F2F7' },
-  borda: { borderColor: '#C6C6C8' },
+  primary: { color: '#007AFF' },
+  secondary: { color: 'rgba(0, 122, 255, 0.6)' },
+  background: { backgroundColor: '#F2F2F7' },
+  border: { borderColor: '#C6C6C8' },
 });
 ```
 
-Não existe um tipo `Color` como em Swift. Tudo é string. Em projetos TypeScript mais robustos, é comum criar constantes tipadas:
+There is no `Color` type as in Swift. Everything is a string. In more robust TypeScript projects, it is common to create typed constants:
 
 ```ts
 export const Colors = {
-  azul: '#007AFF' as const,
-  cinza: '#8E8E93' as const,
-  fundo: '#F2F2F7' as const,
+  blue: '#007AFF' as const,
+  gray: '#8E8E93' as const,
+  background: '#F2F2F7' as const,
 } satisfies Record<string, string>;
 ```
 
 ---
 
-## UIKit Appearance API → Estilos globais com tema
+## UIKit Appearance API → Global styles with theme
 
-Em UIKit você usa `UIAppearance` para definir estilos globais:
+In UIKit you use `UIAppearance` to define global styles:
 
 ```swift
 UINavigationBar.appearance().tintColor = .systemBlue
 UILabel.appearance().font = UIFont.systemFont(ofSize: 17)
 ```
 
-React Native não tem um mecanismo de aparência global embutido equivalente. A abordagem padrão é criar um módulo de tema e importá-lo onde necessário:
+React Native has no built-in global appearance mechanism equivalent. The standard approach is to create a theme module and import it where needed:
 
 ```ts
 // theme.ts
 export const theme = {
   colors: {
-    primario: '#007AFF',
-    secundario: '#5856D6',
-    texto: '#1C1C1E',
-    textoSecundario: '#8E8E93',
-    fundo: '#F2F2F7',
-    superficie: '#FFFFFF',
-    separador: '#C6C6C8',
+    primary: '#007AFF',
+    secondary: '#5856D6',
+    text: '#1C1C1E',
+    secondaryText: '#8E8E93',
+    background: '#F2F2F7',
+    surface: '#FFFFFF',
+    separator: '#C6C6C8',
   },
   spacing: {
     xs: 4,
@@ -124,15 +124,15 @@ export const theme = {
 };
 ```
 
-Componentes consomem o tema importando diretamente ou via Context:
+Components consume the theme by importing it directly or via Context:
 
 ```tsx
 import { theme } from '../theme';
 
 const styles = StyleSheet.create({
-  titulo: {
+  title: {
     ...theme.typography.headline,
-    color: theme.colors.texto,
+    color: theme.colors.text,
     marginBottom: theme.spacing.sm,
   },
 });
@@ -142,31 +142,31 @@ const styles = StyleSheet.create({
 
 ## Dynamic Type → accessibilityFontScale
 
-Em iOS, Dynamic Type respeita a preferência de tamanho de fonte do sistema. React Native não escala fontes automaticamente — por padrão, `Text` tem `allowFontScaling={true}`, o que respeita a configuração de acessibilidade do dispositivo.
+On iOS, Dynamic Type respects the system font size preference. React Native does not scale fonts automatically — by default, `Text` has `allowFontScaling={true}`, which respects the device's accessibility setting.
 
-Para controlar esse comportamento:
+To control this behavior:
 
 ```tsx
-// Respeita acessibilidade (padrão)
-<Text style={styles.body}>Conteúdo</Text>
+// Respects accessibility (default)
+<Text style={styles.body}>Content</Text>
 
-// Desativa escalonamento (use com cautela)
-<Text allowFontScaling={false} style={styles.label}>Rótulo</Text>
+// Disables scaling (use with caution)
+<Text allowFontScaling={false} style={styles.label}>Label</Text>
 
-// Define um limite máximo de escala
-<Text maxFontSizeMultiplier={1.5} style={styles.body}>Conteúdo</Text>
+// Sets a maximum scale limit
+<Text maxFontSizeMultiplier={1.5} style={styles.body}>Content</Text>
 ```
 
-Para replicar o comportamento de Dynamic Type com tamanhos semânticos, use `PixelRatio`:
+To replicate Dynamic Type behavior with semantic sizes, use `PixelRatio`:
 
 ```tsx
 import { PixelRatio } from 'react-native';
 
-const escala = PixelRatio.getFontScale();
+const scale = PixelRatio.getFontScale();
 
 const styles = StyleSheet.create({
   body: {
-    fontSize: 17 * Math.min(escala, 1.5),
+    fontSize: 17 * Math.min(scale, 1.5),
   },
 });
 ```
@@ -175,37 +175,37 @@ const styles = StyleSheet.create({
 
 ## Dark Mode: @Environment(.colorScheme) → useColorScheme()
 
-Em SwiftUI você lê o esquema de cores via environment:
+In SwiftUI you read the color scheme via environment:
 
 ```swift
 @Environment(\.colorScheme) var colorScheme
 
 var body: some View {
-    Text("Olá")
+    Text("Hello")
         .foregroundColor(colorScheme == .dark ? .white : .black)
 }
 ```
 
-Em React Native, o hook equivalente é `useColorScheme()`:
+In React Native, the equivalent hook is `useColorScheme()`:
 
 ```tsx
 import { useColorScheme, View, Text, StyleSheet } from 'react-native';
 
-export default function TelaExemplo() {
-  const esquema = useColorScheme(); // 'light' | 'dark' | null
+export default function ExampleScreen() {
+  const scheme = useColorScheme(); // 'light' | 'dark' | null
 
-  const estilosDinamicos = {
+  const dynamicStyles = {
     container: {
-      backgroundColor: esquema === 'dark' ? '#1C1C1E' : '#F2F2F7',
+      backgroundColor: scheme === 'dark' ? '#1C1C1E' : '#F2F2F7',
     },
-    texto: {
-      color: esquema === 'dark' ? '#FFFFFF' : '#1C1C1E',
+    text: {
+      color: scheme === 'dark' ? '#FFFFFF' : '#1C1C1E',
     },
   };
 
   return (
-    <View style={[styles.base, estilosDinamicos.container]}>
-      <Text style={[styles.texto, estilosDinamicos.texto]}>Modo atual: {esquema}</Text>
+    <View style={[styles.base, dynamicStyles.container]}>
+      <Text style={[styles.text, dynamicStyles.text]}>Current mode: {scheme}</Text>
     </View>
   );
 }
@@ -215,35 +215,35 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
   },
-  texto: {
+  text: {
     fontSize: 17,
   },
 });
 ```
 
-Para projetos maiores, o padrão recomendado é encapsular o tema em um Context que já resolve o dark mode internamente:
+For larger projects, the recommended pattern is to encapsulate the theme in a Context that resolves dark mode internally:
 
 ```tsx
 import { useColorScheme } from 'react-native';
 import { createContext, useContext } from 'react';
-import { temaClaro, temaEscuro } from './themes';
+import { lightTheme, darkTheme } from './themes';
 
-const TemaContext = createContext(temaClaro);
+const ThemeContext = createContext(lightTheme);
 
-export function TemaProvider({ children }: { children: React.ReactNode }) {
-  const esquema = useColorScheme();
-  const tema = esquema === 'dark' ? temaEscuro : temaClaro;
-  return <TemaContext.Provider value={tema}>{children}</TemaContext.Provider>;
+export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const scheme = useColorScheme();
+  const theme = scheme === 'dark' ? darkTheme : lightTheme;
+  return <ThemeContext.Provider value={theme}>{children}</ThemeContext.Provider>;
 }
 
-export const useTema = () => useContext(TemaContext);
+export const useTheme = () => useContext(ThemeContext);
 ```
 
 ---
 
-## Platform.OS e Platform.select()
+## Platform.OS and Platform.select()
 
-Para estilos exclusivos de plataforma, use `Platform`:
+For platform-specific styles, use `Platform`:
 
 ```tsx
 import { Platform, StyleSheet } from 'react-native';
@@ -252,7 +252,7 @@ const styles = StyleSheet.create({
   container: {
     paddingTop: Platform.OS === 'ios' ? 44 : 24,
   },
-  sombra: Platform.select({
+  shadow: Platform.select({
     ios: {
       shadowColor: '#000000',
       shadowOffset: { width: 0, height: 2 },
@@ -267,13 +267,13 @@ const styles = StyleSheet.create({
 });
 ```
 
-`Platform.select()` recebe um objeto com chaves `'ios'`, `'android'`, `'web'` e `'default'`, e retorna o valor correspondente à plataforma atual. É type-safe e mais legível do que múltiplos `if (Platform.OS === ...)`.
+`Platform.select()` receives an object with keys `'ios'`, `'android'`, `'web'` and `'default'`, and returns the value corresponding to the current platform. It is type-safe and more readable than multiple `if (Platform.OS === ...)` checks.
 
 ---
 
-## Sombras: UIView.layer.shadow* → RN iOS/Android
+## Shadows: UIView.layer.shadow* → RN iOS/Android
 
-Em UIKit, sombras são configuradas via `CALayer`:
+In UIKit, shadows are configured via `CALayer`:
 
 ```swift
 view.layer.shadowColor = UIColor.black.cgColor
@@ -282,16 +282,16 @@ view.layer.shadowOpacity = 0.15
 view.layer.shadowRadius = 4
 ```
 
-Em React Native, o mapeamento é quase direto para iOS:
+In React Native, the mapping is almost direct for iOS:
 
 ```tsx
 const styles = StyleSheet.create({
-  cartao: {
+  card: {
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
     padding: 16,
 
-    // iOS — mapeia diretamente para CALayer
+    // iOS — maps directly to CALayer
     shadowColor: '#000000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.15,
@@ -300,19 +300,19 @@ const styles = StyleSheet.create({
 });
 ```
 
-No Android, sombras funcionam com a propriedade `elevation` (Material Design):
+On Android, shadows work with the `elevation` property (Material Design):
 
 ```tsx
 const styles = StyleSheet.create({
-  cartao: {
+  card: {
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
     padding: 16,
 
-    // Android — elevation cria sombra + ripple area
+    // Android — elevation creates shadow + ripple area
     elevation: 4,
 
-    // iOS ignorará elevation; Android ignorará shadow*
+    // iOS will ignore elevation; Android will ignore shadow*
     shadowColor: '#000000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.15,
@@ -321,10 +321,10 @@ const styles = StyleSheet.create({
 });
 ```
 
-Para sombras cross-platform sem repetição, use `Platform.select()`:
+For cross-platform shadows without repetition, use `Platform.select()`:
 
 ```tsx
-const sombra = Platform.select({
+const shadow = Platform.select({
   ios: {
     shadowColor: '#000000',
     shadowOffset: { width: 0, height: 2 },
@@ -337,11 +337,11 @@ const sombra = Platform.select({
 }) ?? {};
 
 const styles = StyleSheet.create({
-  cartao: {
+  card: {
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
     padding: 16,
-    ...sombra,
+    ...shadow,
   },
 });
 ```
@@ -350,25 +350,25 @@ const styles = StyleSheet.create({
 
 ## SwiftUI .font() → fontFamily / fontSize / fontWeight
 
-Em SwiftUI:
+In SwiftUI:
 
 ```swift
-Text("Título")
+Text("Title")
     .font(.system(size: 28, weight: .bold, design: .rounded))
 ```
 
-Em React Native, tipografia é controlada pelas propriedades de estilo do `Text`:
+In React Native, typography is controlled by `Text` style properties:
 
 ```tsx
 const styles = StyleSheet.create({
-  titulo: {
+  title: {
     fontSize: 28,
-    fontWeight: '700',      // '100' a '900' ou 'bold'/'normal'
+    fontWeight: '700',      // '100' to '900' or 'bold'/'normal'
     fontStyle: 'normal',    // 'normal' | 'italic'
     letterSpacing: 0.5,
     lineHeight: 36,
   },
-  corpo: {
+  body: {
     fontSize: 17,
     fontWeight: '400',
     lineHeight: 24,
@@ -378,11 +378,11 @@ const styles = StyleSheet.create({
 
 ---
 
-## Fontes customizadas: UIFont vs fontFamily
+## Custom fonts: UIFont vs fontFamily
 
-Em iOS com UIKit, você registra a fonte no `Info.plist` e usa `UIFont(name:size:)`. Em React Native o processo é similar — a fonte precisa ser linkada no projeto nativo e depois referenciada por nome exato:
+On iOS with UIKit, you register the font in `Info.plist` and use `UIFont(name:size:)`. In React Native the process is similar — the font needs to be linked in the native project and then referenced by its exact name:
 
-Com Expo:
+With Expo:
 
 ```json
 // app.json
@@ -397,118 +397,118 @@ Com Expo:
 import { useFonts } from 'expo-font';
 
 export default function App() {
-  const [fontsCarregadas] = useFonts({
+  const [fontsLoaded] = useFonts({
     'Inter-Regular': require('./assets/fonts/Inter-Regular.ttf'),
     'Inter-Bold': require('./assets/fonts/Inter-Bold.ttf'),
   });
 
-  if (!fontsCarregadas) return null;
+  if (!fontsLoaded) return null;
 
-  return <TelaInicial />;
+  return <HomeScreen />;
 }
 ```
 
 ```tsx
 const styles = StyleSheet.create({
-  titulo: {
+  title: {
     fontFamily: 'Inter-Bold',
     fontSize: 28,
   },
-  corpo: {
+  body: {
     fontFamily: 'Inter-Regular',
     fontSize: 17,
   },
 });
 ```
 
-O nome usado em `fontFamily` deve ser exatamente o nome com que a fonte foi registrada no `useFonts`, não o nome do arquivo.
+The name used in `fontFamily` must be exactly the name with which the font was registered in `useFonts`, not the filename.
 
 ---
 
 ## StyleSheet.flatten
 
-Quando você compõe estilos via arrays, `StyleSheet.flatten()` resolve o array em um único objeto — útil para introspecção ou para passar estilos para bibliotecas que esperam um objeto plano:
+When you compose styles via arrays, `StyleSheet.flatten()` resolves the array into a single object — useful for introspection or passing styles to libraries that expect a plain object:
 
 ```tsx
-const estiloBase = StyleSheet.create({
-  texto: { fontSize: 17, color: '#1C1C1E' },
+const baseStyle = StyleSheet.create({
+  text: { fontSize: 17, color: '#1C1C1E' },
 });
 
-const estiloDestaque = { fontWeight: '700' as const };
+const highlightStyle = { fontWeight: '700' as const };
 
-// Array de estilos (o último sobrescreve os anteriores)
-<Text style={[estiloBase.texto, estiloDestaque]}>Destaque</Text>
+// Array of styles (last one overrides previous ones)
+<Text style={[baseStyle.text, highlightStyle]}>Highlight</Text>
 
-// Resolvendo para objeto plano
-const estiloResolvido = StyleSheet.flatten([estiloBase.texto, estiloDestaque]);
+// Resolving to a plain object
+const resolvedStyle = StyleSheet.flatten([baseStyle.text, highlightStyle]);
 // { fontSize: 17, color: '#1C1C1E', fontWeight: '700' }
 ```
 
 ---
 
-## Estilos dinâmicos a partir de estado
+## Dynamic styles from state
 
-Em SwiftUI, a view re-renderiza automaticamente quando o estado muda. Em React Native, o mesmo acontece — você usa o estado para calcular estilos inline ou combinar classes via array:
+In SwiftUI, the view re-renders automatically when state changes. In React Native, the same happens — you use state to compute inline styles or combine classes via array:
 
 ```tsx
 import { useState } from 'react';
 import { Pressable, Text, StyleSheet } from 'react-native';
 
-export default function BotaoToggle() {
-  const [ativo, setAtivo] = useState(false);
+export default function ToggleButton() {
+  const [active, setActive] = useState(false);
 
   return (
     <Pressable
-      onPress={() => setAtivo(v => !v)}
-      style={[styles.botao, ativo && styles.botaoAtivo]}
+      onPress={() => setActive(v => !v)}
+      style={[styles.button, active && styles.buttonActive]}
     >
-      <Text style={[styles.rotulo, ativo && styles.rotuloAtivo]}>
-        {ativo ? 'Ativo' : 'Inativo'}
+      <Text style={[styles.label, active && styles.labelActive]}>
+        {active ? 'Active' : 'Inactive'}
       </Text>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
-  botao: {
+  button: {
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 10,
     backgroundColor: '#E5E5EA',
     alignItems: 'center',
   },
-  botaoAtivo: {
+  buttonActive: {
     backgroundColor: '#007AFF',
   },
-  rotulo: {
+  label: {
     fontSize: 17,
     fontWeight: '600',
     color: '#8E8E93',
   },
-  rotuloAtivo: {
+  labelActive: {
     color: '#FFFFFF',
   },
 });
 ```
 
-Para estilos que dependem de valores numéricos (progresso, posição), use objetos inline:
+For styles that depend on numeric values (progress, position), use inline objects:
 
 ```tsx
-<View style={[styles.barra, { width: `${progresso}%` }]} />
+<View style={[styles.bar, { width: `${progress}%` }]} />
 ```
 
 ---
 
-## Alternativas: styled-components e NativeWind
+## Alternatives: styled-components and NativeWind
 
-Para equipes vindas de React web ou que preferem uma sintaxe diferente, existem duas alternativas populares ao `StyleSheet` nativo:
+For teams coming from React web or that prefer a different syntax, there are two popular alternatives to the native `StyleSheet`:
 
-**styled-components/native** — mesma API do styled-components web, adaptada para React Native:
+**styled-components/native** — same API as web styled-components, adapted for React Native:
 
 ```tsx
 import styled from 'styled-components/native';
 
-const Cartao = styled.View`
+const Card = styled.View`
   background-color: #ffffff;
   border-radius: 12px;
   padding: 16px;
@@ -518,38 +518,38 @@ const Cartao = styled.View`
   shadow-radius: 8px;
 `;
 
-const Titulo = styled.Text`
+const Title = styled.Text`
   font-size: 17px;
   font-weight: 600;
   color: #1c1c1e;
 `;
 ```
 
-**NativeWind** — Tailwind CSS para React Native. Usa classes utilitárias no lugar de objetos de estilo:
+**NativeWind** — Tailwind CSS for React Native. Uses utility classes instead of style objects:
 
 ```tsx
 import { View, Text } from 'react-native';
 
-export default function Cartao() {
+export default function Card() {
   return (
     <View className="bg-white rounded-xl p-4 shadow-md">
-      <Text className="text-lg font-semibold text-gray-900">Título</Text>
+      <Text className="text-lg font-semibold text-gray-900">Title</Text>
     </View>
   );
 }
 ```
 
-Ambas as abordagens são válidas, mas o `StyleSheet` nativo continua sendo a escolha padrão para projetos novos — oferece melhor desempenho em casos de renderização intensiva e não requer dependências adicionais.
+Both approaches are valid, but the native `StyleSheet` remains the default choice for new projects — it offers better performance in render-intensive cases and requires no additional dependencies.
 
 ---
 
-## Resumo comparativo
+## Comparison Summary
 
 | Swift / SwiftUI | React Native |
 |---|---|
-| `.modifier(ViewModifier)` | `style={styles.classe}` |
-| `UIColor`, `Color` | string hex / rgba / named |
-| `UIAppearance` | módulo de tema + Context |
+| `.modifier(ViewModifier)` | `style={styles.class}` |
+| `UIColor`, `Color` | hex / rgba / named string |
+| `UIAppearance` | theme module + Context |
 | `Dynamic Type` | `allowFontScaling`, `maxFontSizeMultiplier` |
 | `@Environment(.colorScheme)` | `useColorScheme()` |
 | `UIView.layer.shadow*` | `shadowColor/Offset/Opacity/Radius` (iOS) |

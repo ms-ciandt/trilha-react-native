@@ -1,65 +1,65 @@
-﻿---
-title: JSI e Interop ObjC++
+---
+title: JSI and ObjC++ Interop
 ---
 
-# JSI e Interop ObjC++
+# JSI and ObjC++ Interop
 
-React Native 0.76 eliminou a Bridge legada como caminho padrão. No lugar dela, toda comunicação entre JavaScript e código nativo acontece via **JSI** — JavaScript Interface. Para um desenvolvedor Swift, entender JSI significa entender por que existe uma camada C++ no meio, e por que `.mm` (ObjC++) é o elo necessário entre Swift e esse mundo C++.
-
----
-
-## A Bridge legada: contexto histórico
-
-Antes do JSI, React Native usava uma Bridge assíncrona baseada em troca de mensagens serializadas em JSON. O fluxo era:
-
-1. JavaScript serializa um objeto para JSON.
-2. A mensagem é colocada em uma fila.
-3. A thread nativa desserializa o JSON.
-4. A função nativa executa.
-5. O resultado percorre o mesmo caminho de volta.
-
-Cada chamada cruzava a fronteira processo-a-processo — não literalmente processos diferentes, mas threads isoladas sem memória compartilhada, comunicando-se via cópias de dados. O custo era duplo: serialização/desserialização de JSON em toda chamada, e a latência inerente de uma fila de mensagens assíncrona.
-
-Para operações de UI de alta frequência — gestos a 60 fps, animações frame-a-frame, leitura de sensores — esse modelo impunha gargalos visíveis. Uma chamada nativa simples podia levar dezenas de milissegundos só de overhead de fila.
+React Native 0.76 eliminated the legacy Bridge as the default path. In its place, all communication between JavaScript and native code happens via **JSI** — JavaScript Interface. For a Swift developer, understanding JSI means understanding why there is a C++ layer in the middle, and why `.mm` (ObjC++) is the necessary bridge between Swift and that C++ world.
 
 ---
 
-## JSI: memória compartilhada, chamadas síncronas
+## The legacy Bridge: historical context
 
-JSI reescreve essa relação. O ponto central é este: **JavaScript e código nativo rodam no mesmo processo e podem compartilhar a mesma memória**.
+Before JSI, React Native used an asynchronous Bridge based on JSON-serialized message exchange. The flow was:
 
-O runtime JavaScript (Hermes, no React Native moderno) expõe uma API C++ chamada `jsi::Runtime`. Através dela, código C++ pode:
+1. JavaScript serializes an object to JSON.
+2. The message is placed in a queue.
+3. The native thread deserializes the JSON.
+4. The native function executes.
+5. The result travels the same path back.
 
-- Criar e inspecionar valores JavaScript diretamente.
-- Instalar funções e objetos no escopo global do JS.
-- Invocar funções JS de forma síncrona.
-- Receber chamadas JS de volta, também síncronas.
+Every call crossed the thread boundary — not literally different processes, but isolated threads without shared memory, communicating via copies of data. The cost was twofold: JSON serialization/deserialization on every call, and the inherent latency of an asynchronous message queue.
 
-Não há JSON. Não há fila. Não há cópias obrigatórias de dados. Um ponteiro para um buffer nativo pode ser passado para o JS como um `ArrayBuffer` sem copiar um único byte.
+For high-frequency UI operations — gestures at 60 fps, frame-by-frame animations, sensor readings — this model imposed visible bottlenecks. A simple native call could take tens of milliseconds in queue overhead alone.
 
 ---
 
-## Os tipos fundamentais do JSI
+## JSI: shared memory, synchronous calls
+
+JSI rewrites that relationship. The central point is this: **JavaScript and native code run in the same process and can share the same memory**.
+
+The JavaScript runtime (Hermes, in modern React Native) exposes a C++ API called `jsi::Runtime`. Through it, C++ code can:
+
+- Create and inspect JavaScript values directly.
+- Install functions and objects in the JS global scope.
+- Invoke JS functions synchronously.
+- Receive JS callbacks, also synchronously.
+
+No JSON. No queue. No mandatory data copies. A pointer to a native buffer can be passed to JS as an `ArrayBuffer` without copying a single byte.
+
+---
+
+## JSI's fundamental types
 
 ### `jsi::Runtime`
 
-Representa o ambiente de execução JavaScript. É o ponto de entrada para qualquer operação JSI. Você não cria um Runtime — ele é fornecido pelo host (React Native) e passado para as suas funções de instalação.
+Represents the JavaScript execution environment. It is the entry point for any JSI operation. You do not create a Runtime — it is provided by the host (React Native) and passed to your module installation functions.
 
 ```cpp
-// Assinatura típica de uma função de instalação de módulo
+// Typical signature of a module installation function
 void installMyModule(jsi::Runtime& runtime);
 ```
 
-O `Runtime` é thread-affine: você só pode usá-lo na thread JavaScript. Guardar uma referência e usar em outra thread é comportamento indefinido.
+The `Runtime` is thread-affine: you can only use it on the JavaScript thread. Storing a reference and using it on another thread is undefined behavior.
 
 ### `jsi::Value`
 
-O tipo universal que representa qualquer valor JavaScript. Pode conter:
+The universal type that represents any JavaScript value. It can hold:
 
 - `undefined`
 - `null`
 - `bool`
-- `double` (todos os números JS são doubles)
+- `double` (all JS numbers are doubles)
 - `string` (`jsi::String`)
 - `object` (`jsi::Object`)
 - `symbol` (`jsi::Symbol`)
@@ -71,35 +71,35 @@ jsi::Value strValue = jsi::String::createFromUtf8(runtime, "hello");
 jsi::Value boolValue = jsi::Value(true);
 ```
 
-`jsi::Value` é um tipo de valor com semântica de move. Copiar é explícito (`.asObject(runtime)` retorna uma cópia). Isso reflete que objetos JS são reference-counted dentro do runtime.
+`jsi::Value` is a value type with move semantics. Copying is explicit (`.asObject(runtime)` returns a copy). This reflects that JS objects are reference-counted inside the runtime.
 
 ### `jsi::Object`
 
-Subconjunto de `jsi::Value` para objetos JS. Permite leitura e escrita de propriedades:
+A subset of `jsi::Value` for JS objects. Allows reading and writing properties:
 
 ```cpp
 jsi::Object obj = jsi::Object(runtime);
 obj.setProperty(runtime, "width", jsi::Value(320.0));
 obj.setProperty(runtime, "height", jsi::Value(568.0));
 
-// Lendo de volta
+// Reading back
 jsi::Value widthVal = obj.getProperty(runtime, "width");
 double width = widthVal.asNumber(); // 320.0
 ```
 
 ### `jsi::Function`
 
-Representa uma função JavaScript. Você pode criá-la a partir de uma lambda C++ ou de um `HostFunction`, e também invocar funções JS existentes:
+Represents a JavaScript function. You can create one from a C++ lambda or a `HostFunction`, and also invoke existing JS functions:
 
 ```cpp
-// Chamando uma função JS existente
+// Calling an existing JS function
 jsi::Value result = myJsFunction.call(runtime, arg1, arg2);
 
-// Criando uma função nativa callable de JS
+// Creating a native function callable from JS
 auto nativeFunc = jsi::Function::createFromHostFunction(
     runtime,
     jsi::PropNameID::forAscii(runtime, "myNativeFunc"),
-    1, // número de argumentos esperados
+    1, // number of expected arguments
     [](jsi::Runtime& rt,
        const jsi::Value& thisVal,
        const jsi::Value* args,
@@ -112,13 +112,13 @@ auto nativeFunc = jsi::Function::createFromHostFunction(
 runtime.global().setProperty(runtime, "myNativeFunc", std::move(nativeFunc));
 ```
 
-Após isso, `myNativeFunc(21)` em JavaScript retorna `42` — sem fila, sem JSON, de forma síncrona.
+After this, `myNativeFunc(21)` in JavaScript returns `42` — no queue, no JSON, synchronously.
 
 ---
 
-## O padrão HostObject
+## The HostObject pattern
 
-Para expor um objeto nativo com estado para o JavaScript, JSI oferece o `jsi::HostObject`. É uma classe C++ com dois métodos virtuais:
+To expose a stateful native object to JavaScript, JSI offers `jsi::HostObject`. It is a C++ class with two virtual methods:
 
 ```cpp
 class jsi::HostObject {
@@ -133,7 +133,7 @@ public:
 };
 ```
 
-Você implementa essa interface em C++ e instala o objeto no escopo global:
+You implement this interface in C++ and install the object in the global scope:
 
 ```cpp
 class SensorHostObject : public jsi::HostObject {
@@ -155,7 +155,7 @@ public:
                        const jsi::Value&,
                        const jsi::Value*,
                        size_t) -> jsi::Value {
-                    // leitura direta de hardware, sem serialização
+                    // direct hardware read, no serialization
                     lastReading_ = readHardwareSensor();
                     return jsi::Value(lastReading_);
                 }
@@ -167,12 +167,12 @@ public:
     void set(jsi::Runtime& rt,
              const jsi::PropNameID& name,
              const jsi::Value& value) override {
-        // propriedades read-only neste exemplo
+        // read-only properties in this example
     }
 };
 ```
 
-Instalação no runtime:
+Installation in the runtime:
 
 ```cpp
 void installSensorModule(jsi::Runtime& runtime) {
@@ -182,59 +182,59 @@ void installSensorModule(jsi::Runtime& runtime) {
 }
 ```
 
-No JavaScript:
+In JavaScript:
 
 ```js
-const reading = NativeSensor.read(); // síncrono, zero serialização
+const reading = NativeSensor.read(); // synchronous, zero serialization
 ```
 
-O `HostObject` vive enquanto o objeto JS correspondente tiver referências ativas. O garbage collector do Hermes gerencia o ciclo de vida via `shared_ptr`.
+The `HostObject` lives as long as the corresponding JS object has active references. Hermes's garbage collector manages the lifecycle via `shared_ptr`.
 
 ---
 
-## Por que ObjC++ e não Swift direto
+## Why ObjC++ and not Swift directly
 
-Aqui está a limitação central que todo desenvolvedor Swift encontra: **Swift não pode expor tipos C++ para ObjC, e ObjC++ é a única camada que pode fazer a ponte dos dois lados**.
+Here is the central limitation every Swift developer encounters: **Swift cannot expose C++ types to ObjC, and ObjC++ is the only layer that can bridge both sides**.
 
-O JSI é uma API C++. Seus tipos (`jsi::Runtime`, `jsi::Value`, `jsi::HostObject`) são classes C++ com templates, herança virtual e semântica de move. Swift possui interoperabilidade com C++ em evolução (Swift 5.9+), mas as restrições ainda são significativas para tipos complexos com herança virtual, que é exatamente o que `jsi::HostObject` usa.
+JSI is a C++ API. Its types (`jsi::Runtime`, `jsi::Value`, `jsi::HostObject`) are C++ classes with templates, virtual inheritance, and move semantics. Swift has evolving C++ interoperability (Swift 5.9+), but the restrictions are still significant for complex types with virtual inheritance, which is exactly what `jsi::HostObject` uses.
 
-ObjC++ (arquivos `.mm`) resolve isso porque:
+ObjC++ (`.mm` files) solves this because:
 
-1. O compilador Clang compila `.mm` como ObjC com acesso total ao C++.
-2. Um arquivo `.mm` pode incluir headers JSI, instanciar `jsi::HostObject`, e usar toda a API C++.
-3. Esse mesmo arquivo pode definir uma classe ObjC (`@interface`/`@implementation`) que expõe uma interface limpa para Swift.
-4. Swift importa a classe ObjC via bridging header e chama seus métodos normalmente.
+1. The Clang compiler compiles `.mm` as ObjC with full C++ access.
+2. A `.mm` file can include JSI headers, instantiate `jsi::HostObject`, and use the entire C++ API.
+3. That same file can define an ObjC class (`@interface`/`@implementation`) that exposes a clean interface to Swift.
+4. Swift imports the ObjC class via the bridging header and calls its methods normally.
 
-A cadeia fica assim:
+The chain looks like this:
 
 ```
 Swift (.swift)
     |
-    v  chama métodos ObjC
+    v  calls ObjC methods
 ObjC++ (.mm)
     |
-    v  usa diretamente
+    v  uses directly
 JSI C++ (jsi::Runtime, jsi::HostObject, jsi::Function)
     |
-    v  comunica com
+    v  communicates with
 Hermes / JavaScript
 ```
 
 ---
 
-## Estrutura prática de um TurboModule iOS
+## Practical structure of an iOS TurboModule
 
-Um TurboModule iOS mínimo com JSI segue esta estrutura de arquivos:
+A minimal iOS TurboModule with JSI follows this file structure:
 
 ```
 ios/
   MyModule/
-    MyModule.h         ← interface ObjC (visível ao Swift)
-    MyModule.mm        ← implementação ObjC++, usa JSI
-    MyModuleSpec.h     ← protocolo gerado pelo Codegen
+    MyModule.h         ← ObjC interface (visible to Swift)
+    MyModule.mm        ← ObjC++ implementation, uses JSI
+    MyModuleSpec.h     ← protocol generated by Codegen
 ```
 
-`MyModule.h` expõe apenas tipos ObjC-compatíveis:
+`MyModule.h` exposes only ObjC-compatible types:
 
 ```objc
 // MyModule.h
@@ -244,7 +244,7 @@ ios/
 @end
 ```
 
-`MyModule.mm` implementa a lógica com acesso total ao C++ e JSI:
+`MyModule.mm` implements the logic with full access to C++ and JSI:
 
 ```objc
 // MyModule.mm
@@ -267,33 +267,33 @@ RCT_EXPORT_MODULE(MyModule)
 @end
 ```
 
-Swift enxerga apenas `MyModule` como uma classe ObjC normal. A complexidade C++ fica totalmente encapsulada em `.mm`.
+Swift sees only `MyModule` as a normal ObjC class. The C++ complexity is fully encapsulated in `.mm`.
 
 ---
 
-## Implicações de performance
+## Performance implications
 
-A diferença entre Bridge legada e JSI não é apenas teórica:
+The difference between the legacy Bridge and JSI is not just theoretical:
 
-| Aspecto | Bridge (legada) | JSI |
+| Aspect | Bridge (legacy) | JSI |
 |---|---|---|
-| Modelo de chamada | Assíncrono via fila | Síncrono in-process |
-| Serialização | JSON completo | Nenhuma |
-| Latência de ida/volta | Dezenas de ms | Microssegundos |
-| Compartilhamento de memória | Impossível (cópias) | Direto via ponteiros |
-| Uso em gestures 60fps | Impraticável | Viável |
-| `ArrayBuffer` sem cópia | Não suportado | Suportado |
+| Call model | Asynchronous via queue | Synchronous in-process |
+| Serialization | Full JSON | None |
+| Round-trip latency | Tens of ms | Microseconds |
+| Memory sharing | Impossible (copies) | Direct via pointers |
+| Use in 60fps gestures | Impractical | Viable |
+| `ArrayBuffer` without copy | Not supported | Supported |
 
-Para casos como processamento de imagem frame-a-frame, leitura de sensores de alta frequência, ou integração com Metal via buffers compartilhados, a diferença é a fronteira entre viável e inviável.
+For cases like frame-by-frame image processing, high-frequency sensor reading, or Metal integration via shared buffers, the difference is the boundary between viable and infeasible.
 
-A desvantagem do modelo síncrono: uma operação lenta no lado nativo bloqueia a thread JavaScript. TurboModules bem implementados usam JSI de forma síncrona apenas para operações verdadeiramente rápidas — leitura de estado em memória, configuração de callbacks — e delegam trabalho pesado para threads nativas, notificando o JS via eventos ou Promises quando concluído.
+The downside of the synchronous model: a slow operation on the native side blocks the JavaScript thread. Well-implemented TurboModules use JSI synchronously only for truly fast operations — reading state from memory, setting up callbacks — and delegate heavy work to native threads, notifying JS via events or Promises when done.
 
 ---
 
 ## Go Deeper
 
-A exploração completa de JSI, Fabric e a New Architecture como sistema integrado está na trilha avançada:
+The complete exploration of JSI, Fabric, and the New Architecture as an integrated system is in the advanced trail:
 
-- **Masterclass — Modulo 03: Fabric e JSI** (`docs/trilha-masterclass/modulo-03-fabric-jsi/`) — implementação de componentes Fabric com JSI, HostObjects avançados, integração com Metal e CoreML via buffers compartilhados, e análise de performance com Instruments.
+- **Masterclass — Module 03: Fabric and JSI** (`docs/trilha-masterclass/modulo-03-fabric-jsi/`) — complete implementation of Fabric components with JSI, advanced HostObjects, Metal and CoreML integration via shared buffers, and performance analysis with Instruments.
 
-O módulo da Masterclass assume que você já tem o modelo mental de JSI coberto aqui e parte diretamente para implementações de produção com Codegen e a pipeline completa do Fabric renderer.
+The Masterclass module assumes you already have the JSI mental model covered here and goes directly to production implementations with Codegen and the complete Fabric renderer pipeline.

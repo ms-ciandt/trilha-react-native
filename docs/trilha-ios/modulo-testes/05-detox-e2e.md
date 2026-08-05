@@ -1,16 +1,16 @@
-﻿---
-title: Testes E2E com Detox
+---
+title: E2E Tests with Detox
 ---
 
-# Testes E2E com Detox
+# E2E Tests with Detox
 
-Se você vem do desenvolvimento iOS nativo, já conhece o XCUITest: um framework que automatiza interações reais na interface do aplicativo, simulando o que um usuário faria em um iPhone ou iPad. O Detox ocupa exatamente esse espaço no ecossistema React Native. Ele controla um Simulador iOS real, toca em elementos, digita texto, rola listas e verifica o estado visual da interface — tudo a partir de testes escritos em JavaScript ou TypeScript.
+If you come from native iOS development, you already know XCUITest: a framework that automates real UI interactions, simulating what a user would do on an iPhone or iPad. Detox occupies exactly that space in the React Native ecosystem. It controls a real iOS Simulator, taps elements, types text, scrolls lists, and verifies the visual state of the interface — all from tests written in JavaScript or TypeScript.
 
-A grande diferença em relação ao XCUITest é que o Detox roda os mesmos testes no Android também, sem reescrever nada. Além disso, como os testes são escritos em JS, eles vivem junto com o código da aplicação e rodam no mesmo pipeline de CI que o restante da suite.
+The major difference from XCUITest is that Detox runs the same tests on Android too, without rewriting anything. Additionally, since the tests are written in JS, they live alongside the application code and run in the same CI pipeline as the rest of the suite.
 
-## XCUITest versus Detox: mapeamento conceitual
+## XCUITest versus Detox: conceptual mapping
 
-No XCUITest você escreve algo assim:
+In XCUITest you write something like this:
 
 ```swift
 let app = XCUIApplication()
@@ -20,11 +20,11 @@ let button = app.buttons["LoginButton"]
 XCTAssertTrue(button.exists)
 button.tap()
 
-let welcomeLabel = app.staticTexts["Bem-vindo"]
+let welcomeLabel = app.staticTexts["Welcome"]
 XCTAssertTrue(welcomeLabel.waitForExistence(timeout: 5))
 ```
 
-O equivalente em Detox:
+The equivalent in Detox:
 
 ```js
 describe('Login', () => {
@@ -32,56 +32,56 @@ describe('Login', () => {
     await device.launchApp();
   });
 
-  it('exibe boas-vindas após login', async () => {
+  it('shows welcome after login', async () => {
     await expect(element(by.id('LoginButton'))).toBeVisible();
     await element(by.id('LoginButton')).tap();
-    await waitFor(element(by.text('Bem-vindo')))
+    await waitFor(element(by.text('Welcome')))
       .toBeVisible()
       .withTimeout(5000);
   });
 });
 ```
 
-A estrutura é a mesma: localizar um elemento, executar uma ação, verificar o resultado. A vantagem do Detox é o runner JavaScript (Jest por padrão), os matchers expressivos e a integração nativa com o bundler do React Native para sincronização automática.
+The structure is the same: locate an element, perform an action, verify the result. Detox's advantages are the JavaScript runner (Jest by default), expressive matchers, and native integration with the React Native bundler for automatic synchronization.
 
-## Instalando e configurando o Detox
+## Installing and configuring Detox
 
-### Dependências globais
+### Global dependencies
 
-O Detox usa o `applesimutils` para controlar o Simulador e o `xcpretty` para formatar a saída do `xcodebuild`. Instale via Homebrew:
+Detox uses `applesimutils` to control the Simulator and `xcpretty` to format `xcodebuild` output. Install via Homebrew:
 
 ```bash
 brew tap wix/brew
 brew install applesimutils
 ```
 
-### Adicionando o Detox ao projeto
+### Adding Detox to the project
 
 ```bash
 npm install detox --save-dev
-npm install jest-circus --save-dev   # test runner recomendado
+npm install jest-circus --save-dev   # recommended test runner
 ```
 
-Se o seu projeto usa Expo com bare workflow, o processo é o mesmo. Para Expo managed workflow, é necessário usar `expo-detox` ou ejetar primeiro.
+If your project uses Expo with bare workflow, the process is the same. For Expo managed workflow, you need to use `expo-detox` or eject first.
 
-### Inicializando a configuração
+### Initializing the configuration
 
 ```bash
 npx detox init
 ```
 
-Esse comando cria o arquivo `.detoxrc.js` na raiz do projeto e uma pasta `e2e/` com um arquivo de teste de exemplo e um `jest.config.js` dedicado.
+This command creates the `.detoxrc.js` file at the project root and an `e2e/` folder with a sample test file and a dedicated `jest.config.js`.
 
-### Estrutura gerada
+### Generated structure
 
 ```
 e2e/
-  firstTest.test.js      ← teste de exemplo
-  jest.config.js         ← configuração do Jest para Detox
-.detoxrc.js              ← configuração central do Detox
+  firstTest.test.js      ← sample test
+  jest.config.js         ← Jest configuration for Detox
+.detoxrc.js              ← central Detox configuration
 ```
 
-## Configurando o .detoxrc.js para iOS
+## Configuring .detoxrc.js for iOS
 
 ```js
 /** @type {Detox.DetoxConfig} */
@@ -140,9 +140,9 @@ module.exports = {
 };
 ```
 
-Substitua `YourApp` pelo nome real do seu workspace e scheme. O `binaryPath` aponta para o `.app` que o `xcodebuild` vai gerar dentro de `derivedDataPath`.
+Replace `YourApp` with the real name of your workspace and scheme. The `binaryPath` points to the `.app` that `xcodebuild` will generate inside `derivedDataPath`.
 
-### Configurando o Jest para E2E
+### Configuring Jest for E2E
 
 ```js
 // e2e/jest.config.js
@@ -160,60 +160,60 @@ module.exports = {
 };
 ```
 
-O `maxWorkers: 1` é obrigatório — Detox não suporta testes E2E em paralelo no mesmo Simulador.
+`maxWorkers: 1` is mandatory — Detox does not support parallel E2E tests on the same Simulator.
 
-## Compilando o app para Detox
+## Building the app for Detox
 
-Antes de rodar os testes, é necessário compilar o app para o Simulador:
+Before running tests, you need to build the app for the Simulator:
 
 ```bash
 npx detox build --configuration ios.sim.debug
 ```
 
-Por trás dos panos, o Detox executa exatamente o comando `xcodebuild` definido em `apps.ios.debug.build`. O binário resultante fica em `ios/build/Build/Products/Debug-iphonesimulator/`.
+Under the hood, Detox executes exactly the `xcodebuild` command defined in `apps.ios.debug.build`. The resulting binary lands in `ios/build/Build/Products/Debug-iphonesimulator/`.
 
-Em modo release (recomendado para CI, pois desativa o Fast Refresh e o bundler dev):
+In release mode (recommended for CI, as it disables Fast Refresh and the dev bundler):
 
 ```bash
 npx detox build --configuration ios.sim.release
 ```
 
-O build precisa ser refeito sempre que o código nativo mudar (novo módulo, alteração em `AppDelegate`, atualização de dependência com código nativo). Para mudanças apenas em JS, o Detox recarrega o bundle automaticamente.
+The build needs to be redone whenever native code changes (new module, change in `AppDelegate`, dependency update with native code). For JS-only changes, Detox reloads the bundle automatically.
 
-## Rodando os testes
+## Running the tests
 
 ```bash
 npx detox test --configuration ios.sim.debug
 ```
 
-Com o Simulador especificado no `.detoxrc.js`, o Detox vai:
+With the Simulator specified in `.detoxrc.js`, Detox will:
 
-1. Iniciar o Simulador (ou reutilizar um já aberto).
-2. Instalar o `.app` compilado.
-3. Iniciar o Metro Bundler se estiver rodando em debug.
-4. Executar cada arquivo de teste via Jest.
-5. Desligar o Simulador ao final (configurável).
+1. Start the Simulator (or reuse one already open).
+2. Install the compiled `.app`.
+3. Start the Metro Bundler if running in debug mode.
+4. Execute each test file via Jest.
+5. Shut down the Simulator at the end (configurable).
 
-Para rodar um arquivo específico:
+To run a specific file:
 
 ```bash
 npx detox test --configuration ios.sim.debug e2e/login.test.js
 ```
 
-Para rodar com saída detalhada (útil para depurar seletores):
+To run with detailed output (useful for debugging selectors):
 
 ```bash
 npx detox test --configuration ios.sim.debug --loglevel verbose
 ```
 
-## Marcando elementos com testID
+## Marking elements with testID
 
-No React Native, você expõe elementos para o Detox via a prop `testID`. No iOS, o Detox mapeia `testID` para o `accessibilityIdentifier` do UIKit — exatamente o que o XCUITest usa com `app.buttons["LoginButton"]`.
+In React Native, you expose elements to Detox via the `testID` prop. On iOS, Detox maps `testID` to UIKit's `accessibilityIdentifier` — exactly what XCUITest uses with `app.buttons["LoginButton"]`.
 
 ```tsx
-// componente
+// component
 <TouchableOpacity testID="login-button" onPress={handleLogin}>
-  <Text>Entrar</Text>
+  <Text>Sign In</Text>
 </TouchableOpacity>
 
 <TextInput
@@ -224,45 +224,45 @@ No React Native, você expõe elementos para o Detox via a prop `testID`. No iOS
 />
 ```
 
-Mantenha os `testID` estáveis e descritivos. Evite IDs dinâmicos como `item-${index}` em listas longas — prefira IDs baseados em dados (`item-${item.id}`).
+Keep `testID` values stable and descriptive. Avoid dynamic IDs like `item-${index}` in long lists — prefer data-based IDs (`item-${item.id}`).
 
-## Matchers: localizando elementos
+## Matchers: locating elements
 
-### by.id — identificador de acessibilidade
+### by.id — accessibility identifier
 
 ```js
 element(by.id('login-button'))
 element(by.id('email-input'))
 ```
 
-A forma mais robusta. Não quebra com mudanças de texto ou estilo.
+The most robust form. Does not break with text or style changes.
 
-### by.text — texto visível
+### by.text — visible text
 
 ```js
-element(by.text('Entrar'))
-element(by.text('Bem-vindo ao app'))
+element(by.text('Sign In'))
+element(by.text('Welcome to the app'))
 ```
 
-Útil para elementos sem `testID`, mas frágil a mudanças de copy e localização.
+Useful for elements without `testID`, but fragile to copy and localization changes.
 
-### by.type — tipo de componente nativo
+### by.type — native component type
 
 ```js
-element(by.type('RCTTextInput'))      // TextInput no iOS
+element(by.type('RCTTextInput'))      // TextInput on iOS
 element(by.type('RCTScrollView'))     // ScrollView
 ```
 
-Equivale a usar tipos de `XCUIElementType` no XCUITest. Use apenas quando não houver alternativa, pois depende de nomes internos do React Native.
+Equivalent to using `XCUIElementType` types in XCUITest. Use only when there is no alternative, as it depends on React Native's internal names.
 
-### Combinando matchers
+### Combining matchers
 
 ```js
 element(by.id('list').withAncestor(by.id('main-screen')))
-element(by.text('Confirmar').withDescendant(by.id('confirm-icon')))
+element(by.text('Confirm').withDescendant(by.id('confirm-icon')))
 ```
 
-## Actions: interagindo com elementos
+## Actions: interacting with elements
 
 ### tap
 
@@ -273,11 +273,11 @@ await element(by.id('login-button')).tap();
 ### typeText
 
 ```js
-await element(by.id('email-input')).typeText('usuario@exemplo.com');
-await element(by.id('password-input')).typeText('senha123');
+await element(by.id('email-input')).typeText('user@example.com');
+await element(by.id('password-input')).typeText('password123');
 ```
 
-O `typeText` digita caractere por caractere, simulando entrada real do teclado. Para preencher um campo sem simular digitação (mais rápido em testes de integração):
+`typeText` types character by character, simulating real keyboard input. To fill a field without simulating typing (faster in integration tests):
 
 ```js
 await element(by.id('search-input')).replaceText('React Native');
@@ -296,7 +296,7 @@ await element(by.id('product-list')).scroll(300, 'down');
 await element(by.id('product-list')).scroll(150, 'up');
 ```
 
-O primeiro argumento é a distância em pontos, o segundo é a direção (`'up'`, `'down'`, `'left'`, `'right'`).
+The first argument is the distance in points, the second is the direction (`'up'`, `'down'`, `'left'`, `'right'`).
 
 ### scrollTo
 
@@ -312,7 +312,7 @@ await element(by.id('card')).swipe('left');
 await element(by.id('drawer')).swipe('right', 'slow', 0.5);
 ```
 
-Parâmetros: direção, velocidade (`'slow'` ou `'fast'`), fração normalizada (0.0 a 1.0).
+Parameters: direction, speed (`'slow'` or `'fast'`), normalized fraction (0.0 to 1.0).
 
 ### longPress
 
@@ -320,7 +320,7 @@ Parâmetros: direção, velocidade (`'slow'` ou `'fast'`), fração normalizada 
 await element(by.id('message-item')).longPress(800); // 800ms
 ```
 
-## Expectations: verificando o estado
+## Expectations: verifying state
 
 ### toBeVisible
 
@@ -328,7 +328,7 @@ await element(by.id('message-item')).longPress(800); // 800ms
 await expect(element(by.id('welcome-screen'))).toBeVisible();
 ```
 
-Verifica se o elemento está na área visível da tela (não necessariamente existente na hierarquia — precisa estar dentro dos limites visíveis).
+Verifies that the element is in the visible area of the screen (not just present in the hierarchy — it needs to be within visible bounds).
 
 ### toExist
 
@@ -336,12 +336,12 @@ Verifica se o elemento está na área visível da tela (não necessariamente exi
 await expect(element(by.id('error-banner'))).toExist();
 ```
 
-Verifica apenas se o elemento está na hierarquia de views, independente de estar visível.
+Verifies only that the element is in the view hierarchy, regardless of whether it is visible.
 
 ### toHaveText
 
 ```js
-await expect(element(by.id('user-name'))).toHaveText('Ana Souza');
+await expect(element(by.id('user-name'))).toHaveText('Alice Smith');
 ```
 
 ### not
@@ -351,50 +351,50 @@ await expect(element(by.id('loading-spinner'))).not.toBeVisible();
 await expect(element(by.id('error-banner'))).not.toExist();
 ```
 
-## Aguardando estados assíncronos com waitFor
+## Waiting for async states with waitFor
 
-O `waitFor` é o equivalente direto de `waitForExistence(timeout:)` do XCUITest. Ele fica consultando o elemento até a condição ser satisfeita ou o tempo expirar.
+`waitFor` is the direct equivalent of XCUITest's `waitForExistence(timeout:)`. It keeps polling the element until the condition is satisfied or the timeout expires.
 
 ```js
 await waitFor(element(by.id('home-screen')))
   .toBeVisible()
-  .withTimeout(10000); // 10 segundos
+  .withTimeout(10000); // 10 seconds
 ```
 
-Combinando com ação de scroll (útil para listas longas):
+Combining with a scroll action (useful for long lists):
 
 ```js
-await waitFor(element(by.text('Produto 42')))
+await waitFor(element(by.text('Product 42')))
   .toBeVisible()
   .whileElement(by.id('product-list'))
   .scroll(100, 'down');
 ```
 
-O Detox vai rolar a lista em incrementos de 100 pontos até o elemento aparecer ou o timeout ser atingido.
+Detox will scroll the list in 100-point increments until the element appears or the timeout is reached.
 
-## Gerenciando o ciclo de vida do app nos testes
+## Managing the app lifecycle in tests
 
 ```js
-describe('Fluxo de autenticacao', () => {
+describe('Authentication flow', () => {
   beforeAll(async () => {
     await device.launchApp();
   });
 
   beforeEach(async () => {
-    await device.reloadReactNative(); // recarrega o bundle JS sem reiniciar o app
+    await device.reloadReactNative(); // reloads the JS bundle without restarting the app
   });
 
   afterAll(async () => {
     await device.terminateApp();
   });
 
-  it('realiza login com sucesso', async () => {
+  it('logs in successfully', async () => {
     // ...
   });
 });
 ```
 
-Para reiniciar o app completamente entre testes (mais lento, mas garante estado limpo):
+To fully restart the app between tests (slower, but guarantees clean state):
 
 ```js
 beforeEach(async () => {
@@ -402,9 +402,9 @@ beforeEach(async () => {
 });
 ```
 
-## Interceptando diálogos de permissão do iOS
+## Intercepting iOS permission dialogs
 
-Uma das diferenças mais importantes do iOS em relação ao XCUITest: o sistema operacional exibe diálogos nativos para solicitar permissões (câmera, localização, notificações). O Detox permite configurar a resposta a esses diálogos na inicialização do app:
+One of the most important differences from XCUITest: the operating system displays native dialogs to request permissions (camera, location, notifications). Detox lets you configure the response to these dialogs at app launch:
 
 ```js
 await device.launchApp({
@@ -418,15 +418,15 @@ await device.launchApp({
 });
 ```
 
-As permissões são configuradas antes do app iniciar, evitando que o diálogo apareça durante o teste. Os valores aceitos são `'YES'`, `'NO'`, e para localização: `'always'`, `'inuse'`, `'never'`.
+Permissions are configured before the app starts, preventing the dialog from appearing during the test. Accepted values are `'YES'`, `'NO'`, and for location: `'always'`, `'inuse'`, `'never'`.
 
-Para testar o fluxo de solicitação de permissão propriamente dito, o `applesimutils` expõe utilitários que o Detox usa internamente. Em geral, a abordagem recomendada para testes E2E é pré-conceder as permissões e testar o comportamento do app depois que a permissão foi aceita ou negada.
+To test the actual permission request flow, `applesimutils` exposes utilities that Detox uses internally. In general, the recommended approach for E2E tests is to pre-grant permissions and test the app's behavior after the permission has been accepted or denied.
 
-## Exemplo completo: fluxo de login
+## Complete example: login flow
 
 ```js
 // e2e/login.test.js
-describe('Autenticacao', () => {
+describe('Authentication', () => {
   beforeAll(async () => {
     await device.launchApp({
       permissions: { notifications: 'YES' },
@@ -437,15 +437,15 @@ describe('Autenticacao', () => {
     await device.reloadReactNative();
   });
 
-  it('exibe a tela de login ao abrir o app', async () => {
+  it('shows the login screen when the app opens', async () => {
     await expect(element(by.id('login-screen'))).toBeVisible();
     await expect(element(by.id('email-input'))).toBeVisible();
     await expect(element(by.id('password-input'))).toBeVisible();
   });
 
-  it('exibe erro para credenciais invalidas', async () => {
-    await element(by.id('email-input')).typeText('errado@teste.com');
-    await element(by.id('password-input')).typeText('senhaerrada');
+  it('shows an error for invalid credentials', async () => {
+    await element(by.id('email-input')).typeText('wrong@test.com');
+    await element(by.id('password-input')).typeText('wrongpassword');
     await element(by.id('login-button')).tap();
 
     await waitFor(element(by.id('error-message')))
@@ -453,13 +453,13 @@ describe('Autenticacao', () => {
       .withTimeout(5000);
 
     await expect(element(by.id('error-message'))).toHaveText(
-      'Email ou senha incorretos',
+      'Invalid email or password',
     );
   });
 
-  it('navega para a home apos login bem-sucedido', async () => {
-    await element(by.id('email-input')).typeText('usuario@exemplo.com');
-    await element(by.id('password-input')).typeText('senha-correta');
+  it('navigates to home after successful login', async () => {
+    await element(by.id('email-input')).typeText('user@example.com');
+    await element(by.id('password-input')).typeText('correct-password');
     await element(by.id('login-button')).tap();
 
     await waitFor(element(by.id('home-screen')))
@@ -471,9 +471,9 @@ describe('Autenticacao', () => {
 });
 ```
 
-## CI no GitHub Actions com runner macOS
+## CI on GitHub Actions with macOS runner
 
-Testes Detox para iOS exigem um runner com macOS e Xcode instalado. O GitHub Actions oferece runners `macos-14` e `macos-15` com Xcode pré-instalado.
+Detox tests for iOS require a runner with macOS and Xcode installed. GitHub Actions offers `macos-14` and `macos-15` runners with Xcode pre-installed.
 
 ```yaml
 # .github/workflows/e2e-ios.yml
@@ -529,9 +529,9 @@ jobs:
           retention-days: 7
 ```
 
-O flag `--cleanup` faz o Detox desligar o Simulador ao final. O `--headless` roda sem exibir a interface gráfica do Simulador (necessário em runners sem display).
+The `--cleanup` flag makes Detox shut down the Simulator at the end. `--headless` runs without displaying the Simulator's graphical interface (required on runners without a display).
 
-Para salvar screenshots e vídeos das falhas, configure o `artifacts` no `.detoxrc.js`:
+To save screenshots and videos of failures, configure `artifacts` in `.detoxrc.js`:
 
 ```js
 artifacts: {
@@ -549,15 +549,15 @@ artifacts: {
 },
 ```
 
-## Detox versus XCUITest: quando usar cada um
+## Detox versus XCUITest: when to use each
 
-| Criterio | XCUITest | Detox |
+| Criterion | XCUITest | Detox |
 |---|---|---|
-| Plataforma | iOS apenas | iOS e Android |
-| Linguagem dos testes | Swift / Objective-C | JavaScript / TypeScript |
-| Integra com Jest | Nao | Sim |
-| Acesso a APIs nativas profundas | Total | Parcial (via `applesimutils`) |
-| Tempo de build | Mais rapido (nativo) | Similar (usa xcodebuild) |
-| Manutencao unica para ambas as plataformas | Nao | Sim |
+| Platform | iOS only | iOS and Android |
+| Test language | Swift / Objective-C | JavaScript / TypeScript |
+| Integrates with Jest | No | Yes |
+| Access to deep native APIs | Full | Partial (via `applesimutils`) |
+| Build time | Faster (native) | Similar (uses xcodebuild) |
+| Single maintenance for both platforms | No | Yes |
 
-Para projetos React Native, o Detox elimina a necessidade de manter duas suites separadas. Se o seu app tem lógica crítica de UI diferente por plataforma, vale testar casos específicos de iOS em XCUITest e os fluxos principais em Detox.
+For React Native projects, Detox eliminates the need to maintain two separate suites. If your app has critical UI logic that differs per platform, it is worth testing iOS-specific cases in XCUITest and the main flows in Detox.
