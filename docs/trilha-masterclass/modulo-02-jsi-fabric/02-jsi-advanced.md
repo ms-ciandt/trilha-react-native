@@ -341,7 +341,7 @@ Each `HostFunction` call appears as a `JSI::HostFunction::<name>` slice. If you 
 
 | Resource | What to do |
 |---|---|
-| [Expo Snack — JSI via MMKV](https://snack.expo.dev/@mrousavy/react-native-mmkv) | Run MMKV in the browser — observe synchronous reads in action |
+| [MMKV — GitHub](https://github.com/mrousavy/react-native-mmkv) | Source, benchmarks and integration guide |
 | [react-native-jsi-example](https://github.com/ospfranco/react-native-jsi-template) | Minimal template: one HostObject, CMakeLists, iOS + Android — fork and build |
 
 ---

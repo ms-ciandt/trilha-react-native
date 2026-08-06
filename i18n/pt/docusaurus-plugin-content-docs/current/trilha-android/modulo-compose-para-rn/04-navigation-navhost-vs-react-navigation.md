@@ -256,8 +256,6 @@ Quando `estaAutenticado` muda, o React Navigation automaticamente substitui o na
 
 ## Playground Interativo
 
-[![Abrir no Expo Snack](https://img.shields.io/badge/Abrir%20no-Expo%20Snack-000020?logo=expo)](https://snack.expo.dev/@react-navigation/react-navigation-example)
-
 ---
 
 ## Materiais de Estudo

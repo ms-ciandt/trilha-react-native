@@ -259,8 +259,6 @@ Aprenda Flexbox visualmente com o jogo Flexbox Froggy — os eixos, `justify-con
 
 [https://flexboxfroggy.com/](https://flexboxfroggy.com/)
 
-[![Abrir no Expo Snack](https://img.shields.io/badge/Abrir%20no-Expo%20Snack-000020?logo=expo)](https://snack.expo.dev/@react-native-community/layout-flexbox)
-
 ---
 
 ## Materiais de Estudo
