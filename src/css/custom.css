@@ -1045,12 +1045,15 @@ video {
   display: inline-block;
   padding: 0.6rem 1.75rem;
   border-radius: 8px;
-  color: #000050 !important;
+  color: #fff !important;
   font-weight: 700;
   font-size: 0.9rem;
   text-decoration: none !important;
   letter-spacing: 0.01em;
   transition: opacity 0.15s ease, transform 0.15s ease;
+}
+[data-theme='dark'] .trail-feedback-btn {
+  color: #000050 !important;
 }
 .trail-feedback-btn:hover {
   opacity: 0.88;
@@ -1116,12 +1119,15 @@ video {
   padding: 0.6rem 1.75rem;
   border-radius: 8px;
   background: #8CB3D9;
-  color: #000050 !important;
+  color: #fff !important;
   font-weight: 700;
   font-size: 0.9rem;
   text-decoration: none !important;
   letter-spacing: 0.01em;
   transition: opacity 0.15s ease, transform 0.15s ease;
+}
+[data-theme='dark'] .mc-feedback-btn {
+  color: #000050 !important;
 }
 .mc-feedback-btn:hover {
   opacity: 0.88;
