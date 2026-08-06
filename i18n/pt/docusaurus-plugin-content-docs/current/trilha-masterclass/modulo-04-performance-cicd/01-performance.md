@@ -743,7 +743,7 @@ Com configuracao adequada de `staleTime`, navegar de volta para uma tela ja visi
 | Recurso | O que fazer |
 |---|---|
 | [Perfetto UI](https://ui.perfetto.dev/) | Carregue um arquivo HTML do Systrace — explore flame charts online |
-| [Expo Snack — Reanimated worklet](https://snack.expo.dev/@reanimated/worklet-demo) | Execute uma animacao com worklet e observe 60 fps mesmo com o JS bloqueado |
+| [Reanimated — Documentação de Worklets](https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/worklets) | Conceito de worklet, modelo de threads e exemplos |
 | [Yoga playground](https://yogalayout.dev/playground) | Depure performance de layout — veja quais propriedades flexbox disparam re-layout |
 | [TanStack Query DevTools](https://tanstack.com/query/latest/docs/framework/react/devtools) | Inspecione cache de queries, stale times, re-fetch em segundo plano |
 

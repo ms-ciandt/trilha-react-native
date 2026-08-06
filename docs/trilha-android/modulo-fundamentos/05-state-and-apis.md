@@ -459,8 +459,6 @@ function ProductScreen({ route }: NativeStackScreenProps<RootStack, 'Product'>) 
 
 ## Interactive Example
 
-[![Open in Expo Snack](https://img.shields.io/badge/Open%20in-Expo%20Snack-000020?logo=expo)](https://snack.expo.dev/@react-native-community/network)
-
 ---
 
 ## Study Materials

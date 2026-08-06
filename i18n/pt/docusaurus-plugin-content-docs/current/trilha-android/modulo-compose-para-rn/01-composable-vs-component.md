@@ -268,8 +268,6 @@ Ambos virtualizam por padrão — apenas os itens próximos à viewport são mon
 
 ## Exemplo Interativo
 
-[![Abrir no Expo Snack](https://img.shields.io/badge/Abrir%20no-Expo%20Snack-000020?logo=expo)](https://snack.expo.dev/@react-native-community/components-and-props)
-
 ---
 
 ## Materiais de Estudo
@@ -284,7 +282,7 @@ Ambos virtualizam por padrão — apenas os itens próximos à viewport são mon
 ### Interativo
 
 - [Tutorial React — Jogo da Velha](https://react.dev/learn/tutorial-tic-tac-toe)
-- [Expo Snack — Componentes & Props](https://snack.expo.dev/@react-native-community/components-and-props)
+- [React Native — Core Components](https://reactnative.dev/docs/components-and-apis) — referência oficial de componentes
 
 ### Vídeos
 

@@ -214,8 +214,6 @@ export function MySlider({
 
 Este snack demonstra o fluxo de eventos de um Fabric Component ate o JS. No Expo Go, componentes nativos passam pela bridge do Fabric:
 
-https://snack.expo.dev/@react-native-community/slider-example
-
 Abra o React DevTools (shake no dispositivo → "Open Debugger") e observe as props chegando ao Shadow Node.
 
 ---

@@ -332,8 +332,6 @@ Learn Flexbox visually with the Flexbox Froggy game — the axes, `justify-conte
 
 Try this Expo Snack that lets you tweak Flexbox properties live:
 
-[![Open in Expo Snack](https://img.shields.io/badge/Open%20in-Expo%20Snack-000020?logo=expo)](https://snack.expo.dev/@react-native-community/layout-flexbox)
-
 ---
 
 ## Study Materials

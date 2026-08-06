@@ -378,7 +378,7 @@ With proper `staleTime` configuration, navigating back to a screen that has alre
 | Resource | What to do |
 |---|---|
 | [Perfetto UI](https://ui.perfetto.dev/) | Load a Systrace HTML file — explore flame charts online |
-| [Expo Snack — Reanimated worklet](https://snack.expo.dev/@reanimated/worklet-demo) | Run a worklet animation and observe 60 fps even with JS blocked |
+| [Reanimated — Worklets documentation](https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/worklets) | Worklet concept, thread model and examples |
 | [Yoga playground](https://yogalayout.dev/playground) | Debug layout performance — see which flexbox properties trigger re-layout |
 | [TanStack Query DevTools](https://tanstack.com/query/latest/docs/framework/react/devtools) | Inspect query cache, stale times, background refetch |
 

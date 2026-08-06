@@ -307,8 +307,6 @@ Both virtualise by default — only items near the viewport are mounted. The `ke
 
 Try editing the composable-to-component mental model in this live Expo Snack:
 
-[![Open in Expo Snack](https://img.shields.io/badge/Open%20in-Expo%20Snack-000020?logo=expo)](https://snack.expo.dev/@react-native-community/components-and-props)
-
 ---
 
 ## Study Materials
@@ -323,7 +321,7 @@ Try editing the composable-to-component mental model in this live Expo Snack:
 ### Interactive Tutorials
 
 - [React Tutorial — Tic Tac Toe](https://react.dev/learn/tutorial-tic-tac-toe) — hands-on component + state introduction
-- [Expo Snack — Components & Props](https://snack.expo.dev/@react-native-community/components-and-props) — interactive RN playground
+- [React Native — Core Components](https://reactnative.dev/docs/components-and-apis) — official component reference
 
 ### Videos
 

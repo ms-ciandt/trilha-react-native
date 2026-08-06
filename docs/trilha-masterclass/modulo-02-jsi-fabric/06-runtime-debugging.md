@@ -342,8 +342,6 @@ export function useSecureStorage(key: string) {
 
 This snack demonstrates calling a TurboModule (DeviceInfo) synchronously and observing the absence of a loading state:
 
-https://snack.expo.dev/@react-native-community/device-info-example
-
 In the Snack, watch Network tab — there are zero HTTP requests for the device info values. They come directly from JSI.
 
 ---
@@ -394,7 +392,7 @@ In the Snack, watch Network tab — there are zero HTTP requests for the device 
 
 | Resource | What to do |
 |---|---|
-| [React Native New Architecture playground](https://snack.expo.dev/) | Create a Snack, open React DevTools Profiler, record a render |
+| [React Native DevTools — Profiler](https://reactnative.dev/docs/react-native-devtools) | Open the Profiler tab, record a render and inspect component timings |
 | [Hermes playground](https://playground.hermesengine.dev/) | Paste JS, inspect bytecode output, see register assignments |
 | [Yoga playground](https://yogalayout.dev/playground) | Test Flexbox rules, see computed layout numbers |
 | [reactwg/react-native-new-architecture](https://github.com/reactwg/react-native-new-architecture/discussions) | Working group discussions — the source of truth for migration decisions |

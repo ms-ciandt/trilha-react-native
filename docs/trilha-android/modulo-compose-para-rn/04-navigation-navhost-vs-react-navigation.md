@@ -387,8 +387,6 @@ When `isAuthenticated` flips, React Navigation automatically replaces the naviga
 
 ## Interactive Playground
 
-[![Open in Expo Snack](https://img.shields.io/badge/Open%20in-Expo%20Snack-000020?logo=expo)](https://snack.expo.dev/@react-navigation/react-navigation-example)
-
 ---
 
 ## Study Materials
@@ -406,7 +404,7 @@ When `isAuthenticated` flips, React Navigation automatically replaces the naviga
 
 ### Interactive
 
-- [React Navigation — Playground Snack](https://snack.expo.dev/@react-navigation/react-navigation-example)
+- [React Navigation — Getting Started](https://reactnavigation.org/docs/getting-started)
 
 ### Videos
 

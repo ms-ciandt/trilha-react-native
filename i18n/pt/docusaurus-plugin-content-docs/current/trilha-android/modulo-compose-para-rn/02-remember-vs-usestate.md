@@ -265,8 +265,6 @@ Ao contrário do Compose, não há **compilador** aplicando as regras. Elas são
 
 ## Exemplo Interativo
 
-[![Abrir no Expo Snack](https://img.shields.io/badge/Abrir%20no-Expo%20Snack-000020?logo=expo)](https://snack.expo.dev/@react-native-community/hooks)
-
 ---
 
 ## Materiais de Estudo
