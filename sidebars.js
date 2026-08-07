@@ -16,67 +16,6 @@ const sidebars = {
     },
   ],
 
-  trilhaNativo: [
-    {
-      type: 'category',
-      label: 'Fundamentals',
-      collapsed: false,
-      items: [
-        'trilha-nativo/modulo-fundamentos/javascript-for-native-developers',
-        'trilha-nativo/modulo-fundamentos/typescript',
-        'trilha-nativo/modulo-fundamentos/react-fundamentals',
-        'trilha-nativo/modulo-fundamentos/components-and-props',
-        'trilha-nativo/modulo-fundamentos/state-and-hooks',
-        'trilha-nativo/modulo-fundamentos/rn-core-components',
-        'trilha-nativo/modulo-fundamentos/layout-and-flexbox',
-        'trilha-nativo/modulo-fundamentos/styling',
-        'trilha-nativo/modulo-fundamentos/navegacao-nativo',
-        'trilha-nativo/modulo-fundamentos/estado-e-apis-nativo',
-      ],
-    },
-    {
-      type: 'category',
-      label: 'Native Resources',
-      collapsed: false,
-      items: [
-        'trilha-nativo/modulo-recursos-nativos/utilizando-recursos-nativos',
-        'trilha-nativo/modulo-recursos-nativos/integracao-nativa-avancada',
-      ],
-    },
-    {
-      type: 'category',
-      label: 'Performance',
-      collapsed: false,
-      items: [
-        'trilha-nativo/modulo-performance/topico-performance-rn-nativos',
-      ],
-    },
-    {
-      type: 'category',
-      label: 'Testing',
-      collapsed: false,
-      items: [
-        'trilha-nativo/modulo-testes/topico-testes-nativos',
-      ],
-    },
-    {
-      type: 'category',
-      label: 'CI/CD',
-      collapsed: false,
-      items: [
-        'trilha-nativo/modulo-cicd/topico-ci-cd-nativos',
-      ],
-    },
-    {
-      type: 'category',
-      label: 'Architecture',
-      collapsed: false,
-      items: [
-        'trilha-nativo/modulo-arquitetura/topico-arquitetura-nativos',
-      ],
-    },
-  ],
-
   trilhaIos: [
     {
       type: 'category',
