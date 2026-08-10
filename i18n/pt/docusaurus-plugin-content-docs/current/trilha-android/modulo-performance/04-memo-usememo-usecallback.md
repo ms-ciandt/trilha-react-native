@@ -6,7 +6,10 @@ sidebar_position: 4
 
 ## Video Overview
 
-> Video para este topico em breve.
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_android/perf_04_memo.mp4" type="video/mp4">
+  Seu navegador nao suporta o elemento de video.
+</video>
 
 ## O Problema: Tudo Re-renderiza por Padrao
 
