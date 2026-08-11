@@ -1,0 +1,150 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:08.000
+Moving from the web to mobile changes the environment, but the underlying logic you use to verify your code follows a familiar path.
+
+2
+00:00:08.000 --> 00:00:13.000
+Your existing experience with GEST and the testing library philosophy carries over directly.
+
+3
+00:00:13.000 --> 00:00:18.000
+The core goal, testing user behavior rather than internal code, is identical.
+
+4
+00:00:18.000 --> 00:00:21.000
+The differences are found in the specific syntax.
+
+5
+00:00:21.000 --> 00:00:29.000
+Because mobile apps do not use the web's document object model, standard web-based automated tests will fail until we adjust for the native environment.
+
+6
+00:00:29.000 --> 00:00:37.000
+We are going to build a test suite for a react native login form, first the initial render, next validation errors, and finally a successful submission.
+
+7
+00:00:37.000 --> 00:00:42.000
+By adjusting these syntax patterns, you can apply web testing skills to native components with precision.
+
+8
+00:00:42.000 --> 00:00:49.000
+This mockup shows our testing target, a basic mobile screen featuring an email input, a password input, and a submit button.
+
+9
+00:00:49.000 --> 00:00:51.000
+Just remains our test runner.
+
+10
+00:00:51.000 --> 00:00:57.000
+With testing library, we focus on user interaction with these fields, rather than internal state management.
+
+11
+00:00:57.000 --> 00:01:00.000
+The first shift is how we target these elements.
+
+12
+00:01:00.000 --> 00:01:05.000
+In this environment, we cannot use standard HTML tags like div or input.
+
+13
+00:01:05.000 --> 00:01:09.000
+On the web, we isolate elements with data-testID.
+
+14
+00:01:09.000 --> 00:01:13.000
+In React Native, this is replaced by the testID property on a text input.
+
+15
+00:01:13.000 --> 00:01:20.000
+We render the form and use these identifiers to assert the fields are present, confirming it loads without errors.
+
+16
+00:01:20.000 --> 00:01:23.000
+Running this in the terminal confirms a passing initial state.
+
+17
+00:01:24.000 --> 00:01:29.000
+Identifying elements with these native properties is the first step adapting web habits for mobile.
+
+18
+00:01:29.000 --> 00:01:34.000
+Next, we need to test the form's validation by simulating invalid user inputs.
+
+19
+00:01:34.000 --> 00:01:40.000
+This requires a major change in how we simulate typing, as the standard web chain event will not work here.
+
+20
+00:01:40.000 --> 00:01:43.000
+Web typing triggers a generic DOM chain event.
+
+21
+00:01:43.000 --> 00:01:47.000
+In React Native, we must use events compatible with native touch inputs.
+
+22
+00:01:47.000 --> 00:01:52.000
+To interact with a text input, we use the change text method.
+
+23
+00:01:52.000 --> 00:01:56.000
+This specific event processes string updates in React Native.
+
+24
+00:01:56.000 --> 00:02:03.000
+We use it to leave a field blank, simulate pressing submit, and assert that the required message is visible.
+
+25
+00:02:03.000 --> 00:02:07.000
+The test runner confirms that the error logic is working as intended.
+
+26
+00:02:07.000 --> 00:02:15.000
+Using these specific event bindings allows the test suite to accurately reflect how a user physically interacts with the touch screen.
+
+27
+00:02:15.000 --> 00:02:20.000
+To complete the suite, we verify the path where the user provides valid information.
+
+28
+00:02:20.000 --> 00:02:25.000
+We use change text again to inject a valid email and password into the fields.
+
+29
+00:02:25.000 --> 00:02:29.000
+We simulate the final tap, verifying data acceptance and submission.
+
+30
+00:02:29.000 --> 00:02:36.000
+Running the full suite shows all three scenarios, initial, error, and success passing in order.
+
+31
+00:02:36.000 --> 00:02:41.000
+Verifying these states ensures the component handles common user interactions before it is deployed.
+
+32
+00:02:41.000 --> 00:02:45.000
+This reference card summarizes the shifts we've made.
+
+33
+00:02:45.000 --> 00:02:53.000
+We swap standard inputs for text input, use change text for events, and identify elements with test ID.
+
+34
+00:02:53.000 --> 00:03:00.000
+These adjustments allow you to test React Native components with the same rigor you apply to web components.
+
+35
+00:03:00.000 --> 00:03:10.000
+As your application grows, you may need to move beyond component logic and test the entire app on a physical device or emulator using a tool called detox.
+
+36
+00:03:10.000 --> 00:03:18.000
+While our current tests verify isolated logic, detox provides automated end-to-end testing for the fully compiled application.
+
+37
+00:03:18.000 --> 00:03:28.000
+The specific tools and syntax change between operating systems, but the practice of testing against user behavior remains a consistent standard for production-ready code.
+

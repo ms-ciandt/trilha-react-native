@@ -4,6 +4,7 @@ title: Roadmap and Recommended Upgrade Path
 
 <video width="100%" controls>
   <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc05_04_upgrade-roadmap.mp4" type="video/mp4">
+  <track kind="captions" src="/trilha-react-native/assets/captions/trilha_masterclass/mc05_04_upgrade-roadmap_en.vtt" srclang="en" label="English" default>
   Your browser does not support the video tag.
 </video>
 

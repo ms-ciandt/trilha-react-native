@@ -6,6 +6,7 @@ title: Testes e Mocks para Módulos Nativos
 
 <video width="100%" controls>
   <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc02_08_tests-mocks.mp4" type="video/mp4">
+  <track kind="captions" src="/trilha-react-native/assets/captions/trilha_masterclass/mc02_08_tests-mocks.vtt" srclang="pt" label="Português" default>
   Your browser does not support the video tag.
 </video>
 

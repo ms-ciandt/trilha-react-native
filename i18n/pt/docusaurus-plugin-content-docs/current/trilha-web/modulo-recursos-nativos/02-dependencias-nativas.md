@@ -6,6 +6,7 @@ title: Dependências Nativas — JS puro vs Código Nativo
 
 <video width="100%" controls>
   <source src="/trilha-react-native/assets/videos/trilha_web/rec_02_dependencias_nativas.mp4" type="video/mp4">
+  <track kind="captions" src="/trilha-react-native/assets/captions/trilha_web/rec_02_dependencias_nativas.vtt" srclang="pt" label="Português" default>
   Your browser does not support the video tag.
 </video>
 

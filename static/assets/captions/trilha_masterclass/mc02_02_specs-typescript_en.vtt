@@ -1,0 +1,454 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:04.740
+Let's start with a reality check about React Native's new architecture.
+
+2
+00:00:04.740 --> 00:00:08.500
+Writing standard TypeScript for React means flexibility.
+
+3
+00:00:08.500 --> 00:00:11.600
+Types can be dynamic, loose, and forgiving.
+
+4
+00:00:11.600 --> 00:00:15.840
+But when you build a turbo module, that flexibility disappears.
+
+5
+00:00:15.840 --> 00:00:21.880
+The TypeScript spec file serves as the absolute single source of truth for the native interface.
+
+6
+00:00:21.880 --> 00:00:26.960
+This file isn't being fed into a standard JavaScript bundler to be served to the client.
+
+7
+00:00:27.060 --> 00:00:32.800
+Instead, it acts as a rigid schema that drives a specialized build-time code generator.
+
+8
+00:00:32.800 --> 00:00:35.920
+Feed a single TypeScript file into the CodeGen engine,
+
+9
+00:00:35.920 --> 00:00:39.520
+and it mathematically derives three parallel streams of code.
+
+10
+00:00:39.520 --> 00:00:42.960
+Java, Objective C++, and C++.
+
+11
+00:00:42.960 --> 00:00:48.640
+These generated interfaces are strictly and permanently bound to that initial TypeScript input.
+
+12
+00:00:48.640 --> 00:00:52.800
+Because CodeGen translates your TypeScript into static C++ headers,
+
+13
+00:00:52.800 --> 00:00:56.320
+standard JavaScript type maneuvering simply won't compile.
+
+14
+00:00:56.320 --> 00:00:59.440
+The C++ layer requires strict memory boundaries.
+
+15
+00:00:59.440 --> 00:01:05.520
+Writing a valid turbo module requires treating the TypeScript spec as a cross-language contract,
+
+16
+00:01:05.520 --> 00:01:08.400
+rather than a collection of optional type-ends.
+
+17
+00:01:08.400 --> 00:01:12.240
+This strictness begins before CodeGen even parses your types.
+
+18
+00:01:12.240 --> 00:01:17.360
+There are non-negotiable naming rules you must follow just to get the engine to look at your file.
+
+19
+00:01:17.360 --> 00:01:21.200
+First, your file name must start with the exact prefix native.
+
+20
+00:01:21.200 --> 00:01:25.440
+If you name it something like calculator.ts, CodeGen won't throw an error.
+
+21
+00:01:25.440 --> 00:01:27.840
+It will simply and silently ignore the file,
+
+22
+00:01:27.840 --> 00:01:30.480
+leaving you without your native interfaces.
+
+23
+00:01:30.480 --> 00:01:32.640
+Once inside the correctly named style,
+
+24
+00:01:32.640 --> 00:01:35.760
+the exported interface must be named exactly spec,
+
+25
+00:01:35.760 --> 00:01:40.960
+and this spec interface is required to explicitly extend the base turbo module type.
+
+26
+00:01:40.960 --> 00:01:44.720
+Try to use conventional interface naming like iSpec or MySpec,
+
+27
+00:01:44.720 --> 00:01:49.680
+and the parser immediately stops, throwing a misnamed module interface parser error.
+
+28
+00:01:49.680 --> 00:01:51.760
+Then there is the registration string.
+
+29
+00:01:51.760 --> 00:01:54.640
+Below the interface, you invoke the module registry.
+
+30
+00:01:54.640 --> 00:01:58.000
+The string you pass into the get enforcing function,
+
+31
+00:01:58.000 --> 00:02:00.240
+in this case, native calculator,
+
+32
+00:02:00.240 --> 00:02:03.600
+must perfectly match the name used to register the native class.
+
+33
+00:02:04.160 --> 00:02:09.920
+Specifically, this exact string has to align perfectly with the return value of the get name method
+
+34
+00:02:09.920 --> 00:02:11.520
+over on the native side.
+
+35
+00:02:11.520 --> 00:02:15.760
+If there is a typo or a missbatch here, it won't be caught at compile time.
+
+36
+00:02:15.760 --> 00:02:19.840
+It results in a runtime invariant violation when the app tries to load the module.
+
+37
+00:02:20.400 --> 00:02:25.040
+Finally, the file must use a .ts or .ts x extension.
+
+38
+00:02:25.040 --> 00:02:29.440
+If you use .js, the parser assumes you are writing flow specifications.
+
+39
+00:02:29.440 --> 00:02:32.720
+These naming conventions operate as a strict entry gate.
+
+40
+00:02:32.720 --> 00:02:37.600
+Fail them, and the compilation pipeline aborts before the type translation even begins.
+
+41
+00:02:37.600 --> 00:02:42.400
+When you execute the build by running generate code gen artifacts from schema on Android,
+
+42
+00:02:42.400 --> 00:02:45.920
+or pod install on iOS, the real work begins.
+
+43
+00:02:45.920 --> 00:02:49.520
+These commands activate a specialized type script parser built directly
+
+44
+00:02:49.520 --> 00:02:52.000
+into the React Native code gen library.
+
+45
+00:02:52.000 --> 00:02:54.720
+This diagram represents the validation phase.
+
+46
+00:02:54.720 --> 00:02:57.360
+Think of the parser as a rigid filter.
+
+47
+00:02:57.360 --> 00:02:59.840
+We are taking the dynamic types of typescript,
+
+48
+00:02:59.840 --> 00:03:04.000
+and forcing them into the static structural constraints of C++.
+
+49
+00:03:04.000 --> 00:03:07.760
+This translation step means that using an unsupported dynamic type
+
+50
+00:03:07.760 --> 00:03:10.880
+triggers a hard build error rather than a simple inter-warning.
+
+51
+00:03:11.440 --> 00:03:14.640
+Take the typescript utility type partial of T.
+
+52
+00:03:14.640 --> 00:03:18.800
+C++ structs require explicit immutable structural boundaries.
+
+53
+00:03:18.880 --> 00:03:24.640
+A dynamic partial object cannot be safely mapped to a static C++ structure at compile time.
+
+54
+00:03:24.640 --> 00:03:29.360
+To pass the parser, you must manually expand partial of T into a new type definition,
+
+55
+00:03:29.360 --> 00:03:32.400
+where every optional field is explicitly declared.
+
+56
+00:03:32.400 --> 00:03:36.480
+Another common failure point is declaring primitive types as nullable,
+
+57
+00:03:36.480 --> 00:03:38.800
+like a union of a number and null.
+
+58
+00:03:38.800 --> 00:03:42.640
+A primitive number in C++ cannot hold a null state.
+
+59
+00:03:42.640 --> 00:03:47.280
+The memory allocated for an integer or a double expects a numerical value.
+
+60
+00:03:47.280 --> 00:03:49.680
+You have two architectural work-arounds.
+
+61
+00:03:49.680 --> 00:03:52.560
+The first is to use a numerical Sentinel value,
+
+62
+00:03:52.560 --> 00:03:55.120
+like assigning negative one for the null state.
+
+63
+00:03:55.120 --> 00:03:58.480
+The alternative is wrapping the primitive inside an object,
+
+64
+00:03:58.480 --> 00:04:00.880
+defining a value property mapped to a number,
+
+65
+00:04:00.880 --> 00:04:03.440
+and making the entire container nullable.
+
+66
+00:04:03.440 --> 00:04:08.000
+Every type you define in the spec must possess a mathematically perfect translation
+
+67
+00:04:08.000 --> 00:04:09.760
+to a static native type.
+
+68
+00:04:09.760 --> 00:04:12.560
+If it doesn't map exactly, the boundary integrity breaks.
+
+69
+00:04:13.200 --> 00:04:15.200
+Once your spec passes validation,
+
+70
+00:04:15.200 --> 00:04:18.880
+the Code Gen Engine proceeds to generate the required interface files.
+
+71
+00:04:18.880 --> 00:04:22.720
+These artifacts are written directly to the build directory inside your project.
+
+72
+00:04:22.720 --> 00:04:26.640
+For Android, Code Gen outputs an abstract Java class
+
+73
+00:04:26.640 --> 00:04:28.880
+that your module will need to extend,
+
+74
+00:04:28.880 --> 00:04:33.120
+alongside the underlying C++ JSI glue headers.
+
+75
+00:04:33.120 --> 00:04:38.160
+For iOS, it generates an objective C++ protocol your code must adopt,
+
+76
+00:04:38.160 --> 00:04:40.640
+along with its corresponding JSI bindings.
+
+77
+00:04:41.280 --> 00:04:44.880
+There is one unbreakable rule regarding these artifacts,
+
+78
+00:04:44.880 --> 00:04:48.320
+because they are derived from the TypeScript spec on every build,
+
+79
+00:04:48.320 --> 00:04:50.720
+they must never be edited manually.
+
+80
+00:04:50.720 --> 00:04:54.160
+This rigid output structure introduces an architectural challenge
+
+81
+00:04:54.160 --> 00:04:58.400
+when dealing with large modules that contain dozens of complex methods.
+
+82
+00:04:58.400 --> 00:05:03.440
+Defining massive, all-encompassing spec files results in monolithic generated classes
+
+83
+00:05:03.440 --> 00:05:06.880
+that are difficult to maintain and implement on the native side.
+
+84
+00:05:06.880 --> 00:05:09.440
+The elegant solution is spec composition,
+
+85
+00:05:09.440 --> 00:05:14.560
+splitting large modules into multiple distinct specs based on their specific domains.
+
+86
+00:05:14.560 --> 00:05:18.000
+This workflow shows how composition operates at build time.
+
+87
+00:05:18.000 --> 00:05:22.080
+Each domain's specific TypeScript spec you write generates its own independent
+
+88
+00:05:22.080 --> 00:05:24.240
+locked set of native interfaces.
+
+89
+00:05:24.240 --> 00:05:25.920
+On the native registry side,
+
+90
+00:05:25.920 --> 00:05:30.880
+each of these generated specs maps to its own distinct registered module class.
+
+91
+00:05:30.880 --> 00:05:34.240
+However, you aren't forced to duplicate your actual logic.
+
+92
+00:05:34.240 --> 00:05:37.760
+These split native classes can still call through to a single
+
+93
+00:05:37.760 --> 00:05:40.720
+shared internal implementation behind the scenes.
+
+94
+00:05:40.720 --> 00:05:43.840
+For example, you can route two different storage specs
+
+95
+00:05:43.840 --> 00:05:47.200
+to the same underlying shared preferences wrapper on Android
+
+96
+00:05:47.200 --> 00:05:49.440
+or NS user data on iOS,
+
+97
+00:05:49.440 --> 00:05:52.160
+keeping your code modular with redundancy.
+
+98
+00:05:52.160 --> 00:05:56.560
+Because the build directory operates as an automated untouchable translation layer,
+
+99
+00:05:56.560 --> 00:06:01.760
+adopting modular spec design is essential for keeping your resulting native code base organized.
+
+100
+00:06:01.760 --> 00:06:04.720
+From the rigid naming rules applied to your TypeScript input,
+
+101
+00:06:04.720 --> 00:06:07.600
+down to the uneditable locked native outputs,
+
+102
+00:06:07.600 --> 00:06:10.560
+the code gen pipeline operates as a strict governor,
+
+103
+00:06:10.560 --> 00:06:13.840
+enforcing these validation rules at the very beginning of the process
+
+104
+00:06:13.840 --> 00:06:18.000
+guarantees mathematical type safety across the native C++ boundary.
+
+105
+00:06:18.000 --> 00:06:19.680
+By respecting this contract,
+
+106
+00:06:19.680 --> 00:06:23.600
+you eliminate the vast majority of cross-language communication bugs
+
+107
+00:06:23.600 --> 00:06:26.160
+before the application even attempts to compile.
+
+108
+00:06:26.800 --> 00:06:29.920
+Now that this spec has generated these locked artifacts,
+
+109
+00:06:29.920 --> 00:06:32.720
+the next phase is crossing over into the native layer
+
+110
+00:06:32.720 --> 00:06:36.160
+and implementing those typed interfaces in iOS and Android.
+
+111
+00:06:36.800 --> 00:06:39.680
+Mastering the strict language of the TypeScript spec
+
+112
+00:06:39.680 --> 00:06:43.200
+provides the structural foundation required to engineer successfully
+
+113
+00:06:43.200 --> 00:06:45.600
+within React Native's new architecture.
+

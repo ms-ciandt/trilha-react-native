@@ -1,0 +1,362 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:04.000
+In a perfectly optimized system, execution looks like this.
+
+2
+00:00:04.000 --> 00:00:10.000
+Continuous uninterrupted pulses of data, bypassing traditional hardware bottlenecks to run instantly.
+
+3
+00:00:10.000 --> 00:00:14.000
+By replacing the default JavaScript engine in React Native,
+
+4
+00:00:14.000 --> 00:00:20.000
+engineers have eliminated up to 800 milliseconds from application cold start times on real devices.
+
+5
+00:00:20.000 --> 00:00:25.000
+The historical culprit for slow mobile startups is the just in time or JIT compilation model,
+
+6
+00:00:25.000 --> 00:00:29.000
+a standard utilized by older engines like JavaScript Core.
+
+7
+00:00:29.000 --> 00:00:32.000
+JIT compilation was engineered for long running browser sessions.
+
+8
+00:00:32.000 --> 00:00:38.000
+Here, sustaining peak performance over hours of continuous use is prioritized over the initial loading speed.
+
+9
+00:00:38.000 --> 00:00:41.000
+Mobile environments operate under severe constraints.
+
+10
+00:00:41.000 --> 00:00:45.000
+Applications face strict battery limitations, limited memory availability,
+
+11
+00:00:45.000 --> 00:00:50.000
+and an absolute requirement for immediate UI responsiveness the second and app is opened.
+
+12
+00:00:50.000 --> 00:00:55.000
+This split-screen flow demonstrates the shift required to solve this constraint.
+
+13
+00:00:55.000 --> 00:01:00.000
+On the left, the JIT model forces the smartphone to grind through compilation.
+
+14
+00:01:00.000 --> 00:01:04.000
+On the right, compilation shifts entirely to a server rack.
+
+15
+00:01:04.000 --> 00:01:08.000
+This is ahead of time, or AOT compilation.
+
+16
+00:01:08.000 --> 00:01:12.000
+The new architecture operates in two highly specialized layers.
+
+17
+00:01:12.000 --> 00:01:16.000
+The Hermes engine accelerates the internal JavaScript execution,
+
+18
+00:01:16.000 --> 00:01:23.000
+while the JavaScript interface, or JSI, accelerates external communication with native C++ layers.
+
+19
+00:01:23.000 --> 00:01:28.000
+Achieving immediate mobile responsiveness requires abandoning web-centric engine architectures
+
+20
+00:01:28.000 --> 00:01:33.000
+in favor of mobile native memory management and synchronous execution.
+
+21
+00:01:33.000 --> 00:01:38.000
+This side-by-side execution timeline maps CPU and memory utilization.
+
+22
+00:01:38.000 --> 00:01:43.000
+On the top track, a standard JIT engine executes mechanical faces directly on the device.
+
+23
+00:01:43.000 --> 00:01:48.000
+Raw code moves through the parser, builds a massive abstract syntax tree,
+
+24
+00:01:48.000 --> 00:01:51.000
+and forces a heavy JIT warm-up phase before rendering.
+
+25
+00:01:51.000 --> 00:01:54.000
+Contrast this with the Hermes pipeline on the bottom track.
+
+26
+00:01:54.000 --> 00:01:58.000
+The Hermes CLI performs these heavy tasks during the build step,
+
+27
+00:01:58.000 --> 00:02:04.000
+moving the parser and AST faces off the device entirely and into a separate build server.
+
+28
+00:02:04.000 --> 00:02:08.000
+The output of this build step is Hermes bytecode, or .HBC.
+
+29
+00:02:08.000 --> 00:02:13.000
+This is a dense, register-based instruction set bundled directly into the application.
+
+30
+00:02:13.000 --> 00:02:18.000
+Because the Hermes bytecode is pre-confiled, the mobile device skips the parser,
+
+31
+00:02:18.000 --> 00:02:21.000
+AST generation, and JIT warm-up entirely.
+
+32
+00:02:21.000 --> 00:02:23.000
+Execution starts immediately.
+
+33
+00:02:23.000 --> 00:02:26.000
+A secondary benefit is drastically reduced RAM usage.
+
+34
+00:02:26.000 --> 00:02:32.000
+Because compilation happens before deployment, no JIT compiler remains resident in the device's memory.
+
+35
+00:02:32.000 --> 00:02:34.000
+The metrics from this pipeline are clear.
+
+36
+00:02:34.000 --> 00:02:39.000
+Faster cold start times, a lower memory footprint, and a smaller compiled binary.
+
+37
+00:02:39.000 --> 00:02:42.000
+By offloading computational lifting to the build machine,
+
+38
+00:02:42.000 --> 00:02:47.000
+Hermes guarantees the mobile CTU is exclusively dedicated to rendering the UI upon launch.
+
+39
+00:02:47.000 --> 00:02:52.000
+An isolated fast engine needs efficient communication with native operating systems.
+
+40
+00:02:52.000 --> 00:02:56.000
+Internal speed must translate to host communication.
+
+41
+00:02:56.000 --> 00:02:59.000
+This structural flow chart demonstrates the connection.
+
+42
+00:02:59.000 --> 00:03:02.000
+The Hermes engine is wrapped by the Hermes runtime,
+
+43
+00:03:02.000 --> 00:03:05.000
+which communicates directly with the JavaScript interface,
+
+44
+00:03:05.000 --> 00:03:09.000
+establishing a solid bridge to the C++ host layer.
+
+45
+00:03:09.000 --> 00:03:14.000
+In the Legacy React native bridge, every layout request was serialized into JSON
+
+46
+00:03:14.000 --> 00:03:19.000
+and placed in a delayed asynchronous queue before the native side could read it.
+
+47
+00:03:19.000 --> 00:03:25.000
+JSI bypasses that queue by allowing the C++ layer to expose its functions directly
+
+48
+00:03:25.000 --> 00:03:30.000
+into the JavaScript runtime memory space, enabling immediate synchronous function calls.
+
+49
+00:03:30.000 --> 00:03:36.000
+The React native fabric renderer relies on this capability specifically for its measurement and layout queries.
+
+50
+00:03:36.000 --> 00:03:40.000
+Layout measurements are returned synchronously within the same UI frame.
+
+51
+00:03:41.000 --> 00:03:46.000
+Engineers no longer need complex asynchronous callback loops to determine where an element belongs.
+
+52
+00:03:46.000 --> 00:03:52.000
+JSI transitions React native from a system that requests native actions via a queue
+
+53
+00:03:52.000 --> 00:03:56.000
+into a system that directly commands native actions in real time.
+
+54
+00:03:56.000 --> 00:04:02.000
+Moving heavy binary payloads like image pixels or raw audio samples between environments
+
+55
+00:04:02.000 --> 00:04:06.000
+has historically caused massive latency due to data serialization.
+
+56
+00:04:06.000 --> 00:04:12.000
+By locking the layers together, JSI allows heavy data streams to flow between environments instantly
+
+57
+00:04:12.000 --> 00:04:14.000
+without physical duplication or copying.
+
+58
+00:04:14.000 --> 00:04:18.000
+This diagram shows how JSI utilizes a shared array buffer.
+
+59
+00:04:18.000 --> 00:04:21.000
+By placing a unified memory block between the layers,
+
+60
+00:04:21.000 --> 00:04:25.000
+pointers from both sides can reference the exact same memory address.
+
+61
+00:04:25.000 --> 00:04:29.000
+This zero copy transfer eliminates the memory duplication and serialization overhead
+
+62
+00:04:29.000 --> 00:04:32.000
+that previously hindered media heavy applications.
+
+63
+00:04:32.000 --> 00:04:36.000
+However, accessing the shared memory comes with a strict constraint.
+
+64
+00:04:36.000 --> 00:04:38.000
+The JSI runtime is not thread safe.
+
+65
+00:04:38.000 --> 00:04:42.000
+All JSI operations must happen exclusively on the JavaScript thread.
+
+66
+00:04:42.000 --> 00:04:47.000
+Blocking IO cannot be called synchronously without triggering a fading runtime collision.
+
+67
+00:04:47.000 --> 00:04:51.000
+When work is IO bound or requires a different thread,
+
+68
+00:04:51.000 --> 00:04:55.000
+engineers explicitly schedule it asynchronously using standard promises,
+
+69
+00:04:55.000 --> 00:04:59.000
+routing it back onto the JSI thread through a native invoker hook.
+
+70
+00:04:59.000 --> 00:05:03.000
+Synchronous execution requires precise architectural discipline.
+
+71
+00:05:03.000 --> 00:05:07.000
+You must explicitly manage thread boundaries to utilize memory sharing safely.
+
+72
+00:05:07.000 --> 00:05:13.000
+Validating these architectural optimizations in a production environment requires specific empirical measurement tools.
+
+73
+00:05:13.000 --> 00:05:18.000
+Modern React Native architectures bypass older debugging tools like flipper.
+
+74
+00:05:18.000 --> 00:05:22.000
+Instead, Hermes integrates directly with the Chrome Dev Tools Protocol or CDP.
+
+75
+00:05:22.000 --> 00:05:27.000
+This integration allows engineers to inspect the engine directly via a Chrome browser window.
+
+76
+00:05:27.000 --> 00:05:32.000
+You can map execution paths and set exact breakpoints inside your C++ host functions.
+
+77
+00:05:32.000 --> 00:05:35.000
+This is a Perfetto system trace.
+
+78
+00:05:35.000 --> 00:05:42.000
+It is the primary tool for profiling JSI overhead and proving synchronous execution claims on Android hardware,
+
+79
+00:05:42.000 --> 00:05:46.000
+displaying host function calls as precise horizontal slices.
+
+80
+00:05:46.000 --> 00:05:50.000
+By analyzing this trace, engineers can spot JSI bottlenecks.
+
+81
+00:05:50.000 --> 00:05:55.000
+If a horizontal execution slice on the JSI thread is unexpectedly long,
+
+82
+00:05:55.000 --> 00:06:00.000
+it indicates a host function is doing too much work synchronously and needs to be offloaded.
+
+83
+00:06:00.000 --> 00:06:04.000
+When failures do occur, JSI exceptions are surface natively.
+
+84
+00:06:04.000 --> 00:06:08.000
+They appear in the JSI error boundary as standard error objects,
+
+85
+00:06:08.000 --> 00:06:12.000
+with exact stack traces pointing directly to the failing C++ function.
+
+86
+00:06:12.000 --> 00:06:16.000
+The new architecture relies completely on this dual engine integration.
+
+87
+00:06:16.000 --> 00:06:19.000
+Hermes handles the instant ahead of time by code execution,
+
+88
+00:06:19.000 --> 00:06:23.000
+while JSI manages direct synchronous host communication.
+
+89
+00:06:23.000 --> 00:06:27.000
+Optimizing modern react native requires moving past the JavaScript layer.
+
+90
+00:06:27.000 --> 00:06:34.000
+High performance application design now demands a strict understanding of the underlying C++ execution pipelines.
+

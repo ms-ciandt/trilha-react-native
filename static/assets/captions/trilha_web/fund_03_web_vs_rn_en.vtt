@@ -1,0 +1,194 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:06.000
+When you build for the web with React, you already have a massive system of gears turning in your head.
+
+2
+00:00:06.000 --> 00:00:11.000
+You know how to manage state, you understand hooks, and you think in modular components.
+
+3
+00:00:11.000 --> 00:00:16.000
+But opening a React Native project for the first time feels disorienting.
+
+4
+00:00:16.000 --> 00:00:22.000
+The DOM is gone, there are no HTML tags, and you won't find a single CSS file in the project.
+
+5
+00:00:22.000 --> 00:00:25.000
+React Native functions like a new dialect.
+
+6
+00:00:25.000 --> 00:00:31.000
+Since you already speak the language fluently, you just need to pick up the local vocabulary used for mobile devices.
+
+7
+00:00:31.000 --> 00:00:36.000
+The React logic, the brain that handles your data, is identical to what you use on the web.
+
+8
+00:00:36.000 --> 00:00:41.000
+We are simply swapping out the rendering engine or the body to talk to phone hardware.
+
+9
+00:00:41.000 --> 00:00:45.000
+Because you understand how to structure applications and manage data flow,
+
+10
+00:00:45.000 --> 00:00:51.000
+your transition to mobile is a straightforward process of mapping those skills to a new set of components.
+
+11
+00:00:51.000 --> 00:00:54.000
+On the web, code lives inside a browser.
+
+12
+00:00:54.000 --> 00:01:01.000
+On a mobile phone, that middleman is removed, allowing your code to connect directly to the native interface.
+
+13
+00:01:01.000 --> 00:01:06.000
+Without a browser to interpret them, standard HTML tags no longer work.
+
+14
+00:01:06.000 --> 00:01:10.000
+We replace them with native UI instructions the phone can understand.
+
+15
+00:01:10.000 --> 00:01:13.000
+This map shows the direct translations.
+
+16
+00:01:13.000 --> 00:01:19.000
+A div becomes a view, and a P or span tags are replaced by text components.
+
+17
+00:01:19.000 --> 00:01:23.000
+Even though the names change, the tree structure remains the same.
+
+18
+00:01:23.000 --> 00:01:27.000
+You still nest components exactly as you would in a web layout.
+
+19
+00:01:27.000 --> 00:01:29.000
+Styling follows a similar shift.
+
+20
+00:01:29.000 --> 00:01:36.000
+Instead of external CSS files, we use JavaScript objects to define how our elements look and feel.
+
+21
+00:01:36.000 --> 00:01:40.000
+One major change is the lack of CSS inheritance.
+
+22
+00:01:40.000 --> 00:01:44.000
+On the web, applying color to a container changes text inside too.
+
+23
+00:01:44.000 --> 00:01:47.000
+In React Native, the text remains unaffected.
+
+24
+00:01:47.000 --> 00:01:53.000
+You must apply properties directly to the text component itself, rather than relying on a parent container.
+
+25
+00:01:53.000 --> 00:01:56.000
+You are still using familiar logic to build your UI.
+
+26
+00:01:56.000 --> 00:02:03.000
+You're just applying specific localized instructions to each piece, instead of relying on a global cascade.
+
+27
+00:02:03.000 --> 00:02:06.000
+Moving between screens also changes.
+
+28
+00:02:06.000 --> 00:02:11.000
+Mobile apps don't use URLs, so traditional routing doesn't apply here.
+
+29
+00:02:11.000 --> 00:02:14.000
+Mobile uses a stack model.
+
+30
+00:02:14.000 --> 00:02:19.000
+Navigating to a new area is like pushing a new screen onto the top of a deck.
+
+31
+00:02:19.000 --> 00:02:25.000
+Hitting the back button pops that screen off the stack, revealing the ones sitting directly underneath it.
+
+32
+00:02:25.000 --> 00:02:28.000
+User interactions change from clicks to touches.
+
+33
+00:02:28.000 --> 00:02:34.000
+Instead of an on-click event, you'll listen for an on-press event to handle user input.
+
+34
+00:02:34.000 --> 00:02:37.000
+Rendering lists also requires a different approach.
+
+35
+00:02:37.000 --> 00:02:42.000
+Mapping thousands of items at once can quickly exhaust a phone's limited memory.
+
+36
+00:02:42.000 --> 00:02:45.000
+To handle long lists efficiently, you'll use flat list.
+
+37
+00:02:45.000 --> 00:02:52.000
+This component only renders the items currently visible on the screen, which keeps the app fast and responsive.
+
+38
+00:02:52.000 --> 00:02:56.000
+These tools are designed to work with the physical reality of a mobile device.
+
+39
+00:02:56.000 --> 00:03:00.000
+Ensuring your app meets the performance expectations of mobile users.
+
+40
+00:03:00.000 --> 00:03:06.000
+When you look at a web component and a native component side by side, the similarities are obvious.
+
+41
+00:03:06.000 --> 00:03:10.000
+The top section, where your state and props live, is identical.
+
+42
+00:03:10.000 --> 00:03:13.000
+Your hooks and data logic transfer perfectly.
+
+43
+00:03:13.000 --> 00:03:17.000
+The code you wrote for the web is immediately useful in this new environment.
+
+44
+00:03:17.000 --> 00:03:20.000
+You are using the same engine you've driven for years.
+
+45
+00:03:20.000 --> 00:03:24.000
+You're just switching onto new tracks leading to the app store and play store.
+
+46
+00:03:24.000 --> 00:03:30.000
+In the next lesson, we'll dive deeper into styling and explore how to build complex layouts without a DOM.
+
+47
+00:03:30.000 --> 00:03:33.000
+Your background in web development is your greatest asset.
+
+48
+00:03:33.000 --> 00:03:37.000
+Now, let's start applying those skills to the world of mobile apps.
+

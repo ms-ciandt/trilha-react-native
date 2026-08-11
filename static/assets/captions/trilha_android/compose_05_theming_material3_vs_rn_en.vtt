@@ -1,0 +1,306 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:05.800
+When you spin up a Jetpack Compose project, it hands you a pre-configured design architecture.
+
+2
+00:00:05.800 --> 00:00:13.600
+The material theme object automatically cascades color roles, typography, and shape tokens down your entire component tree.
+
+3
+00:00:13.600 --> 00:00:18.600
+When the device shifts from light to dark, the framework handles the inversion natively.
+
+4
+00:00:18.600 --> 00:00:23.200
+React Native takes the opposite approach. It ships completely un-styled.
+
+5
+00:00:23.200 --> 00:00:28.600
+Because React Native provides raw UI primitives rather than an integrated design system,
+
+6
+00:00:28.600 --> 00:00:33.200
+building a scalable token-based architecture requires explicit setup.
+
+7
+00:00:33.200 --> 00:00:37.600
+You have to construct the structural plumbing that Compose provides by default.
+
+8
+00:00:37.600 --> 00:00:41.800
+Large production code bases typically solve this through one of two approaches.
+
+9
+00:00:41.800 --> 00:00:46.600
+Teams either roll a bespoke custom token system managed via React context,
+
+10
+00:00:46.600 --> 00:00:52.400
+or they adopt React Native paper, a third-party library that implements Material Design 3.
+
+11
+00:00:52.400 --> 00:00:56.800
+While the starting points differ, the underlying mechanics are highly compatible.
+
+12
+00:00:56.800 --> 00:01:04.800
+Both frameworks rely on declarative UI logic, meaning the way data flows through the component tree to trigger visual updates
+
+13
+00:01:04.800 --> 00:01:07.400
+follows the same structural patterns.
+
+14
+00:01:07.400 --> 00:01:13.000
+Migrating from Android to React Native does not require abandoning token-based design.
+
+15
+00:01:13.000 --> 00:01:19.600
+It simply requires you to manually define the theme architecture that you are used to receiving as a built-in feature.
+
+16
+00:01:19.600 --> 00:01:23.200
+To map this out, we will start at the OS hardware level.
+
+17
+00:01:23.200 --> 00:01:26.800
+Trace the two distinct React Native architectural paths,
+
+18
+00:01:26.800 --> 00:01:33.600
+and conclude with a definitive framework translation matrix, mapping Compose functions to React Native equivalents.
+
+19
+00:01:33.600 --> 00:01:42.200
+Achieving parity between these environments relies on recognizing that declarative UI systems share a common logic for state and styling,
+
+20
+00:01:42.200 --> 00:01:45.000
+regardless of the specific API names.
+
+21
+00:01:45.000 --> 00:01:51.200
+Any dynamic declarative theme must originate from a hardware level signal provided by the operating system
+
+22
+00:01:51.200 --> 00:01:54.600
+to determine the baseline, light, or dark mode state.
+
+23
+00:01:54.600 --> 00:02:00.200
+In Compose, you capture this hardware signal using is system and dark theme using.
+
+24
+00:02:00.200 --> 00:02:05.600
+In React Native, the use color scheme hook pushes the Boolean into your theme architecture.
+
+25
+00:02:05.600 --> 00:02:08.000
+The implementation follows two paths.
+
+26
+00:02:08.000 --> 00:02:14.400
+The first is a custom theme system, passing token definitions through create context down the component tree.
+
+27
+00:02:14.400 --> 00:02:20.400
+Teams use this custom context approach because it mirrors the logical token structure of Compose's material theme,
+
+28
+00:02:20.400 --> 00:02:24.600
+but allows the UI to deviate from material design visual guidelines.
+
+29
+00:02:24.600 --> 00:02:27.000
+The second path is React Native paper.
+
+30
+00:02:27.000 --> 00:02:30.600
+This acts as the direct equivalent to Compose's material theme.
+
+31
+00:02:30.600 --> 00:02:35.600
+For strict material three parity, developers wrap their root app in a paper provider.
+
+32
+00:02:35.600 --> 00:02:41.800
+To populate that provider, developers use Google's material theme builder to generate exact MD3 values,
+
+33
+00:02:41.800 --> 00:02:45.600
+export them as JSON, and pass them into the paper configuration.
+
+34
+00:02:45.600 --> 00:02:50.000
+Your choice is based on the specific design requirements of the product.
+
+35
+00:02:50.000 --> 00:02:53.800
+You either build bespoke architectural control via context,
+
+36
+00:02:53.800 --> 00:02:58.000
+or you achieve immediate framework parity by importing paper.
+
+37
+00:02:58.000 --> 00:03:01.400
+Moving from macro architecture down to implementation,
+
+38
+00:03:01.400 --> 00:03:07.000
+requires translating abstract semantic tokens into explicit layout values.
+
+39
+00:03:07.000 --> 00:03:14.800
+Compose's material theme.typography scale maps directly to explicitly defined text variance in React Native paper,
+
+40
+00:03:14.800 --> 00:03:18.200
+or to custom text components in a context system.
+
+41
+00:03:18.200 --> 00:03:21.200
+Shape tokens require literal translation.
+
+42
+00:03:21.200 --> 00:03:26.800
+This table maps Compose's semantic shapes to React Native border radius integers.
+
+43
+00:03:26.800 --> 00:03:32.400
+Shapes.extra small maps to 4, cascading down to 28 for extra large.
+
+44
+00:03:32.400 --> 00:03:38.400
+To mimic shapes.full, assign a massive border radius of 1000 for the pill effect.
+
+45
+00:03:38.400 --> 00:03:45.800
+Defining these integer equivalent centrally in a token file ensures visual consistency across your React Native component tree,
+
+46
+00:03:45.800 --> 00:03:49.000
+matching the exact result from composes shape tokens.
+
+47
+00:03:49.000 --> 00:03:55.400
+Replicating Android 12's Monet system, where the UI pulls color palettes from the user's wallpaper,
+
+48
+00:03:55.400 --> 00:03:58.800
+introduces a technical hurdle for cross-platform apps.
+
+49
+00:03:58.800 --> 00:04:03.200
+Compose handles Monet natively via dynamic dark color scheme.
+
+50
+00:04:03.200 --> 00:04:06.000
+Because React Native executes in JavaScript,
+
+51
+00:04:06.000 --> 00:04:09.400
+it cannot read these native OS tokens without a bridge.
+
+52
+00:04:09.400 --> 00:04:15.000
+To access these colors, you either utilize a dedicated package like Expo Material 3 theme,
+
+53
+00:04:15.000 --> 00:04:20.800
+or write a custom turbo module to surface those native Android APIs to your JavaScript runtime.
+
+54
+00:04:20.800 --> 00:04:24.800
+Once your colors are accessible, you must address a common architectural issue
+
+55
+00:04:24.800 --> 00:04:28.200
+that occurs when using both navigation and UI libraries.
+
+56
+00:04:28.200 --> 00:04:33.600
+If you combine React Native paper with React navigation, they spin up independent theme states.
+
+57
+00:04:33.600 --> 00:04:38.800
+This fragmented UI renders navigation headers in one color and the screen body in another.
+
+58
+00:04:38.800 --> 00:04:43.800
+The solution is merging the navigation container theme with the paper provider theme at the root.
+
+59
+00:04:43.800 --> 00:04:48.000
+Explicit synchronization between these core libraries is the only way
+
+60
+00:04:48.000 --> 00:04:53.400
+to ensure background and surface colors remain perfectly consistent across your React Native app.
+
+61
+00:04:53.400 --> 00:04:59.000
+Moving between Jetpack Compose and React Native is less about learning a new UI philosophy
+
+62
+00:04:59.000 --> 00:05:03.000
+and more about translating identical logic between different APIs.
+
+63
+00:05:03.000 --> 00:05:06.000
+This translation matrix proves the logic matrix.
+
+64
+00:05:06.000 --> 00:05:08.000
+State memory remains consistent.
+
+65
+00:05:08.000 --> 00:05:11.800
+Compose's mutable state of maps to React Native's use state,
+
+66
+00:05:11.800 --> 00:05:14.400
+while a basic remember maps to use ref.
+
+67
+00:05:14.400 --> 00:05:18.800
+Launched effect logic translates directly to use effect dependency arrays.
+
+68
+00:05:18.800 --> 00:05:24.800
+For layout, column, row, and box structures become view components organized by Flexbox rules.
+
+69
+00:05:24.800 --> 00:05:29.800
+Architectural scopes like Composition local perform the same role as React context
+
+70
+00:05:29.800 --> 00:05:35.400
+and the styling provided by Compose modifiers is handled by passing style objects into the style prop.
+
+71
+00:05:35.600 --> 00:05:42.000
+Even your nav controller logic transfers smoothly over to standard use navigation hooks
+
+72
+00:05:42.000 --> 00:05:45.200
+inside a configured navigation container.
+
+73
+00:05:45.200 --> 00:05:49.000
+Once you have mapped these declarative structural equivalents,
+
+74
+00:05:49.000 --> 00:05:52.200
+the friction of UI development decreases.
+
+75
+00:05:52.200 --> 00:05:56.400
+This allows you to focus your attention on the deeper performance layer,
+
+76
+00:05:56.400 --> 00:06:01.400
+the mechanics of the new architecture, Hermes, and Kotlin turbo modules.
+

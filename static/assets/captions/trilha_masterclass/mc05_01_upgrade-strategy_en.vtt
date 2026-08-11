@@ -1,0 +1,278 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:04.000
+Successful React Native upgrades require a structured migration,
+
+2
+00:00:04.000 --> 00:00:07.000
+Diff, Apply, Validate, and Repeat.
+
+3
+00:00:07.000 --> 00:00:11.000
+The developers who get this right treat the process as a planned refactor,
+
+4
+00:00:11.000 --> 00:00:14.000
+rather than a simple dependency bump.
+
+5
+00:00:14.000 --> 00:00:17.000
+To keep things stable, we rely on a strict four-phase strategy
+
+6
+00:00:17.000 --> 00:00:21.000
+that ensures every change is isolated and verified.
+
+7
+00:00:21.000 --> 00:00:24.000
+This flow chart illustrates the golden rule of the upgrade path.
+
+8
+00:00:24.000 --> 00:00:28.000
+Minor version bumps, like moving from 0.74 to 0.75,
+
+9
+00:00:28.000 --> 00:00:31.000
+require mandatory sequential stepping stones.
+
+10
+00:00:31.000 --> 00:00:34.000
+You must take them one minor at a time.
+
+11
+00:00:34.000 --> 00:00:38.000
+But for patch upgrades, like 0.76.0 to 0.76.5,
+
+12
+00:00:38.000 --> 00:00:42.000
+it's safe to collapse fixes into a single jump.
+
+13
+00:00:42.000 --> 00:00:45.000
+Moving forward, 0.74 is a critical stop,
+
+14
+00:00:45.000 --> 00:00:47.000
+introducing the turbo-module interop layer.
+
+15
+00:00:47.000 --> 00:00:51.000
+By passing it, guarantees failures transitioning to the new architecture.
+
+16
+00:00:51.000 --> 00:00:57.000
+Jumping multiple minor versions at once makes it impossible to isolate which change broke what.
+
+17
+00:00:57.000 --> 00:01:03.000
+Sticking to a strict sequential path guarantees your upgrade remains deterministic and easy to debug.
+
+18
+00:01:03.000 --> 00:01:07.000
+Phase 1 begins before you modify any code.
+
+19
+00:01:07.000 --> 00:01:11.000
+The most expensive mistakes happen when you begin applying Diff's
+
+20
+00:01:11.000 --> 00:01:14.000
+without first understanding the specific release landscape.
+
+21
+00:01:14.000 --> 00:01:17.000
+This is the official React Native change log.
+
+22
+00:01:17.000 --> 00:01:23.000
+First, scan specifically for deprecated APIs and breaking changes requiring manual code adjustments.
+
+23
+00:01:24.000 --> 00:01:27.000
+Next, check the React Native releases discussion board.
+
+24
+00:01:27.000 --> 00:01:30.000
+It surfaces known issues caught during the release candidate cycle,
+
+25
+00:01:30.000 --> 00:01:33.000
+not included in the primary change log it.
+
+26
+00:01:33.000 --> 00:01:36.000
+Pin pointing these native only behavior changes in the documentation
+
+27
+00:01:36.000 --> 00:01:41.000
+prevents you from blind debugging issues that will never appear in a standard JavaScript code diff.
+
+28
+00:01:41.000 --> 00:01:45.000
+Phase 2 builds a blueprint using the React Native upgrade helper.
+
+29
+00:01:45.000 --> 00:01:50.000
+This essential tool generates a clean native code diff between current and target versions.
+
+30
+00:01:50.000 --> 00:01:54.000
+The tool works by running a new project initialization at both versions
+
+31
+00:01:54.000 --> 00:01:58.000
+and comparing the raw template outputs to show exactly what changed.
+
+32
+00:01:58.000 --> 00:02:03.000
+You will work through these file changes from top to bottom, beginning with low risk items,
+
+33
+00:02:03.000 --> 00:02:06.000
+like standard version bumps in your package.json.
+
+34
+00:02:06.000 --> 00:02:10.000
+This chart categorizes the risk level of different project files.
+
+35
+00:02:10.000 --> 00:02:13.000
+While the package.json is generally straightforward,
+
+36
+00:02:13.000 --> 00:02:19.000
+files like your Android build.gradle and iOS app delegate move into the high-risk zone.
+
+37
+00:02:19.000 --> 00:02:23.000
+Errors in these files lead to immediate build failures or boot crashes.
+
+38
+00:02:23.000 --> 00:02:28.000
+The resulting diff serves as a customized blueprint for the native adjustments required,
+
+39
+00:02:28.000 --> 00:02:31.000
+eliminating guesswork from the framework transition.
+
+40
+00:02:31.000 --> 00:02:34.000
+Phase 3 is the application of those changes.
+
+41
+00:02:34.000 --> 00:02:39.000
+While automated upgrade commands are available, they frequently create irresolvable conflicts
+
+42
+00:02:39.000 --> 00:02:41.000
+in heavily modified applications.
+
+43
+00:02:41.000 --> 00:02:45.000
+This comparison shows a generic template next to a customized local file.
+
+44
+00:02:45.000 --> 00:02:47.000
+Avoid the copy-paste mistake.
+
+45
+00:02:47.000 --> 00:02:51.000
+Overwriting your file entirely will erase your unique configurations.
+
+46
+00:02:51.000 --> 00:02:57.000
+Instead, you must map the template changes manually onto your local files at the specific property level.
+
+47
+00:02:57.000 --> 00:03:01.000
+In this snippet, we update just a single integer,
+
+48
+00:03:01.000 --> 00:03:05.000
+changing the target SDK version from 34 to 35,
+
+49
+00:03:05.000 --> 00:03:08.000
+while leaving the surrounding custom code untouched.
+
+50
+00:03:08.000 --> 00:03:13.000
+Manual property level mapping is the only way to absorb core framework updates
+
+51
+00:03:13.000 --> 00:03:18.000
+while protecting any undocumented native integrations from being erased.
+
+52
+00:03:18.000 --> 00:03:24.000
+Phase 4 involves a final audit of your applied code against the breaking changes checklist you created in Phase 1.
+
+53
+00:03:24.000 --> 00:03:27.000
+Before you attempt the first post-upgrade compile,
+
+54
+00:03:27.000 --> 00:03:29.000
+you must perform one mandatory step.
+
+55
+00:03:29.000 --> 00:03:32.000
+Entirely purge your local build cache.
+
+56
+00:03:32.000 --> 00:03:37.000
+Compiling over old cached artifacts triggers fake, non-deterministic failures.
+
+57
+00:03:37.000 --> 00:03:42.000
+Starting from an absolute clean state ensures your build results are completely accurate.
+
+58
+00:03:42.000 --> 00:03:48.000
+This clean state ensures that any resulting build errors are legitimate framework issues that require attention,
+
+59
+00:03:48.000 --> 00:03:50.000
+rather than leftover artifact corruption.
+
+60
+00:03:50.000 --> 00:03:53.000
+Once the application compiles successfully,
+
+61
+00:03:53.000 --> 00:03:57.000
+you are ready to launch and begin final validation.
+
+62
+00:03:57.000 --> 00:04:01.000
+For the initial smoke test, you must follow a strict hardware rule.
+
+63
+00:04:01.000 --> 00:04:05.000
+Use a physical, low-end device rather than a simulator.
+
+64
+00:04:05.000 --> 00:04:09.000
+Flagship devices possess enough raw processing power
+
+65
+00:04:09.000 --> 00:04:15.000
+to completely mask subtle performance regressions that might have been introduced by the new framework version.
+
+66
+00:04:15.000 --> 00:04:20.000
+If the application performs smoothly on this older hardware, lock in the validated version.
+
+67
+00:04:20.000 --> 00:04:24.000
+You are now ready to repeat this cycle for the next minor bump.
+
+68
+00:04:24.000 --> 00:04:29.000
+By treating upgrades as structured, incremental, and rigorously validated refactors,
+
+69
+00:04:29.000 --> 00:04:33.000
+you ensure a stable progression toward the new architecture.
+

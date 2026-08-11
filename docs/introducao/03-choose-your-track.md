@@ -6,7 +6,7 @@ title: Choose Your Trail
 
 <video width="100%" controls style="border-radius: 8px; margin: 16px 0;">
   <source src="/trilha-react-native/assets/videos/introducao/03_choose_track.mp4" type="video/mp4">
-  <track kind="captions" src="/trilha-react-native/assets/captions/introducao/03_choose_track.vtt" srclang="pt" label="Português" default>
+  <track kind="captions" src="/trilha-react-native/assets/captions/introducao/03_choose_track_en.vtt" srclang="en" label="English" default>
   Your browser does not support the video tag.
 </video>
 

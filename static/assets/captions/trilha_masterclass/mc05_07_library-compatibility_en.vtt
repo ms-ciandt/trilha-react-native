@@ -1,0 +1,506 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:05.000
+React Native 0.76 activates the new architecture by default.
+
+2
+00:00:05.000 --> 00:00:07.000
+After years of opt-in testing,
+
+3
+00:00:07.000 --> 00:00:09.000
+the framework now locks into a new baseline
+
+4
+00:00:09.000 --> 00:00:12.000
+for how JavaScript communicates with native code.
+
+5
+00:00:12.000 --> 00:00:14.000
+For most engineering teams,
+
+6
+00:00:14.000 --> 00:00:16.000
+the core framework itself upgrades cleanly.
+
+7
+00:00:16.000 --> 00:00:19.000
+The internal React Native changes are extensively tested
+
+8
+00:00:19.000 --> 00:00:21.000
+and rarely cause a build to fail.
+
+9
+00:00:21.000 --> 00:00:23.000
+The single largest source of friction
+
+10
+00:00:23.000 --> 00:00:25.000
+and the reason most migration stall
+
+11
+00:00:25.000 --> 00:00:27.000
+is the third-party dependency tree
+
+12
+00:00:28.000 --> 00:00:30.000
+Before committing to an upgrade timeline
+
+13
+00:00:30.000 --> 00:00:32.000
+or writing a single line of feature code,
+
+14
+00:00:32.000 --> 00:00:35.000
+teams must halt and execute a complete structural audit
+
+15
+00:00:35.000 --> 00:00:37.000
+of their package.json.
+
+16
+00:00:37.000 --> 00:00:41.000
+Moving to 0.76 is a dependency triage exercise.
+
+17
+00:00:41.000 --> 00:00:43.000
+The success of the upgrade depends entirely
+
+18
+00:00:43.000 --> 00:00:46.000
+on identifying which libraries natively support the new architecture
+
+19
+00:00:46.000 --> 00:00:48.000
+and which will block your release.
+
+20
+00:00:48.000 --> 00:00:52.000
+You will encounter two distinct categories of compatibility problems.
+
+21
+00:00:52.000 --> 00:00:54.000
+The first is a functional failure,
+
+22
+00:00:55.000 --> 00:00:58.000
+a library that relies on deprecated native APIs
+
+23
+00:00:58.000 --> 00:01:02.000
+and lacks new architecture support for version 0.76.
+
+24
+00:01:02.000 --> 00:01:05.000
+The second is a superficial metadata mismatch.
+
+25
+00:01:05.000 --> 00:01:08.000
+A library might be structurally perfectly compatible
+
+26
+00:01:08.000 --> 00:01:10.000
+with the new architecture,
+
+27
+00:01:10.000 --> 00:01:13.000
+but its package configuration declares a strict peer dependency
+
+28
+00:01:13.000 --> 00:01:15.000
+on React Native 0.74.
+
+29
+00:01:15.000 --> 00:01:18.000
+When you run your install command on 0.76,
+
+30
+00:01:18.000 --> 00:01:20.000
+the package manager rejects it.
+
+31
+00:01:20.000 --> 00:01:23.000
+One is a code failure, requiring a structural fix
+
+32
+00:01:23.000 --> 00:01:25.000
+or complete replacement.
+
+33
+00:01:25.000 --> 00:01:29.000
+The other is an artificial blockade enforced by a package manager.
+
+34
+00:01:29.000 --> 00:01:32.000
+Distinguishing a functional breakage from a rigid metadata rule
+
+35
+00:01:32.000 --> 00:01:34.000
+prevents engineering teams from burning days
+
+36
+00:01:34.000 --> 00:01:38.000
+attempting to rewrite libraries that simply need an installation override.
+
+37
+00:01:38.000 --> 00:01:42.000
+With a typical enterprise application carrying 50 or more dependencies,
+
+38
+00:01:42.000 --> 00:01:45.000
+guessing line by line is inefficient.
+
+39
+00:01:45.000 --> 00:01:48.000
+The inventory phase requires bulk compatibility checking.
+
+40
+00:01:48.000 --> 00:01:54.000
+You can scan your local repository using the React Native Checked New Archie CLI tool.
+
+41
+00:01:54.000 --> 00:01:57.000
+It cross-references your current installation
+
+42
+00:01:57.000 --> 00:01:59.000
+against known compatibility lists.
+
+43
+00:01:59.000 --> 00:02:03.000
+Alternatively, you can use the web-based React Native package checker.
+
+44
+00:02:03.000 --> 00:02:07.000
+By pasting your entire package.json dependency block,
+
+45
+00:02:07.000 --> 00:02:11.000
+you generate a bulk output table detailing the precise support status
+
+46
+00:02:11.000 --> 00:02:14.000
+and last update for every library in your project.
+
+47
+00:02:14.000 --> 00:02:17.000
+For any ambiguous results, cross-reference the package
+
+48
+00:02:17.000 --> 00:02:19.000
+in the React Native directory.
+
+49
+00:02:19.000 --> 00:02:23.000
+Filter explicitly by the new architecture supported badge.
+
+50
+00:02:23.000 --> 00:02:26.000
+This data is self-reported by library maintainers
+
+51
+00:02:26.000 --> 00:02:29.000
+and provides the most reliable signal of ongoing support.
+
+52
+00:02:29.000 --> 00:02:31.000
+By utilizing these scanning tools,
+
+53
+00:02:31.000 --> 00:02:34.000
+an unpredictable monolithic upgrade is broken down
+
+54
+00:02:34.000 --> 00:02:37.000
+into a quantifiable engineering checklist.
+
+55
+00:02:37.000 --> 00:02:39.000
+This diagram outlines the triage algorithm,
+
+56
+00:02:39.000 --> 00:02:42.000
+sorting dependencies into three buckets.
+
+57
+00:02:42.000 --> 00:02:44.000
+We start with Scenario A.
+
+58
+00:02:44.000 --> 00:02:47.000
+Actively maintained, fully compatible libraries.
+
+59
+00:02:47.000 --> 00:02:51.000
+Most active packages fall here, requiring just a version bump.
+
+60
+00:02:51.000 --> 00:02:56.000
+However, Scenario A often requires crossing strict major version boundaries.
+
+61
+00:02:56.000 --> 00:03:00.000
+React Native reanimated requires exactly version three.
+
+62
+00:03:00.000 --> 00:03:02.000
+Version two will crash.
+
+63
+00:03:02.000 --> 00:03:06.000
+Similarly, React Native screens must reach version 3.29
+
+64
+00:03:06.000 --> 00:03:10.000
+and React Native gesture handler requires version 2.21
+
+65
+00:03:10.000 --> 00:03:13.000
+or higher to render correctly on the new fabric layer.
+
+66
+00:03:13.000 --> 00:03:16.000
+Processing the Scenario A library's first
+
+67
+00:03:16.000 --> 00:03:18.000
+clears the bulk of the dependency tree noise,
+
+68
+00:03:18.000 --> 00:03:22.000
+allowing you to isolate the specific nodes requiring manual intervention.
+
+69
+00:03:22.000 --> 00:03:24.000
+The next bucket is Scenario B.
+
+70
+00:03:24.000 --> 00:03:28.000
+These are libraries that still rely on legacy bridge mechanisms,
+
+71
+00:03:28.000 --> 00:03:31.000
+like native modules or native emitter event.
+
+72
+00:03:31.000 --> 00:03:34.000
+When running these libraries on 0.76,
+
+73
+00:03:34.000 --> 00:03:38.000
+the Metro Bundler will surface bright red deprecation warnings.
+
+74
+00:03:38.000 --> 00:03:42.000
+A common misconception is that these warnings mean the library is completely broken
+
+75
+00:03:42.000 --> 00:03:45.000
+and requires immediate replacement.
+
+76
+00:03:45.000 --> 00:03:47.000
+Look at this architectural schematic.
+
+77
+00:03:47.000 --> 00:03:50.000
+When a Scenario B library calls the absent legacy bridge,
+
+78
+00:03:50.000 --> 00:03:55.000
+a C++ middle tier called the interrupt layer intercepts that call.
+
+79
+00:03:55.000 --> 00:03:58.000
+It transparently translates the legacy API request
+
+80
+00:03:58.000 --> 00:04:02.000
+and routes it directly into the new turbo modules or fabric architecture.
+
+81
+00:04:02.000 --> 00:04:05.000
+React navigation version six is a prime example.
+
+82
+00:04:06.000 --> 00:04:09.000
+While navigation version seven is natively compatible,
+
+83
+00:04:09.000 --> 00:04:14.000
+version six functions reliably on 0.76 entirely through this interrupt mechanism
+
+84
+00:04:14.000 --> 00:04:17.000
+despite generating extensive terminal warnings.
+
+85
+00:04:17.000 --> 00:04:20.000
+The operational rule for Scenario B is straightforward.
+
+86
+00:04:20.000 --> 00:04:22.000
+If the specific feature works on device,
+
+87
+00:04:22.000 --> 00:04:25.000
+do not panic disable the new architecture.
+
+88
+00:04:25.000 --> 00:04:29.000
+File an issue or a pull request with the library maintainer to migrate to turbo modules
+
+89
+00:04:29.000 --> 00:04:30.000
+and keep moving.
+
+90
+00:04:31.000 --> 00:04:35.000
+Deprecation warnings for these interrupt libraries represent technical debt
+
+91
+00:04:35.000 --> 00:04:40.000
+you need to address in the future, not an immediate blocker for your 0.76 release.
+
+92
+00:04:40.000 --> 00:04:42.000
+The final bucket is Scenario C.
+
+93
+00:04:42.000 --> 00:04:45.000
+These libraries are either completely abandoned
+
+94
+00:04:45.000 --> 00:04:48.000
+or functionally incompatible with the new native layers.
+
+95
+00:04:48.000 --> 00:04:52.000
+This failure happens because the libraries contain deep native integrations,
+
+96
+00:04:52.000 --> 00:04:56.000
+custom C++ code, or direct JSI implementations.
+
+97
+00:04:56.000 --> 00:04:59.000
+These bypass the interrupt layer entirely.
+
+98
+00:04:59.000 --> 00:05:01.000
+If the bridge is gone, they crash the build.
+
+99
+00:05:01.000 --> 00:05:04.000
+This table shows hard replacements for abandoned packages.
+
+100
+00:05:04.000 --> 00:05:08.000
+Legacy libraries must be swapped for modern alternatives.
+
+101
+00:05:08.000 --> 00:05:11.000
+For example, react native camera is replaced by vision camera
+
+102
+00:05:11.000 --> 00:05:15.000
+and old Firebase implementations require version 21 or higher.
+
+103
+00:05:15.000 --> 00:05:22.000
+Alternatively, if a fully compatible library is blocked solely by a strict 0.74 peer dependency mismatch,
+
+104
+00:05:22.000 --> 00:05:27.000
+you can use dash dash legacy peer depths or package manager overrides to force the installation.
+
+105
+00:05:27.000 --> 00:05:30.000
+Scenario C requires decisive action.
+
+106
+00:05:30.000 --> 00:05:34.000
+You either surgically replace dead code with modern equivalents
+
+107
+00:05:34.000 --> 00:05:38.000
+or forcefully override arbitrary package manager restrictions.
+
+108
+00:05:38.000 --> 00:05:41.000
+Occasionally, a team will hit a hard wall,
+
+109
+00:05:41.000 --> 00:05:45.000
+a single, deeply integrated, un-maintained legacy dependency
+
+110
+00:05:45.000 --> 00:05:50.000
+that blocks the entire production release with no immediate replacement available.
+
+111
+00:05:50.000 --> 00:05:54.000
+In this exact scenario, execute the fallback protocol.
+
+112
+00:05:55.000 --> 00:06:01.000
+Complete the upgrade to react native 0.76 to capture the core framework improvements,
+
+113
+00:06:01.000 --> 00:06:06.000
+but explicitly disable the new architecture flag for that specific release.
+
+114
+00:06:06.000 --> 00:06:08.000
+This is a temporary measure.
+
+115
+00:06:08.000 --> 00:06:11.000
+Disabling the flag incurs immediate technical debt.
+
+116
+00:06:11.000 --> 00:06:15.000
+You must set a strict internal deadline to replace that blocking library
+
+117
+00:06:15.000 --> 00:06:17.000
+and reactivate the new architecture.
+
+118
+00:06:17.000 --> 00:06:23.000
+A single outdated package should not freeze your organization's entire application framework upgrade cycle.
+
+119
+00:06:23.000 --> 00:06:26.000
+Zooming out from the individual package files,
+
+120
+00:06:26.000 --> 00:06:30.000
+the broader react native ecosystem has already fully crossed the tipping point.
+
+121
+00:06:30.000 --> 00:06:37.000
+Over 61% of the top 400 most installed react native libraries currently support the new architecture,
+
+122
+00:06:37.000 --> 00:06:40.000
+and that metric increases steadily every month.
+
+123
+00:06:40.000 --> 00:06:44.000
+You can monitor ongoing support for any remaining holdouts in your project
+
+124
+00:06:44.000 --> 00:06:48.000
+by tracking the official react working group library status tracker.
+
+125
+00:06:48.000 --> 00:06:52.000
+The new architecture represents the current production baseline.
+
+126
+00:06:52.000 --> 00:06:58.000
+Mastering dependency triage is the standard for any team maintaining modern mobile applications.
+

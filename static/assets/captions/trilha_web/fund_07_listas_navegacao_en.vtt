@@ -1,0 +1,382 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:03.300
+If you are coming to react native from web development,
+
+2
+00:00:03.300 --> 00:00:08.600
+your natural instinct when building a list is to reach for the standard .map array method.
+
+3
+00:00:08.600 --> 00:00:11.700
+On a desktop browser, that works without a second thought.
+
+4
+00:00:11.700 --> 00:00:15.900
+But mobile devices operate on strict, unforgiving memory budgets
+
+5
+00:00:15.900 --> 00:00:19.600
+and they simply don't have the brute processing power of a laptop.
+
+6
+00:00:19.600 --> 00:00:24.400
+This split-screen comparison shows why standard web mapping fails on mobile.
+
+7
+00:00:24.400 --> 00:00:29.100
+On the left, a web browser easily renders every item simultaneously.
+
+8
+00:00:29.300 --> 00:00:32.300
+On the right, the app freezes and drops frames
+
+9
+00:00:32.300 --> 00:00:37.100
+because forcing a massive list into memory all at once overloads the device.
+
+10
+00:00:37.100 --> 00:00:43.100
+To prevent those crashes, we have to map out exactly which react native list API you need to use
+
+11
+00:00:43.100 --> 00:00:47.400
+based entirely on the size of your data and your specific UI layout.
+
+12
+00:00:47.400 --> 00:00:50.200
+Choosing the correct API is a balancing act.
+
+13
+00:00:50.200 --> 00:00:53.700
+You want to avoid over-engineering a simple static screen
+
+14
+00:00:53.700 --> 00:00:58.500
+while ensuring your complex data-heavy screens actually stay alive under stress.
+
+15
+00:00:58.500 --> 00:01:04.500
+Mastering mobile lists is about respecting the physical limitations of the hardware in your user's pocket.
+
+16
+00:01:04.500 --> 00:01:08.000
+This flow chart represents the decision tree for mobile lists.
+
+17
+00:01:08.000 --> 00:01:11.400
+Choices branch based on the user experience you're delivering.
+
+18
+00:01:11.400 --> 00:01:15.900
+The first branch handles short lists, under 20 items with static data.
+
+19
+00:01:15.900 --> 00:01:19.600
+Here, you use scroll view, combined with the .map function.
+
+20
+00:01:19.600 --> 00:01:22.000
+This route gives you the fastest development time
+
+21
+00:01:22.000 --> 00:01:24.400
+because you don't have to learn any new APIs.
+
+22
+00:01:24.400 --> 00:01:26.900
+You just right react the way you always have.
+
+23
+00:01:26.900 --> 00:01:30.000
+But it works because of a very specific mechanism.
+
+24
+00:01:30.000 --> 00:01:35.900
+Scroll view immediately loads all of its data directly into the device's RAM, the second it renders.
+
+25
+00:01:35.900 --> 00:01:38.600
+That immediate loading is a strict trade-off.
+
+26
+00:01:38.600 --> 00:01:44.500
+It means this approach is only safe for very short predictable components, like in app settings menu.
+
+27
+00:01:44.500 --> 00:01:49.300
+If you push a scroll view past that 20 item threshold, you guarantee memory bloat.
+
+28
+00:01:49.300 --> 00:01:52.600
+It has zero dynamic memory management capabilities,
+
+29
+00:01:52.600 --> 00:01:56.500
+so every item you add constantly eats away at the phone's resources.
+
+30
+00:01:56.500 --> 00:02:02.100
+When your data scales up, we follow the second branch, handling dynamic or long data sets.
+
+31
+00:02:02.100 --> 00:02:04.500
+This leads us directly to flat list.
+
+32
+00:02:04.500 --> 00:02:09.200
+Flat list is the primary heavy duty component for rendering data and react native.
+
+33
+00:02:09.200 --> 00:02:13.200
+It handles scale through a mechanical advantage called virtualization.
+
+34
+00:02:13.200 --> 00:02:15.500
+Virtualization solves memory limits.
+
+35
+00:02:15.500 --> 00:02:18.700
+Only blocks visible inside the physical screen are colored.
+
+36
+00:02:18.700 --> 00:02:20.700
+Everything outside is grayed out.
+
+37
+00:02:20.700 --> 00:02:24.200
+As the user scrolls, the engine unloads hidden items at the top
+
+38
+00:02:24.200 --> 00:02:27.600
+and recycles that memory for new items entering the bottom.
+
+39
+00:02:27.600 --> 00:02:30.900
+The trade-off is that you have to abandon your standard web mapping.
+
+40
+00:02:30.900 --> 00:02:34.400
+Flat list requires you to learn its specific API boilerplate,
+
+41
+00:02:34.400 --> 00:02:38.400
+mapping your data through properties like render item and key extractor.
+
+42
+00:02:38.400 --> 00:02:41.300
+Writing that extra boilerplate is the mandatory tax you pay
+
+43
+00:02:41.300 --> 00:02:44.500
+to achieve fluid professional scrolling on mobile hardware.
+
+44
+00:02:44.500 --> 00:02:49.800
+We hit the third branch when your design requires categorized or grouped data.
+
+45
+00:02:49.800 --> 00:02:53.300
+Think of the alphabetized layout in an iOS context book.
+
+46
+00:02:53.300 --> 00:02:55.600
+For this, we use section list.
+
+47
+00:02:55.600 --> 00:02:59.000
+Section list is built to provide native feeling sticky headers
+
+48
+00:02:59.000 --> 00:03:02.200
+and distinctly categorized sections right out of the box.
+
+49
+00:03:02.200 --> 00:03:04.400
+But it comes with a strict constraint.
+
+50
+00:03:04.400 --> 00:03:08.600
+It demands a highly specific nested array data structure to function.
+
+51
+00:03:08.600 --> 00:03:12.800
+If your backend data arrives flat and isn't pre-formatted for section list,
+
+52
+00:03:12.800 --> 00:03:17.500
+your app will burn excessive processing power trying to reshape those arrays on the client side
+
+53
+00:03:17.500 --> 00:03:19.400
+before it can even render the screen.
+
+54
+00:03:19.500 --> 00:03:23.500
+The fourth and final branch covers transforming a standard vertical list
+
+55
+00:03:23.500 --> 00:03:25.600
+into a multi-column grit layout.
+
+56
+00:03:25.600 --> 00:03:29.000
+By applying the num columns property to a standard flat list,
+
+57
+00:03:29.000 --> 00:03:32.400
+you instantly convert your vertical rows into a rigid grid.
+
+58
+00:03:32.400 --> 00:03:34.900
+The primary constraint here is flexibility.
+
+59
+00:03:34.900 --> 00:03:37.800
+You cannot change the column count dynamically on the fly
+
+60
+00:03:37.800 --> 00:03:40.700
+if the device rotates or the layout state changes.
+
+61
+00:03:40.700 --> 00:03:44.700
+Altering that column count requires you to force a complete re-render
+
+62
+00:03:44.700 --> 00:03:46.700
+of the entire list component.
+
+63
+00:03:46.700 --> 00:03:49.900
+Implementing specialized layouts like grids and sections
+
+64
+00:03:49.900 --> 00:03:52.000
+requires architectural foresight.
+
+65
+00:03:52.000 --> 00:03:54.200
+You have to strictly format your data state
+
+66
+00:03:54.200 --> 00:03:56.700
+long before it reaches the UI layer.
+
+67
+00:03:56.700 --> 00:04:00.000
+If you're a web transplant, relying on standard.map methods
+
+68
+00:04:00.000 --> 00:04:02.300
+for every list will result in visible stuttering
+
+69
+00:04:02.300 --> 00:04:04.500
+once your content exceeds the viewport.
+
+70
+00:04:04.500 --> 00:04:06.700
+For beginners, the best move you can make today
+
+71
+00:04:06.700 --> 00:04:09.700
+is accepting the initial learning curve of flat list.
+
+72
+00:04:09.700 --> 00:04:12.200
+Doing it now prevents a massive refactoring headache
+
+73
+00:04:12.200 --> 00:04:14.900
+a month down the line when your user data grows.
+
+74
+00:04:14.900 --> 00:04:17.300
+If you are focused on performance optimization,
+
+75
+00:04:17.300 --> 00:04:20.400
+remember that real speed comes from auditing your UI designs
+
+76
+00:04:20.400 --> 00:04:22.700
+before you write a single line of code.
+
+77
+00:04:22.700 --> 00:04:25.600
+Proactively deciding that a screen needs a section list
+
+78
+00:04:25.600 --> 00:04:28.000
+or a num columns grid dictates exactly
+
+79
+00:04:28.000 --> 00:04:30.300
+how you must structure your backend data queries.
+
+80
+00:04:30.300 --> 00:04:33.000
+This matrix maps out your action plan.
+
+81
+00:04:33.000 --> 00:04:36.000
+Under 20 static items means scroll view.
+
+82
+00:04:36.000 --> 00:04:38.100
+Dynamic data gets flat list.
+
+83
+00:04:38.100 --> 00:04:40.500
+Grouped data requires section list.
+
+84
+00:04:40.500 --> 00:04:42.500
+Grids need num columns.
+
+85
+00:04:42.500 --> 00:04:45.100
+To practice, check the official React Native docs
+
+86
+00:04:45.100 --> 00:04:47.700
+for flat list and section list and tax.
+
+87
+00:04:47.700 --> 00:04:50.500
+If you prefer a hands-on step-by-step walkthrough,
+
+88
+00:04:50.500 --> 00:04:52.500
+we highly recommend the comprehensive
+
+89
+00:04:52.500 --> 00:04:55.500
+eight-hour masterclass by notjust.dev.
+
+90
+00:04:55.500 --> 00:04:58.100
+You can find the links to both of those technical resources
+
+91
+00:04:58.100 --> 00:05:00.000
+in the video description below.
+
+92
+00:05:00.000 --> 00:05:02.400
+Matching the right list component to your data
+
+93
+00:05:02.400 --> 00:05:05.200
+ensures the application handles memory efficiently,
+
+94
+00:05:05.200 --> 00:05:07.300
+whether you're rendering a short settings menu
+
+95
+00:05:07.300 --> 00:05:10.000
+or a scrolling feed of thousands.
+

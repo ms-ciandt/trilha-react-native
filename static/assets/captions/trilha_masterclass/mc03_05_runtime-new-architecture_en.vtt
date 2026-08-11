@@ -1,0 +1,314 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:04.360
+To build a native level application, the standard is strict.
+
+2
+00:00:04.360 --> 00:00:10.880
+When data changes, the user interface must react instantly with zero perceptible latency.
+
+3
+00:00:10.880 --> 00:00:19.320
+React native 0.76 and beyond achieves this by moving to a strictly bridgeless JSI first architecture.
+
+4
+00:00:19.320 --> 00:00:24.640
+Previously, JavaScript and native threads communicated over an asynchronous bridge.
+
+5
+00:00:24.640 --> 00:00:29.400
+Every UI update had to be serialized, queued, and deserialized,
+
+6
+00:00:29.560 --> 00:00:31.560
+which caused visual lack.
+
+7
+00:00:31.560 --> 00:00:34.200
+For engineers adopting the new architecture,
+
+8
+00:00:34.200 --> 00:00:39.320
+the challenge is understanding exactly how the isolated components of the system,
+
+9
+00:00:39.320 --> 00:00:43.960
+Hermes, Cogen, and Fabric wire together end-to-end.
+
+10
+00:00:43.960 --> 00:00:47.000
+We are going to trace the full execution pipeline,
+
+11
+00:00:47.000 --> 00:00:50.000
+starting from pre-compiled bytecode on the device,
+
+12
+00:00:50.000 --> 00:00:52.880
+all the way to a synchronous UI commit.
+
+13
+00:00:52.880 --> 00:00:57.640
+Understanding this pipeline allows engineers to produce the deterministic performance
+
+14
+00:00:57.640 --> 00:01:00.280
+required for complex applications.
+
+15
+00:01:00.280 --> 00:01:07.160
+To understand the pipeline, we have to look at what occurs before a single react component even attempts to render.
+
+16
+00:01:07.160 --> 00:01:13.160
+This timeline contrasts the old, just-in-time model with Hermes ahead of time compilation.
+
+17
+00:01:13.160 --> 00:01:16.040
+The device never parses raw JavaScript.
+
+18
+00:01:16.040 --> 00:01:22.000
+Compilation happens at build time, delivering only the pre-compiled.hbc binary.
+
+19
+00:01:22.000 --> 00:01:24.600
+Instead of generating runtime machine code,
+
+20
+00:01:24.600 --> 00:01:28.360
+Hermes interprets a register-based instruction set directly.
+
+21
+00:01:28.360 --> 00:01:31.080
+The only exception is during debug builds.
+
+22
+00:01:31.080 --> 00:01:35.000
+Here, Hermes eases jit-free interpretation of text JavaScript
+
+23
+00:01:35.000 --> 00:01:38.440
+so that you maintain accurate, line-by-line source maps.
+
+24
+00:01:38.440 --> 00:01:42.520
+Shifting compilation to build time removes parsing and execution overhead
+
+25
+00:01:42.520 --> 00:01:44.920
+from the application's cold start phase.
+
+26
+00:01:44.920 --> 00:01:49.480
+In the past, the standard method for improving startup times was using RAM bundles
+
+27
+00:01:49.480 --> 00:01:53.000
+to load only the specific modules required into memory.
+
+28
+00:01:53.000 --> 00:01:56.680
+If you are using Hermes, you must stop using RAM bundles.
+
+29
+00:01:56.680 --> 00:02:01.160
+The .hbc format inherently surpasses it in efficiency on its own.
+
+30
+00:02:01.160 --> 00:02:06.280
+The modern optimization for managing module loading is lazy module evaluation
+
+31
+00:02:06.280 --> 00:02:09.640
+specifically through the in-line requires configuration.
+
+32
+00:02:09.640 --> 00:02:12.200
+This flow chart compares execution paths.
+
+33
+00:02:12.200 --> 00:02:15.960
+A top-level require evaluates the module when the file loads.
+
+34
+00:02:15.960 --> 00:02:21.000
+The in-line configuration defers evaluation until a specific function needs the byte code.
+
+35
+00:02:21.000 --> 00:02:25.080
+For apps with large dependencies, this lowers the time to interactive.
+
+36
+00:02:25.080 --> 00:02:30.200
+Profiling in Android Studios Perfetto, you track these gains by monitoring the load bundle method
+
+37
+00:02:30.200 --> 00:02:33.640
+in Hermes executor and call function within runtime.
+
+38
+00:02:33.640 --> 00:02:37.960
+In the new architecture, performance gains come from strictly deferring byte code evaluation
+
+39
+00:02:37.960 --> 00:02:40.520
+until it is required by the execution path.
+
+40
+00:02:40.520 --> 00:02:45.960
+Once Hermes byte code is evaluated, it needs a way to safely communicate with native device APIs.
+
+41
+00:02:45.960 --> 00:02:50.120
+The legacy architecture relied on magic strings and runtime dictionary lookups.
+
+42
+00:02:50.120 --> 00:02:54.040
+If a method name was misspelled, it would often fail silently during execution.
+
+43
+00:02:54.040 --> 00:02:55.720
+Code Gen solves this problem.
+
+44
+00:02:55.720 --> 00:03:00.680
+It reads a TypeScript specification file and acts as a build-time generator,
+
+45
+00:03:00.680 --> 00:03:03.720
+outputting a native C++ header file.
+
+46
+00:03:03.720 --> 00:03:06.840
+Your workflow simplifies to taking this generated header
+
+47
+00:03:06.840 --> 00:03:09.960
+and subclassing it to build out your native module.
+
+48
+00:03:09.960 --> 00:03:14.920
+Because the native implementation is forced to conform to the structure of the generated header,
+
+49
+00:03:14.920 --> 00:03:18.120
+you have Type Safety across the JavaScript to native boundary.
+
+50
+00:03:18.760 --> 00:03:23.240
+Code Gen shifts the burden of type validation from the user's device at runtime
+
+51
+00:03:23.240 --> 00:03:25.480
+to the developer's machine at build-time,
+
+52
+00:03:25.480 --> 00:03:27.800
+eliminating a category of native crashes.
+
+53
+00:03:28.600 --> 00:03:33.640
+Knowing how the native code is typed leads directly into how that code is loaded into memory
+
+54
+00:03:33.640 --> 00:03:34.920
+during application startup.
+
+55
+00:03:35.560 --> 00:03:40.760
+The old architecture penalized boot times because every native module was eagerly instantiated
+
+56
+00:03:40.760 --> 00:03:43.320
+when the app launched, regardless of user behavior.
+
+57
+00:03:44.040 --> 00:03:48.680
+This memory map illustrates the turbo-module paradigm of lazy instantiation.
+
+58
+00:03:48.680 --> 00:03:51.240
+Core startup nodes initialize immediately,
+
+59
+00:03:51.240 --> 00:03:55.240
+but specialized modules like this Bluetooth component remain dormant at boot.
+
+60
+00:03:55.960 --> 00:04:00.920
+The module is exclusively created at the exact millisecond JavaScript fires a call to
+
+61
+00:04:00.920 --> 00:04:02.600
+turbo-moduleregistry.get.
+
+62
+00:04:03.400 --> 00:04:07.640
+Instead of wasting memory, it acts exactly like a dormant native hardware bridge,
+
+63
+00:04:07.640 --> 00:04:10.280
+instantly waking up and locking into gear on demand.
+
+64
+00:04:11.080 --> 00:04:15.640
+Large-scale applications lower their memory footprint because unvisited screens and unused
+
+65
+00:04:15.640 --> 00:04:20.760
+features never trigger initialization cycles. The ultimate test of this architecture is whether
+
+66
+00:04:20.760 --> 00:04:25.240
+it can execute a native function, return a value to JavaScript, and update the UI
+
+67
+00:04:25.240 --> 00:04:30.360
+all within the exact same frame. This timeline represents a critical rule of the system.
+
+68
+00:04:30.360 --> 00:04:34.680
+There is zero event loop tick between a turbo-module call and its synchronous return,
+
+69
+00:04:34.680 --> 00:04:37.640
+bounded here by a 16.6 millisecond V-sync frame.
+
+70
+00:04:38.200 --> 00:04:42.760
+Step one begins when JavaScript calls a function like set auth token, prompting React to schedule
+
+71
+00:04:42.760 --> 00:04:49.480
+a discrete priority update. Step two, reacts reconciler processes that data and produces a new
+
+72
+00:04:49.480 --> 00:04:57.400
+element tree. Step three, through the JavaScript interface, or JSI, the fabric C++ layer receives
+
+73
+00:04:57.400 --> 00:05:04.040
+this new tree synchronously. Step four, the mathematical layout for the UI is computed directly
+
+74
+00:05:04.120 --> 00:05:10.040
+within the C++ layer. Finally, a mounting transaction is dispatched to the UI thread,
+
+75
+00:05:10.040 --> 00:05:15.800
+updating the native views just before the frame reaches its limit. The legacy A synchronous Q would
+
+76
+00:05:15.800 --> 00:05:21.400
+have required a round trip delay, missing this frame and forcing a visual stutter. Now, execution
+
+77
+00:05:21.400 --> 00:05:26.920
+remains locked to the display's refresh rate. By interlocking ahead of time compiled bytecode,
+
+78
+00:05:26.920 --> 00:05:33.160
+generated C++ bindings and synchronous JSI, React Native achieves deterministic performance.
+

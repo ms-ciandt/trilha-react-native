@@ -1,0 +1,270 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:07.500
+You run your package managers. The terminal spits out a wall of text, and finally, you see that bright green bar of success.
+
+2
+00:00:07.500 --> 00:00:13.000
+It is very tempting to look at those terminal windows and assume your React Native upgrade is finished.
+
+3
+00:00:13.000 --> 00:00:17.500
+But a successful yarn install or pod install is a false positive.
+
+4
+00:00:17.500 --> 00:00:22.000
+All that green text means is that your local environment resolved its dependency tree.
+
+5
+00:00:22.000 --> 00:00:26.500
+It tells you nothing about whether the application will actually build or run.
+
+6
+00:00:26.500 --> 00:00:33.500
+Upgrading React Native means swapping out the underlying native bridge and shifting the actual compilation artifacts.
+
+7
+00:00:33.500 --> 00:00:39.500
+To know if those architecture changes are stable, you have to execute a completely fresh native compilation.
+
+8
+00:00:39.500 --> 00:00:45.500
+When you try to compile, you expose the first category of post-upgrade breaks, build time failures.
+
+9
+00:00:45.500 --> 00:00:53.500
+These are deep configuration errors, like a mismatched Gradle plugin version on Android, or a CocoaCode's resolution conflict on iOS.
+
+10
+00:00:53.500 --> 00:00:57.500
+If the build does succeed, you then face runtime crashes.
+
+11
+00:00:57.500 --> 00:01:05.500
+These errors only trigger the moment you actually launch the app, caused by a JSI-type mismatch or a native module failing to load.
+
+12
+00:01:05.500 --> 00:01:16.000
+Finally, there are behavioral regressions. The app compiles and it runs, but a critical navigation gesture is broken, or a screen layout overflows the edges of the device.
+
+13
+00:01:16.000 --> 00:01:19.500
+Works on my machine is not a validation strategy.
+
+14
+00:01:19.500 --> 00:01:26.500
+To ship an architecture change safely, you need a deterministic, multi-platform pipeline that starts from a completely clean slate.
+
+15
+00:01:26.500 --> 00:01:30.500
+That clean slate begins with invalidating the build caches.
+
+16
+00:01:30.500 --> 00:01:36.500
+Cached artifacts from your previous React Native version are the primary cause of non-deterministic build outcomes.
+
+17
+00:01:36.500 --> 00:01:39.500
+If you leave old caches in place, you risk two outcomes.
+
+18
+00:01:39.500 --> 00:01:44.500
+You get a false positive where the build passes only because it relies on outdated files.
+
+19
+00:01:44.500 --> 00:01:51.500
+Or you get a false negative, a build that fails purely because of a stale reference, not because your updated code is broken.
+
+20
+00:01:51.500 --> 00:01:54.500
+This is a structural layout of an Xcode project.
+
+21
+00:01:54.500 --> 00:02:03.500
+The red lines represent how stale artifacts from the previous React Native version remain tightly injected directly into the project's references.
+
+22
+00:02:03.500 --> 00:02:06.500
+You cannot simply build over these.
+
+23
+00:02:06.500 --> 00:02:13.500
+Running the pod deintegrate command physically severs these stale pod injected references from the Xcode project file.
+
+24
+00:02:13.500 --> 00:02:19.500
+It leaves the main project node completely isolated. Following that with a fresh pod install,
+
+25
+00:02:19.500 --> 00:02:25.500
+deterministically rebuilds those connections, strictly pulling from your newly updated pod file.
+
+26
+00:02:25.500 --> 00:02:34.500
+Executing a strict cache purge is the only way to ensure that the errors you encounter in the next phase, Native compilation, are real, actionable problems.
+
+27
+00:02:34.500 --> 00:02:39.500
+Now you can move to compiling the Native Android release build entirely from source.
+
+28
+00:02:39.500 --> 00:02:45.500
+This table details the most common Android compilation failures that emerge after a major architecture upgrade.
+
+29
+00:02:45.500 --> 00:02:51.500
+If you hit a Gradle plugin mismatch, it means your plugin version is out of sync with your Gradle wrapper.
+
+30
+00:02:51.500 --> 00:02:56.500
+You resolve this by aligning both versions against the React Native upgrade helper diff.
+
+31
+00:02:56.500 --> 00:02:59.500
+Next are missing namespace errors.
+
+32
+00:02:59.500 --> 00:03:06.500
+This requires opening the build.gradle file and explicitly defining the Android.namespace string for your app.
+
+33
+00:03:06.500 --> 00:03:12.500
+If you are moving to React Native 0.76 or higher and targeting the new architecture,
+
+34
+00:03:12.500 --> 00:03:18.500
+you will encounter sttay errors unless you bump your min SDK version to 24.
+
+35
+00:03:18.500 --> 00:03:23.500
+You may also see runtime errors claiming a module is missing from the turbo module registry.
+
+36
+00:03:23.500 --> 00:03:30.500
+This happens when native modules are registered under the wrong name string or completely omitted from the get packages list.
+
+37
+00:03:30.500 --> 00:03:36.500
+Finally, CMake and JNI build failures usually stem from stale cogen outputs.
+
+38
+00:03:36.500 --> 00:03:41.500
+You have to purge those artifacts and regenerate them directly from the schema before rebuilding.
+
+39
+00:03:41.500 --> 00:03:47.500
+These are deep native layer compilation errors. JavaScript only validation tools will never catch them.
+
+40
+00:03:47.500 --> 00:03:51.500
+The parallel process is compiling the iOS release build from source.
+
+41
+00:03:51.500 --> 00:03:56.500
+We have a similar table for the specific iOS compilation failures that surface post upgrade.
+
+42
+00:03:56.500 --> 00:04:05.500
+A missing rctapplicate.h file error requires you to explicitly add the react rctapplicate pod import into your main application.
+
+43
+00:04:05.500 --> 00:04:10.500
+Cocoa pods version conflicts happen because local Ruby gem environments fall behind.
+
+44
+00:04:10.500 --> 00:04:16.500
+You will likely need to manually update your local cocoa pods installation to meet the new react native requirements.
+
+45
+00:04:16.500 --> 00:04:21.500
+If you get xcode build phase conflicts, check for duplicate info.plist files.
+
+46
+00:04:21.500 --> 00:04:28.500
+These must be manually removed through the target settings. Starting with 0.76, you may hit Swift compiler errors.
+
+47
+00:04:28.500 --> 00:04:36.500
+Because the underlying rctapplicate has changed, your custom application override signatures will no longer match and require manual refactoring.
+
+48
+00:04:36.500 --> 00:04:43.500
+Achieving a clean, successful native build on both Android and iOS proves that your code compiles structurally.
+
+49
+00:04:43.500 --> 00:04:48.500
+But compilation does not guarantee behavioral or runtime stability.
+
+50
+00:04:48.500 --> 00:04:54.500
+At this stage, your automated unit tests might fail. Post upgrade, this rarely means your logic is broken.
+
+51
+00:04:54.500 --> 00:05:01.500
+It usually means a mocked native module is missing a new method or a snapshot test is simply capturing deprecated behavior.
+
+52
+00:05:01.500 --> 00:05:06.500
+To find the real runtime errors, you have to execute a physical device smoke test.
+
+53
+00:05:06.500 --> 00:05:10.500
+Emulators and simulators are inadequate for architecture validation.
+
+54
+00:05:10.500 --> 00:05:15.500
+At a hardware level, emulators bypass actual network latency by using the host machine's connection,
+
+55
+00:05:15.500 --> 00:05:21.500
+and they cannot accurately replicate the exact CPU and GPU constraints of physical hardware.
+
+56
+00:05:21.500 --> 00:05:30.500
+They also mask real memory pressure, fail to test hardware APIs like biometrics properly, and execute Hermes garbage collection differently than a mobile processor.
+
+57
+00:05:30.500 --> 00:05:36.500
+This split matrix details the exact physical hardware tiers required to surface those blind spots.
+
+58
+00:05:36.500 --> 00:05:46.500
+On the Android side, testing on a low-end device with three gigabytes of RAM or less is mandatory to expose hidden memory leaks and start-up time regressions.
+
+59
+00:05:46.500 --> 00:05:56.500
+You also need a mid-range device to represent your median user, and an older device running API24 to verify your absolute minimum baseline still operates.
+
+60
+00:05:56.500 --> 00:06:05.500
+Testing on Android 15 is specifically required to catch edge-case layout overflows caused by the new gesture navigation bar behaviors.
+
+61
+00:06:05.500 --> 00:06:19.500
+For the iOS matrix, you must validate against the absolute newest iOS to test features like Dynamic Island APIs, and contrast that with an older iOS version to ensure your deployment target baseline hasn't broken.
+
+62
+00:06:19.500 --> 00:06:27.500
+Only a rigorous matrix of physical hardware can expose the complex behavioral regressions introduced by a deep framework upgrade.
+
+63
+00:06:27.500 --> 00:06:38.500
+Once established, this entire sequence, clearing caches, native compilation, and hardware matrices, must be codified into an automated CI pipeline.
+
+64
+00:06:38.500 --> 00:06:45.500
+Automating these checks is how you prevent framework level regressions from silently creeping into future, smaller feature updates.
+
+65
+00:06:45.500 --> 00:06:52.500
+But a cleanly tested build is still only a baseline. It is not a guarantee of zero production impact.
+
+66
+00:06:52.500 --> 00:07:04.500
+In the past, we have tracked a 48-hour post-release crash rate, abnormal spikes, trigger remediation, JS crashes demand code push rollbacks, while native crashes require immediate app store hot fixes.
+
+67
+00:07:04.500 --> 00:07:17.500
+By abandoning the false positive of a successful local install, and treating react native upgrades as a rigorous, hardware verified pipeline, engineering teams can execute architecture changes with absolute confidence.
+

@@ -1,0 +1,218 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:09.000
+A seasoned React Web Developer ports their skills to react native, builds a standard list to details view, and encounters an invisible barrier.
+
+2
+00:00:09.000 --> 00:00:15.000
+The code compiles, the initial render is perfect, but the lifecycle hooks fail to execute.
+
+3
+00:00:15.000 --> 00:00:23.000
+The user taps the back button to return to a dashboard, expecting a fresh data fetch, but the interface yields absolutely no response.
+
+4
+00:00:23.000 --> 00:00:28.000
+The UI is frozen in a stale state, ignoring the inputs entirely.
+
+5
+00:00:28.000 --> 00:00:37.000
+The technical breakdown happens at the dependency array. A use effect designed to fire on page load operates exactly as instructed during the initial visit.
+
+6
+00:00:37.000 --> 00:00:45.000
+But when the user navigates backward to that specific screen, the fetch function sits idle. The component refuses to remount.
+
+7
+00:00:45.000 --> 00:00:55.000
+This failure stems from a direct mis-translation of environments. Web developers logically assume mobile navigation is simply web routing without a visible URL address bar.
+
+8
+00:00:55.000 --> 00:01:00.000
+They write their components expecting the router to destroy and recreate pages on every visit.
+
+9
+00:01:00.000 --> 00:01:10.000
+That mental model collapses in a native environment. There is no document object model to manipulate, and there is no linear URL history for the browser to traverse.
+
+10
+00:01:10.000 --> 00:01:21.000
+Mobile routing operates entirely on physical, persistent, and memory stacks. When a user moves through a mobile application, they are stacking live components on top of one another.
+
+11
+00:01:21.000 --> 00:01:31.000
+To architect stable mobile applications, we have to abandon the web's destructive rendering cycle. Reliable mobile architecture requires designing for native memory persistence.
+
+12
+00:01:31.000 --> 00:01:40.000
+This split-screen diagram illustrates the architectural divide. On the left, web routes are inherently destructive, navigating unmounts the current tree.
+
+13
+00:01:40.000 --> 00:01:47.000
+On the right, moving forward pushes a new screen directly on top. The screens underneath remain fully mounted and alive in device memory.
+
+14
+00:01:47.000 --> 00:02:00.000
+The operating system requires this persistence to function. Keeping previous screens alive and memory enables hardware accelerated transitions and those instant fluid, swipe-back gestures without triggering heavy layout shifts.
+
+15
+00:02:00.000 --> 00:02:10.000
+This physical stacking results our initial lifecycle bug. Because the previous screen never unmounted from memory, returning to it simply peels away the top layer.
+
+16
+00:02:10.000 --> 00:02:17.000
+The underlying screen is already mounted, so a standard UF set with an empty dependency array has no trigger to fire.
+
+17
+00:02:17.000 --> 00:02:24.000
+The native solution to this persistence model requires a framework specific hook. Use focus effect.
+
+18
+00:02:24.000 --> 00:02:31.000
+Rather than relying on the component mounting phase, use focus effect ties your logic execution directly to screen visibility.
+
+19
+00:02:31.000 --> 00:02:39.000
+When the top card is removed and the underlying screen comes back into focus, the hook fires, pulling fresh data exactly as intended.
+
+20
+00:02:39.000 --> 00:02:48.000
+Internalizing how native stacks persist in memory marks the dividing line between writing reliable react native code and constantly fighting the frameworks lifecycle.
+
+21
+00:02:48.000 --> 00:03:00.000
+That memory model requires a strict hierarchy to manage. At the very top, the navigation container acts as the absolute root node, holding the entire application's navigation state in a single memory store.
+
+22
+00:03:00.000 --> 00:03:07.000
+Beneath that container, complex production apps utilize a specific nesting rule, breadth first, depth later.
+
+23
+00:03:07.000 --> 00:03:14.000
+Looking at this isometric breakdown, the outermost layer is the drawer navigator, mapped directly to native horizontal swipe gestures.
+
+24
+00:03:14.000 --> 00:03:20.000
+One level deeper sits the tab navigator, which executes a completely different structural purpose.
+
+25
+00:03:20.000 --> 00:03:25.000
+Each individual mobile tab maintains its own completely independent, persistent internal memory state.
+
+26
+00:03:25.000 --> 00:03:32.000
+Switching away from a tab and returning later brings the user back to the exact scroll position and nested screen they left behind.
+
+27
+00:03:32.000 --> 00:03:42.000
+To prevent massive memory consumption, the bottom tab navigator is lazy by default. It flatly refuses to render the component trees of unvisited tabs until the user explicitly requests them.
+
+28
+00:03:42.000 --> 00:03:52.000
+At the innermost layer is the stack navigator. This layer handles the deep dive navigation and parameter passing within one specific tab's boundaries.
+
+29
+00:03:52.000 --> 00:04:00.000
+Because of the hierarchy, pushing new screens onto the stack of the profile tab has zero effect on the stack residing in the settings tab.
+
+30
+00:04:00.000 --> 00:04:04.000
+These local states are entirely isolated from each other.
+
+31
+00:04:04.000 --> 00:04:16.000
+Explicitly nesting these independent navigators provides the strict boundaries required to manage complex UI states, completely removing the need for a URL address bar to act as the source of truth.
+
+32
+00:04:16.000 --> 00:04:21.000
+On the web, protecting a route usually involves an imperative wrapper component.
+
+33
+00:04:21.000 --> 00:04:29.000
+Developers build a private route module to check a token, intercept the navigation request, and force a redirect if the user fails authorization.
+
+34
+00:04:29.000 --> 00:04:34.000
+Attempting to intercept routes dynamically is a severe anti-pattern in react navigation.
+
+35
+00:04:34.000 --> 00:04:44.000
+This logic tree shows the native declarative pattern. Instead of guarding individual screens, a ternary operator at the route level dictates which navigator group is allowed to exist.
+
+36
+00:04:44.000 --> 00:04:53.000
+React navigation constantly monitors the declared component tree. It watches for structural changes at the route, rather than evaluating string paths on click.
+
+37
+00:04:54.000 --> 00:05:00.000
+When a user logs in and the authentication state updates from false to true, the tree updates.
+
+38
+00:05:00.000 --> 00:05:05.000
+The authentication stack is instantly destroyed, and the application stack is mounted.
+
+39
+00:05:05.000 --> 00:05:14.000
+The navigator executes this complex structural swap automatically. There is no manual navigate command written, and no explicit redirect function called.
+
+40
+00:05:14.000 --> 00:05:23.000
+Managing sessions by conditionally rendering the tree structure ensures that unauthorized screens are never mounted in memory, completely eliminating orphan states.
+
+41
+00:05:23.000 --> 00:05:35.000
+Deep linking provides the required bridge between web infrastructure and these native stacks. Using custom schemes or universal links, external URLs can bypass the standard routing logic to target specific screens directly.
+
+42
+00:05:35.000 --> 00:05:46.000
+The process begins with an OS level handshake. The mobile operating system intercepts the incoming universal link and passes the raw string to react navigation before the application interface fully initializes.
+
+43
+00:05:46.000 --> 00:05:59.000
+Here, the standard web URL is parsed and injected into the mobile hierarchy. The path determines which screen to focus, while dynamic segments drop into a strictly structured route.params object.
+
+44
+00:05:59.000 --> 00:06:10.000
+Unlike the web, which relies on an implicit use params hook to pull from the address bar, these native route parameters must be explicitly typed and mapped before they are injected into the mounted component.
+
+45
+00:06:10.000 --> 00:06:18.000
+For teams migrating from next JS, the current standard is expo router, a file-based routing layer designed to mimic web development patterns.
+
+46
+00:06:18.000 --> 00:06:27.000
+Expo router uses your folder structure to define paths, successfully replicating the automatic URL to component mapping that web developers are comfortable with.
+
+47
+00:06:27.000 --> 00:06:38.000
+But expo router is purely an abstraction layer built directly on top of react navigation. Underneath the familiar file structure, it is still compiling down to persistent native stacks and isolated taps.
+
+48
+00:06:38.000 --> 00:06:52.000
+File-based routing simply provides convenience and tactic sugar. But if a developer relies on it without understanding the underlying navigator memory, they will inevitably hit the exact same silent lifecycle errors.
+
+49
+00:06:52.000 --> 00:07:00.000
+Mobile architecture does not function on visited string addresses. It relies entirely on physical, mounted component layers.
+
+50
+00:07:00.000 --> 00:07:13.000
+Translating web logic to mobile requires adhering to a few rigid constraints. First, default to use focus effect over standard mounting hooks whenever you need to trigger logic based on screen visits.
+
+51
+00:07:13.000 --> 00:07:22.000
+Second, structure your hierarchy to respect the independent memory states and default lazy loading behavior of nested tab navigators.
+
+52
+00:07:22.000 --> 00:07:30.000
+Third, control authentication flows strictly through declarative root-level tree rendering, never attempt to intercept routes on the fly.
+
+53
+00:07:30.000 --> 00:07:43.000
+When these architectural constraints are respected, the native components lock into alignment. You prevent memory leaks from abandoned navigation stacks and ensure lifecycle hooks fire exactly when the user expects them to.
+
+54
+00:07:43.000 --> 00:07:54.000
+Designing directly with native navigation primitives ensures your application actually leverages the fluid hardware accelerated performance that the mobile operating system was built to provide.
+

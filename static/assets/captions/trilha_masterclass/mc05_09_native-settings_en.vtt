@@ -1,0 +1,218 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:08.500
+You upgrade a React Native project, run the build on an Android 15 device, and the UI elements overlap and overflow.
+
+2
+00:00:08.500 --> 00:00:14.000
+The top header bleeds into the system icons, and the bottom navigation menu syncs out of view.
+
+3
+00:00:14.000 --> 00:00:18.000
+This breakage arrives with React Native 0.76.
+
+4
+00:00:18.000 --> 00:00:24.000
+The upgrade helper template for this release bumps the default Android target SDK to version 35.
+
+5
+00:00:24.000 --> 00:00:27.000
+The visual symptoms are consistent across projects.
+
+6
+00:00:27.000 --> 00:00:33.000
+Any content previously sitting safely below the top bezel now overlaps with the system status bar,
+
+7
+00:00:33.000 --> 00:00:38.000
+and anything pinned to the bottom of the screen is obscured by the gesture navigation bar.
+
+8
+00:00:38.000 --> 00:00:43.000
+Google mandated this behavior at the OS level for all apps targeting SDK 35.
+
+9
+00:00:43.000 --> 00:00:47.000
+Any app hitting this target is now forced to render edge-to-edge.
+
+10
+00:00:47.000 --> 00:00:51.000
+Android no longer provides a safe, constrained drawing box by default.
+
+11
+00:00:51.000 --> 00:00:56.000
+To fix the breakage, we have to look at the geometric difference between Android 14 and Android 15.
+
+12
+00:00:56.000 --> 00:01:01.000
+This isometric diagram compares physical rendering boundaries across the two versions.
+
+13
+00:01:01.000 --> 00:01:10.000
+On the left, Android 14 traps the application UI in a strict bounding box between a solid top status bar and a bottom navigation bar.
+
+14
+00:01:10.000 --> 00:01:17.000
+Notice the right side. Android 15 forces the application to fill the entire available screen.
+
+15
+00:01:17.000 --> 00:01:19.000
+This is a Z-axis shift.
+
+16
+00:01:19.000 --> 00:01:25.000
+The application's content area now draws on a continuous plane directly behind the system Chrome layer.
+
+17
+00:01:25.000 --> 00:01:31.000
+The operating system no longer guarantees a non-drawing boundary at the top and bottom of the viewport.
+
+18
+00:01:31.000 --> 00:01:35.000
+The system bars still exist, but they float over your content.
+
+19
+00:01:35.000 --> 00:01:42.000
+Developers are responsible for managing the spatial relationship between the application, the hardware bezels, and the OS Chrome.
+
+20
+00:01:42.000 --> 00:01:50.000
+Since the geometry has changed, we can trace which specific react native component patterns cause these layouts to fail.
+
+21
+00:01:50.000 --> 00:01:57.000
+This split screen shows the status bar dot set background color API failing silently on API 35.
+
+22
+00:01:57.000 --> 00:02:01.000
+The code executes, but the status bar remains a transparent overlay.
+
+23
+00:02:01.000 --> 00:02:12.000
+Hard coded paddings, like padding top 24, also fail, as static integers cannot account for varying system overlay heights across Android devices.
+
+24
+00:02:12.000 --> 00:02:20.000
+Similarly, passing a translucent prop to the status bar component is now ignored. Translucency is the enforced default.
+
+25
+00:02:20.000 --> 00:02:23.000
+This occlusion repeats at the bottom.
+
+26
+00:02:23.000 --> 00:02:29.000
+Hard coded paddings meant to clear the gesture bar, leave interactable elements trapped behind the system UI.
+
+27
+00:02:29.000 --> 00:02:37.000
+Modern applications must react to the OS's dynamic insets rather than attempting to dictate terms to the hardware Chrome.
+
+28
+00:02:37.000 --> 00:02:44.000
+The core team and Expo recommend a specific architectural solution, the react native edge-to-edge library.
+
+29
+00:02:44.000 --> 00:02:52.000
+Applying dynamic insets pulls the application out of its broken state, snapping your views into perfect, inset-aware alignment.
+
+30
+00:02:52.000 --> 00:02:55.000
+This three-step flowchart outlines the migration.
+
+31
+00:02:55.000 --> 00:02:59.000
+First, enable the edge-to-edge flag in Android Gradle properties.
+
+32
+00:02:59.000 --> 00:03:05.000
+Second, replace legacy status bar components with the new API 35 compatible systems bars component.
+
+33
+00:03:05.000 --> 00:03:15.000
+Third, swap hard coded paddings for dynamic variables using the used safe area insets hook, shifting entirely to dynamic spatial awareness.
+
+34
+00:03:15.000 --> 00:03:18.000
+Migrating the root view is only the first step.
+
+35
+00:03:18.000 --> 00:03:25.000
+Floating elements and third-party UI libraries will still render incorrectly and require targeted patches.
+
+36
+00:03:25.000 --> 00:03:28.000
+This matrix charts necessary library fixes.
+
+37
+00:03:28.000 --> 00:03:32.000
+Wrap modals in a safe area view to avoid system bars.
+
+38
+00:03:32.000 --> 00:03:37.000
+Pass an explicit bottom-inset prop to bottom sheets to clear the gesture bar.
+
+39
+00:03:37.000 --> 00:03:41.000
+Inject CSS variables into web views to prevent occlusion.
+
+40
+00:03:41.000 --> 00:03:45.000
+A full migration requires auditing every floating component.
+
+41
+00:03:45.000 --> 00:03:50.000
+Migrating an entire UI suite in a single sprint is often unfeasible for active development teams.
+
+42
+00:03:50.000 --> 00:03:53.000
+There is a temporary escape hatch.
+
+43
+00:03:53.000 --> 00:04:00.000
+You can force the React Native 0.76 build to target SDK34, opting out of the Android 15 default.
+
+44
+00:04:00.000 --> 00:04:08.000
+This downgrade buys runway, allowing your team to complete the upgrade to React Native 0.76 while delaying the UI audit.
+
+45
+00:04:08.000 --> 00:04:11.000
+Google Play Policies limit this window.
+
+46
+00:04:11.000 --> 00:04:16.000
+New app releases must target the latest SDK within a year of its release.
+
+47
+00:04:16.000 --> 00:04:20.000
+Targeting SDK34 is a borrowed time strategy.
+
+48
+00:04:20.000 --> 00:04:23.000
+The structural audit is inevitable.
+
+49
+00:04:23.000 --> 00:04:32.000
+Before deploying your upgrade, there are two non-UI build requirements introduced by React Native 0.76 that you must check.
+
+50
+00:04:32.000 --> 00:04:37.000
+This side-by-side view highlights new C++ and namespace build requirements.
+
+51
+00:04:37.000 --> 00:04:44.000
+Brownfield applications lacking a C make lists.text file will fail to compile new architecture modules.
+
+52
+00:04:45.000 --> 00:04:52.000
+Missing a namespace definition in your build.gradle file will cause immediate crashes during Gradle 8.x builds.
+
+53
+00:04:52.000 --> 00:05:01.000
+Once the build configurations are patched and the dynamic insets are applied, the application renders contents seamlessly underneath the translucent system chrome.
+
+54
+00:05:01.000 --> 00:05:11.000
+While the API 35 transition disrupts existing projects, it ensures the application UI is dynamically resilient to future hardware form factors and OS updates.
+

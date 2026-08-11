@@ -1,0 +1,598 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:04.300
+Legacy React Native had a persistent performance bottleneck.
+
+2
+00:00:04.300 --> 00:00:08.200
+Every piece of data passing between JavaScript and the Native OS
+
+3
+00:00:08.200 --> 00:00:11.000
+had to be serialized into a JSON string,
+
+4
+00:00:11.000 --> 00:00:13.300
+shoved across an asynchronous bridge,
+
+5
+00:00:13.300 --> 00:00:15.200
+and parsed on the other side.
+
+6
+00:00:15.200 --> 00:00:17.900
+That model is obsolete in the new architecture.
+
+7
+00:00:17.900 --> 00:00:20.800
+We are no longer passing messages back and forth.
+
+8
+00:00:20.800 --> 00:00:24.800
+Instead, we are using direct synchronous memory references.
+
+9
+00:00:24.800 --> 00:00:28.600
+This happens at the JSI or JavaScript interface boundary.
+
+10
+00:00:28.700 --> 00:00:32.200
+JavaScript variables now hold physical pointers directly
+
+11
+00:00:32.200 --> 00:00:35.200
+to C++ objects resting in memory.
+
+12
+00:00:35.200 --> 00:00:38.500
+React Native uses CodeGen to parse TypeScript specs,
+
+13
+00:00:38.500 --> 00:00:41.500
+writing the exact C++ dispatch code.
+
+14
+00:00:41.500 --> 00:00:44.800
+Your TypeScript functions as a rigid C++ blueprint,
+
+15
+00:00:44.800 --> 00:00:47.200
+structuring physical native memory.
+
+16
+00:00:47.200 --> 00:00:50.100
+Old bridge mismatches caused silent crashes.
+
+17
+00:00:50.100 --> 00:00:52.500
+Now CodeGen enforces this contract,
+
+18
+00:00:52.500 --> 00:00:55.500
+turning mismatches into instant CI failures.
+
+19
+00:00:55.600 --> 00:00:59.200
+By treating TypeScript as a strict C++ contract,
+
+20
+00:00:59.200 --> 00:01:01.400
+you eliminate runtime volatility
+
+21
+00:01:01.400 --> 00:01:03.700
+and guarantee cross-platform memory safety
+
+22
+00:01:03.700 --> 00:01:06.400
+before the app ever reaches a device.
+
+23
+00:01:06.400 --> 00:01:08.700
+Let's look at how basic primitive types,
+
+24
+00:01:08.700 --> 00:01:10.900
+strings, bullions, and numbers
+
+25
+00:01:10.900 --> 00:01:13.000
+are mapped directly through this new system
+
+26
+00:01:13.000 --> 00:01:15.200
+without allocation overhead.
+
+27
+00:01:15.200 --> 00:01:18.900
+Strings offer a distinct performance advantage across the boundary.
+
+28
+00:01:18.900 --> 00:01:21.400
+The Hermes engine natively handles transmission
+
+29
+00:01:21.400 --> 00:01:24.200
+using an efficient zero-copy mechanism.
+
+30
+00:01:24.200 --> 00:01:26.600
+Looking at this chart, a JavaScript string
+
+31
+00:01:26.600 --> 00:01:30.160
+points directly to a JSI string in C++ space,
+
+32
+00:01:30.160 --> 00:01:32.100
+skipping memory duplication.
+
+33
+00:01:32.100 --> 00:01:34.300
+For numbers, every JavaScript number
+
+34
+00:01:34.300 --> 00:01:36.700
+maps directly to a standard double primitive
+
+35
+00:01:36.700 --> 00:01:40.300
+at the C++ level requiring zero allocation.
+
+36
+00:01:40.300 --> 00:01:43.400
+Morning tone, but there is a strict constraint.
+
+37
+00:01:43.400 --> 00:01:47.200
+Numbers cannot be nullable within a turbo-module specification.
+
+38
+00:01:47.200 --> 00:01:49.700
+Sometimes a standard double isn't precise enough
+
+39
+00:01:49.700 --> 00:01:50.900
+for the native side.
+
+40
+00:01:50.900 --> 00:01:53.800
+You might require an exact 32-bit integer.
+
+41
+00:01:53.800 --> 00:01:56.200
+To enforce this precise intent,
+
+42
+00:01:56.200 --> 00:01:59.900
+you must explicitly import int32, float,
+
+43
+00:01:59.900 --> 00:02:03.400
+or double directly from the code gen types package.
+
+44
+00:02:03.400 --> 00:02:05.700
+You need to be aware of a specific bug.
+
+45
+00:02:05.700 --> 00:02:10.000
+Issue 45659, affecting certain react native versions
+
+46
+00:02:10.000 --> 00:02:13.100
+where int32 mistakenly generates Java doubles
+
+47
+00:02:13.100 --> 00:02:14.600
+instead of integers.
+
+48
+00:02:14.600 --> 00:02:17.800
+To work around this, run the dot-slash-gradle-you-generate
+
+49
+00:02:17.800 --> 00:02:20.100
+code gen artifacts from schema command
+
+50
+00:02:20.100 --> 00:02:22.300
+and manually inspect the generated output
+
+51
+00:02:22.300 --> 00:02:23.800
+to ensure your types align.
+
+52
+00:02:23.800 --> 00:02:26.800
+Knowing exactly how these primitives map into memory
+
+53
+00:02:26.800 --> 00:02:28.900
+prevents accidental allocations
+
+54
+00:02:28.900 --> 00:02:32.100
+and stops unintended data truncation on the native side.
+
+55
+00:02:32.100 --> 00:02:35.300
+For complex data structures, generic untyped object
+
+56
+00:02:35.300 --> 00:02:38.300
+definitions are deprecated in new turbo-module code.
+
+57
+00:02:38.300 --> 00:02:41.600
+You must use strict typed object literals instead.
+
+58
+00:02:41.600 --> 00:02:44.200
+Code Gen uses this explicit TypeScript shape
+
+59
+00:02:44.200 --> 00:02:47.500
+to generate C++ code that prevalidates the structure,
+
+60
+00:02:47.500 --> 00:02:51.300
+extracting exact fields by name right at the C++ layer.
+
+61
+00:02:51.300 --> 00:02:54.300
+Once extracted in C++, a data is packed
+
+62
+00:02:54.300 --> 00:02:56.900
+into the appropriate OS specific structure,
+
+63
+00:02:56.900 --> 00:03:00.500
+a readable map for Android, or an end-estictionary for iOS
+
+64
+00:03:00.500 --> 00:03:02.900
+before reaching your native implementation.
+
+65
+00:03:02.900 --> 00:03:05.700
+Rapping these object literals in the read-only utility type
+
+66
+00:03:05.700 --> 00:03:07.200
+is the preferred standard.
+
+67
+00:03:07.200 --> 00:03:10.400
+It communicates strict immutability to the native environment.
+
+68
+00:03:10.400 --> 00:03:13.000
+Arrays follow a similarly rigid boundary rule.
+
+69
+00:03:13.000 --> 00:03:15.200
+They cross the JSI boundary exclusively
+
+70
+00:03:15.200 --> 00:03:16.700
+as read-only references.
+
+71
+00:03:16.700 --> 00:03:19.300
+The physical consequence is that any mutation performed
+
+72
+00:03:19.300 --> 00:03:21.200
+on an array within the native OS layer
+
+73
+00:03:21.200 --> 00:03:23.500
+will not reflect back to the JavaScript layer.
+
+74
+00:03:23.500 --> 00:03:25.700
+To update array values, you must instantiate
+
+75
+00:03:25.700 --> 00:03:27.600
+an entirely new array on the native side
+
+76
+00:03:27.600 --> 00:03:29.400
+and return it across the boundary.
+
+77
+00:03:29.400 --> 00:03:32.000
+Enforcing structural immutability at the TypeScript level
+
+78
+00:03:32.000 --> 00:03:34.900
+aligns with how JSI manages complex memory references
+
+79
+00:03:34.900 --> 00:03:37.000
+without causing synchronization errors.
+
+80
+00:03:37.000 --> 00:03:40.600
+This migration introduces a specific friction point.
+
+81
+00:03:40.600 --> 00:03:42.800
+Valid application TypeScript patterns
+
+82
+00:03:42.800 --> 00:03:44.500
+will trigger hard build failures
+
+83
+00:03:44.500 --> 00:03:46.800
+when used in turbo-modules back.
+
+84
+00:03:46.800 --> 00:03:48.700
+Take a look at this comparison.
+
+85
+00:03:48.700 --> 00:03:51.200
+Utility types like partial and generics
+
+86
+00:03:51.200 --> 00:03:54.800
+are rejected when mapping to fixed C++ structs.
+
+87
+00:03:54.800 --> 00:03:57.400
+Co-Gen operates purely as a parser.
+
+88
+00:03:57.400 --> 00:03:59.700
+It is not a full TypeScript language server,
+
+89
+00:03:59.700 --> 00:04:02.500
+meaning it lacks the capability to compute and resolve
+
+90
+00:04:02.500 --> 00:04:04.300
+utility expansions.
+
+91
+00:04:04.300 --> 00:04:06.400
+Generics and tuples fail validation
+
+92
+00:04:06.400 --> 00:04:08.400
+for similar structural reasons.
+
+93
+00:04:08.400 --> 00:04:11.700
+C++ dictates that struct memory maps must be concrete
+
+94
+00:04:11.700 --> 00:04:14.200
+and explicitly sized at compile time.
+
+95
+00:04:14.200 --> 00:04:18.200
+Dynamic generic parameters cannot map to a static physical size.
+
+96
+00:04:18.200 --> 00:04:20.700
+Union types present another boundary issue.
+
+97
+00:04:20.700 --> 00:04:23.700
+The common pattern of declaring a value as number or null
+
+98
+00:04:23.700 --> 00:04:26.200
+will fail code-gen validation immediately.
+
+99
+00:04:26.200 --> 00:04:29.000
+In C++, primitive numeric types do not possess
+
+100
+00:04:29.000 --> 00:04:31.500
+a null state representation at the memory level.
+
+101
+00:04:31.500 --> 00:04:34.300
+A double primitive simply cannot represent a null state.
+
+102
+00:04:34.300 --> 00:04:37.500
+Map and set structures are also unsupported.
+
+103
+00:04:37.500 --> 00:04:39.800
+Having no direct JSI equivalent,
+
+104
+00:04:39.800 --> 00:04:42.100
+they require standard objects or arrays
+
+105
+00:04:42.100 --> 00:04:44.600
+paired with native deduplication logic.
+
+106
+00:04:44.600 --> 00:04:46.300
+If you need a nullable number,
+
+107
+00:04:46.300 --> 00:04:48.700
+you must use an explicit object wrapper,
+
+108
+00:04:48.700 --> 00:04:52.200
+such as an object containing a numeric value or null.
+
+109
+00:04:52.200 --> 00:04:53.900
+These code-gen restrictions are not
+
+110
+00:04:53.900 --> 00:04:56.000
+arbitrary TypeScript-linting rules.
+
+111
+00:04:56.000 --> 00:04:58.000
+They define the rigid physical boundaries
+
+112
+00:04:58.000 --> 00:05:00.800
+of static C++ memory allocation.
+
+113
+00:05:00.800 --> 00:05:03.400
+For asynchronous communication, the baseline rule
+
+114
+00:05:03.400 --> 00:05:04.600
+is straightforward.
+
+115
+00:05:04.600 --> 00:05:07.400
+Prefer promises and avoid callbacks entirely
+
+116
+00:05:07.400 --> 00:05:09.600
+unless wrapping a specific native API
+
+117
+00:05:09.600 --> 00:05:11.600
+makes a promise unjustifiable.
+
+118
+00:05:11.600 --> 00:05:14.100
+Callbacks carry a strict native restriction.
+
+119
+00:05:14.100 --> 00:05:15.800
+They cannot be invoked more than once
+
+120
+00:05:15.800 --> 00:05:18.200
+without generating a completely new native invocation
+
+121
+00:05:18.200 --> 00:05:19.700
+from the JavaScript side.
+
+122
+00:05:19.700 --> 00:05:22.900
+For recurring events, react Native 0.76
+
+123
+00:05:22.900 --> 00:05:25.500
+introduces a new spec-level emitter.
+
+124
+00:05:25.500 --> 00:05:27.300
+As you can see in this code comparison,
+
+125
+00:05:27.300 --> 00:05:29.600
+the legacy manual patterns are replaced.
+
+126
+00:05:29.600 --> 00:05:31.700
+This single-type definition eliminates
+
+127
+00:05:31.700 --> 00:05:34.100
+the error-prone setup previously required
+
+128
+00:05:34.100 --> 00:05:36.300
+by the old device emitter pattern.
+
+129
+00:05:36.300 --> 00:05:38.300
+By defining the emitter in your spec,
+
+130
+00:05:38.300 --> 00:05:40.800
+code-gen automatically generates strictly-typed
+
+131
+00:05:40.800 --> 00:05:42.400
+event subscription code natively
+
+132
+00:05:42.400 --> 00:05:44.600
+for both iOS and Android.
+
+133
+00:05:44.600 --> 00:05:47.200
+Standardizing around promises for single returns
+
+134
+00:05:47.200 --> 00:05:49.500
+and the new emitter for recurring streams
+
+135
+00:05:49.500 --> 00:05:52.000
+creates a statically-typed asynchronous pipeline
+
+136
+00:05:52.000 --> 00:05:53.200
+across the boundary.
+
+137
+00:05:53.200 --> 00:05:55.700
+We established earlier that the heavy asynchronous
+
+138
+00:05:55.700 --> 00:05:58.600
+JSON parsing over the old bridge has been replaced.
+
+139
+00:05:58.600 --> 00:06:01.700
+While zero-copy transmission is achieved within JSI,
+
+140
+00:06:01.700 --> 00:06:03.700
+a minor serialization cost exists
+
+141
+00:06:03.700 --> 00:06:05.700
+at the architecture's extreme edge.
+
+142
+00:06:05.700 --> 00:06:09.100
+Translating C++ memory into OS-specific native structures
+
+143
+00:06:09.100 --> 00:06:10.300
+is unavoidable.
+
+144
+00:06:10.300 --> 00:06:13.400
+However, this localized overhead is mathematically negligible
+
+145
+00:06:13.400 --> 00:06:15.900
+compared to the old JSON-over-Q model.
+
+146
+00:06:15.900 --> 00:06:18.200
+To leverage the new architecture's performance,
+
+147
+00:06:18.200 --> 00:06:20.500
+stop viewing your turbo-module-type script files
+
+148
+00:06:20.500 --> 00:06:22.000
+as standard JavaScript.
+
+149
+00:06:22.000 --> 00:06:26.500
+Start treating them as strict C++ header files in disguise.
+

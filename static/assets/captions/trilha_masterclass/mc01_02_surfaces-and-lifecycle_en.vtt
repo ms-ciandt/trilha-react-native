@@ -1,0 +1,178 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:07.500
+Every mobile application translates abstract code logic into the visual reality the user interacts with on their device.
+
+2
+00:00:07.500 --> 00:00:15.700
+In React Native, this bridge is a surface. It's a one-to-one mapping, where one entry point renders into a specific native view.
+
+3
+00:00:15.700 --> 00:00:21.800
+Applications can scale this, rendering multiple surfaces simultaneously from one JavaScript bundle.
+
+4
+00:00:21.800 --> 00:00:26.000
+Each maintains its own node tree, props, and React state.
+
+5
+00:00:26.200 --> 00:00:32.200
+These surfaces appear as separate elements on the screen, but they share the same underlying architecture.
+
+6
+00:00:32.200 --> 00:00:41.400
+Assuming these surfaces are fully isolated is a mistake that leads to unexpected behavior when the different component trees attempt to access shared resources.
+
+7
+00:00:41.400 --> 00:00:50.000
+Managing multi-surface architecture requires looking past the visual independence of the UI to understand how they are connected at the system level.
+
+8
+00:00:50.000 --> 00:00:55.600
+To understand those connections, we have to look at how the app handles multiple surfaces during execution.
+
+9
+00:00:55.600 --> 00:01:02.400
+The architectural rule is that multiple surfaces originating from the same bundle are never isolated runtimes.
+
+10
+00:01:02.400 --> 00:01:08.000
+Even visually separate active surfaces route operations through one JavaScript thread and engine.
+
+11
+00:01:08.000 --> 00:01:12.700
+They share a module registry, making dependencies common across every surface.
+
+12
+00:01:12.700 --> 00:01:21.800
+On Android, each surface is a fragment backed by React surface. On iOS, they mount within a UI view controller connected to RCT host.
+
+13
+00:01:21.800 --> 00:01:29.200
+The native operating system provides separate containers for the UI, but those containers are still tied to the same shared runtime.
+
+14
+00:01:29.200 --> 00:01:35.100
+This creates an environment where one surface can interfere with another, despite appearing completely separate.
+
+15
+00:01:35.100 --> 00:01:41.100
+This shared thread model reaches its limit in super app ecosystems that require strict boundaries between features.
+
+16
+00:01:41.100 --> 00:01:48.900
+For example, a surface handling sensitive payment processing should not have access to the same memory or modules as third-party advertising code.
+
+17
+00:01:48.900 --> 00:01:55.000
+Different engineering teams may need to ship bundles that rely on conflicting versions of the same dependency.
+
+18
+00:01:55.000 --> 00:01:59.300
+To solve this, these scenarios require React Native sandbox.
+
+19
+00:01:59.300 --> 00:02:04.700
+Sandboxing changes the architecture by creating separate module registries for different surfaces.
+
+20
+00:02:04.700 --> 00:02:11.500
+This forces the creation of independent JavaScript engines, ensuring the surfaces do not share state or memory.
+
+21
+00:02:11.500 --> 00:02:16.400
+Because the registries are no longer shared, synchronous data transfer is impossible.
+
+22
+00:02:16.500 --> 00:02:22.000
+All inter sandbox communication must instead use an asynchronous post message API.
+
+23
+00:02:22.000 --> 00:02:30.400
+True security and team autonomy require moving away from the default shared thread model and adopting the constraints of an isolated environment.
+
+24
+00:02:30.400 --> 00:02:38.600
+Beyond memory architecture, we have to manage the timing of the surface lifecycle, specifically the moments before a surface is ready to render.
+
+25
+00:02:38.600 --> 00:02:46.300
+This is the initialization tax. Before the UI appears, the Hermes engine must load and parse the entire JavaScript bundle.
+
+26
+00:02:46.300 --> 00:02:51.700
+On lower end devices, this parsing sequence can take up to two seconds, leaving the user waiting.
+
+27
+00:02:51.700 --> 00:02:55.400
+Engineers use warm start strategies to mitigate this delay.
+
+28
+00:02:55.400 --> 00:03:00.400
+The first strategy, eager host start, initializes the host when the app boots.
+
+29
+00:03:00.400 --> 00:03:06.700
+This removes delay, but consumes 10 megabytes of RAM, even if the user never opens a React Native surface.
+
+30
+00:03:06.700 --> 00:03:11.300
+A conditional warm start waits for a trigger, like logging in before starting.
+
+31
+00:03:11.300 --> 00:03:16.300
+This saves memory for inactive users, but introduces a slight delay during activation.
+
+32
+00:03:16.300 --> 00:03:20.700
+A pre-built surface triggers the start command just before the user transitions.
+
+33
+00:03:20.700 --> 00:03:25.300
+It renders invisibly in the background, ready to display the moment the transition occurs.
+
+34
+00:03:25.300 --> 00:03:30.500
+Finally, a RAM bundle with inline requires changes how the bundler packages code.
+
+35
+00:03:30.500 --> 00:03:35.200
+Instead of parsing up front, the engine lazily loads modules only when needed.
+
+36
+00:03:35.200 --> 00:03:41.100
+Managing the host requires balancing the need for immediate UI response against the memory limits of the device.
+
+37
+00:03:41.100 --> 00:03:48.400
+When the architecture and the lifecycle are managed correctly, they create a fluid final experience for the user.
+
+38
+00:03:48.400 --> 00:03:53.500
+A surface serves as the bridge between a native view and the JavaScript engine.
+
+39
+00:03:53.500 --> 00:03:58.000
+By default, these surfaces are connected by a shared thread and registry.
+
+40
+00:03:58.000 --> 00:04:04.900
+When the app requires strict security or independent dependencies, sandboxing is used to create hard boundaries.
+
+41
+00:04:04.900 --> 00:04:08.900
+And to ensure the UI feels responsive, we use warm start strategies
+
+42
+00:04:08.900 --> 00:04:12.100
+to account for the initialization time of the engine.
+
+43
+00:04:12.100 --> 00:04:17.600
+Building complex multi-surface applications requires moving beyond default assumptions
+
+44
+00:04:17.600 --> 00:04:22.100
+to actively engineer the memory boundaries and the startup lifecycle.
+

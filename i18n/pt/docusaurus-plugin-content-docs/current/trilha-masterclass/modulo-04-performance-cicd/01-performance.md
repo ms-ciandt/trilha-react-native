@@ -8,6 +8,7 @@ title: Performance
 
 <video width="100%" controls>
   <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc04_01_performance.mp4" type="video/mp4">
+  <track kind="captions" src="/trilha-react-native/assets/captions/trilha_masterclass/mc04_01_performance.vtt" srclang="pt" label="Português" default>
   Your browser does not support the video tag.
 </video>
 

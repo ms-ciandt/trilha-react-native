@@ -1,0 +1,426 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:04.000
+In traditional Android development, you build user interfaces
+
+2
+00:00:04.000 --> 00:00:09.000
+by writing layout XML and bringing it to life using a layout inflator.
+
+3
+00:00:09.000 --> 00:00:13.000
+This compilation process generates the R.layout classes,
+
+4
+00:00:13.000 --> 00:00:16.000
+hard-coding your UI structure into the native build.
+
+5
+00:00:16.000 --> 00:00:20.000
+React Native does not use this XML inflation pipeline.
+
+6
+00:00:20.000 --> 00:00:24.000
+There is no layout inflator and no R.layout generation.
+
+7
+00:00:24.000 --> 00:00:29.000
+For many native developers, this absence of XML triggers an assumption.
+
+8
+00:00:29.000 --> 00:00:35.000
+If the framework isn't inflating layouts, it must be painting web elements onto a hidden canvas.
+
+9
+00:00:35.000 --> 00:00:40.000
+That assumption is incorrect. React Native does not render to a web view.
+
+10
+00:00:40.000 --> 00:00:43.000
+It produces real native Android widgets on the screen.
+
+11
+00:00:43.000 --> 00:00:47.000
+Developing for React Native means removing the XML middleman
+
+12
+00:00:47.000 --> 00:00:50.000
+and interacting with native pixels through code.
+
+13
+00:00:50.000 --> 00:00:53.000
+Historically, React Native communicated with the native layer
+
+14
+00:00:53.000 --> 00:00:55.000
+through an asynchronous JSON bridge,
+
+15
+00:00:55.000 --> 00:00:58.000
+serializing and deserializing every layout command,
+
+16
+00:00:58.000 --> 00:01:01.000
+which created a performance bottleneck.
+
+17
+00:01:01.000 --> 00:01:05.000
+That bridge has been replaced by direct synchronous communication.
+
+18
+00:01:05.000 --> 00:01:08.000
+This is powered by Fabric, the new C++ renderer,
+
+19
+00:01:08.000 --> 00:01:11.000
+and the JavaScript interface, or JSI,
+
+20
+00:01:11.000 --> 00:01:15.000
+which acts as the connective tissue between the two environments.
+
+21
+00:01:15.000 --> 00:01:18.000
+Now, when you write a JSX-slash-view tag,
+
+22
+00:01:18.000 --> 00:01:21.000
+it traverses this synchronous JSI channel
+
+23
+00:01:21.000 --> 00:01:26.000
+and Fabric allocates an actual Android.view.view in memory.
+
+24
+00:01:26.000 --> 00:01:29.000
+While the programming model shifts from imperative to declarative,
+
+25
+00:01:29.000 --> 00:01:31.000
+the target remains the same.
+
+26
+00:01:31.000 --> 00:01:34.000
+You are still manipulating an Android view tree,
+
+27
+00:01:34.000 --> 00:01:38.000
+making your existing widget knowledge a direct map for the new syntax.
+
+28
+00:01:38.000 --> 00:01:41.000
+To map this out, we start at the root container of your application,
+
+29
+00:01:41.000 --> 00:01:44.000
+the base level that holds every other element.
+
+30
+00:01:44.000 --> 00:01:47.000
+In Android, you choose from specific structural containers,
+
+31
+00:01:47.000 --> 00:01:50.000
+such as linear layout for sequential stacking,
+
+32
+00:01:50.000 --> 00:01:53.000
+or constraint layout for relative positioning.
+
+33
+00:01:53.000 --> 00:01:56.000
+React Native replaces these diverse view groups
+
+34
+00:01:56.000 --> 00:01:58.000
+with one generic component, the view.
+
+35
+00:01:58.000 --> 00:02:00.000
+Functionally acting like a frame layout,
+
+36
+00:02:00.000 --> 00:02:03.000
+this component defaults to a vertical column direction,
+
+37
+00:02:03.000 --> 00:02:06.000
+serving the same role as a vertical linear linear out.
+
+38
+00:02:06.000 --> 00:02:09.000
+Rather than defining relational coordinates per widget,
+
+39
+00:02:09.000 --> 00:02:13.000
+all spatial logic is handled by the centralized flexbox engine,
+
+40
+00:02:13.000 --> 00:02:15.000
+which calculates the internal spacing and positioning.
+
+41
+00:02:15.000 --> 00:02:17.000
+There is one structural constraint.
+
+42
+00:02:18.000 --> 00:02:20.000
+A view cannot contain raw string data.
+
+43
+00:02:20.000 --> 00:02:24.000
+Passing raw text directly into a view will throw a runtime exception.
+
+44
+00:02:24.000 --> 00:02:27.000
+By reducing the container model to a single component,
+
+45
+00:02:27.000 --> 00:02:31.000
+structural complexity is moved out of the view type and into the layout engine.
+
+46
+00:02:31.000 --> 00:02:35.000
+To render strings on screen, the data must be wrapped inside a text component,
+
+47
+00:02:35.000 --> 00:02:37.000
+which is the replacement for Android's text view.
+
+48
+00:02:37.000 --> 00:02:41.000
+Instead of XML attributes, you apply props to control behavior,
+
+49
+00:02:41.000 --> 00:02:43.000
+such as number of lines for truncation,
+
+50
+00:02:43.000 --> 00:02:47.000
+or adjust font size to fit to scale typography to its container.
+
+51
+00:02:47.000 --> 00:02:51.000
+For user data entry, Android's edit text maps to the text input component.
+
+52
+00:02:51.000 --> 00:02:55.000
+React Native inputs operate as controlled components.
+
+53
+00:02:55.000 --> 00:02:59.000
+The input field does not hold its own internal text state.
+
+54
+00:02:59.000 --> 00:03:02.000
+It is a reflection of the application state held in memory.
+
+55
+00:03:02.000 --> 00:03:04.000
+Like an Android text watcher,
+
+56
+00:03:04.000 --> 00:03:07.000
+typing triggers the on-change text event.
+
+57
+00:03:07.000 --> 00:03:10.000
+This event updates the state, which then loops back
+
+58
+00:03:10.000 --> 00:03:12.000
+to drive the value displayed in the text box.
+
+59
+00:03:12.000 --> 00:03:16.000
+Input rendering requires treating the component as a visual output
+
+60
+00:03:16.000 --> 00:03:19.000
+of your current memory data, not an independent data holder.
+
+61
+00:03:19.000 --> 00:03:23.000
+Older React Native touch handlers, like touchability opacity,
+
+62
+00:03:23.000 --> 00:03:26.000
+have been superseded by a unified API.
+
+63
+00:03:26.000 --> 00:03:30.000
+The pressable component is now the replacement for standard Android widgets
+
+64
+00:03:30.000 --> 00:03:32.000
+like button or image button.
+
+65
+00:03:32.000 --> 00:03:37.000
+Pressable utilizes hitslop, which serves as the functional equivalent to Android's touch delegate.
+
+66
+00:03:37.000 --> 00:03:41.000
+Hitslop expands the interactive target area for accessibility,
+
+67
+00:03:41.000 --> 00:03:45.000
+without altering the visual calculations of the layout engine.
+
+68
+00:03:45.000 --> 00:03:49.000
+React Native consolidates touch event math into a single wrapper component,
+
+69
+00:03:49.000 --> 00:03:52.000
+simplifying how interactive layers are applied.
+
+70
+00:03:52.000 --> 00:03:55.000
+Rendering static views requires minimal overhead,
+
+71
+00:03:55.000 --> 00:03:59.000
+but dynamic infinite data lists require active memory management.
+
+72
+00:03:59.000 --> 00:04:02.000
+The scroll view component is a non virtualized tool.
+
+73
+00:04:02.000 --> 00:04:04.000
+It mounts all of its children at once,
+
+74
+00:04:04.000 --> 00:04:07.000
+so it is designed for short finite content.
+
+75
+00:04:07.000 --> 00:04:09.000
+Feeding large dynamic data sets into a scroll view
+
+76
+00:04:09.000 --> 00:04:12.000
+will cause high memory usage and eventual crashes.
+
+77
+00:04:12.000 --> 00:04:15.000
+For long lists, you must use the flat list component,
+
+78
+00:04:15.000 --> 00:04:18.000
+the structural equivalent to Android's recycler view.
+
+79
+00:04:18.000 --> 00:04:20.000
+Flat list relies on view recycling.
+
+80
+00:04:20.000 --> 00:04:23.000
+Items scrolling outside the viewport are unmounted,
+
+81
+00:04:23.000 --> 00:04:26.000
+and their resources are repurposed for new items entering the screen.
+
+82
+00:04:26.000 --> 00:04:31.000
+This table shows how the native Android adapter pattern maps to react native props.
+
+83
+00:04:31.000 --> 00:04:35.000
+The sizing function of adapter.get item count translates to passing an array
+
+84
+00:04:35.000 --> 00:04:37.000
+into the data prop and reading its length.
+
+85
+00:04:37.000 --> 00:04:42.000
+The UI construction handled by adapter.on bind view holder
+
+86
+00:04:42.000 --> 00:04:46.000
+is mapped to a render item function that returns your JSX.
+
+87
+00:04:46.000 --> 00:04:51.000
+The list diffing logic of diffutil.item callback is handled by the key extractor prop,
+
+88
+00:04:51.000 --> 00:04:55.000
+letting reacts reconciliation engine identify changes.
+
+89
+00:04:55.000 --> 00:05:00.000
+Complex list virtualization relies on the same memory recycling mechanics as native Android,
+
+90
+00:05:00.000 --> 00:05:05.000
+executed through declarative syntax rather than Java or Kotlin adapters.
+
+91
+00:05:05.000 --> 00:05:10.000
+Beyond the component tree, you must account for the physical constraints of modern mobile hardware.
+
+92
+00:05:10.000 --> 00:05:15.000
+Device screens are interrupted by system status bars, navigation overlays,
+
+93
+00:05:15.000 --> 00:05:17.000
+and physical camera punch holes.
+
+94
+00:05:17.000 --> 00:05:21.000
+By default, react native will render UI elements directly into these physical zones,
+
+95
+00:05:21.000 --> 00:05:23.000
+causing data to be obscured.
+
+96
+00:05:23.000 --> 00:05:26.000
+To fix this, use safe area view.
+
+97
+00:05:26.000 --> 00:05:30.000
+It calculates system insets and snaps your views into the readable zones.
+
+98
+00:05:30.000 --> 00:05:34.000
+A reliable interface design anticipates the physical hardware topography of the device,
+
+99
+00:05:34.000 --> 00:05:37.000
+not just the logical pixel grid.
+
+100
+00:05:37.000 --> 00:05:43.000
+The structural building blocks of a react native interface map to the native Android widgets you already know.
+
+101
+00:05:43.000 --> 00:05:50.000
+Transitioning to this framework is an exercise in remapping your vocabulary to a different set of implementation details.
+
+102
+00:05:50.000 --> 00:05:55.000
+While the structural components and underlying memory mechanics share a translation,
+
+103
+00:05:55.000 --> 00:05:59.000
+the methodology for styling these elements diverges from traditional XML.
+
+104
+00:05:59.000 --> 00:06:04.000
+Android's XML style attributes are replaced by the react native style sheet API
+
+105
+00:06:04.000 --> 00:06:07.000
+and platform specific styling parameters.
+
+106
+00:06:07.000 --> 00:06:15.000
+Mastering this architectural mapping provides the foundation required before you can successfully style and polish a production-ready application.
+

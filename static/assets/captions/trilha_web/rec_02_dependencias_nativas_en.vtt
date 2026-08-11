@@ -1,0 +1,402 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:04.000
+On the web, adding a new feature is a frictionless process.
+
+2
+00:00:04.000 --> 00:00:09.500
+Type NPM install and watch the code seamlessly merge into your digital pipeline.
+
+3
+00:00:09.500 --> 00:00:13.500
+Web developers have built an entire operational habit around this.
+
+4
+00:00:13.500 --> 00:00:18.000
+You run a package manager, let the bundler handle tree shaking to drop dead code,
+
+5
+00:00:18.000 --> 00:00:20.500
+and move on to building the UI.
+
+6
+00:00:20.500 --> 00:00:22.500
+But when you transition to React Native,
+
+7
+00:00:22.500 --> 00:00:27.500
+the assumption that dependencies are operationally cheap breaks down immediately.
+
+8
+00:00:27.500 --> 00:00:31.500
+A mobile dependency doesn't just sit in a single browser environment.
+
+9
+00:00:31.500 --> 00:00:36.000
+It has to navigate two entirely different execution models simultaneously,
+
+10
+00:00:36.000 --> 00:00:41.000
+communicating between your JavaScript logic and the underlying mobile operating system.
+
+11
+00:00:41.000 --> 00:00:45.000
+If you treat a React Native dependency tree exactly like a web apps,
+
+12
+00:00:45.000 --> 00:00:49.000
+you guarantee pipeline friction and inevitable build failures.
+
+13
+00:00:49.000 --> 00:00:52.500
+To avoid that friction, you have to recognize that React Native packages
+
+14
+00:00:52.500 --> 00:00:56.500
+are strictly bifurcated into two distinct risk profiles.
+
+15
+00:00:56.500 --> 00:01:00.000
+The first profile consists of JavaScript-only packages.
+
+16
+00:01:00.000 --> 00:01:05.000
+These are your standard utility libraries, like low-dash or state management tools,
+
+17
+00:01:05.000 --> 00:01:07.000
+like Zestand and Redux.
+
+18
+00:01:07.000 --> 00:01:10.000
+These carry a very low-risk profile.
+
+19
+00:01:10.000 --> 00:01:12.500
+Because they contain only JavaScript code,
+
+20
+00:01:12.500 --> 00:01:15.500
+they are resolved entirely by the Metro Bundler.
+
+21
+00:01:15.500 --> 00:01:20.500
+They behave exactly as they do in the DOM, requiring no special compilation.
+
+22
+00:01:20.500 --> 00:01:24.500
+The second profile involves packages containing native code.
+
+23
+00:01:24.500 --> 00:01:29.500
+These interact directly with device hardware, like the camera, GPS mapping modules,
+
+24
+00:01:29.500 --> 00:01:31.500
+or gyroscope sensors.
+
+25
+00:01:31.500 --> 00:01:34.500
+Look inside these packages in your Node modules folder,
+
+26
+00:01:34.500 --> 00:01:41.000
+and you'll find nested Android and iOS sub-directories containing raw Kotlin, Java, or Swift files.
+
+27
+00:01:41.000 --> 00:01:43.500
+These bypass standard JavaScript tools.
+
+28
+00:01:43.500 --> 00:01:45.100
+They cannot be bundled.
+
+29
+00:01:45.100 --> 00:01:49.500
+They must be compiled by native toolchains every single time you build.
+
+30
+00:01:49.500 --> 00:01:52.500
+Identifying which category a package falls into
+
+31
+00:01:52.500 --> 00:01:57.000
+allows you to map its impact on the build process before the first line of code is written.
+
+32
+00:01:57.000 --> 00:02:01.000
+That architectural cost manifests in four distinct ways.
+
+33
+00:02:01.000 --> 00:02:03.500
+The first is region version bubbling.
+
+34
+00:02:03.500 --> 00:02:07.000
+A native package is highly sensitive to the environment around it.
+
+35
+00:02:07.000 --> 00:02:12.000
+It must perfectly align with the specific version of the react native core you are currently running.
+
+36
+00:02:12.000 --> 00:02:16.000
+This matrix shows a central native dependency linked to four pillars.
+
+37
+00:02:16.000 --> 00:02:21.000
+React native core, Android Gradle, Xcode, and your Expo SDK.
+
+38
+00:02:21.000 --> 00:02:23.500
+This creates a cascading failure state.
+
+39
+00:02:23.500 --> 00:02:28.000
+If you upgrade the core framework, that dependency must have a compatible update ready,
+
+40
+00:02:28.000 --> 00:02:30.000
+otherwise compilation fails.
+
+41
+00:02:30.000 --> 00:02:34.000
+Adopting a native package means your project's upgrade timeline is now hostage
+
+42
+00:02:34.000 --> 00:02:37.000
+to that specific library's open source maintainers.
+
+43
+00:02:37.000 --> 00:02:40.500
+The second cost involves build times and the debugging domain.
+
+44
+00:02:40.500 --> 00:02:43.000
+On the web, if you introduce a problematic package,
+
+45
+00:02:43.000 --> 00:02:46.500
+the errors are cleanly surfaced in your Bundler's terminal output.
+
+46
+00:02:46.500 --> 00:02:50.000
+You fix the syntax, save the file, and the browser reloads.
+
+47
+00:02:50.000 --> 00:02:53.500
+Native dependency errors bypass the JavaScript Bundler entirely.
+
+48
+00:02:53.500 --> 00:02:59.500
+Metro will report a successful build even while the app itself fails to compile and launch.
+
+49
+00:02:59.500 --> 00:03:02.000
+When a build fails due to a native package,
+
+50
+00:03:02.000 --> 00:03:08.000
+syntax or version errors trigger massive complex stack traces deep within Gradle or Xcode.
+
+51
+00:03:08.000 --> 00:03:13.000
+Debugging these failures is an entirely different operational skill than debugging JavaScript.
+
+52
+00:03:13.000 --> 00:03:18.000
+It requires a baseline fluency and reading platform specific tool chain logs.
+
+53
+00:03:18.000 --> 00:03:22.500
+The third cost center centers on architectural deprecation and compatibility.
+
+54
+00:03:22.500 --> 00:03:26.000
+React Native is undergoing a massive structural transition,
+
+55
+00:03:26.000 --> 00:03:31.500
+moving away from its original asynchronous communication bridge between JavaScript and native threads.
+
+56
+00:03:31.500 --> 00:03:37.500
+The framework is adopting a new synchronous execution model based on C++ interfaces.
+
+57
+00:03:37.500 --> 00:03:41.000
+This new architecture is the required standard moving forward.
+
+58
+00:03:41.000 --> 00:03:46.000
+However, thousands of community native packages still rely on the legacy bridge.
+
+59
+00:03:46.500 --> 00:03:52.000
+If you integrate one of these packages, your app is forced to route data through the old slower pipeline,
+
+60
+00:03:52.000 --> 00:03:54.000
+bottlenecking performance.
+
+61
+00:03:54.000 --> 00:04:02.000
+By installing a legacy native dependency, you bind your modern application to the performance limitations of the old communication bridge.
+
+62
+00:04:02.000 --> 00:04:05.000
+The fourth and final hidden cost is deployment rigidity.
+
+63
+00:04:05.000 --> 00:04:13.000
+In a standard React Native lifecycle, over-the-air updates allow you to quickly swap out the JavaScript bundle to hot-fix bugs instantly,
+
+64
+00:04:13.000 --> 00:04:15.500
+bypassing the App Store review process.
+
+65
+00:04:15.500 --> 00:04:18.000
+This flow chart contrasts update paths.
+
+66
+00:04:18.000 --> 00:04:23.000
+On top, a lightweight JavaScript payload bypasses stores directly to the device.
+
+67
+00:04:23.000 --> 00:04:27.000
+On the bottom, native code changes require large binary blocks.
+
+68
+00:04:27.000 --> 00:04:33.000
+Because native dependencies alter the compiled binary, they're immune to over-the-air deployment,
+
+69
+00:04:33.000 --> 00:04:35.500
+bottlenecking at App Store review.
+
+70
+00:04:35.500 --> 00:04:40.000
+If you realize a native library is broken or causing crashes in production,
+
+71
+00:04:40.000 --> 00:04:43.000
+you have to execute a full native rebuild,
+
+72
+00:04:43.000 --> 00:04:48.000
+update your provisioning profiles, and submit a brand-new release to Apple and Google.
+
+73
+00:04:48.000 --> 00:04:51.000
+Once a native dependency is published in a live app,
+
+74
+00:04:51.000 --> 00:04:56.000
+the engineering team permanently loses the ability to hot-fix that specific feature.
+
+75
+00:04:56.000 --> 00:05:02.000
+These four costs apply to Greenfield projects, built entirely in React Native from day one.
+
+76
+00:05:02.000 --> 00:05:05.000
+But they escalate rapidly in a brownfield environment,
+
+77
+00:05:05.000 --> 00:05:10.000
+where React Native is embedded inside a large, pre-existing native application.
+
+78
+00:05:10.000 --> 00:05:16.000
+In this context, the operational risks of introducing a native dependency are multiplied significantly.
+
+79
+00:05:16.000 --> 00:05:20.000
+A React Native package brings its own transitive dependencies,
+
+80
+00:05:20.000 --> 00:05:23.000
+native networking clients, or image processing tools,
+
+81
+00:05:23.000 --> 00:05:28.000
+that often go unseen until they conflict with the host app's existing environment.
+
+82
+00:05:28.000 --> 00:05:34.000
+This diagram shows a large host application container holding an embedded React Native container.
+
+83
+00:05:34.000 --> 00:05:37.000
+Watch what happens when the React Native package
+
+84
+00:05:37.000 --> 00:05:41.000
+injects a library version the host app already uses.
+
+85
+00:05:41.000 --> 00:05:46.000
+They collide, resulting in duplicate symbols and fatal compilation crashes.
+
+86
+00:05:46.000 --> 00:05:51.000
+In a brownfield environment, adding a native dependency is a highly invasive action.
+
+87
+00:05:51.000 --> 00:05:55.000
+It requires direct architectural coordination with the host native team
+
+88
+00:05:55.000 --> 00:05:59.000
+to resolve version conflicts before any code can run.
+
+89
+00:05:59.000 --> 00:06:03.000
+To manage these risks, you must implement a strict pre-flight operational checklist
+
+90
+00:06:03.000 --> 00:06:07.000
+before ever running an installation command on a mobile project.
+
+91
+00:06:07.000 --> 00:06:09.000
+The first check is simple.
+
+92
+00:06:09.000 --> 00:06:15.000
+Investigate the package repository, specifically for the presence of native Android or iOS directories.
+
+93
+00:06:15.000 --> 00:06:18.000
+A stay exists, the risk profile elevates.
+
+94
+00:06:18.000 --> 00:06:22.000
+The second check verifies compatibility with the new architecture.
+
+95
+00:06:22.000 --> 00:06:28.000
+Cross-reference the library on community directory databases to ensure it supports the synchronous bridge model.
+
+96
+00:06:28.000 --> 00:06:31.000
+Finally, audit the packages maintenance status.
+
+97
+00:06:31.000 --> 00:06:35.000
+Check its open issue queue and rigorously search for a JavaScript only alternative
+
+98
+00:06:35.000 --> 00:06:39.000
+that could fulfill the exact same use case without touching the native layer.
+
+99
+00:06:39.000 --> 00:06:43.000
+Every native dependency links into your app's compilation process,
+
+100
+00:06:43.000 --> 00:06:48.000
+creating a long-term maintenance commitment that requires the same scrutiny as your core infrastructure.
+

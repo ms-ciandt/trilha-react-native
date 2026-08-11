@@ -6,6 +6,7 @@ title: "JSI — Advanced Patterns"
 
 <video width="100%" controls>
   <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc03_02_jsi-advanced.mp4" type="video/mp4">
+  <track kind="captions" src="/trilha-react-native/assets/captions/trilha_masterclass/mc03_02_jsi-advanced_en.vtt" srclang="en" label="English" default>
   Your browser does not support the video tag.
 </video>
 
