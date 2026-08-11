@@ -6,7 +6,10 @@ sidebar_position: 2
 
 ## Video Overview
 
-> Video para este tópico em breve.
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_android/perf_02_flatlist.mp4" type="video/mp4">
+  Seu navegador nao suporta o elemento de video.
+</video>
 
 ## RecyclerView vs FlatList
 
