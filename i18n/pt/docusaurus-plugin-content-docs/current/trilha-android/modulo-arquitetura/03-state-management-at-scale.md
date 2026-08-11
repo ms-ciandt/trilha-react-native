@@ -6,7 +6,10 @@ sidebar_position: 3
 
 ## Visão Geral em Vídeo
 
-> Vídeo deste tópico em breve.
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_android/arq_03_state-management-at-scale.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 ## Duas Categorias de Estado — Sempre
 
