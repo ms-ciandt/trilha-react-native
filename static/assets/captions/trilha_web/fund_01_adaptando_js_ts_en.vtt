@@ -1,0 +1,262 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:04.000
+You already know React, so building a mobile app should feel intuitive,
+
+2
+00:00:04.000 --> 00:00:09.000
+but applying web techniques to a phone means components don't behave as expected.
+
+3
+00:00:09.000 --> 00:00:13.000
+Web developers have been told for years that they can learn once,
+
+4
+00:00:13.000 --> 00:00:15.000
+write anywhere with React.
+
+5
+00:00:15.000 --> 00:00:18.000
+While React Native uses the React library,
+
+6
+00:00:18.000 --> 00:00:22.000
+it swaps the browser's standard APIs for a native mobile environment.
+
+7
+00:00:22.000 --> 00:00:25.000
+This split-screen comparison highlights the divergence.
+
+8
+00:00:25.000 --> 00:00:29.000
+The browser sandbox handles different tasks than the Hermes engine.
+
+9
+00:00:29.000 --> 00:00:32.000
+In a browser, you rely on the document object model,
+
+10
+00:00:32.000 --> 00:00:36.000
+a CSS engine, and a URL bar to manage state and navigation.
+
+11
+00:00:36.000 --> 00:00:38.000
+The Hermes engine removes these tools.
+
+12
+00:00:38.000 --> 00:00:42.000
+There is no global document window or URL-based routing.
+
+13
+00:00:42.000 --> 00:00:46.000
+Instead, the engine prioritizes touch gestures and direct storage access.
+
+14
+00:00:46.000 --> 00:00:50.000
+Relying on browser-specific tools leads to broken layouts and missing data
+
+15
+00:00:50.000 --> 00:00:52.000
+that keep an app from being shipable.
+
+16
+00:00:52.000 --> 00:00:55.000
+The transition starts with the absence of HTML.
+
+17
+00:00:55.000 --> 00:01:00.000
+Standard div or span tags are not supported in React Native,
+
+18
+00:01:00.000 --> 00:01:03.000
+including them causes the app to crash immediately.
+
+19
+00:01:03.000 --> 00:01:07.000
+You replace web markup with mobile-specific primitives.
+
+20
+00:01:07.000 --> 00:01:11.000
+You build your interface using foundational blocks like View and Text.
+
+21
+00:01:11.000 --> 00:01:15.000
+Styling also moves away from a global cascading system.
+
+22
+00:01:15.000 --> 00:01:20.000
+Each component receives its own styles defined as independent JavaScript objects.
+
+23
+00:01:20.000 --> 00:01:22.000
+Core React Logic remains the same.
+
+24
+00:01:23.000 --> 00:01:27.000
+You still use state, hooks, and the fetch API to manage your application data.
+
+25
+00:01:27.000 --> 00:01:31.000
+The way components update and handle data flow is familiar,
+
+26
+00:01:31.000 --> 00:01:33.000
+even though the rendering engine is different.
+
+27
+00:01:33.000 --> 00:01:38.000
+Success in mobile development requires thinking in terms of these isolated UI primitives,
+
+28
+00:01:38.000 --> 00:01:40.000
+rather than a linked document.
+
+29
+00:01:40.000 --> 00:01:43.000
+Mobile apps also operate without a URL bar.
+
+30
+00:01:43.000 --> 00:01:48.000
+Mobile operating systems do not use URL changes to switch between views.
+
+31
+00:01:48.000 --> 00:01:50.000
+Instead, you use navigation patterns,
+
+32
+00:01:50.000 --> 00:01:54.000
+where screens are stacked on top of each other or organized into tabs.
+
+33
+00:01:54.000 --> 00:02:00.000
+Standard browser persistence like local storage and session storage are unavailable here.
+
+34
+00:02:00.000 --> 00:02:07.000
+Saving user data requires integrating asynchronous storage libraries like MMKV to handle persistence.
+
+35
+00:02:07.000 --> 00:02:12.000
+Navigation and memory are structures you must actively build and manage
+
+36
+00:02:12.000 --> 00:02:14.000
+as part of the app's internal state.
+
+37
+00:02:14.000 --> 00:02:18.000
+Mobile development also means accounting for physical hardware.
+
+38
+00:02:19.000 --> 00:02:23.000
+Screen real estate is interrupted by camera notches and home indicators.
+
+39
+00:02:23.000 --> 00:02:29.000
+Without proper adjustments, the OS renders UI elements directly behind these physical obstructions,
+
+40
+00:02:29.000 --> 00:02:32.000
+making buttons impossible to press.
+
+41
+00:02:32.000 --> 00:02:35.000
+You prevent this by defining safe areas for your content.
+
+42
+00:02:35.000 --> 00:02:40.000
+Using safe area context ensures your layout remains clear of the edges,
+
+43
+00:02:40.000 --> 00:02:44.000
+effectively shrinking the usable area to fit within the visible screen.
+
+44
+00:02:45.000 --> 00:02:47.000
+Software also changes the layout in real time,
+
+45
+00:02:47.000 --> 00:02:50.000
+specifically when the virtual keyboard appears.
+
+46
+00:02:50.000 --> 00:02:55.000
+When the keyboard slides up, it often obscures the input field the user is currently typing in.
+
+47
+00:02:55.000 --> 00:02:59.000
+You solve this by wrapping forms in a keyboard avoiding view,
+
+48
+00:02:59.000 --> 00:03:03.000
+which detects the keyboard and responds by adjusting the view height.
+
+49
+00:03:03.000 --> 00:03:08.000
+A mobile UI constantly changes based on the physical device and active software overlays.
+
+50
+00:03:08.000 --> 00:03:13.000
+User interaction shifts from high precision clicking to tactile touch,
+
+51
+00:03:13.000 --> 00:03:20.000
+treating a mobile screen like a mouse driven interface results in an app that feels unresponsive and difficult to use.
+
+52
+00:03:20.000 --> 00:03:26.000
+Modern users expect intuitive gestures like fluid sideways swipes and deliberate long presses
+
+53
+00:03:26.000 --> 00:03:29.000
+to effectively navigate and interact with the mobile app.
+
+54
+00:03:29.000 --> 00:03:35.000
+Development requires adding gesture handlers to interpret these complex pressure sensitive inputs.
+
+55
+00:03:35.000 --> 00:03:41.000
+To create a native field, you must replace cursor logic with systems designed for thumbs and momentum.
+
+56
+00:03:41.000 --> 00:03:47.000
+Moving to mobile is an exercise in working within the specific physical constraints of handheld hardware.
+
+57
+00:03:47.000 --> 00:03:52.000
+This chart shows the expected learning curve based on your existing web development strengths.
+
+58
+00:03:52.000 --> 00:03:58.000
+If you specialize in application logic and state management, many of your skills port over easily,
+
+59
+00:03:58.000 --> 00:04:00.000
+leading to a faster transition.
+
+60
+00:04:00.000 --> 00:04:07.000
+If your work is primarily UI-driven and relies on CSS cascades, you will face a significant adjustment,
+
+61
+00:04:07.000 --> 00:04:09.000
+as you learn native layout rules.
+
+62
+00:04:09.000 --> 00:04:15.000
+Modern tools like Expo and pre-configured TypeScript templates handle the infrastructure setup,
+
+63
+00:04:15.000 --> 00:04:18.000
+allowing you to focus on these environment differences.
+
+64
+00:04:18.000 --> 00:04:23.000
+Building for mobile requires actively working with the physical devices constraints
+
+65
+00:04:23.000 --> 00:04:27.000
+in order to create truly responsive native experiences.
+

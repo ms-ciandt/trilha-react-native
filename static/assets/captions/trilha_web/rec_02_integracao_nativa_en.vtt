@@ -1,0 +1,178 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:06.000
+The web environment gives you incredible speed and flexibility, but eventually you hit a wall.
+
+2
+00:00:06.000 --> 00:00:13.000
+You need access to a specific device feature or a proprietary SDK, and standard JavaScript simply won't cut it.
+
+3
+00:00:13.000 --> 00:00:18.000
+That's when the sandbox shatters, and you have to cross over into native territory.
+
+4
+00:00:18.000 --> 00:00:25.000
+The good news is, crossing that job doesn't require you to drop your current workflow and learn Swift or Kotlin.
+
+5
+00:00:25.000 --> 00:00:30.000
+React Native provides a bridge that lets your JavaScript talk directly to native code.
+
+6
+00:00:30.000 --> 00:00:40.000
+Today, we are going to build a custom hook that pulls device environment data, like the build number and the active environment flag, straight from an existing native module.
+
+7
+00:00:40.000 --> 00:00:46.000
+By learning to consume these modules safely, you expand your capabilities beyond standard web constraints.
+
+8
+00:00:46.000 --> 00:00:53.000
+You equip yourself to integrate deep system functions alongside your iOS and Android engineering counterparts.
+
+9
+00:00:53.000 --> 00:01:02.000
+Let's start with this layout. We have a parallel architecture showing standard web concepts on one side and react native on the other.
+
+10
+00:01:02.000 --> 00:01:06.000
+Mapping these concepts is the first step to navigating mobile development.
+
+11
+00:01:06.000 --> 00:01:11.000
+On the web, you interact with built-in browser APIs, like local storage.
+
+12
+00:01:11.000 --> 00:01:16.000
+In mobile, you access underlying platform APIs on Android and iOS.
+
+13
+00:01:16.000 --> 00:01:21.000
+A data bridge connects your JavaScript payload directly to those native functions.
+
+14
+00:01:21.000 --> 00:01:25.000
+Standard React components map directly to native UI components.
+
+15
+00:01:25.000 --> 00:01:34.000
+You write familiar React props and events in JavaScript, sending instructions over the bridge, while the actual rendering happens entirely in the native engine.
+
+16
+00:01:34.000 --> 00:01:40.000
+The specific mechanism handling all of this business logic is a JavaScript object called native modules.
+
+17
+00:01:40.000 --> 00:01:47.000
+This object exposes the methods written by the mobile teams, so you can call them just like any other JavaScript function.
+
+18
+00:01:47.000 --> 00:01:59.000
+Keeping this separation in mind is critical. When a layout issue or a crash occurs, knowing whether it originated in your JavaScript or across the bridge in the native code points you to the correct fix.
+
+19
+00:01:59.000 --> 00:02:10.000
+Let's put this into practice. We'll start by creating a dedicated file called AppNVService.js. At the top, we import the native modules object from React Native.
+
+20
+00:02:10.000 --> 00:02:22.000
+Next, we assign native modules.appNV to a constant. It's best practice to verify this object actually exists before we try to interact with it, so we establish a quick validation check right away.
+
+21
+00:02:22.000 --> 00:02:36.000
+From that module, we need to extract two specific pieces of information, get environment to tell us if we are in dev, staging, or prod, and get build number to return the exact string identifier for the application build.
+
+22
+00:02:36.000 --> 00:02:42.000
+Because we are sending messages across the React Native bridge, these function calls are strictly promise based.
+
+23
+00:02:42.000 --> 00:02:50.000
+We use standard async await syntax to send the request, wait for the native side to process it, and then receive the data back in JavaScript.
+
+24
+00:02:50.000 --> 00:03:04.000
+You must wrap these bridge calls in strict try catch blocks. If the native module fails to respond or isn't linked correctly, the error will bypass standard JS boundaries. You need that code block to catch the failure explicitly.
+
+25
+00:03:04.000 --> 00:03:16.000
+By isolating the specific native requests inside a dedicated service layer, we keep the rest of our React application safe. If the native code behaves unpredictably, the fallout is contained away from our core UI.
+
+26
+00:03:16.000 --> 00:03:33.000
+Now we move out of the service layer and into React itself. We'll build a custom hook called useappNV to manage this incoming data. Inside the hook, we define three standard state variables, one for the environment string, one for the build number, and a critical state variable to capture any runtime errors.
+
+27
+00:03:33.000 --> 00:03:45.000
+We then use a use effect hook to trigger our asynchronous native service. Rapping the call here ensures the request fires exactly once, immediately upon the component mounting to the screen.
+
+28
+00:03:45.000 --> 00:03:56.000
+To verify everything is wired correctly, add a simple console log for the returns data. Seeing those values populate in your terminal, proves your JavaScript is actively communicating with the device.
+
+29
+00:03:56.000 --> 00:04:09.000
+Managing external native data through a custom hook keeps your components pure. Your user interface doesn't need to know about the React native bridge. It simply consumes the predictable React state output by your new hook.
+
+30
+00:04:09.000 --> 00:04:17.000
+Let's plug this data into the main app component. We import our useappNV hook and destructure the environment, build number, and error states.
+
+31
+00:04:17.000 --> 00:04:29.000
+Next, we add our conditional logic. If the environment value returns as dev, we instruct React to render a distinct banner across the top of the screen to remind testers they are looking at a development build.
+
+32
+00:04:29.000 --> 00:04:41.000
+But we must account for the error state. If you run this code in a pure web browser, or if a team member forgets to link the native library during setup, native modules.appNV will be missing entirely.
+
+33
+00:04:41.000 --> 00:04:53.000
+This visual mockup shows our safeguard in action. We evaluate the error state first. If it returns true, we display a default banner with a fallback message, clearly stating the native module is currently offline.
+
+34
+00:04:53.000 --> 00:05:05.000
+Anticipating the absence of a native module is a requirement in React native. This fallback pattern prevents the application from throwing a catastrophic red screen of death when developers test on the web or in incomplete simulators.
+
+35
+00:05:05.000 --> 00:05:15.000
+Even with strict safeguards in place, working with custom modules and proprietary SDKs means you will eventually encounter a hard crash originating on the native side.
+
+36
+00:05:15.000 --> 00:05:25.000
+When the app fails, look closely at the stack trace. A standard React native JavaScript error will point clearly to .js or .tsx file paths within your project directory.
+
+37
+00:05:25.000 --> 00:05:37.000
+This log visualization shows the exact distinction. If the crash happened in the Android layer, the trace switches to JavaScript syntax. Look for error lines starting with Java .lang, like a null point exception.
+
+38
+00:05:37.000 --> 00:05:50.000
+On iOS, the format switches to Objective C or Swift patterns. You will see method calls formatted with brackets, like dash uivu.dot, or direct memory references specific to Apple frameworks.
+
+39
+00:05:50.000 --> 00:06:04.000
+As a web developer, your exact responsibility here is triage. You identify that the crash is not a pure JavaScript issue, isolate the precise reproduction steps and extract the complete raw native stack trace from Android logcat or Xcode.
+
+40
+00:06:04.000 --> 00:06:14.000
+Providing accurate native logs transforms you into an essential debugging partner for the mobile teams. You eliminate the guesswork and point the iOS and Android engineers straight to the point of failure.
+
+41
+00:06:14.000 --> 00:06:24.000
+You have successfully implemented an asynchronous native state manager. You pull deep device data into your React application without writing a single line of native code.
+
+42
+00:06:24.000 --> 00:06:35.000
+The real leverage you've gained today is vocabulary. You know how the bridge operates, how to read the logs, and what structural information your native counterparts need to build the right endpoints.
+
+43
+00:06:35.000 --> 00:06:47.000
+Step 1 was pulling logic. Step 2 is visual integration. In our next session, we will move from data driven native modules to implementing fully rendered native UI components on the screen.
+
+44
+00:06:47.000 --> 00:06:57.000
+Bridging this integration gap combines the rapid iteration of web development with the raw processing power of a native application. You now have the blueprint to connect the two.
+

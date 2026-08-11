@@ -1,0 +1,522 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:03.680
+On the left, a smooth 60 frames per second scroll.
+
+2
+00:00:03.680 --> 00:00:05.920
+On the right, a radic stuttering.
+
+3
+00:00:05.920 --> 00:00:09.360
+Overlaying the Perfetto choreographer lane reveals why.
+
+4
+00:00:09.360 --> 00:00:13.200
+The left hits consistent 16.6 millisecond intervals.
+
+5
+00:00:13.200 --> 00:00:16.400
+The right shows elongated sections missing the deadline,
+
+6
+00:00:16.400 --> 00:00:18.160
+dropping frames entirely.
+
+7
+00:00:18.160 --> 00:00:21.040
+The instant for many developers is to immediately start
+
+8
+00:00:21.040 --> 00:00:23.200
+refactoring code to fix the stutter,
+
+9
+00:00:23.200 --> 00:00:26.400
+but the cardinal rule of performance engineering is simple.
+
+10
+00:00:26.400 --> 00:00:29.040
+Do not optimize what you have not measured.
+
+11
+00:00:29.120 --> 00:00:31.840
+Dropped frames are trailing indicators of a bottleneck,
+
+12
+00:00:31.840 --> 00:00:33.840
+typically located in the JavaScript thread,
+
+13
+00:00:33.840 --> 00:00:36.000
+or the JS to native bridge.
+
+14
+00:00:36.000 --> 00:00:39.440
+Isolating that bottleneck requires a strict diagnostic loop.
+
+15
+00:00:39.440 --> 00:00:42.640
+You form a hypothesis, measure it with a profiling tool,
+
+16
+00:00:42.640 --> 00:00:46.400
+apply a targeted fix, and measure again to verify impact.
+
+17
+00:00:46.400 --> 00:00:49.920
+Bypassing this empirical process means you are coding blind,
+
+18
+00:00:49.920 --> 00:00:53.440
+guessing its structural flaws without data rarely fixes the problem
+
+19
+00:00:53.440 --> 00:00:56.560
+and usually introduces entirely new performance regressions
+
+20
+00:00:56.560 --> 00:00:58.000
+into the application.
+
+21
+00:00:58.000 --> 00:01:02.320
+This react native component tree updates via a strict contract.
+
+22
+00:01:02.320 --> 00:01:06.480
+Rule one, a component re-renders when its local state changes.
+
+23
+00:01:06.480 --> 00:01:08.560
+Rule two, when apparent updates,
+
+24
+00:01:08.560 --> 00:01:12.000
+a chain reaction forces every connected child to re-render,
+
+25
+00:01:12.000 --> 00:01:14.400
+unless protected by react.memo.
+
+26
+00:01:14.400 --> 00:01:17.600
+Rule three states that a component will re-render anytime
+
+27
+00:01:17.600 --> 00:01:20.560
+a global context that it consumes receives an update.
+
+28
+00:01:20.560 --> 00:01:23.120
+And rule four triggers a re-render whenever a hook
+
+29
+00:01:23.120 --> 00:01:26.320
+the component relies on returns a new reference in memory.
+
+30
+00:01:26.320 --> 00:01:28.720
+Internalizing this precise designing architecture
+
+31
+00:01:28.720 --> 00:01:32.000
+that intentionally opts out of unnecessary compute cycles,
+
+32
+00:01:32.000 --> 00:01:34.800
+you protect the UI thread from being overwhelmed.
+
+33
+00:01:34.800 --> 00:01:37.280
+When you suspect that JavaScript execution itself
+
+34
+00:01:37.280 --> 00:01:38.880
+is dragging down your frame rate,
+
+35
+00:01:38.880 --> 00:01:42.720
+the primary diagnostic instrument is the React Dev Tools profiler.
+
+36
+00:01:42.720 --> 00:01:45.760
+Looking at a profiler flame chart tracks commit times.
+
+37
+00:01:45.760 --> 00:01:50.080
+To diagnose issues, enable record why each component rendered
+
+38
+00:01:50.080 --> 00:01:53.360
+to isolate the exact prop forcing the commit.
+
+39
+00:01:53.360 --> 00:01:57.040
+This view frequently exposes a common architectural flaw,
+
+40
+00:01:57.040 --> 00:01:59.840
+the Redux Toolkit Uselector trap.
+
+41
+00:01:59.840 --> 00:02:03.120
+This cascade happens because every Uselector call
+
+42
+00:02:03.120 --> 00:02:06.960
+re-evaluates on every single dispatch to the global store.
+
+43
+00:02:06.960 --> 00:02:10.640
+Even if a component's specific slice of data remains identical,
+
+44
+00:02:10.640 --> 00:02:14.560
+the hook can return a new memory reference, triggering rule four.
+
+45
+00:02:14.560 --> 00:02:17.520
+Moving to ZooStand addresses this specific overhead
+
+46
+00:02:17.520 --> 00:02:20.400
+by changing how components interact with the store.
+
+47
+00:02:20.400 --> 00:02:22.880
+ZooStand avoids the global dispatch trap
+
+48
+00:02:22.960 --> 00:02:25.200
+through an architecture based on fine-grained
+
+49
+00:02:25.200 --> 00:02:27.120
+per selector subscriptions.
+
+50
+00:02:27.120 --> 00:02:30.320
+A component only recalculates when the exact piece of state
+
+51
+00:02:30.320 --> 00:02:32.560
+it points to actually changes.
+
+52
+00:02:32.560 --> 00:02:34.800
+Moving from global dispatch evaluations
+
+53
+00:02:34.800 --> 00:02:37.920
+to localized subscriptions prevents accidental contract
+
+54
+00:02:37.920 --> 00:02:39.520
+violations at scale.
+
+55
+00:02:39.520 --> 00:02:42.640
+This ensures the JavaScript thread remains completely idle
+
+56
+00:02:42.640 --> 00:02:46.320
+until a targeted update absolutely requires its processing power.
+
+57
+00:02:46.320 --> 00:02:50.240
+Sometimes the JavaScript code itself is highly optimized,
+
+58
+00:02:50.240 --> 00:02:52.800
+yet the application still drops frames.
+
+59
+00:02:52.880 --> 00:02:56.080
+In those cases, the friction lies at the complex boundary
+
+60
+00:02:56.080 --> 00:02:59.280
+where JavaScript communicates with native modules.
+
+61
+00:02:59.280 --> 00:03:03.520
+This is a Perfetto timeline, mapping asynchronous operations.
+
+62
+00:03:03.520 --> 00:03:06.240
+When investigating slow native view creation,
+
+63
+00:03:06.240 --> 00:03:09.040
+we isolate the fabric.comit track.
+
+64
+00:03:09.040 --> 00:03:12.160
+Reading this commit lane tracks how long the shadow tree takes
+
+65
+00:03:12.160 --> 00:03:13.840
+to calculate layouts.
+
+66
+00:03:13.840 --> 00:03:17.600
+The JSI category track specifically exposes host function
+
+67
+00:03:17.600 --> 00:03:18.880
+call durations.
+
+68
+00:03:18.880 --> 00:03:21.920
+It measures exactly how many milliseconds are lost,
+
+69
+00:03:21.920 --> 00:03:25.120
+waiting for data to cross the bridge between environments.
+
+70
+00:03:25.120 --> 00:03:27.920
+A common reaction to deep execution delays
+
+71
+00:03:27.920 --> 00:03:30.720
+is defensively wrapping every JavaScript component
+
+72
+00:03:30.720 --> 00:03:34.080
+in a use memo hook, hoping to cache rendering output.
+
+73
+00:03:34.080 --> 00:03:37.120
+But memoization has a hidden execution cost.
+
+74
+00:03:37.120 --> 00:03:40.560
+The engine is still forced to run a dependency array comparison
+
+75
+00:03:40.560 --> 00:03:43.040
+on every single render cycle to determine
+
+76
+00:03:43.040 --> 00:03:45.120
+if the cache value remains valid.
+
+77
+00:03:45.120 --> 00:03:47.920
+Use memo is not a free performance boost.
+
+78
+00:03:47.920 --> 00:03:49.840
+It only yields a net positive
+
+79
+00:03:49.840 --> 00:03:52.080
+when the raw computation being bypassed
+
+80
+00:03:52.080 --> 00:03:53.920
+is heavier than the processing cost
+
+81
+00:03:53.920 --> 00:03:56.000
+of the dependency comparison.
+
+82
+00:03:56.000 --> 00:03:59.920
+Another hidden tax on the JS thread comes from memory allocation.
+
+83
+00:03:59.920 --> 00:04:02.480
+Continuously mounting and unmounting elements
+
+84
+00:04:02.480 --> 00:04:04.160
+triggers garbage collection.
+
+85
+00:04:04.160 --> 00:04:05.840
+This forces the JavaScript thread
+
+86
+00:04:05.840 --> 00:04:08.880
+to aggressively halt all of its primary operations,
+
+87
+00:04:08.880 --> 00:04:10.480
+freezing the interface completely
+
+88
+00:04:10.480 --> 00:04:12.560
+while it frantically queens up memory.
+
+89
+00:04:12.560 --> 00:04:15.040
+Left, flat list eagerly generates
+
+90
+00:04:15.040 --> 00:04:17.440
+and destroys UI elements off screen.
+
+91
+00:04:17.520 --> 00:04:20.400
+Right, flash list uses a fixed pool of items,
+
+92
+00:04:20.400 --> 00:04:22.720
+looping back to the bottom to swap data.
+
+93
+00:04:22.720 --> 00:04:24.560
+Because containers are recycled,
+
+94
+00:04:24.560 --> 00:04:27.840
+an accurate, estimated item size property is critical.
+
+95
+00:04:27.840 --> 00:04:29.520
+Otherwise, the engine miscalculates,
+
+96
+00:04:29.520 --> 00:04:31.440
+causing jarring layout jumps.
+
+97
+00:04:31.440 --> 00:04:35.120
+This logic of pooling resources applies directly to image assets.
+
+98
+00:04:35.120 --> 00:04:37.200
+An un-cashed image forces the device
+
+99
+00:04:37.200 --> 00:04:40.080
+to run an expensive re-download and re-decode operation
+
+100
+00:04:40.080 --> 00:04:42.160
+every time the interface renders.
+
+101
+00:04:42.160 --> 00:04:45.680
+You bypass this by implementing strict disk and memory
+
+102
+00:04:45.680 --> 00:04:49.920
+caching, using libraries like fast image or expo image.
+
+103
+00:04:49.920 --> 00:04:51.920
+For assets that rarely change,
+
+104
+00:04:51.920 --> 00:04:54.400
+you use content-addressed URLs,
+
+105
+00:04:54.400 --> 00:04:56.880
+allowing the URL string itself to function
+
+106
+00:04:56.880 --> 00:04:58.800
+as a permanent cache key.
+
+107
+00:04:58.800 --> 00:05:01.200
+The final layer of this caching architecture
+
+108
+00:05:01.200 --> 00:05:03.200
+extends to your network requests,
+
+109
+00:05:03.200 --> 00:05:05.680
+using tools like TanStack Query.
+
+110
+00:05:05.680 --> 00:05:09.520
+TanStack Query operates on a stale-while-revalidate model.
+
+111
+00:05:09.520 --> 00:05:12.320
+If a user navigates back to a visited screen,
+
+112
+00:05:12.320 --> 00:05:14.800
+the UI renders instantly from cache,
+
+113
+00:05:14.800 --> 00:05:17.920
+silently refetching fresh data in the background.
+
+114
+00:05:17.920 --> 00:05:21.920
+By recycling UI views and aggressively caching external assets,
+
+115
+00:05:21.920 --> 00:05:25.120
+you effectively starve the garbage collector of work.
+
+116
+00:05:25.120 --> 00:05:28.480
+This guarantees that the JavaScript thread remains unblocked
+
+117
+00:05:28.480 --> 00:05:32.080
+and fully responsive during intense user interactions.
+
+118
+00:05:32.080 --> 00:05:35.280
+Optimization requires aligning the rendering contract
+
+119
+00:05:35.280 --> 00:05:39.200
+with engine capabilities through rigorous empirical measurement.
+
+120
+00:05:39.200 --> 00:05:42.960
+This tool selection matrix maps your specific hypothesis
+
+121
+00:05:42.960 --> 00:05:46.000
+to the exact diagnostic instrument required.
+
+122
+00:05:46.000 --> 00:05:48.880
+Suspect as script is dragging down frame rates.
+
+123
+00:05:48.880 --> 00:05:53.280
+Hermes isolates that JSCPU hotspot into a flame chart.
+
+124
+00:05:53.280 --> 00:05:54.800
+Data loading sluggish,
+
+125
+00:05:54.800 --> 00:05:58.240
+flipper maps out the exact request waterfall timings,
+
+126
+00:05:58.240 --> 00:06:00.400
+strictly enforcing the rendering contract
+
+127
+00:06:00.400 --> 00:06:02.400
+and applying the correct diagnostic tool
+
+128
+00:06:02.400 --> 00:06:04.080
+to each suspected layer,
+
+129
+00:06:04.080 --> 00:06:06.880
+allows developers to maintain smooth frame timings
+
+130
+00:06:06.880 --> 00:06:10.400
+and predictable behavior across complex architectures.
+

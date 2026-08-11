@@ -1,0 +1,342 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:05.320
+For years, React Native relied on an asynchronous bridge to pass messages.
+
+2
+00:00:05.320 --> 00:00:09.480
+Developers wrote the glue code by hand to connect these two realms.
+
+3
+00:00:09.480 --> 00:00:13.040
+Because the data was serialized and sent over at runtime,
+
+4
+00:00:13.040 --> 00:00:15.960
+there was no way to guarantee the shapes matched.
+
+5
+00:00:15.960 --> 00:00:19.400
+A typo in JavaScript could send a string instead of a number,
+
+6
+00:00:19.400 --> 00:00:23.200
+resulting in a silent failure or a hard crash on the native side.
+
+7
+00:00:23.200 --> 00:00:28.840
+The new architecture replaces this fragile runtime messaging with rigid native interfaces.
+
+8
+00:00:28.840 --> 00:00:33.840
+Code Gen operates exclusively as a build time compiler to achieve this stability.
+
+9
+00:00:33.840 --> 00:00:37.520
+It reads a strictly typed TypeScript specification file.
+
+10
+00:00:37.520 --> 00:00:41.560
+From that specification, it automatically generates abstract classes,
+
+11
+00:00:41.560 --> 00:00:44.280
+protocols, and JSI dispatch tables.
+
+12
+00:00:44.280 --> 00:00:47.720
+This is the native boilerplate that historically caused errors.
+
+13
+00:00:47.720 --> 00:00:51.760
+Now you never write the C++ or Java bridging glue by hand.
+
+14
+00:00:51.760 --> 00:00:54.880
+The TypeScript file becomes the absolute single source of truth
+
+15
+00:00:54.880 --> 00:00:57.240
+for the entire cross-platform architecture.
+
+16
+00:00:57.280 --> 00:01:00.200
+By declaring a module's interface in TypeScript,
+
+17
+00:01:00.200 --> 00:01:05.080
+you are physically binding the underlying native implementations to that exact shape.
+
+18
+00:01:05.080 --> 00:01:09.200
+This shift transforms TypeStafety into a compile-time requirement,
+
+19
+00:01:09.200 --> 00:01:13.000
+preventing mismatches before the code ever reaches a device.
+
+20
+00:01:13.000 --> 00:01:15.480
+To see how this model executes in practice,
+
+21
+00:01:15.480 --> 00:01:20.560
+we start at the exact entry point of the configuration, the package.json file.
+
+22
+00:01:20.560 --> 00:01:23.240
+Code Gen requires explicit mapping instructions
+
+23
+00:01:23.240 --> 00:01:27.000
+to translate JavaScript declarations into native build targets.
+
+24
+00:01:27.000 --> 00:01:31.600
+The name configuration property defines the exact CMake target name for Android,
+
+25
+00:01:31.600 --> 00:01:35.600
+as well as the framework name for iOS when generating the spec group.
+
+26
+00:01:35.600 --> 00:01:39.120
+Next, the compiler needs to know where the source files are located,
+
+27
+00:01:39.120 --> 00:01:41.680
+defined by the source directory property.
+
+28
+00:01:41.680 --> 00:01:47.720
+Code Gen specifically scans this path looking for files that match the native.ts naming convention.
+
+29
+00:01:47.720 --> 00:01:51.560
+For the Android routing configuration, you provide a Java package name.
+
+30
+00:01:51.600 --> 00:01:57.600
+This dictates the exact name space where the generated Android interface classes will reside.
+
+31
+00:01:57.600 --> 00:02:01.400
+The iOS equivalent is the module's provider property.
+
+32
+00:02:01.400 --> 00:02:05.760
+This mapping explicitly dictates how a given JavaScript module string
+
+33
+00:02:05.760 --> 00:02:10.440
+corresponds to the specific native class that the system needs to instantiate.
+
+34
+00:02:10.440 --> 00:02:14.520
+This JSON configuration acts as a strict routing table.
+
+35
+00:02:14.520 --> 00:02:18.960
+It ensures the build-time compiler knows exactly where the source of truth lives
+
+36
+00:02:18.960 --> 00:02:22.480
+and precisely where the compiled outputs must be delivered.
+
+37
+00:02:22.480 --> 00:02:28.680
+When we follow an input file like nativecalculator.ts through this pipeline into the Android environment,
+
+38
+00:02:28.680 --> 00:02:31.560
+we see the architectural enforcement in action.
+
+39
+00:02:31.560 --> 00:02:37.440
+Code Gen produces a specific file for the Android build called nativecalculatorspec.java.
+
+40
+00:02:37.440 --> 00:02:41.000
+Developers must never manually edit this generated spec file.
+
+41
+00:02:41.000 --> 00:02:43.560
+It is entirely controlled by the compiler.
+
+42
+00:02:43.560 --> 00:02:48.800
+The developer's sole responsibility on the native side is writing the actual implementation logic.
+
+43
+00:02:48.800 --> 00:02:55.760
+You write a custom Java or Kotlin class, but it is strictly required to use the extends keyword,
+
+44
+00:02:55.760 --> 00:02:58.040
+targeting the generated spec.
+
+45
+00:02:58.040 --> 00:03:04.520
+By acting as an abstract class, the generated spec dictates a rigid mathematical contract.
+
+46
+00:03:04.520 --> 00:03:10.240
+This inheritance pattern forces a strict validation during the local Android build process.
+
+47
+00:03:10.240 --> 00:03:15.120
+If your native implementation is missing a method that you defined in the TypeScript spec,
+
+48
+00:03:15.160 --> 00:03:19.920
+the Java compiler will immediately throw a fatal error and block the build.
+
+49
+00:03:19.920 --> 00:03:24.520
+This hardware-level validation eliminates the possibility of a JavaScript function
+
+50
+00:03:24.520 --> 00:03:28.640
+attempting to call an Android method that doesn't exist at runtime.
+
+51
+00:03:28.640 --> 00:03:33.880
+Code Gen weaponizes the local Java compiler to enforce the front-end TypeScript contract
+
+52
+00:03:33.880 --> 00:03:36.960
+long before the application is ever deployed.
+
+53
+00:03:36.960 --> 00:03:42.560
+The exact same TypeScript specification feeds a parallel compilation pipeline for iOS.
+
+54
+00:03:42.600 --> 00:03:47.520
+Here, code Gen produces a header file called nativecalculatorspec.h.
+
+55
+00:03:47.520 --> 00:03:54.040
+This header file defines an objective C++ protocol that dictates the required interface for Apple devices.
+
+56
+00:03:54.040 --> 00:04:00.160
+When you write your custom iOS implementation class, you must explicitly adopt this generated protocol.
+
+57
+00:04:00.160 --> 00:04:07.000
+Just like the abstract class in Android, this protocol forces the native code to match the TypeScript definition perfectly.
+
+58
+00:04:07.000 --> 00:04:10.720
+But there is a strict requirement for your iOS implementation file.
+
+59
+00:04:10.760 --> 00:04:13.360
+It must end with the .mm extension.
+
+60
+00:04:13.360 --> 00:04:18.600
+A standard objective C file, ending .m, will completely fail in this architecture.
+
+61
+00:04:18.600 --> 00:04:25.240
+This is because turbo modules communicate using the JavaScript interface, or JSI, which is written in C++.
+
+62
+00:04:25.240 --> 00:04:30.400
+Using .mm denotes objective C++, and it is absolutely mandatory.
+
+63
+00:04:30.400 --> 00:04:36.120
+It is the only way to successfully bridge standard iOS code with the underlying JSI dispatch tables.
+
+64
+00:04:36.120 --> 00:04:41.200
+On iOS, code Gen binds front-end TypeScript types to the JSI dispatch tables,
+
+65
+00:04:41.200 --> 00:04:45.000
+ensuring native execution remains in lockstep with the JavaScript thread.
+
+66
+00:04:45.000 --> 00:04:52.040
+A common developer concern with build-time compilation is the assumed time cost of running a full X code or Gradle build,
+
+67
+00:04:52.040 --> 00:04:54.280
+just to verify Type definitions.
+
+68
+00:04:54.280 --> 00:05:01.040
+However, code Gen can be triggered from the terminal completely independently of the heavy iOS or Android app builds.
+
+69
+00:05:01.040 --> 00:05:06.160
+This isolated execution allows engineers to rapidly preview generated native specs
+
+70
+00:05:06.160 --> 00:05:11.680
+and iterate on their TypeScript interfaces in milliseconds, without waiting for a full compile cycle.
+
+71
+00:05:11.680 --> 00:05:14.600
+Taking a step back, we can see the entire pipeline.
+
+72
+00:05:14.600 --> 00:05:18.800
+A single TypeScript file passes through the configuration backing into the compiler,
+
+73
+00:05:18.800 --> 00:05:25.160
+splitting into strict Java and Objective C++ specifications, which then lock into the custom implementations.
+
+74
+00:05:25.160 --> 00:05:29.080
+This framework utilizes TypeScript as an infrastructure definition language,
+
+75
+00:05:29.080 --> 00:05:33.360
+providing the rigid schema that governs both the JavaScript and native environments.
+
+76
+00:05:33.360 --> 00:05:37.000
+By standardizing the JSI dispatch tables at compile time,
+
+77
+00:05:37.000 --> 00:05:42.600
+the framework concretely eliminates the need to manually parse and evaluate JSON strings across a bridge.
+
+78
+00:05:42.600 --> 00:05:49.080
+Every method call is direct and prevalidated, removing the overhead and the risk inherent in the legacy system.
+
+79
+00:05:49.080 --> 00:05:53.640
+The ultimate operational benefit is a drastic reduction in production runtime crashes,
+
+80
+00:05:53.640 --> 00:05:56.280
+caused by tight mismatches between the realms.
+
+81
+00:05:56.320 --> 00:05:59.680
+With these native modules perfectly typed and safely compiled,
+
+82
+00:05:59.680 --> 00:06:04.680
+the framework has the structural integrity required to optimize when they are loaded into memory.
+
+83
+00:06:04.680 --> 00:06:07.040
+This brings us to the next architectural phase,
+
+84
+00:06:07.040 --> 00:06:10.080
+utilizing these typed interfaces for defensive loading,
+
+85
+00:06:10.080 --> 00:06:13.840
+a strategy designed to achieve near-instant application startup times.
+

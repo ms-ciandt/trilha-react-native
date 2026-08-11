@@ -1,0 +1,578 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:04.300
+For years, React Native operated under a structural constraint.
+
+2
+00:00:04.300 --> 00:00:07.500
+Every time JavaScript needed to command native hardware,
+
+3
+00:00:07.500 --> 00:00:10.700
+instructions crossed a separate intermediary layer.
+
+4
+00:00:10.700 --> 00:00:13.400
+Engineers call this the asynchronous bridge.
+
+5
+00:00:13.400 --> 00:00:16.300
+It acted as a single mandatory choke point.
+
+6
+00:00:16.300 --> 00:00:18.600
+If your app needed to access the camera,
+
+7
+00:00:18.600 --> 00:00:21.200
+read the battery level, or query a database,
+
+8
+00:00:21.200 --> 00:00:24.200
+the call had to travel across this specific bridge.
+
+9
+00:00:24.200 --> 00:00:26.900
+The new architecture of React Native removes this bridge
+
+10
+00:00:26.900 --> 00:00:28.700
+from the data path entirely.
+
+11
+00:00:28.800 --> 00:00:31.100
+This schematic shows the structural shift.
+
+12
+00:00:31.100 --> 00:00:33.900
+The asynchronous bridge is replaced by JSI,
+
+13
+00:00:33.900 --> 00:00:35.800
+the JavaScript interface.
+
+14
+00:00:35.800 --> 00:00:38.700
+JSI establishes a direct C++ channel
+
+15
+00:00:38.700 --> 00:00:41.500
+between the JavaScript environment and the native code,
+
+16
+00:00:41.500 --> 00:00:44.900
+creating an instantaneous two-way flow of information.
+
+17
+00:00:44.900 --> 00:00:47.400
+By making this switch, React Native moves away
+
+18
+00:00:47.400 --> 00:00:49.600
+from a serialized message passing system
+
+19
+00:00:49.600 --> 00:00:51.900
+and into a shared memory environment.
+
+20
+00:00:51.900 --> 00:00:54.300
+This enables three specific capabilities
+
+21
+00:00:54.300 --> 00:00:56.000
+that were previously impossible.
+
+22
+00:00:56.100 --> 00:00:58.600
+Synchronous execution, absolute type safety
+
+23
+00:00:58.600 --> 00:01:01.000
+at the boundary, and lazy initialization.
+
+24
+00:01:01.000 --> 00:01:03.000
+Turbo modules utilize these mechanics
+
+25
+00:01:03.000 --> 00:01:05.500
+to completely rewrite how JavaScript commands
+
+26
+00:01:05.500 --> 00:01:08.500
+the device's native mobile hardware from the ground up.
+
+27
+00:01:08.500 --> 00:01:11.100
+To isolate exactly why the asynchronous bridge
+
+28
+00:01:11.100 --> 00:01:13.900
+caused performance lag, we can trace the execution
+
+29
+00:01:13.900 --> 00:01:17.300
+of a single native module call under the legacy architecture.
+
+30
+00:01:17.300 --> 00:01:19.500
+In the legacy bridge pipeline, a data object
+
+31
+00:01:19.500 --> 00:01:21.100
+cannot cross directly.
+
+32
+00:01:21.100 --> 00:01:22.840
+It's crushed into a JSON string,
+
+33
+00:01:22.840 --> 00:01:24.900
+queued, and pushed across the gap.
+
+34
+00:01:24.900 --> 00:01:27.400
+Every argument underwent this serialization.
+
+35
+00:01:27.400 --> 00:01:30.700
+On the native side, it unpacks into a generic readable map.
+
+36
+00:01:30.700 --> 00:01:33.700
+This unpacking process exposes the second failure point,
+
+37
+00:01:33.700 --> 00:01:35.800
+a lack of type safety at the boundary.
+
+38
+00:01:35.800 --> 00:01:38.500
+Because the incoming data arrived as a generic map,
+
+39
+00:01:38.500 --> 00:01:40.500
+the native code had no strict guarantee
+
+40
+00:01:40.500 --> 00:01:41.700
+of what it was receiving.
+
+41
+00:01:41.700 --> 00:01:43.400
+It had to guess the contents.
+
+42
+00:01:43.400 --> 00:01:46.500
+The native side would mechanically fish out values
+
+43
+00:01:46.500 --> 00:01:49.700
+by looking up specific string keys at runtime,
+
+44
+00:01:49.700 --> 00:01:52.600
+hoping the correct data type was attached to them.
+
+45
+00:01:52.600 --> 00:01:54.500
+If the JavaScript sent a number,
+
+46
+00:01:54.500 --> 00:01:56.800
+but the native code expected a string,
+
+47
+00:01:56.800 --> 00:01:59.700
+the system wouldn't catch the error during the build.
+
+48
+00:01:59.700 --> 00:02:02.800
+The app would simply crash in the user's hands.
+
+49
+00:02:02.800 --> 00:02:06.000
+Because the entire queue operated asynchronously,
+
+50
+00:02:06.000 --> 00:02:08.100
+the JavaScript thread could not pause
+
+51
+00:02:08.100 --> 00:02:10.700
+and wait to see if the operation succeeded.
+
+52
+00:02:10.700 --> 00:02:14.000
+It fired the message and immediately moved on.
+
+53
+00:02:14.000 --> 00:02:16.800
+The legacy architecture traded processing speed
+
+54
+00:02:16.800 --> 00:02:19.900
+and type safety for a simpler connection model,
+
+55
+00:02:20.000 --> 00:02:23.500
+imposing a hard ceiling on the complexity and responsiveness
+
+56
+00:02:23.500 --> 00:02:25.800
+of react native applications.
+
+57
+00:02:25.800 --> 00:02:27.400
+Under the new architecture,
+
+58
+00:02:27.400 --> 00:02:30.200
+that ceiling is removed by integrating directly
+
+59
+00:02:30.200 --> 00:02:32.500
+with the Hermes JavaScript engine.
+
+60
+00:02:32.500 --> 00:02:35.000
+This diagram shows the new stack.
+
+61
+00:02:35.000 --> 00:02:38.200
+JSI is a C++ abstraction layer,
+
+62
+00:02:38.200 --> 00:02:40.800
+locking directly onto the Hermes engine.
+
+63
+00:02:40.800 --> 00:02:44.800
+Within this layer sits the core primitive, the host object.
+
+64
+00:02:44.800 --> 00:02:47.400
+Hermes interacts with this block directly,
+
+65
+00:02:47.400 --> 00:02:50.500
+treating it exactly like a native JavaScript object.
+
+66
+00:02:50.500 --> 00:02:53.800
+To the JavaScript thread, a host object looks and behaves
+
+67
+00:02:53.800 --> 00:02:56.100
+exactly like a normal JS object.
+
+68
+00:02:56.100 --> 00:03:00.000
+But mechanically, its methods are actual C++ lambdas.
+
+69
+00:03:00.000 --> 00:03:02.900
+This relationship is the basis for the new system.
+
+70
+00:03:02.900 --> 00:03:06.000
+Every turbo module is implemented as a host object.
+
+71
+00:03:06.000 --> 00:03:09.200
+We can see exactly how this bypasses the old bottleneck
+
+72
+00:03:09.200 --> 00:03:11.700
+by tracing a practical code execution.
+
+73
+00:03:11.700 --> 00:03:16.000
+When the JavaScript thread fires nativecalculator.add1.2,
+
+74
+00:03:16.000 --> 00:03:19.200
+the input traces directly into the C++ execution block
+
+75
+00:03:19.200 --> 00:03:20.500
+with 0Q.
+
+76
+00:03:20.500 --> 00:03:22.800
+Because nativecalculator is a host object,
+
+77
+00:03:22.800 --> 00:03:25.000
+no JSON serialization occurs.
+
+78
+00:03:25.000 --> 00:03:27.400
+C++ instantly calculates the result
+
+79
+00:03:27.400 --> 00:03:30.400
+and hands it back along the exact same shared memory line.
+
+80
+00:03:30.400 --> 00:03:33.200
+The JSI runtime calls the C++ lambda directly
+
+81
+00:03:33.200 --> 00:03:35.000
+on the JavaScript thread itself.
+
+82
+00:03:35.000 --> 00:03:38.500
+By eliminating the ASync queue and operating in shared memory,
+
+83
+00:03:38.500 --> 00:03:41.400
+turbo modules can finally expose synchronous native methods
+
+84
+00:03:41.400 --> 00:03:42.500
+to JavaScript.
+
+85
+00:03:42.500 --> 00:03:45.400
+While JSI solves the speed problem,
+
+86
+00:03:45.400 --> 00:03:48.200
+the architecture still needs a way to guarantee
+
+87
+00:03:48.200 --> 00:03:52.200
+the native side knows exactly what data JavaScript is sending.
+
+88
+00:03:52.200 --> 00:03:55.000
+To solve this, every turbo module requires
+
+89
+00:03:55.000 --> 00:03:57.500
+a strict TypeScript specification file
+
+90
+00:03:57.500 --> 00:04:00.700
+defining the exact inputs and outputs.
+
+91
+00:04:00.700 --> 00:04:04.000
+That specification document is processed by Cogen,
+
+92
+00:04:04.000 --> 00:04:06.500
+splitting into strict typed interfaces
+
+93
+00:04:06.500 --> 00:04:10.400
+for C++, Java, and Objective C++.
+
+94
+00:04:10.400 --> 00:04:13.500
+Cogen reads the TypeScript spec at build time,
+
+95
+00:04:13.500 --> 00:04:15.600
+generating typed native interfaces
+
+96
+00:04:15.600 --> 00:04:17.600
+before the app compiles completely
+
+97
+00:04:17.600 --> 00:04:21.700
+eliminates blindly extracting values from maps at runtime.
+
+98
+00:04:21.700 --> 00:04:24.300
+Beyond execution speed and type safety,
+
+99
+00:04:24.300 --> 00:04:28.100
+turbo modules also alter application startup performance.
+
+100
+00:04:28.100 --> 00:04:30.400
+The legacy bridge eagerly instantiated
+
+101
+00:04:30.400 --> 00:04:33.700
+every single native module the moment the app opened,
+
+102
+00:04:33.700 --> 00:04:36.300
+burning CPU cycles and memory on features
+
+103
+00:04:36.300 --> 00:04:38.400
+the user hadn't even touched yet.
+
+104
+00:04:38.400 --> 00:04:40.700
+This chart tracks CPU and memory load
+
+105
+00:04:40.700 --> 00:04:42.600
+during application startup.
+
+106
+00:04:42.600 --> 00:04:44.900
+Legacy spikes heavily at zero seconds
+
+107
+00:04:44.900 --> 00:04:46.400
+as all modules load.
+
+108
+00:04:46.400 --> 00:04:48.800
+Turbo modules maintain a flat line,
+
+109
+00:04:48.800 --> 00:04:52.400
+utilizing a factory pattern for lazy initialization.
+
+110
+00:04:52.400 --> 00:04:56.200
+By default, modules are set to avoid eager initialization.
+
+111
+00:04:56.200 --> 00:04:59.000
+Memory is only consumed the exact millisecond
+
+112
+00:04:59.000 --> 00:05:01.100
+the JavaScript thread actively requests
+
+113
+00:05:01.100 --> 00:05:03.100
+the module from the registry.
+
+114
+00:05:03.100 --> 00:05:05.500
+By combining Cogen's build time safety
+
+115
+00:05:05.500 --> 00:05:07.800
+with lazy runtime initialization,
+
+116
+00:05:07.800 --> 00:05:10.500
+turbo modules create a system that is type safe
+
+117
+00:05:10.600 --> 00:05:13.800
+and uses fewer device resources during startup.
+
+118
+00:05:13.800 --> 00:05:16.300
+Moving an ecosystem to a new architecture
+
+119
+00:05:16.300 --> 00:05:19.000
+requires managing existing code bases,
+
+120
+00:05:19.000 --> 00:05:21.100
+particularly apps that rely on older,
+
+121
+00:05:21.100 --> 00:05:23.600
+un-migrated third-party modules.
+
+122
+00:05:23.600 --> 00:05:26.200
+This comparison matrix breaks down module behavior
+
+123
+00:05:26.200 --> 00:05:28.000
+across architectures.
+
+124
+00:05:28.000 --> 00:05:30.000
+To prevent legacy code from breaking,
+
+125
+00:05:30.000 --> 00:05:32.600
+react native 0.76 and above
+
+126
+00:05:32.600 --> 00:05:36.000
+includes an automatic turbo module interop layer.
+
+127
+00:05:36.000 --> 00:05:38.400
+The interop layer wraps old native modules
+
+128
+00:05:38.400 --> 00:05:40.120
+in a turbo module facade,
+
+129
+00:05:40.120 --> 00:05:42.600
+functioning without immediate rewrites.
+
+130
+00:05:42.600 --> 00:05:45.400
+However, this facade only provides compatibility,
+
+131
+00:05:45.400 --> 00:05:46.800
+not performance.
+
+132
+00:05:46.800 --> 00:05:50.000
+A wrapped module still lacks lazy initialization
+
+133
+00:05:50.000 --> 00:05:51.300
+and type safety.
+
+134
+00:05:51.300 --> 00:05:53.900
+To realize the full architectural benefits,
+
+135
+00:05:53.900 --> 00:05:56.900
+a module must satisfy four definitive properties
+
+136
+00:05:56.900 --> 00:06:00.100
+to be classified as a true native turbo module.
+
+137
+00:06:00.100 --> 00:06:02.200
+It must possess a TypeScript spec.
+
+138
+00:06:02.200 --> 00:06:04.500
+It must be compiled using Cogen.
+
+139
+00:06:04.500 --> 00:06:07.300
+It must communicate directly via JSI.
+
+140
+00:06:07.300 --> 00:06:09.400
+It must be lazy by default.
+
+141
+00:06:09.400 --> 00:06:12.700
+Satisfying these properties removes the async bottleneck.
+
+142
+00:06:12.700 --> 00:06:14.600
+It completes react native's evolution
+
+143
+00:06:14.600 --> 00:06:16.200
+from a bridge-dependent framework
+
+144
+00:06:16.200 --> 00:06:19.200
+into a fully unified memory-shared environment.
+

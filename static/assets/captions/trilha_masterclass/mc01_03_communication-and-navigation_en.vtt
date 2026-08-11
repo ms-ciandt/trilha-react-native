@@ -1,0 +1,242 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:05.500
+Look at this diagram. On the left, we have the native heap. On the right, the JavaScript heap.
+
+2
+00:00:05.500 --> 00:00:10.500
+In a brown field application, these two environments operate in total isolation.
+
+3
+00:00:10.500 --> 00:00:15.500
+They are like two people working in soundproof rooms, who cannot see each other's whiteboards.
+
+4
+00:00:15.500 --> 00:00:17.500
+There is no shared global memory.
+
+5
+00:00:17.500 --> 00:00:23.000
+Every piece of data that moves between them must be explicitly handed through a very narrow slot.
+
+6
+00:00:23.000 --> 00:00:27.000
+The absolute simplest way to pass that data is through initial props.
+
+7
+00:00:27.000 --> 00:00:31.500
+This is channel 1. When the native side creates the react native surface,
+
+8
+00:00:31.500 --> 00:00:37.500
+it bundles up the necessary data and slides it through the slot to the JS environment, right as it initializes.
+
+9
+00:00:37.500 --> 00:00:42.500
+But this delivery mechanism has a strict limitation. It happens exactly once.
+
+10
+00:00:42.500 --> 00:00:46.000
+After the surface is mounted, that initial data becomes immutable.
+
+11
+00:00:46.000 --> 00:00:48.500
+You cannot use this channel to send updates later.
+
+12
+00:00:48.500 --> 00:00:54.000
+Because you cannot natively share global memory, you have to abandon the assumption of seamless data access.
+
+13
+00:00:54.000 --> 00:01:01.000
+Every interaction between your native and JS layers requires an explicit, carefully planned handoff.
+
+14
+00:01:01.000 --> 00:01:06.000
+This structural table shows how we handle ongoing operations beyond that initial mount.
+
+15
+00:01:06.000 --> 00:01:13.000
+If the JS layer needs to request data synchronously or asynchronously, it calls native modules or turbo modules.
+
+16
+00:01:13.000 --> 00:01:19.000
+That's channel 2. If the native side needs to push system alerts like a network status change,
+
+17
+00:01:19.000 --> 00:01:24.000
+without waiting for a JS request, it uses event emitters. That is channel 3.
+
+18
+00:01:24.000 --> 00:01:31.000
+If native code needs to update an already mounted user interface, it uses the surface API, which is channel 4.
+
+19
+00:01:31.000 --> 00:01:34.000
+Native cannot directly call a react set state.
+
+20
+00:01:34.000 --> 00:01:42.000
+Instead, the configuration changes flow through the surface API and arrive on the JS side as an ordinary re-render with updated properties.
+
+21
+00:01:42.000 --> 00:01:47.000
+So, consider this scenario. Your native layer needs to trigger an action in JS,
+
+22
+00:01:47.000 --> 00:01:50.000
+like clearing the text inputs of a react native form.
+
+23
+00:01:50.000 --> 00:01:56.000
+Which channel do you use? You could use an imperative native to JS call, which is channel 5.
+
+24
+00:01:56.000 --> 00:02:00.000
+But the architecturally cleaner pattern involves flipping the direction.
+
+25
+00:02:00.000 --> 00:02:04.000
+At mount time, the JS layer registers a callback on a native module.
+
+26
+00:02:04.000 --> 00:02:08.000
+When native needs to clear the form later, it simply triggers that callback.
+
+27
+00:02:08.000 --> 00:02:13.000
+By strictly matching the specific architectural task to the correct communication channel,
+
+28
+00:02:13.000 --> 00:02:19.000
+you guarantee predictable data flow across the bridge and keep your code base from devolving into spaghetti code.
+
+29
+00:02:19.000 --> 00:02:26.000
+Communication channels handle discrete messages, but they do not solve the most dangerous problem in brownfield development,
+
+30
+00:02:26.000 --> 00:02:30.000
+keeping complex state synchronized over time without shared global memory.
+
+31
+00:02:30.000 --> 00:02:34.000
+In this diagram, watch what happens when we allow bidirectional rights.
+
+32
+00:02:34.000 --> 00:02:41.000
+If both native and JS components attempt to update the same piece of shared data simultaneously, they create a race condition.
+
+33
+00:02:42.000 --> 00:02:44.000
+The rights collide, and the state corrupts.
+
+34
+00:02:44.000 --> 00:02:49.000
+The definitive solution is designating a strict single source of truth.
+
+35
+00:02:49.000 --> 00:02:57.000
+You implement a cross process safe key value store, like MMKV, and house the master database exclusively on the native side.
+
+36
+00:02:57.000 --> 00:03:04.000
+The native environment owns the data, and it feeds clean, read-only updates across the barrier to the JS side.
+
+37
+00:03:04.000 --> 00:03:11.000
+Preventing data corruption requires deciding exactly which layer owns the truth before you write a single line of code.
+
+38
+00:03:11.000 --> 00:03:15.000
+Managing state is closely tied to managing screens.
+
+39
+00:03:15.000 --> 00:03:22.000
+Developers accustomed to pure react native often try to put a JS based navigation container at the root of a brownfield app.
+
+40
+00:03:22.000 --> 00:03:25.000
+In a true hybrid environment, this approach fails.
+
+41
+00:03:25.000 --> 00:03:31.000
+Look at this visual hierarchy. This is the native first model, and it is the correct architectural approach.
+
+42
+00:03:32.000 --> 00:03:37.000
+Here, a react native screen is treated exactly like any other fragment or view controller.
+
+43
+00:03:37.000 --> 00:03:43.000
+The central native controller pushes it onto the primary native stack, right alongside standard native UI items.
+
+44
+00:03:43.000 --> 00:03:48.000
+This ensures the native operating system retains absolute control.
+
+45
+00:03:48.000 --> 00:03:56.000
+When a user executes a system backswipe, or presses a hardware back button, the native controller smoothly discards the top react native layer.
+
+46
+00:03:56.000 --> 00:04:00.000
+The JS side does not intercept or interfere with the gesture.
+
+47
+00:04:01.000 --> 00:04:10.000
+To build an experience that feels like a single cohesive application to the user, the native layer must be the undisputed manager of all navigation transitions.
+
+48
+00:04:10.000 --> 00:04:19.000
+Let's pull these concepts together with a practical capstone scenario, securely managing a user's login session across both the native and JS layers.
+
+49
+00:04:19.000 --> 00:04:22.000
+This structural flowchart outlines the initialization phase.
+
+50
+00:04:22.000 --> 00:04:26.000
+The native root system holds the master authentication token.
+
+51
+00:04:26.000 --> 00:04:34.000
+During the start-up sequence, it uses channel 1, initial props, to securely inject an exact duplicate of that token straight into the JS environment.
+
+52
+00:04:34.000 --> 00:04:36.000
+Next comes the maintenance phase.
+
+53
+00:04:36.000 --> 00:04:44.000
+If the native token refreshes, the system uses channel 3, event emitters, to proactively push that update to the JS layer.
+
+54
+00:04:44.000 --> 00:04:48.000
+The copy stays current, perfectly preserving the single source of truth.
+
+55
+00:04:48.000 --> 00:04:53.000
+This brings us to the three unyielding rules of brownfield architecture represented here.
+
+56
+00:04:53.000 --> 00:04:57.000
+One, strictly route your data through the five defined communication channels.
+
+57
+00:04:57.000 --> 00:05:01.000
+Two, enforce a single source of truth for all shared state.
+
+58
+00:05:01.000 --> 00:05:05.000
+And three, always default to a native first navigation stack.
+
+59
+00:05:05.000 --> 00:05:11.000
+Successfully engineering a hybrid application means you stop trying to force JavaScript to behave like native code.
+
+60
+00:05:11.000 --> 00:05:18.000
+You design precise, disciplined boundaries that allow both environments to do their jobs without stepping on each other.
+

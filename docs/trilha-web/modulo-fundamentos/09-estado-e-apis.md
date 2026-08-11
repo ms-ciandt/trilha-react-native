@@ -11,6 +11,7 @@ sidebar_position: 9
 
 <video width="100%" controls>
   <source src="/trilha-react-native/assets/videos/trilha_web/fund_09_estado_apis.mp4" type="video/mp4">
+  <track kind="captions" src="/trilha-react-native/assets/captions/trilha_web/fund_09_estado_apis_en.vtt" srclang="en" label="English" default>
   Your browser does not support the video tag.
 </video>
 

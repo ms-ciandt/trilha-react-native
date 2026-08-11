@@ -1,0 +1,150 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:09.000
+Look at this vast grid! This uniform, instantaneous wave of color represents the baseline expectation for web deployment.
+
+2
+00:00:09.000 --> 00:00:18.000
+On the web, a deploy is atomic and universal. When you push an update, the state change applies to everyone, everywhere, all at once.
+
+3
+00:00:18.000 --> 00:00:29.000
+The mechanics are straightforward. You push a new build, invalidate the CDN cache, and on the very next refresh, every clients browser downloads the exact same new version of your application.
+
+4
+00:00:30.000 --> 00:00:40.000
+On mobile, that assumed workflow hits a rigid structural barrier, the store review. Apple and Google stand directly between your code and your user base.
+
+5
+00:00:40.000 --> 00:00:52.000
+This split screen shows the divergence. Web code instantly routes to all users. Mobile code hits a store review block and waits. After approval, users dictate when to update.
+
+6
+00:00:52.000 --> 00:01:07.000
+Thus an app is a fragmented distribution of versions 1.0, 1.1, and 2.0 operating concurrently. Back-end developers migrating from the web often operate under the misconception that they control when a client receives new code.
+
+7
+00:01:07.000 --> 00:01:19.000
+In the mobile ecosystem, you forfeit that control entirely. Standard incident response playbooks assume that if a bad line of code goes live, you can instantly revert the CDN to the previous state.
+
+8
+00:01:19.000 --> 00:01:30.000
+Using atomic web logic to manage this fragmented landscape leads to immediate failures, where back-end updates and client versions are no longer in sync, leaving users stranded.
+
+9
+00:01:30.000 --> 00:01:40.000
+The app store and Google Play policy review phase brings continuous delivery to a jarring halt, creating a distinct period of vulnerability for any development team.
+
+10
+00:01:40.000 --> 00:01:49.000
+Standard compliance, privacy, and security checks can hold a submitted binary in review for anywhere from several hours to multiple days.
+
+11
+00:01:49.000 --> 00:01:59.000
+This delay eliminates the out-of-band security hot fix. While a web incident resolves in five minutes, the mobile fix sits trapped in a massive opaque store queue.
+
+12
+00:01:59.000 --> 00:02:15.000
+A critical patch is a delayed request that might not resolve for 48 hours. Operations runbooks must adapt. This brings us to a strict rule of mobile engineering. There is no rollback button. There is no instant undo for a bad deployment.
+
+13
+00:02:15.000 --> 00:02:25.000
+Mobile teams operate under a strict fix-forward requirement. Reverting bad codes still means generating a brand new binary and submitting it to the back of the store review line.
+
+14
+00:02:25.000 --> 00:02:34.000
+When a broken release reaches production, developers are forced to watch users crash in real time, while the mitigation sits powerless in the store queue.
+
+15
+00:02:34.000 --> 00:02:44.000
+Because hot fixes are dead and rollbacks are impossible, your survival depends entirely on limiting the blast radius of new code before it reaches the entire user base.
+
+16
+00:02:44.000 --> 00:02:57.000
+To limit that blast radius, mobile teams rely on the equivalent of a canary deployment, the staged rollout. Google Play uses a manual staged rollout, 1, 10, 50, 100%.
+
+17
+00:02:57.000 --> 00:03:09.000
+The App Store automates a seven-day curve. Both require strict crash telemetry. If the crash rate spikes violently at 10%, you immediately pause the rollout, protecting the remaining users.
+
+18
+00:03:09.000 --> 00:03:18.000
+Standard infrastructure tools like fire-based crash-litx or sentry provide the necessary version-level filtering to isolate this data in real time.
+
+19
+00:03:18.000 --> 00:03:31.000
+Halting a rollout is the closest thing a mobile developer has to a rollback mechanism. By pairing a staggered rollout algorithm with real-time crash telemetry, an unmitigated disaster is contained into a localized, low-impact incident.
+
+20
+00:03:31.000 --> 00:03:41.000
+Staged rollouts keep client app safe, but they force a harsh reality onto backend architecture. A mobile backend simultaneously handles traffic from scattered client versions.
+
+21
+00:03:41.000 --> 00:03:53.000
+If an engineer deletes a JSON field, version 2.0 clients process it fine, but versions 1 and 1.2 instantly fail, crashing because they expect a data structure that no longer exists.
+
+22
+00:03:53.000 --> 00:04:12.000
+This establishes an iron clad rule. A mobile API must remain strictly backward compatible indefinitely. Developers manage this using standard API versioning implementation patterns, assigning distinct routing paths like forward slash v1 and forward slash v2, or utilizing strict except version headers.
+
+23
+00:04:12.000 --> 00:04:21.000
+Within a single version contract, changes can only be additive. You can introduce new optional fields, but you can never modify or remove existing ones.
+
+24
+00:04:21.000 --> 00:04:32.000
+Deplicating code requires a prolonged lifecycle. The old endpoint logic must remain fully operational alongside the new structure until telemetry confirms zero traffic from older clients.
+
+25
+00:04:32.000 --> 00:04:40.000
+In mobile development, API evolution is permanent. You cannot break a contract atomically because you cannot force the client to update atomically.
+
+26
+00:04:40.000 --> 00:04:54.000
+Maintaining backward compatibility handles most deployments, but extreme edge cases remain. Critical security flaws or the sunsetting of third party APIs can make maintaining older versions impossible.
+
+27
+00:04:54.000 --> 00:05:06.000
+To kill an old app version, developers use the forced update pattern. Upon launch, the device pings a backend version check node. It compares the running version against a minimum threshold.
+
+28
+00:05:06.000 --> 00:05:19.000
+If the version is too old, the server returns a blocking signal. The user is then locked out of the interface by an impassable screen, forcing them to manually install the store update before any app functionality resumes.
+
+29
+00:05:19.000 --> 00:05:29.000
+For immediate bug fixes that don't warrant locking users out, teams use a secondary escape hatch. Over the air, or OTA, updates for JavaScript bundles.
+
+30
+00:05:29.000 --> 00:05:43.000
+Tools like EAS update bypass the store review process entirely, pushing JavaScript directly to the user's device, acting similarly to a web deploy. However, these OTA updates have strict technical limitations.
+
+31
+00:05:43.000 --> 00:05:51.000
+They can only notify the JavaScript layer. They cannot touch native Kotlin or Swift binaries without triggering a store rejection.
+
+32
+00:05:51.000 --> 00:06:01.000
+Both forced updates and OTA patches are engineered bypass mechanisms. They exist specifically to regain control over the rigid store review bottleneck.
+
+33
+00:06:01.000 --> 00:06:18.000
+The final and perhaps most granular layer of runtime control lies in feature flags and kill switches. If a new UI component crashes in production, feature flags allow you to remotely disable that specific component for all users instantly, without compiling or releasing a new binary.
+
+34
+00:06:18.000 --> 00:06:30.000
+Flags decouple feature releases from the app store cycle. You can merge the code, ship the binary, pass the review, and then execute a gradual, controlled rollout of the feature, completely on your own schedule.
+
+35
+00:06:30.000 --> 00:06:42.000
+While web engineering prioritizes deploy time control, knowing a push is live instantly, mobile engineering prioritizes runtime control, building the levers to manage the code long after it leaves your hands.
+
+36
+00:06:43.000 --> 00:06:53.000
+This dashboard visualizes a complete mobile pipeline, integrating a phased rollout, real-time crash monitoring, active feature flags, and an OTA bypass.
+
+37
+00:06:53.000 --> 00:07:02.000
+If a new feature registers a failure, the kill switch isolates the component. The system restabilizes with the rollout safely paused at 10 seconds.
+

@@ -1,0 +1,266 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:05.760
+You are testing a new feature, you scroll through a list, tap an element, and the interface
+
+2
+00:00:05.760 --> 00:00:11.120
+suddenly tears or freezes mid-action. When this happens in a React Native application,
+
+3
+00:00:11.120 --> 00:00:16.640
+the standard diagnostic reflex is to open the React DevTools profiler to investigate component
+
+4
+00:00:16.640 --> 00:00:21.920
+render times. The resulting flame chart provides a detailed breakdown of the JavaScript thread.
+
+5
+00:00:21.920 --> 00:00:27.280
+It identifies exactly which components re-rendered, the specific state changes that triggered them,
+
+6
+00:00:27.280 --> 00:00:32.960
+and the exact millisecond duration of the JavaScript execution. But you will inevitably encounter a
+
+7
+00:00:32.960 --> 00:00:37.760
+specific anomaly. The DevTools profiler will show that your components rendered in less
+
+8
+00:00:37.760 --> 00:00:42.480
+been a single millisecond, yet the device in your hand continues to visibly drop frames.
+
+9
+00:00:43.040 --> 00:00:47.680
+This discrepancy confirms that the JavaScript logic is executing efficiently. The bottom
+
+10
+00:00:47.680 --> 00:00:53.360
+neck is not in your component code. It exists further down the rendering pipeline. In the new architecture,
+
+11
+00:00:53.360 --> 00:00:58.240
+data must cross structural boundaries. If the delay is missing from the JavaScript thread,
+
+12
+00:00:58.240 --> 00:01:03.760
+the stall is occurring during the C++ layout engine calculations, or during the final native
+
+13
+00:01:03.760 --> 00:01:09.920
+view mutations. Relying solely on React DevTools for performance profiling in the new architecture
+
+14
+00:01:09.920 --> 00:01:16.080
+creates a diagnostic blind spot. Finding the root cause requires moving beyond the JavaScript thread
+
+15
+00:01:16.080 --> 00:01:21.600
+to observe the complete execution timeline. This conceptual graphic displays the React Native
+
+16
+00:01:21.600 --> 00:01:27.280
+architecture as three distinct layers, the JavaScript thread, the C++ and JS hybrid,
+
+17
+00:01:27.280 --> 00:01:32.640
+and the native thread. To diagnose cross thread failures, engineers rely on a tool called
+
+18
+00:01:32.640 --> 00:01:38.160
+Perfetto. While Hermes and React DevTools profile the top layer of JavaScript execution,
+
+19
+00:01:38.160 --> 00:01:44.160
+Perfetto captures absolute OS level metrics across all boundaries simultaneously. It transforms
+
+20
+00:01:44.160 --> 00:01:49.520
+performance optimization from a process of elimination into a strict mathematical packing problem.
+
+21
+00:01:49.600 --> 00:01:56.240
+By deconstructing a Perfetto trace, we can see the exact microsecond where JavaScript IO,
+
+22
+00:01:56.240 --> 00:02:02.720
+C++ layout engines, and native rendering operations compete for the exact same block of time.
+
+23
+00:02:03.440 --> 00:02:09.120
+The health of a system built on the new architecture is defined by the application's ability to fit
+
+24
+00:02:09.120 --> 00:02:14.080
+all of these cross boundary operations into a single, inflexible time window.
+
+25
+00:02:14.800 --> 00:02:20.560
+This is a simplified representation of the Perfetto timeline. To locate a performance bottleneck,
+
+26
+00:02:20.560 --> 00:02:26.880
+we start with a blank horizontal track. The most critical marker on this timeline is a slice called
+
+27
+00:02:26.880 --> 00:02:33.760
+choreographer due frame. This marker establishes the Android V-sync frame budget, a strict
+
+28
+00:02:33.760 --> 00:02:40.080
+interval dictated by the physical hardware of the device's screen. At a standard 60 frames per second
+
+29
+00:02:40.080 --> 00:02:47.600
+refresh rate, the application has exactly 16.6 milliseconds to complete all processing for a single frame.
+
+30
+00:02:48.080 --> 00:02:54.640
+This 16.6 millisecond boundary is the definitive standard against which Perfetto measures all success
+
+31
+00:02:54.640 --> 00:03:00.320
+or failure in your rendering pipeline. Performance optimization relies on strictly packing every
+
+32
+00:03:00.320 --> 00:03:06.160
+required calculation and mutation into this tight hardware constraint. To measure our exact budget
+
+33
+00:03:06.160 --> 00:03:12.080
+utilization, we examine the fabric commit trace slice. This block tracks the complete lifecycle
+
+34
+00:03:12.080 --> 00:03:17.760
+of the new C++ rendering pipeline. A healthy fabric commit operation needs to complete in under
+
+35
+00:03:17.760 --> 00:03:23.200
+8 milliseconds. Because the commit finishes well inside the V-sync deadline, the screen updates
+
+36
+00:03:23.200 --> 00:03:28.400
+incredibly smoothly on the user's device. But if the commit pipeline is overloaded with complex
+
+37
+00:03:28.400 --> 00:03:34.080
+calculations, that block expands. When the fabric commit extends past the red line, the hardware
+
+38
+00:03:34.160 --> 00:03:39.840
+deadline is missed. The device drops the frame, creating visible UI stutter. Identifying the dropped
+
+39
+00:03:39.840 --> 00:03:45.840
+frame is the starting point. Using Perfetto, we subdivide the overflowing fabric commit block to
+
+40
+00:03:45.840 --> 00:03:52.000
+isolate specific sub-operations causing the delay. The fabric commit is not a single action.
+
+41
+00:03:52.000 --> 00:03:57.440
+It is a container for several distinct C++ and JSI operations executing sequentially.
+
+42
+00:03:58.080 --> 00:04:03.600
+The first sub-metric inside the block is the yoga layout pass. If this specific calculation takes
+
+43
+00:04:03.600 --> 00:04:08.320
+longer than two milliseconds, it indicates that the shadow tree is processing too many nodes.
+
+44
+00:04:08.960 --> 00:04:14.320
+This bloat is typically caused by excessively deep view hierarchies and large measure in window calls
+
+45
+00:04:14.320 --> 00:04:19.920
+executing during the layout calculation. The second sub-metric is the JSI host function trace.
+
+46
+00:04:20.480 --> 00:04:25.360
+This tracks the exact duration of each host function call, which is where the JavaScript thread
+
+47
+00:04:25.360 --> 00:04:30.800
+interacts with synchronous turbo modules. If a poorly implemented turbo module performs expensive
+
+48
+00:04:30.800 --> 00:04:36.560
+synchronous IO operations, it stalls the JavaScript thread. This inflates the host function slice
+
+49
+00:04:36.560 --> 00:04:42.400
+and pushes the parent commit block past the deadline. The final sub-metric is the mounting transaction
+
+50
+00:04:42.400 --> 00:04:49.200
+execution. This tracks the exact time required to apply the calculated C++ mutations down to the
+
+51
+00:04:49.200 --> 00:04:55.840
+native Android or iOS views. By isolating these three specific slices, you transition from guessing
+
+52
+00:04:55.840 --> 00:05:01.600
+why a UI is slow to having targeted proof of the bottleneck's location. With the exact bottleneck
+
+53
+00:05:01.600 --> 00:05:07.440
+isolated in the trace, we can implement precise code-level optimizations. We begin by addressing the
+
+54
+00:05:07.440 --> 00:05:13.520
+bloated yoga layout slice. Relying on the default collapsible true property, flatens the node hierarchy
+
+55
+00:05:13.520 --> 00:05:18.240
+in the shadow tree, immediately reducing the layout calculation time to under two milliseconds.
+
+56
+00:05:18.800 --> 00:05:24.480
+Next, we address the JSI slice by refactoring the synchronous turbo module call to execute
+
+57
+00:05:24.480 --> 00:05:30.480
+asynchronous IO instead. Moving the IO off the JavaScript thread removes the blocking behavior,
+
+58
+00:05:30.480 --> 00:05:36.400
+rapidly shrinking the host function duration. As these sub-metric shrink, the overall fabric commit block
+
+59
+00:05:36.400 --> 00:05:43.760
+retracts. True performance optimization in the new architecture is visually confirmed when all C++
+
+60
+00:05:43.760 --> 00:05:51.520
+and JSI blocks are safely packed inside that 16.6 millisecond window. React dev tools remains highly
+
+61
+00:05:51.520 --> 00:05:57.040
+effective for identifying inefficient component renders and redundant state updates in the JavaScript
+
+62
+00:05:57.040 --> 00:06:03.040
+layer. But Perfetto is the only tool that accurately visualizes the synchronous realities and
+
+63
+00:06:03.040 --> 00:06:08.480
+cross-thread dependencies of the new architecture. Cross-referencing the choreographer frame deadline
+
+64
+00:06:08.480 --> 00:06:13.920
+dense the fabric commit block provides the empirical data required to verify that the rendering
+
+65
+00:06:13.920 --> 00:06:19.680
+pipeline meets the hardware's timing requirements. Analyzing these traces allows for the precise
+
+66
+00:06:19.680 --> 00:06:29.840
+isolation of bottlenecks that standard JavaScript profilers cannot detect.
+

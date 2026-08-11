@@ -1,0 +1,166 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:06.320
+If you're bringing a React Native project into a standard web CICD pipeline, you'll hit a wall quickly.
+
+2
+00:00:06.320 --> 00:00:12.400
+Moving a project to mobile requires a shift away from the single-threaded build process common in web development.
+
+3
+00:00:12.400 --> 00:00:17.520
+On the web, your build pipeline usually terminates here, assembling a JavaScript bundle.
+
+4
+00:00:17.520 --> 00:00:20.320
+Once generated, the compilation is mostly done.
+
+5
+00:00:20.320 --> 00:00:26.560
+React Native requires that exact bundle, but routes it into a secondary parallel track for native compilation.
+
+6
+00:00:26.640 --> 00:00:31.280
+That second track takes the bundled code and wraps it into a standalone native executable,
+
+7
+00:00:31.280 --> 00:00:36.240
+an Android package. To set this up, you'll need a React Native project hosted on GitHub,
+
+8
+00:00:36.240 --> 00:00:40.080
+a basic understanding of YAML configuration, and pre-configured scripts for
+
+9
+00:00:40.080 --> 00:00:44.640
+linting and testing your code. Our objective is to configure a workflow that automatically
+
+10
+00:00:44.640 --> 00:00:50.240
+delivers a tangible, installable Android APK every single time you push code to the repository.
+
+11
+00:00:50.240 --> 00:00:53.600
+We'll start by initializing a standard GitHub actions YAML file.
+
+12
+00:00:54.240 --> 00:01:01.280
+First, we check out the code. Next, we set up node. Then we install dependencies.
+
+13
+00:01:01.280 --> 00:01:05.280
+We run our code limter and execute our automated tests.
+
+14
+00:01:06.000 --> 00:01:11.680
+Those steps handle the website of the equation. Now we have to satisfy the mobile requirement.
+
+15
+00:01:12.240 --> 00:01:18.160
+To compile the actual application, we invoke Gradle, the essential build tool for Android
+
+16
+00:01:18.160 --> 00:01:23.440
+environments. A common mistake here is trying to run the build tool from the root directory.
+
+17
+00:01:23.840 --> 00:01:28.080
+You must instruct the runner to change directories into the Android folder first.
+
+18
+00:01:28.720 --> 00:01:34.800
+Once inside, you execute slash slash Gradle, assemble release to compile the production build.
+
+19
+00:01:35.360 --> 00:01:40.560
+Unlike those earlier web steps that yield static files, successfully executing this Gradle
+
+20
+00:01:40.560 --> 00:01:46.720
+command compiles a standalone operating system executable. At this point, the build is complete,
+
+21
+00:01:46.720 --> 00:01:52.800
+but this entire process happened inside an ephemeral cloud virtual machine. Without an artifact upload
+
+22
+00:01:52.800 --> 00:01:58.000
+step, the moment the workflow finishes, that virtual machine shuts down, and your freshly
+
+23
+00:01:58.000 --> 00:02:05.200
+compiled APK is instantly destroyed. To solve this, we add the actions slash upload artifact step.
+
+24
+00:02:05.840 --> 00:02:11.920
+We point it to the exact directory where Gradle left the file, targeting any file ending in .apk.
+
+25
+00:02:12.720 --> 00:02:17.520
+This step reaches into the virtual machine before it shuts down, grabs the APK,
+
+26
+00:02:17.520 --> 00:02:23.360
+and routes it directly to your GitHub dashboard. Automating this capture ensures that every successful
+
+27
+00:02:23.360 --> 00:02:27.920
+run produces a testable file that persists beyond the temporary life of the runner.
+
+28
+00:02:28.560 --> 00:02:32.800
+Eventually, a build will fail, and you'll be greeted by the GitHub actions error log.
+
+29
+00:02:33.440 --> 00:02:38.560
+At first glance, this log is intimidating. It's packed with irrelevant JavaScript bundle noise
+
+30
+00:02:38.560 --> 00:02:44.960
+and generic Java warnings that obscure the actual issue. To navigate this, bypass all the JS steps
+
+31
+00:02:44.960 --> 00:02:50.480
+entirely and locate the specific section where the Gradle execution failed. You are looking for a
+
+32
+00:02:50.480 --> 00:02:59.280
+specific keyword string, task, colon, app, colon, assemble, release, failed. Once you spot that exact
+
+33
+00:02:59.280 --> 00:03:05.520
+line, look directly at the three to five lines immediately preceding it. That is where you will find
+
+34
+00:03:05.520 --> 00:03:11.360
+the actual human readable error. Learning to filter this noise focuses your troubleshooting on the
+
+35
+00:03:11.360 --> 00:03:17.520
+specific line of code or configuration that actually broke the build. Now, let's look at a pipeline
+
+36
+00:03:17.520 --> 00:03:23.360
+run that successfully completed the entire process. If you scroll to the bottom of the run summary,
+
+37
+00:03:23.360 --> 00:03:29.120
+you'll locate the downloadable artifact. Automated artifact generation immediately empowers
+
+38
+00:03:29.120 --> 00:03:35.040
+quality assurance teams with testable software without requiring manual compilation on local machines.
+
+39
+00:03:35.680 --> 00:03:40.880
+You can download that file right now and drag it directly onto an Android emulator to verify
+
+40
+00:03:40.880 --> 00:03:47.440
+the changes. Transitioning from web to react native CI requires mastering native build tools,
+
+41
+00:03:47.440 --> 00:03:57.920
+turning simple code pushes into immediately testable mobile applications.
+

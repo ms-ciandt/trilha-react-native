@@ -1,0 +1,182 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:06.740
+Android Logic flows from a retrofit source through a repository into a view model and to compose UI.
+
+2
+00:00:06.740 --> 00:00:13.300
+While React Native often appears disorganized, modern libraries align with this exact same structural grid.
+
+3
+00:00:13.300 --> 00:00:17.000
+The labels change, but the directional data flow remains the same.
+
+4
+00:00:17.000 --> 00:00:21.700
+Building and React Native does not require adopting an entirely foreign mental model.
+
+5
+00:00:21.700 --> 00:00:28.900
+Instead, success depends on identifying how the structural principles you already use in Kotlin manifest in this different syntax.
+
+6
+00:00:28.900 --> 00:00:31.900
+The first rule of this mapping is a strict bifurcation.
+
+7
+00:00:31.900 --> 00:00:35.900
+You must treat state you own locally differently than state owned by a remote server.
+
+8
+00:00:35.900 --> 00:00:44.900
+While early React Native development often mixed these concerns into a single store, modern libraries provide dedicated tools that mirror the separation found in Native development.
+
+9
+00:00:44.900 --> 00:00:52.900
+We are going to map the standard Android stack, view models, repositories, and shared preferences directly to their highly optimized JavaScript counterparts.
+
+10
+00:00:52.900 --> 00:01:04.900
+By applying native architectural rigor, you ensure that even while navigating the nuances of a new language, the underlying system remains as predictable and scalable as a native code base.
+
+11
+00:01:04.900 --> 00:01:14.900
+At the simplest level, component level state that isn't shared between screens, like a mutable state and a composable, maps directly to react use state hook.
+
+12
+00:01:14.900 --> 00:01:25.900
+For more complex state machines, where you might use a sealed class UI state in Android, React Native uses a typescript discriminated union, managed by the use reducer hook.
+
+13
+00:01:25.900 --> 00:01:34.900
+The challenge arises with global UI state, data that must persist across screens, which is typically handled by a view model and exposed via state flow.
+
+14
+00:01:34.900 --> 00:01:39.900
+This is where Zewstand fits in, the direct equivalent to the Android view model.
+
+15
+00:01:39.900 --> 00:01:49.900
+Notice how a state update travels through both pipelines. Zewstand holds the state outside the component tree, letting the UI react without owning mutation logic.
+
+16
+00:01:49.900 --> 00:01:56.900
+Unlike other JavaScript options, Zewstand requires no boilerplate, no complex reducers or provider wrapping.
+
+17
+00:01:56.900 --> 00:02:02.900
+It is a plain object store that any component can subscribe to. It uses a selector pattern.
+
+18
+00:02:02.900 --> 00:02:09.900
+By calling use authstore and selecting only the user object, the component only re-renders when that specific field changes.
+
+19
+00:02:09.900 --> 00:02:21.900
+This is the functional equivalent of using stateflow.map and collect a state in compose. Both mechanisms exist to prevent unnecessary UI updates from irrelevant state changes.
+
+20
+00:02:21.900 --> 00:02:29.900
+Zewstand provides the same encapsulation and reactivity you expect from a view model, ensuring the UI remains a pure reflection of the underlying state.
+
+21
+00:02:30.900 --> 00:02:38.900
+UI state is only half the story. The other half is server state, data owned by an API that exists outside the app's immediate control.
+
+22
+00:02:38.900 --> 00:02:45.900
+This data has a distinct life cycle. It requires caching, background refetching to stay current, and logic for handling pagination.
+
+23
+00:02:45.900 --> 00:02:54.900
+In Android, you manage this manually within a repository class, orchestrating co-routines, retrofit interfaces, and room.
+
+24
+00:02:54.900 --> 00:03:02.900
+TANstack Query consolidates that entire manual infrastructure into a single hook-based system, acting as an automated repository layer.
+
+25
+00:03:02.900 --> 00:03:10.900
+Read operations, your suspend fun calls, map to the use query hook, which manages the fetch and the cache entry automatically.
+
+26
+00:03:10.900 --> 00:03:18.900
+Write operations, post-put and delete, map to the use mutation hook, giving you built-in tracking for loading and error states.
+
+27
+00:03:19.900 --> 00:03:27.900
+For the transport layer itself, you can use the standard Axios library, or the native fetch API. Both serve the same purpose as retrofit or k-tor.
+
+28
+00:03:27.900 --> 00:03:35.900
+And the asynchronous logic is a direct translation. Kotlin co-routines map cleanly to JavaScript async await and promises.
+
+29
+00:03:35.900 --> 00:03:40.900
+A common mistake is trying to manage this remote data inside a local store like Zewstand.
+
+30
+00:03:40.900 --> 00:03:47.900
+Without the specialized logic of TANstack Query, you lose the ability to handle stale data and background synchronization.
+
+31
+00:03:47.900 --> 00:03:57.900
+TANstack Query ensures that network data is managed as a separate entity, keeping your local UI state machine focused on client-owned interactions.
+
+32
+00:03:57.900 --> 00:04:07.900
+Finally, we have local persistence for small pieces of data, like off tokens or user preferences. On Android, this is the domain of shared preferences or data store.
+
+33
+00:04:07.900 --> 00:04:15.900
+Historically, react native relied on async storage, which is often slow and requires asynchronous calls for every read and write.
+
+34
+00:04:15.900 --> 00:04:23.900
+This chart shows the performance gap. The bottom bar represents async storage. MMKV is the high-speed alternative.
+
+35
+00:04:23.900 --> 00:04:29.900
+Because it is a synchronous C++ backed store, it can be 10 to 100 times faster.
+
+36
+00:04:29.900 --> 00:04:39.900
+Just like shared preferences, MMKV is for simple key value pairs. If your app requires relational data, the equivalent of room, you would use Expo SQL instead.
+
+37
+00:04:39.900 --> 00:04:49.900
+By utilizing MMKV, you eliminate the IO bottlenecks often found in cross-platform apps, bringing storage performance back in line with native expectations.
+
+38
+00:04:49.900 --> 00:04:59.900
+With each layer defined, we can see how these tools align into a single cohesive stack. This mapping provides a structural mirror for your native skills.
+
+39
+00:04:59.900 --> 00:05:05.900
+On the left, the Android patterns you know. On the right, the react native libraries that fulfill them.
+
+40
+00:05:05.900 --> 00:05:10.900
+ZooStan manages the local UI state and view transitions, replacing the V-model.
+
+41
+00:05:10.900 --> 00:05:21.900
+TanStack Query handles the network lifecycle as an automated repository layer. MMKV provides the fast synchronous persistence you expect from shared preferences.
+
+42
+00:05:21.900 --> 00:05:28.900
+When you use the specific stack, the resulting application feels structurally identical to a high-quality native built.
+
+43
+00:05:28.900 --> 00:05:38.900
+While these abstractions are powerful, truly mastering the platform requires understanding the bridge between the JavaScript environment and the native code beneath it.
+
+44
+00:05:38.900 --> 00:05:50.900
+In the next module, we will explore the new architecture, diving into Hermes, the JSI, and how to write turbo modules in Kotlin. React Native isn't an abandonment of your engineering principles.
+
+45
+00:05:50.900 --> 00:05:56.900
+It is a parallel environment where your existing architectural rigor is your most valuable asset.
+

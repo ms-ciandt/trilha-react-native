@@ -6,6 +6,7 @@ title: Styling & Flexbox for Web Developers
 
 <video width="100%" controls>
   <source src="/trilha-react-native/assets/videos/trilha_web/fund_06_estilos_flexbox.mp4" type="video/mp4">
+  <track kind="captions" src="/trilha-react-native/assets/captions/trilha_web/fund_06_estilos_flexbox_en.vtt" srclang="en" label="English" default>
   Your browser does not support the video tag.
 </video>
 

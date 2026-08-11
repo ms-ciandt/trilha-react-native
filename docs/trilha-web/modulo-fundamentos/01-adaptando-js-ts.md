@@ -6,6 +6,7 @@ title: "Adapting JS/TS for Mobile"
 
 <video width="100%" controls>
   <source src="/trilha-react-native/assets/videos/trilha_web/fund_01_adaptando_js_ts.mp4" type="video/mp4">
+  <track kind="captions" src="/trilha-react-native/assets/captions/trilha_web/fund_01_adaptando_js_ts_en.vtt" srclang="en" label="English" default>
   Your browser does not support the video tag.
 </video>
 

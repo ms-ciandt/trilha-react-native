@@ -1,0 +1,246 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:05.920
+Android development requires selecting specific layout containers for every UI task.
+
+2
+00:00:05.920 --> 00:00:11.440
+React Native replaces this with a single adaptable entity used for every interface.
+
+3
+00:00:11.440 --> 00:00:15.440
+In Jetpack Compose, layout is an explicit taxonomy.
+
+4
+00:00:15.440 --> 00:00:19.360
+To build a screen, you must choose between specific geometric nodes,
+
+5
+00:00:19.360 --> 00:00:25.200
+like column, row, or box, depending on the desired direction and stacking behavior.
+
+6
+00:00:25.200 --> 00:00:28.000
+React Native discards these named layouts.
+
+7
+00:00:28.000 --> 00:00:32.800
+Instead, it relies on one unified geometric primitive called the view.
+
+8
+00:00:32.800 --> 00:00:36.240
+This view is powered by yoga, a customized flexbox engine.
+
+9
+00:00:36.880 --> 00:00:41.760
+Rather than following preset rules, yoga calculates spatial constraints dynamically
+
+10
+00:00:41.760 --> 00:00:46.560
+for every element. This architectural shift requires a change in strategy.
+
+11
+00:00:46.560 --> 00:00:51.680
+You stop selecting containers from a library and start manipulating engine constraints directly.
+
+12
+00:00:52.320 --> 00:00:57.760
+Mastering this universal geometric primitive is the key to replicating standard mobile layouts.
+
+13
+00:00:57.840 --> 00:01:01.200
+As direct component to component replacements often do not exist.
+
+14
+00:01:01.840 --> 00:01:04.880
+A common mistake when migrating to React Native
+
+15
+00:01:04.880 --> 00:01:09.520
+is assuming its flexbox engine follows the exact rules of web CSS.
+
+16
+00:01:10.160 --> 00:01:12.400
+This table highlights the primary difference.
+
+17
+00:01:13.040 --> 00:01:16.720
+While web flexbox defaults to a horizontal main axis,
+
+18
+00:01:16.720 --> 00:01:19.280
+React Native's view primitive defaults to vertical.
+
+19
+00:01:19.920 --> 00:01:25.200
+Because of this, a standard view component stacks children from top to bottom automatically,
+
+20
+00:01:25.280 --> 00:01:31.120
+requiring no extra code. For an Android engineer, this means a raw view in React Native
+
+21
+00:01:31.120 --> 00:01:33.920
+behaves exactly like a column in Jetpack Compose.
+
+22
+00:01:34.480 --> 00:01:38.000
+However, the two frameworks diverge in cross-axis alignment.
+
+23
+00:01:38.480 --> 00:01:42.960
+A composed column aligns children to the start by default, hugging the left edge.
+
+24
+00:01:43.520 --> 00:01:48.480
+In contrast, a React Native view defaults to stretching children across the entire width of the
+
+25
+00:01:48.480 --> 00:01:54.320
+container. Establishing this baseline of vertical stretched default state allows us to begin
+
+26
+00:01:54.320 --> 00:01:59.280
+reverse engineering the rest of the composed layout catalog. Creating a horizontal row in
+
+27
+00:01:59.280 --> 00:02:05.040
+React Native is simply a matter of inverting the main axis. By applying the property flex direction
+
+28
+00:02:05.040 --> 00:02:11.040
+row, you override the vertical default. This forces the engine to evaluate and place children
+
+29
+00:02:11.040 --> 00:02:17.120
+horizontally. This single property transforms the universal view into a functional equivalent of
+
+30
+00:02:17.120 --> 00:02:22.960
+a composed row. Replicating a composed box for overlays requires a different approach,
+
+31
+00:02:22.960 --> 00:02:29.200
+moving into the third dimension. The flex box engine handles overlapping UI by removing specific
+
+32
+00:02:29.200 --> 00:02:35.600
+elements from the standard linear flow. Applying position.absolute removes a child from the standard
+
+33
+00:02:35.600 --> 00:02:41.280
+X and Y calculations. It then stacks the element via Z ordering against its parent container.
+
+34
+00:02:41.280 --> 00:02:45.680
+This absolute positioning technique serves as the direct architectural replacement
+
+35
+00:02:45.680 --> 00:02:50.960
+for wrapping elements in a composed box. React Native does not lack row and box layouts.
+
+36
+00:02:50.960 --> 00:02:56.560
+It treats them as specific coordinate states, activated by overriding the views default properties.
+
+37
+00:02:56.560 --> 00:03:01.360
+Moving from theory to syntax, the method for applying these constraints differs significantly
+
+38
+00:03:01.360 --> 00:03:07.840
+between frameworks. Jetpack composes is modifiers, which are chainable methods. They apply layout
+
+39
+00:03:07.840 --> 00:03:13.840
+and drawing behaviors sequentially, with each link in the chain building on the last. React Native uses
+
+40
+00:03:13.840 --> 00:03:19.680
+a style property that accepts a flat configuration object. Unlike modifiers, React Native does not
+
+41
+00:03:19.680 --> 00:03:24.720
+evaluate styles in a sequence. It resolves all properties within the object simultaneously
+
+42
+00:03:24.720 --> 00:03:29.840
+to determine the final layout. We can see this in practice by looking at how both systems handle
+
+43
+00:03:29.840 --> 00:03:38.160
+filling available screen space, where composeusesmodifier.filmaxize, or wait 1f. React Native uses the property
+
+44
+00:03:38.160 --> 00:03:45.120
+flex1. The flex1 property acts as a proportional vacuum, instructing the view to expand and consume
+
+45
+00:03:45.120 --> 00:03:50.480
+any remaining free space along the parent's axes. Shifting to React Native requires moving away
+
+46
+00:03:50.480 --> 00:03:56.240
+from sequential thinking and adopting static declarative property mapping. Once the axes is defined,
+
+47
+00:03:56.240 --> 00:04:01.840
+the final step is controlling the negative space between children. Composes arrangement properties map
+
+48
+00:04:01.840 --> 00:04:08.320
+to justified justify in in React Native. This property dictates how the engine distributes extra space
+
+49
+00:04:08.320 --> 00:04:14.880
+along the main axis. Similarly, alignment maps to itemize, which provides control over the cross-axis.
+
+50
+00:04:15.280 --> 00:04:20.320
+Despite its flexibility, this engine has a technical limitation. It lacks an equivalent to
+
+51
+00:04:20.320 --> 00:04:26.000
+composes intrinsic size calculation. In compose, you can force siblings to match the size of the
+
+52
+00:04:26.000 --> 00:04:30.800
+largest element in the group. In React Native, siblings do not automatically communicate their
+
+53
+00:04:30.800 --> 00:04:35.840
+dimensions to each other this way. To achieve matching sizes, you must either rely on the default
+
+54
+00:04:35.840 --> 00:04:41.040
+stretch behavior, or manually measure the elements using the on layout event after the initial render.
+
+55
+00:04:41.680 --> 00:04:45.600
+Understanding these limits in intrinsic measurement prevents wasted effort searching for a
+
+56
+00:04:45.600 --> 00:04:51.280
+direct API equivalent that does not exist in the flexbox model. The shift to React Native consolidates
+
+57
+00:04:51.280 --> 00:04:56.880
+a diverse library of layout rules into a single unified engine. Successfully building screens a
+
+58
+00:04:56.880 --> 00:05:02.080
+misenvironment means moving past the mental model of choosing between distinct layout blocks.
+
+59
+00:05:02.640 --> 00:05:08.160
+Mastery comes from manipulating the flow and properties of the flexbox primitive to fit mobile
+
+60
+00:05:08.160 --> 00:05:13.920
+specific defaults. But geometry within a single screen is only the first step in the transition.
+
+61
+00:05:14.560 --> 00:05:20.400
+Next, we must apply these spatial concepts to the broader architecture of screen hierarchies and navigation.
+

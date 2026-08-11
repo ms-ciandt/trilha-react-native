@@ -6,6 +6,7 @@ title: Mobile Delivery Model — Stores, Rollout, and Updates
 
 <video width="100%" controls>
   <source src="/trilha-react-native/assets/videos/trilha_web/cicd_02_modelo_entrega_mobile.mp4" type="video/mp4">
+  <track kind="captions" src="/trilha-react-native/assets/captions/trilha_web/cicd_02_modelo_entrega_mobile_en.vtt" srclang="en" label="English" default>
   Your browser does not support the video tag.
 </video>
 

@@ -1,0 +1,378 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:04.640
+Imagine a critical data bridge carrying millions of requests a second.
+
+2
+00:00:04.640 --> 00:00:08.480
+If that bridge suddenly shatters, the entire system halts.
+
+3
+00:00:08.480 --> 00:00:13.760
+In React Native, that catastrophic break happens when you blindly call a turbo module.
+
+4
+00:00:13.760 --> 00:00:16.800
+It is easy to assume that if you authored a native module,
+
+5
+00:00:16.800 --> 00:00:21.520
+it is guaranteed to be available at runtime, waiting for your JavaScript to execute.
+
+6
+00:00:21.520 --> 00:00:25.680
+This diagram shows the literal bridge, the turbo module registry.
+
+7
+00:00:25.680 --> 00:00:29.120
+It connects JavaScript on the left to native code on the right.
+
+8
+00:00:29.120 --> 00:00:32.880
+When in sync, synchronous calls glide across flawlessly.
+
+9
+00:00:32.880 --> 00:00:38.240
+But if the receiving native module is missing, it triggers a silent system-wide crash.
+
+10
+00:00:38.240 --> 00:00:42.240
+Calling a missing module blindly causes an untyped error in production,
+
+11
+00:00:42.240 --> 00:00:44.640
+leaving almost no trace to debug.
+
+12
+00:00:44.640 --> 00:00:48.720
+The reality is that a modern React Native runtime is highly fragmented,
+
+13
+00:00:48.720 --> 00:00:52.320
+and the environment executing your code is constantly shifting.
+
+14
+00:00:52.320 --> 00:00:56.240
+To prevent these crashes, we will map the seven distinct environments
+
+15
+00:00:56.240 --> 00:01:01.120
+where native modules vanish and implement three defensive loading patterns.
+
+16
+00:01:01.120 --> 00:01:05.440
+Robust mobile architecture requires you to anticipate missing modules,
+
+17
+00:01:05.440 --> 00:01:08.400
+and absorb that uncertainty right at the system boundary.
+
+18
+00:01:09.040 --> 00:01:13.760
+This grid maps the seven specific volatile environments developers must navigate.
+
+19
+00:01:14.320 --> 00:01:19.520
+The core issue is that the execution environment frequently lacks a complete native runtime.
+
+20
+00:01:20.160 --> 00:01:25.360
+First, we have the JavaScript-only environments, the web, storybook, and gist tests.
+
+21
+00:01:25.920 --> 00:01:30.640
+In these spaces, there's no native runtime, custom native calls inherently fail.
+
+22
+00:01:31.360 --> 00:01:35.280
+Next, Exbogo only runs officially bundled modules.
+
+23
+00:01:35.280 --> 00:01:38.480
+Your custom native code physically isn't inside the binary.
+
+24
+00:01:39.120 --> 00:01:44.320
+Then, partial runtimes, an iOS-specific sensor simply cannot exist on Android.
+
+25
+00:01:44.800 --> 00:01:49.920
+Similarly, a brownfield application might selectively omit registering certain modules,
+
+26
+00:01:49.920 --> 00:01:52.160
+depending on which specific surface is active.
+
+27
+00:01:52.800 --> 00:01:54.560
+Finally, over-the-air updates.
+
+28
+00:01:55.360 --> 00:01:58.880
+This seventh environment is uniquely dangerous,
+
+29
+00:01:58.880 --> 00:02:02.880
+using default strict enforcement or get enforcing
+
+30
+00:02:02.880 --> 00:02:07.120
+across this fragmented landscape guarantees an application crash
+
+31
+00:02:07.120 --> 00:02:08.880
+in at least one of these scenarios.
+
+32
+00:02:09.520 --> 00:02:12.560
+Because you cannot control the runtime environment,
+
+33
+00:02:12.560 --> 00:02:18.000
+you must build defense mechanisms directly into how the JavaScript bundle interacts with the registry.
+
+34
+00:02:18.720 --> 00:02:23.760
+Let's contrast a raw, unprotected turbo module call with our first defensive pattern.
+
+35
+00:02:24.320 --> 00:02:27.840
+Pattern 1 pairs the get method with optional chaining.
+
+36
+00:02:27.840 --> 00:02:31.920
+This handles optional extras, like shipping a third-party library.
+
+37
+00:02:31.920 --> 00:02:33.920
+You don't know the consumer's environment,
+
+38
+00:02:33.920 --> 00:02:36.160
+so the feature degrades gracefully of absent.
+
+39
+00:02:36.720 --> 00:02:38.960
+But for hardware-exclusive modules,
+
+40
+00:02:38.960 --> 00:02:41.840
+the execution flow must be explicitly divided.
+
+41
+00:02:42.400 --> 00:02:46.640
+This is Pattern 2, applying platform guards before ever calling get.
+
+42
+00:02:47.120 --> 00:02:52.400
+This is mandatory for OS-specific APIs that physically lack a counterpart on other platforms.
+
+43
+00:02:53.040 --> 00:02:56.400
+Patterns 1 and 2 keep the application running,
+
+44
+00:02:56.400 --> 00:03:01.600
+but they force individual UI components to navigate system-level limitations.
+
+45
+00:03:01.600 --> 00:03:04.400
+At scale, this is difficult to maintain.
+
+46
+00:03:04.400 --> 00:03:09.680
+Scattering null checks throughout individual UI components creates a fragile code base.
+
+47
+00:03:09.680 --> 00:03:12.400
+A cleaner architecture inserts a protective layer
+
+48
+00:03:12.400 --> 00:03:15.120
+right between the UI and the native registry.
+
+49
+00:03:15.120 --> 00:03:19.600
+This brings us to Pattern 3, service abstraction with a new fallback.
+
+50
+00:03:19.600 --> 00:03:22.720
+The service layer intercepts data events from the UI.
+
+51
+00:03:22.720 --> 00:03:25.920
+It checks the registry once, and if the native module is missing,
+
+52
+00:03:25.920 --> 00:03:28.560
+it blocks the events and silently drops them.
+
+53
+00:03:28.560 --> 00:03:32.560
+This nupe mechanism replaces missing module methods with empty functions,
+
+54
+00:03:32.560 --> 00:03:35.200
+allowing the application to execute smoothly.
+
+55
+00:03:35.200 --> 00:03:37.360
+Use this pattern for background services,
+
+56
+00:03:37.360 --> 00:03:40.000
+analytics, crash reporting, and feature flags.
+
+57
+00:03:40.000 --> 00:03:44.320
+It is the cleanest production pattern because the entire UI layer operates normally,
+
+58
+00:03:44.320 --> 00:03:48.080
+completely shielded from the uncertainty of the underlying native registry.
+
+59
+00:03:48.080 --> 00:03:52.800
+Imagine two moving bodies operating at vastly different speeds.
+
+60
+00:03:52.800 --> 00:03:57.200
+This visualizes our final, most dangerous runtime environment,
+
+61
+00:03:57.200 --> 00:03:59.920
+the over-the-air update scenario.
+
+62
+00:03:59.920 --> 00:04:02.240
+In an OTA timeline mismatch,
+
+63
+00:04:02.240 --> 00:04:05.040
+a new JavaScript bundle is deployed to users
+
+64
+00:04:05.040 --> 00:04:08.160
+before the app stored native binary is updated.
+
+65
+00:04:08.160 --> 00:04:11.920
+The version 2 JavaScript will attempt to call a newly added method
+
+66
+00:04:11.920 --> 00:04:13.440
+that does not exist yet.
+
+67
+00:04:13.440 --> 00:04:16.640
+The registry verifies that the module itself exists,
+
+68
+00:04:16.640 --> 00:04:18.000
+returning true.
+
+69
+00:04:18.000 --> 00:04:21.760
+But when the specific new method call hits a void in native memory,
+
+70
+00:04:21.760 --> 00:04:23.280
+you trigger a crash.
+
+71
+00:04:23.280 --> 00:04:25.360
+Strict enforcement fails here.
+
+72
+00:04:25.360 --> 00:04:27.840
+It verifies the module object exists,
+
+73
+00:04:27.840 --> 00:04:32.240
+but it cannot verify if the new method signature is defined at runtime.
+
+74
+00:04:32.240 --> 00:04:34.640
+To defend against OTA mismatches,
+
+75
+00:04:34.640 --> 00:04:39.440
+you must explicitly version gate new methods inside the JavaScript payload.
+
+76
+00:04:39.440 --> 00:04:43.360
+OTA deployments decouple your JS and native release cycles.
+
+77
+00:04:43.360 --> 00:04:45.520
+Anticipating this temporal mismatch
+
+78
+00:04:45.520 --> 00:04:48.240
+is a mandatory architectural requirement.
+
+79
+00:04:48.240 --> 00:04:51.760
+We can map our defensive patterns back to their proper use cases.
+
+80
+00:04:51.760 --> 00:04:53.200
+As a default rule,
+
+81
+00:04:53.200 --> 00:04:56.960
+utilize pattern 3's newp fallbacks for background services,
+
+82
+00:04:56.960 --> 00:04:59.200
+where silent failure is acceptable.
+
+83
+00:04:59.200 --> 00:05:02.560
+For hardware integration, use pattern 2's platform guards,
+
+84
+00:05:02.560 --> 00:05:05.200
+exclusively for OS-specific features.
+
+85
+00:05:05.200 --> 00:05:07.840
+The only valid use case for struct enforcement
+
+86
+00:05:07.840 --> 00:05:10.400
+is an absolute core application feature
+
+87
+00:05:10.400 --> 00:05:13.840
+where missing native code should intentionally halt execution.
+
+88
+00:05:13.840 --> 00:05:16.400
+Developers must stop treating the native registry
+
+89
+00:05:16.400 --> 00:05:19.200
+as a guaranteed, safe internal component.
+
+90
+00:05:19.200 --> 00:05:22.480
+Calling a native module should be treated with the exact same caution
+
+91
+00:05:22.480 --> 00:05:25.440
+as making a network request to an unreliable server.
+
+92
+00:05:25.440 --> 00:05:29.040
+By treating the turbo-module registry as an external API,
+
+93
+00:05:29.040 --> 00:05:30.960
+defensive loading becomes the foundation
+
+94
+00:05:30.960 --> 00:05:34.240
+of a robust crash-resistant react native architecture.
+

@@ -1,0 +1,274 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:07.600
+This visualization shows a massive cargo ship receiving a new structural module right in the middle of the ocean.
+
+2
+00:00:07.600 --> 00:00:12.200
+It's exactly what the modern enterprise mobile landscape looks like today.
+
+3
+00:00:12.200 --> 00:00:16.400
+Most large companies aren't building applications from a blank slate.
+
+4
+00:00:16.400 --> 00:00:22.400
+They are dropping new, distinct technologies into massive, active, legacy platforms.
+
+5
+00:00:22.400 --> 00:00:29.400
+If you start a brand new app using React Native, you're working in what developers call a Greenfield environment.
+
+6
+00:00:29.600 --> 00:00:32.600
+From day one, the JavaScript tool chain is the boss.
+
+7
+00:00:32.600 --> 00:00:40.600
+It owns the build system, it dictates the app lifecycle, and every piece of code traces back to a single JavaScript entry point.
+
+8
+00:00:40.600 --> 00:00:45.000
+But enterprise teams usually operate in a brownfield environment.
+
+9
+00:00:45.000 --> 00:00:52.200
+A native iOS or Android app already exists, and React Native is just invited over as a guest dependency.
+
+10
+00:00:52.200 --> 00:00:56.800
+It has to figure out how to live inside a rigid, pre-existing structure.
+
+11
+00:00:57.400 --> 00:01:01.800
+If developers assume React Native as the boss in a brownfield environment,
+
+12
+00:01:01.800 --> 00:01:04.700
+they immediately introduce structural friction.
+
+13
+00:01:04.700 --> 00:01:09.800
+The native code and the JavaScript engine end up fighting over who actually controls the process,
+
+14
+00:01:09.800 --> 00:01:12.800
+and that creates severe performance bottlenecks.
+
+15
+00:01:12.800 --> 00:01:15.400
+Let's look at how this breaks down in practice.
+
+16
+00:01:15.400 --> 00:01:20.600
+A user is navigating your native app, and then taps a prominent button to open a brand new feature,
+
+17
+00:01:20.600 --> 00:01:23.400
+like a checkout screen powered by React Native.
+
+18
+00:01:23.400 --> 00:01:26.900
+Because React Native operates as a separate guest dependency,
+
+19
+00:01:26.900 --> 00:01:33.000
+the native code has to suddenly pivot and spin up an entirely separate React runtime right on the spot.
+
+20
+00:01:33.000 --> 00:01:36.000
+Looking at this animated timeline of the user interaction,
+
+21
+00:01:36.000 --> 00:01:42.400
+a massive 600 millisecond gap forms precisely between the tap and the actual UI rendering.
+
+22
+00:01:42.400 --> 00:01:47.500
+Even on modern hardware, like a Pixel 7 Pro, it takes over a half-second of dead time.
+
+23
+00:01:47.500 --> 00:01:54.600
+In a lazy loading architecture, expanding that gap reveals the app sequentially loading the JavaScript bundle,
+
+24
+00:01:54.600 --> 00:02:00.100
+starting the Hermes engine and wiring the turbo-module registry to bridge native code,
+
+25
+00:02:00.100 --> 00:02:04.600
+forcing the phone's processor to do all of that heavy computational lifting
+
+26
+00:02:04.600 --> 00:02:10.300
+at the exact moment the user asks for a screen transition creates a noticeable stutter,
+
+27
+00:02:10.300 --> 00:02:14.300
+the illusion of a fast native application breaks.
+
+28
+00:02:14.300 --> 00:02:20.400
+To eliminate that stutter, teams must decouple the heavy background processing of the JavaScript engine
+
+29
+00:02:20.400 --> 00:02:23.400
+from the front-end rendering of the user interface.
+
+30
+00:02:23.400 --> 00:02:30.100
+In React Native 0.76 and later, the new architecture provides a specific mechanism for this,
+
+31
+00:02:30.100 --> 00:02:36.900
+a persistent reusable object called React Host on Android, or RCT Host on iOS.
+
+32
+00:02:36.900 --> 00:02:41.600
+This diagram shows how React Host acts as a central administrative node.
+
+33
+00:02:41.600 --> 00:02:46.400
+It actively manages the three separate processing streams that used to cause our delay,
+
+34
+00:02:46.400 --> 00:02:51.600
+pulling the JS undle, the Hermes engine, and the turbo-modules all under one roof.
+
+35
+00:02:51.600 --> 00:02:58.600
+Older legacy architectures relied on a communication bridge that had to juggle these initialization tasks on the fly
+
+36
+00:02:58.600 --> 00:03:01.100
+right when the user navigated to the screen.
+
+37
+00:03:01.100 --> 00:03:05.600
+By wrapping all of the engines set up into a single centralized object,
+
+38
+00:03:05.600 --> 00:03:11.300
+developers gain exact control over when those heavy computations happen in the app's lifecycle.
+
+39
+00:03:11.300 --> 00:03:14.700
+The practical execution is entirely about timing.
+
+40
+00:03:14.700 --> 00:03:19.700
+Developers take the initialization command, specifically calling React Host.start,
+
+41
+00:03:19.700 --> 00:03:22.900
+and move it to the very beginning of the app launch sequence.
+
+42
+00:03:22.900 --> 00:03:26.600
+This dual-layer timeline illustrates concurrent processing.
+
+43
+00:03:26.600 --> 00:03:29.500
+On the top layer, the standard native app loads.
+
+44
+00:03:29.500 --> 00:03:33.200
+On the bottom, React Host initialization executes in parallel.
+
+45
+00:03:33.200 --> 00:03:38.800
+The sequence locks into a pre-warmed state, leaving a fully operational Hermes engine idling
+
+46
+00:03:38.900 --> 00:03:41.300
+while the user grouses native screens.
+
+47
+00:03:41.300 --> 00:03:45.900
+Instead of reacting to a tap by starting a complex sequence from scratch,
+
+48
+00:03:45.900 --> 00:03:52.500
+the system has already completed the hardest processing tasks before the user even reaches the checkout screen.
+
+49
+00:03:52.500 --> 00:03:55.900
+Absorbing that computation during the app's initial startup,
+
+50
+00:03:55.900 --> 00:04:01.000
+utilizes natural idle time to perfectly hide the latency from the end user.
+
+51
+00:04:01.000 --> 00:04:05.300
+Let's put our user back in the app, tapping that exact same navigation button
+
+52
+00:04:05.300 --> 00:04:07.900
+to access the React Native checkout flow.
+
+53
+00:04:08.000 --> 00:04:11.500
+This time, the application doesn't scramble to boot a new engine.
+
+54
+00:04:11.500 --> 00:04:15.300
+It simply pulls from that pre-warmed React Host singleton.
+
+55
+00:04:15.300 --> 00:04:17.900
+Because the background environment is already running,
+
+56
+00:04:17.900 --> 00:04:22.100
+the host object immediately generates the specific React Native UI layout
+
+57
+00:04:22.100 --> 00:04:24.100
+the moment the request comes in.
+
+58
+00:04:24.100 --> 00:04:28.400
+Watch this diagram as that generated layout slides instantly into place.
+
+59
+00:04:28.400 --> 00:04:33.000
+The React component is embedded directly into an empty slot within the native framework,
+
+60
+00:04:33.000 --> 00:04:36.400
+like an Android React fragment or an iOS view controller.
+
+61
+00:04:36.400 --> 00:04:39.300
+The entire process renders without friction,
+
+62
+00:04:39.300 --> 00:04:44.500
+completely eliminating that original 300 to 600 millisecond delay.
+
+63
+00:04:44.500 --> 00:04:49.100
+This architecture works by embracing a concept called inversion of control.
+
+64
+00:04:49.100 --> 00:04:53.000
+The native codebase acts as the host and dictates the process,
+
+65
+00:04:53.000 --> 00:04:58.000
+while React Native serves simply as a compliant library nested inside of it.
+
+66
+00:04:58.000 --> 00:05:02.400
+By strictly enforcing this hierarchy and front loading the heavy processing,
+
+67
+00:05:02.400 --> 00:05:07.400
+engineering teams can seamlessly fuse entirely different technology stacks together.
+
+68
+00:05:07.400 --> 00:05:12.400
+The architectures remain distinct, but the user never feels a single transition.
+

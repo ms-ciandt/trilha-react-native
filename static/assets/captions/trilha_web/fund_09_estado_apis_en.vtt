@@ -1,0 +1,422 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:04.480
+You write a component, you call a hook, you trigger a render.
+
+2
+00:00:04.480 --> 00:00:08.480
+Whether you're building for a web browser or a react native mobile app,
+
+3
+00:00:08.480 --> 00:00:12.240
+the core syntax of React remains completely identical,
+
+4
+00:00:12.240 --> 00:00:15.360
+but the environment hosting that code changes entirely.
+
+5
+00:00:16.160 --> 00:00:19.520
+Web browsers provide an invisible layer of safety nets.
+
+6
+00:00:19.520 --> 00:00:23.760
+They handle memory, cache data, and manage network connections automatically.
+
+7
+00:00:24.320 --> 00:00:27.520
+A mobile operating system strips all of that away.
+
+8
+00:00:27.520 --> 00:00:30.720
+On mobile, there is no window object to rely on.
+
+9
+00:00:30.720 --> 00:00:34.800
+You lose local storage, you lose automatic tab focus events,
+
+10
+00:00:34.800 --> 00:00:38.240
+and you can no longer assume your user has a stable internet connection.
+
+11
+00:00:38.880 --> 00:00:43.520
+Success on mobile requires manually replacing the browser's implicit infrastructure
+
+12
+00:00:43.520 --> 00:00:45.280
+with explicit mobile equivalents.
+
+13
+00:00:46.000 --> 00:00:49.360
+This chart shows the three layers of state we must manage,
+
+14
+00:00:49.360 --> 00:00:51.120
+local, global, and network.
+
+15
+00:00:51.760 --> 00:00:57.120
+To make our React code thrive on a phone, we have to fill in these blank spaces on the mobile side,
+
+16
+00:00:57.120 --> 00:01:01.280
+mapping web architectures to mobile first principles, layer by layer.
+
+17
+00:01:01.280 --> 00:01:05.680
+These highly optimized web state architectures remain our foundation.
+
+18
+00:01:05.680 --> 00:01:08.160
+We are docking them into a new host.
+
+19
+00:01:08.160 --> 00:01:09.840
+By the time we fill this map,
+
+20
+00:01:09.840 --> 00:01:13.840
+we will have constructed a robust offline first mobile state system.
+
+21
+00:01:14.400 --> 00:01:18.880
+Skip this step, and even the most elegantly written React components will degrade
+
+22
+00:01:18.880 --> 00:01:22.400
+into a brittle, disynced, and laggy mess on physical devices.
+
+23
+00:01:23.120 --> 00:01:25.280
+Looking at the first row of our matrix,
+
+24
+00:01:25.280 --> 00:01:28.960
+local state tools survive the transition without any modification.
+
+25
+00:01:28.960 --> 00:01:33.520
+Both you state and use reducer run directly within React's memory space.
+
+26
+00:01:33.520 --> 00:01:36.160
+They require zero adaptation from the web developer.
+
+27
+00:01:36.720 --> 00:01:38.960
+The context API also ports over,
+
+28
+00:01:38.960 --> 00:01:41.120
+functioning identically across both platforms.
+
+29
+00:01:41.600 --> 00:01:45.360
+However, mobile rendering engines are far less forgiving of unnecessary
+
+30
+00:01:45.360 --> 00:01:47.840
+re-renders than web engines like V8.
+
+31
+00:01:47.840 --> 00:01:51.840
+If a state update at the top of a context tree triggers nested re-renders,
+
+32
+00:01:51.840 --> 00:01:53.760
+a web browser might muscle through it.
+
+33
+00:01:53.840 --> 00:01:56.480
+A mobile device will stutter and drop frames.
+
+34
+00:01:56.480 --> 00:01:59.760
+Therefore, context on mobile requires strict discipline.
+
+35
+00:01:59.760 --> 00:02:03.920
+It must be isolated to low velocity read heavy state.
+
+36
+00:02:03.920 --> 00:02:09.040
+In a React native app, reserve context exclusively for structural constants,
+
+37
+00:02:09.040 --> 00:02:13.200
+toggling a dark mode theme, setting an i18 and language preference,
+
+38
+00:02:13.200 --> 00:02:15.520
+or holding an authentication session.
+
+39
+00:02:15.520 --> 00:02:18.880
+The tools in this first layer remain exactly the same,
+
+40
+00:02:18.880 --> 00:02:22.400
+but the hardware running them dictates a much thinner margin for error.
+
+41
+00:02:23.040 --> 00:02:24.560
+Moving to global state,
+
+42
+00:02:24.560 --> 00:02:28.400
+porting a standard zoo-stand implementation to mobile immediately fails.
+
+43
+00:02:28.880 --> 00:02:34.160
+Global state hydration crashes because local storage simply does not exist on a mobile OS.
+
+44
+00:02:34.720 --> 00:02:37.440
+We need a new database connection to persist our state.
+
+45
+00:02:38.000 --> 00:02:42.640
+For years, developers used a tool called Async Storage as the historical workaround.
+
+46
+00:02:43.200 --> 00:02:48.320
+Comparing storage solutions, Async Storage relies on a slow asynchronous bridge.
+
+47
+00:02:48.320 --> 00:02:50.640
+When an app launches and hydrates its state,
+
+48
+00:02:50.640 --> 00:02:53.600
+it waits on a promise, blocking the UI with layout shifts.
+
+49
+00:02:54.240 --> 00:02:58.160
+Modern mobile architectures replace this entirely with MMKV.
+
+50
+00:02:58.160 --> 00:03:04.640
+MMKV stores data using memory mapped files and communicates through a C++ JavaScript interface.
+
+51
+00:03:04.640 --> 00:03:08.080
+This completely bypasses the traditional asynchronous bridge.
+
+52
+00:03:08.080 --> 00:03:10.640
+The measurable outcome is extreme speed.
+
+53
+00:03:10.640 --> 00:03:14.240
+MMKV is up to 30 times faster than asynchronous.
+
+54
+00:03:14.240 --> 00:03:17.360
+That execution speed allows it to operate synchronously,
+
+55
+00:03:17.360 --> 00:03:20.640
+making it a true one-to-one replacement for web storage.
+
+56
+00:03:20.640 --> 00:03:23.680
+To implement this, you keep your existing zoo-stand code,
+
+57
+00:03:23.680 --> 00:03:28.320
+and simply swap out local storage for MMKV as the back end for your persistence middleware.
+
+58
+00:03:28.800 --> 00:03:32.400
+Bypassing the asynchronous bridge is mandatory for achieving web-like,
+
+59
+00:03:32.400 --> 00:03:36.160
+instant state hydration, the moment a user launches your application.
+
+60
+00:03:36.160 --> 00:03:40.160
+The final matrix row is network state, managed by TANstack Query.
+
+61
+00:03:40.160 --> 00:03:42.480
+Lacking automatic HTTP caching,
+
+62
+00:03:42.480 --> 00:03:45.760
+mobile requires developer to find API revalidation,
+
+63
+00:03:45.760 --> 00:03:48.960
+unlike browsers that navigate across flat horizontal tabs,
+
+64
+00:03:48.960 --> 00:03:52.320
+mobile apps push new screens onto a vertical Z-axis stack,
+
+65
+00:03:52.320 --> 00:03:54.160
+obscuring underlying screens.
+
+66
+00:03:54.160 --> 00:03:58.000
+TANstacks default refetch on window-focused strategy
+
+67
+00:03:58.000 --> 00:04:01.600
+fails completely on a phone because tabs do not exist.
+
+68
+00:04:01.600 --> 00:04:05.680
+We replace it using react navigations use focus effect hook.
+
+69
+00:04:05.680 --> 00:04:08.320
+You explicitly map TANstacks focus manager
+
+70
+00:04:08.320 --> 00:04:11.120
+to these native mobile screen lifecycle events.
+
+71
+00:04:11.120 --> 00:04:14.720
+Whenever a user navigates backward and pops a screen off the stack,
+
+72
+00:04:14.720 --> 00:04:18.080
+the newly revealed screen instantly revalidates any stale data.
+
+73
+00:04:18.640 --> 00:04:22.240
+Mobile API revalidation must be bound to spatial screen depth,
+
+74
+00:04:22.240 --> 00:04:24.320
+rather than flat window visibility.
+
+75
+00:04:24.320 --> 00:04:28.880
+We also have to address the web's foundational assumption of an always-on connection.
+
+76
+00:04:28.880 --> 00:04:31.760
+A browser's standard navigator.online API
+
+77
+00:04:31.760 --> 00:04:34.720
+cannot accurately detect when a device enters a subway tunnel
+
+78
+00:04:34.720 --> 00:04:36.560
+or drops a cellular signal.
+
+79
+00:04:36.560 --> 00:04:41.680
+We adapt by integrating the native at-react native community slash net info library.
+
+80
+00:04:41.680 --> 00:04:44.240
+By injecting net info into TANstack Query,
+
+81
+00:04:44.240 --> 00:04:46.800
+the state engine actively monitors connectivity,
+
+82
+00:04:46.800 --> 00:04:51.600
+automatically pausing and resuming data mutations based on true physical hardware states.
+
+83
+00:04:51.600 --> 00:04:56.000
+By combining TANstack, MMKV, and net info,
+
+84
+00:04:56.000 --> 00:04:59.360
+we build a secure offline first cache.
+
+85
+00:04:59.360 --> 00:05:04.080
+The app securely serves and queues data even when the device is in airplane mode.
+
+86
+00:05:04.720 --> 00:05:10.880
+Mobile applications must treat offline status as a standard expected operating condition,
+
+87
+00:05:10.880 --> 00:05:12.800
+rather than an error state.
+
+88
+00:05:12.800 --> 00:05:17.680
+With all three layers translated, our architectural map is fully populated.
+
+89
+00:05:17.680 --> 00:05:20.080
+This diagram shows the final flow.
+
+90
+00:05:20.080 --> 00:05:25.280
+TANstack Query and ZooStant route their data into a central MMKV core,
+
+91
+00:05:25.280 --> 00:05:28.240
+orchestrated by a native net info listener.
+
+92
+00:05:28.240 --> 00:05:32.960
+We completed this transition simply by substituting the environment's infrastructure,
+
+93
+00:05:32.960 --> 00:05:35.200
+not by changing React itself.
+
+94
+00:05:35.200 --> 00:05:38.160
+We didn't invent new state management paradigms.
+
+95
+00:05:38.160 --> 00:05:41.280
+We just built strict environmental adapters.
+
+96
+00:05:41.280 --> 00:05:46.960
+Mastery of cross-platform development is defined by our control over environmental constraints,
+
+97
+00:05:46.960 --> 00:05:50.560
+far beyond the initial memorization of components and tax.
+
+98
+00:05:50.560 --> 00:05:56.240
+We replaced asynchronous legacy storage with synchronous C++ backed execution.
+
+99
+00:05:56.240 --> 00:06:01.600
+We manually bound API cache invalidation to physical screen life cycles
+
+100
+00:06:01.600 --> 00:06:02.960
+and real network states.
+
+101
+00:06:03.600 --> 00:06:07.280
+The result is a system that uses familiar React patterns
+
+102
+00:06:07.280 --> 00:06:11.520
+to deliver native mobile performance and absolute offline reliability.
+
+103
+00:06:12.240 --> 00:06:15.280
+If you already know how to build architectures on the web,
+
+104
+00:06:15.280 --> 00:06:18.880
+you possess the knowledge required to build elite mobile applications.
+
+105
+00:06:19.440 --> 00:06:23.840
+You just need to take explicit control of the new environment.
+

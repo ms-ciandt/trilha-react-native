@@ -1,0 +1,266 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:05.360
+If you write Jetpack Compose, you are already familiar with the reactive UI model.
+
+2
+00:00:05.360 --> 00:00:11.760
+Moving to React Native involves mapping your existing knowledge of declarative code onto TypeScript syntax.
+
+3
+00:00:11.760 --> 00:00:15.600
+Both ecosystems operate on the same technical foundation.
+
+4
+00:00:15.600 --> 00:00:19.280
+The user interface is a direct function of current state.
+
+5
+00:00:19.280 --> 00:00:22.960
+This split screen shows the side-by-side syntactic mapping.
+
+6
+00:00:22.960 --> 00:00:27.920
+You are looking at the same architectural concept expressed in two different languages.
+
+7
+00:00:28.000 --> 00:00:32.800
+On the Kotlin side, the At Composable annotation flags the function for the Compose compiler.
+
+8
+00:00:33.360 --> 00:00:37.840
+React Native uses a plain TypeScript function that returns a JSX UI tree.
+
+9
+00:00:38.480 --> 00:00:44.080
+Inside that UI tree, the string interpolation syntax shifts from Kotlin's dollar sign bracket format
+
+10
+00:00:44.080 --> 00:00:46.160
+to standard JavaScript expression brackets.
+
+11
+00:00:46.640 --> 00:00:50.960
+You retain your underlying functional architecture while simultaneously adjusting
+
+12
+00:00:50.960 --> 00:00:53.760
+the surface-level syntax to fit the new React runtime.
+
+13
+00:00:54.320 --> 00:00:58.960
+Let's follow how data flows down this tree from a parent element to a child component.
+
+14
+00:00:58.960 --> 00:01:04.960
+In Compose, you pass data into a child by declaring individual named parameters directly in the
+
+15
+00:01:04.960 --> 00:01:10.880
+function signature. In React, individual parameters bundle into a single props object
+
+16
+00:01:10.880 --> 00:01:16.000
+then immediately destructure in the function signature. Notice the attached TypeScript interface
+
+17
+00:01:16.000 --> 00:01:21.680
+providing static type safety. Instead of an equal sign, TypeScript marks props as optional,
+
+18
+00:01:21.680 --> 00:01:26.640
+assigning default values during destructuring. For event handling, the naming convention shifts
+
+19
+00:01:26.640 --> 00:01:32.560
+slightly. A click event on Android becomes an on-press callback for touch events in React Native.
+
+20
+00:01:32.560 --> 00:01:36.560
+Component inputs in React Native are bundled and typed via interfaces,
+
+21
+00:01:36.560 --> 00:01:39.440
+removing the reliance on Kotlin-specific parameter features.
+
+22
+00:01:40.000 --> 00:01:45.040
+Beyond function signatures, the structural API's governing layout map directly between the two
+
+23
+00:01:45.040 --> 00:01:50.800
+ecosystems. This snippet shows Compose's slot API, which passes child Composables as Lambda
+
+24
+00:01:50.800 --> 00:01:56.800
+parameters. In React, this routes directly into the standard children prop. If a Compose layout
+
+25
+00:01:56.800 --> 00:02:03.280
+requires multiple named slots, such as a header and a footer, React passes distinct JSX elements
+
+26
+00:02:03.280 --> 00:02:09.520
+through multiple named props. For scrolling data arrays, Compose's lazy column translates to
+
+27
+00:02:09.520 --> 00:02:16.160
+React Native's flat list. Both list components virtualized by default. As this animation shows,
+
+28
+00:02:16.160 --> 00:02:21.920
+the system only mounts items immediately near the viewport, removing off-screen elements to preserve
+
+29
+00:02:21.920 --> 00:02:28.480
+memory. Because these elements mount and unmount rapidly, both frameworks require you to define a key,
+
+30
+00:02:28.480 --> 00:02:34.560
+or a key extractor function, to track item identity during updates. The logic used for conditional
+
+31
+00:02:34.560 --> 00:02:40.480
+rendering reveals a specific difference in how the two languages evaluate expressions. JavaScript
+
+32
+00:02:40.480 --> 00:02:47.040
+evaluates the logical and operator in JSX differently than Kotlin's if statements. If you evaluate
+
+33
+00:02:47.040 --> 00:02:53.200
+against a zero integer, JavaScript short circuits, rendering a literal zero on screen. Resolve this
+
+34
+00:02:53.200 --> 00:02:59.600
+by explicitly comparing the count to zero, or using a standard ternary operator. Structural translation
+
+35
+00:02:59.600 --> 00:03:05.520
+is generally straightforward, provided you account for JavaScript's specific handling of faulty values.
+
+36
+00:03:06.160 --> 00:03:11.200
+The most significant technical difference between these frameworks lies in their underlying
+
+37
+00:03:11.200 --> 00:03:18.080
+execution engines. While the code looks similar, the way each framework processes state updates follows
+
+38
+00:03:18.080 --> 00:03:24.560
+a different logic. In Jetpack Compose, a state variable is directly wired to the specific UI
+
+39
+00:03:24.560 --> 00:03:31.120
+nodes that read it. When state updates, the change propagates exclusively to those connected nodes.
+
+40
+00:03:31.120 --> 00:03:36.880
+They read raw, while the rest of the tree remains static, ensuring unaffected subtrees are skipped
+
+41
+00:03:36.880 --> 00:03:43.360
+during recomposition. This precision is possible because a compiler plugin analyzes and maps these
+
+42
+00:03:43.360 --> 00:03:49.120
+granular state reads before the code ever runs. The compiler automates rendering performance by
+
+43
+00:03:49.120 --> 00:03:55.520
+tracking which composables read which state snapshots. React Native does not use a specialized compiler
+
+44
+00:03:55.520 --> 00:04:01.760
+for diffing. Instead, it relies on a runtime process called virtual DOM diffing. Look at the same
+
+45
+00:04:01.760 --> 00:04:08.560
+state update in React, a cascading wave flows top-down, flagging the component holding state, and every
+
+46
+00:04:08.560 --> 00:04:15.120
+node nested beneath it. React then performs a virtual DOM diff, scanning that subtree to calculate which
+
+47
+00:04:15.120 --> 00:04:21.760
+specific elements require a screen update. React does not track granular state reads at compile time.
+
+48
+00:04:21.760 --> 00:04:26.960
+It defaults to re-rendering the state holder and its entire downstream branch. This means the
+
+49
+00:04:26.960 --> 00:04:31.840
+developer is responsible for identifying where these cascading re-renders might hurt performance.
+
+50
+00:04:32.480 --> 00:04:38.400
+This visual shield represents memo, a React function that blocks re-renders if a component's props
+
+51
+00:04:38.400 --> 00:04:44.000
+haven't changed. This is the primary tool for manually recreating the skipping behavior composed
+
+52
+00:04:44.000 --> 00:04:49.760
+provides by default. This engine behavior requires a different approach to architecture. You should
+
+53
+00:04:49.760 --> 00:04:55.440
+push state as low in the tree as possible to keep re-renders isolated. Because the diffing pass
+
+54
+00:04:55.440 --> 00:05:01.920
+must check every tiled node, small modular components are more efficient to process in React Native than
+
+55
+00:05:01.920 --> 00:05:08.000
+large monolithic ones. The similar syntax between the frameworks means the compose compiler is doing
+
+56
+00:05:08.000 --> 00:05:14.400
+work that React requires the developer to manage. Rendering efficiency in React is a result of component
+
+57
+00:05:14.400 --> 00:05:21.040
+isolation and the deliberate use of manual bailouts. The layout mappings, list structures, and component
+
+58
+00:05:21.040 --> 00:05:27.040
+signatures form a learnable translation layer between the two frameworks. This table completes the
+
+59
+00:05:27.040 --> 00:05:33.680
+structural mapping. Modifiers map to style sheets, stable annotations align with memo, and composition
+
+60
+00:05:33.680 --> 00:05:39.520
+locals translate to React context. Once you account for the differences in how the engines execute,
+
+61
+00:05:39.520 --> 00:05:45.520
+the UI architecture maps cleanly. The shift to React Native requires moving away from an automated
+
+62
+00:05:45.520 --> 00:05:51.600
+compiler and toward a model where you control which subtrees re-render. This leads to the final set
+
+63
+00:05:51.600 --> 00:05:56.880
+of mappings, the hooks that allow data to persist across these distinct rendering cycles.
+
+64
+00:05:57.440 --> 00:06:02.480
+We need to examine how state is remembered by looking at the functional relationship between
+
+65
+00:06:02.480 --> 00:06:09.360
+mutable state of and U state. Mastering React Native requires combining this structural translation
+
+66
+00:06:09.360 --> 00:06:18.400
+with a technical understanding of React state hooks. Let's look at how those hooks behave.
+

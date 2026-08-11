@@ -1,0 +1,618 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:02.800
+React Native upgrades have a reputation.
+
+2
+00:00:02.800 --> 00:00:04.600
+You set out to bump a version number
+
+3
+00:00:04.600 --> 00:00:07.600
+and suddenly your entire build pipeline collapses
+
+4
+00:00:07.600 --> 00:00:09.400
+in a time-consuming failure.
+
+5
+00:00:09.400 --> 00:00:12.800
+Your terminal floods with incomprehensible Xcode C++
+
+6
+00:00:12.800 --> 00:00:15.100
+compiler errors or Gradle crashes out
+
+7
+00:00:15.100 --> 00:00:17.300
+before the build even properly begins.
+
+8
+00:00:17.300 --> 00:00:18.500
+You look at the stack trace
+
+9
+00:00:18.500 --> 00:00:20.900
+and none of it points to the JavaScript or TypeScript
+
+10
+00:00:20.900 --> 00:00:22.100
+you actually wrote.
+
+11
+00:00:22.100 --> 00:00:24.100
+The errors seem entirely disconnected
+
+12
+00:00:24.100 --> 00:00:25.800
+from your application logic.
+
+13
+00:00:25.800 --> 00:00:27.300
+That's because the vast majority
+
+14
+00:00:27.300 --> 00:00:29.100
+of these native errors have nothing to do
+
+15
+00:00:29.100 --> 00:00:31.700
+with code regressions or bad package updates.
+
+16
+00:00:31.700 --> 00:00:33.400
+These failures are the direct result
+
+17
+00:00:33.400 --> 00:00:35.100
+of invisible, untracked drift
+
+18
+00:00:35.100 --> 00:00:36.900
+between your local machine's environment
+
+19
+00:00:36.900 --> 00:00:38.500
+and the underlying platform tools
+
+20
+00:00:38.500 --> 00:00:40.300
+required to compile the app.
+
+21
+00:00:40.300 --> 00:00:41.500
+When it's time to upgrade,
+
+22
+00:00:41.500 --> 00:00:42.900
+the standard developer instinct
+
+23
+00:00:42.900 --> 00:00:46.500
+is to open package.json and start bumping dependency versions.
+
+24
+00:00:46.500 --> 00:00:49.100
+Executing this step first is a process error.
+
+25
+00:00:49.100 --> 00:00:52.200
+It guarantees false positive build failures
+
+26
+00:00:52.200 --> 00:00:54.400
+because your system isn't ready to compile
+
+27
+00:00:54.400 --> 00:00:56.500
+the code you're asking it to run.
+
+28
+00:00:56.600 --> 00:00:58.100
+To prepare your system,
+
+29
+00:00:58.100 --> 00:01:01.900
+you need the official react native compatibility matrix.
+
+30
+00:01:01.900 --> 00:01:05.200
+This is the official source of truth for your project.
+
+31
+00:01:05.200 --> 00:01:08.000
+The matrix dictates the exact version alignment
+
+32
+00:01:08.000 --> 00:01:11.600
+required across multiple disconnected software layers
+
+33
+00:01:11.600 --> 00:01:14.400
+from JavaScript runtimes to native compilers
+
+34
+00:01:14.400 --> 00:01:17.300
+before a single line of code can compile.
+
+35
+00:01:17.300 --> 00:01:20.700
+Achieving exact alignment with this compatibility matrix
+
+36
+00:01:20.700 --> 00:01:23.700
+is the actual first step of any upgrade.
+
+37
+00:01:23.700 --> 00:01:26.900
+It has to precede any code modifications.
+
+38
+00:01:26.900 --> 00:01:29.500
+This table is the compatibility matrix.
+
+39
+00:01:29.500 --> 00:01:31.700
+It maps every react native release
+
+40
+00:01:31.700 --> 00:01:35.700
+from 0.72 up to 0.84 and beyond
+
+41
+00:01:35.700 --> 00:01:38.500
+to its specific environmental dependencies.
+
+42
+00:01:38.500 --> 00:01:42.100
+It provides minimum required versions for node, JDK,
+
+43
+00:01:42.100 --> 00:01:45.300
+Xcode, cocoa pods, and Android SDKs.
+
+44
+00:01:45.300 --> 00:01:46.800
+Looking at the node column,
+
+45
+00:01:46.800 --> 00:01:49.200
+notice the jump from node 18 to 20
+
+46
+00:01:49.200 --> 00:01:51.400
+at react native 0.80
+
+47
+00:01:51.400 --> 00:01:54.300
+and to node 22 at 0.84.
+
+48
+00:01:54.300 --> 00:01:57.300
+If you install node globally using a package manager
+
+49
+00:01:57.300 --> 00:02:00.700
+like app or brew, you guarantee mismatches.
+
+50
+00:02:00.700 --> 00:02:02.200
+Different developers on your team
+
+51
+00:02:02.200 --> 00:02:04.200
+will end up on different node versions
+
+52
+00:02:04.200 --> 00:02:06.000
+leading to localized bugs.
+
+53
+00:02:06.000 --> 00:02:09.200
+The required solution is to use a local version manager
+
+54
+00:02:09.200 --> 00:02:11.300
+like NVM or FNM.
+
+55
+00:02:11.300 --> 00:02:13.700
+These tools allow you to isolate the node runtime
+
+56
+00:02:13.700 --> 00:02:15.500
+on a per project basis.
+
+57
+00:02:15.500 --> 00:02:18.700
+You enforce this isolation using an NVM RC file
+
+58
+00:02:18.700 --> 00:02:20.000
+in your repository.
+
+59
+00:02:20.100 --> 00:02:22.500
+This declares the exact node version needed,
+
+60
+00:02:22.500 --> 00:02:26.200
+forcing your machine and CI to read the same specification.
+
+61
+00:02:26.200 --> 00:02:29.200
+By committing an NVM RC file to your code base,
+
+62
+00:02:29.200 --> 00:02:31.500
+you completely eliminate node-based works
+
+63
+00:02:31.500 --> 00:02:34.600
+on my machine discrepancies during your CI pipelines.
+
+64
+00:02:34.600 --> 00:02:36.100
+Moving down the matrix brings us
+
+65
+00:02:36.100 --> 00:02:38.700
+to the most frequent cause of broken CI builds,
+
+66
+00:02:38.700 --> 00:02:40.300
+the JDK transition.
+
+67
+00:02:40.300 --> 00:02:44.100
+Between react native 0.72 and 0.73,
+
+68
+00:02:44.100 --> 00:02:47.800
+the framework shifted from JDK 11 to JDK 17.
+
+69
+00:02:47.900 --> 00:02:50.500
+This introduces a severe debugging pitfall.
+
+70
+00:02:50.500 --> 00:02:54.200
+You might check your terminal and see Java 17 installed,
+
+71
+00:02:54.200 --> 00:02:57.000
+but the Gradle build tool is still quietly reading
+
+72
+00:02:57.000 --> 00:02:59.200
+an older incorrect version.
+
+73
+00:02:59.200 --> 00:03:03.800
+To fix this, explicitly set your Java home environment variable.
+
+74
+00:03:03.800 --> 00:03:06.800
+This configuration forces Gradle to route directly
+
+75
+00:03:06.800 --> 00:03:09.400
+to the JDK 17 directory.
+
+76
+00:03:09.400 --> 00:03:11.400
+You must mirror this explicit routing
+
+77
+00:03:11.400 --> 00:03:14.000
+in GitHub actions workflows by utilizing
+
+78
+00:03:14.000 --> 00:03:16.100
+the setup-java step.
+
+79
+00:03:16.100 --> 00:03:18.800
+This pins the distribution and version.
+
+80
+00:03:18.800 --> 00:03:22.100
+Without explicitly tethering Gradle to the correct JDK
+
+81
+00:03:22.100 --> 00:03:24.000
+via the Java home variable,
+
+82
+00:03:24.000 --> 00:03:28.000
+your Android CI builds will remain inherently non-deterministic.
+
+83
+00:03:28.000 --> 00:03:30.700
+Shifting focus to the Apple ecosystem
+
+84
+00:03:30.700 --> 00:03:33.700
+reveals the most rigid dependency chains
+
+85
+00:03:33.700 --> 00:03:36.000
+in the entire upgrade process.
+
+86
+00:03:36.000 --> 00:03:39.500
+iOS compilation operates on a strict rule.
+
+87
+00:03:39.500 --> 00:03:41.800
+Xcode versions are immutably tied
+
+88
+00:03:41.800 --> 00:03:44.100
+to specific Mac OS versions.
+
+89
+00:03:44.100 --> 00:03:49.900
+Xcode 15.1 requires Sonoma and 16.1 requires Sequoia.
+
+90
+00:03:49.900 --> 00:03:52.000
+This is a critical infrastructure jump
+
+91
+00:03:52.000 --> 00:03:54.500
+for react native 0.81,
+
+92
+00:03:54.500 --> 00:03:57.600
+strictly mandating Xcode 16.1.
+
+93
+00:03:57.600 --> 00:04:01.600
+If your YAML configuration requests an older Mac OS runner,
+
+94
+00:04:01.600 --> 00:04:04.900
+this requirement breaks your CI pipelines immediately.
+
+95
+00:04:04.900 --> 00:04:08.700
+The build fails before dependencies even begin to install.
+
+96
+00:04:08.700 --> 00:04:11.100
+Once the operating system is locked in,
+
+97
+00:04:11.200 --> 00:04:14.600
+you have to manage dependency management via CocoaPods.
+
+98
+00:04:14.600 --> 00:04:17.700
+Committing your gem file dot lock is mandatory.
+
+99
+00:04:17.700 --> 00:04:20.200
+It is the only reliable mechanism to pin
+
+100
+00:04:20.200 --> 00:04:22.400
+the exact CocoaPods version required
+
+101
+00:04:22.400 --> 00:04:24.400
+across all your environments.
+
+102
+00:04:24.400 --> 00:04:26.200
+Failing to lock your Mac OS,
+
+103
+00:04:26.200 --> 00:04:29.700
+your specific Xcode and CocoaPods versions in Unison,
+
+104
+00:04:29.700 --> 00:04:32.400
+guarantees your iOS builds will fail.
+
+105
+00:04:32.400 --> 00:04:35.500
+The final critical layer of the compatibility matrix
+
+106
+00:04:35.500 --> 00:04:39.500
+involves the Android SDK and NDK requirements.
+
+107
+00:04:39.500 --> 00:04:43.200
+Unlike iOS, which relies on Xcode's internal SDKs,
+
+108
+00:04:43.200 --> 00:04:45.400
+Android requires manual version alignment
+
+109
+00:04:45.400 --> 00:04:48.000
+directly within your project's Gradle files.
+
+110
+00:04:48.000 --> 00:04:50.300
+As you progress through React Native releases,
+
+111
+00:04:50.300 --> 00:04:53.200
+the min SDK requirements steadily advances,
+
+112
+00:04:53.200 --> 00:04:56.700
+stepping up from API21 to API24.
+
+113
+00:04:56.700 --> 00:04:59.800
+Then there is the native development kit or NDK.
+
+114
+00:04:59.800 --> 00:05:02.900
+The NDK is responsible for compiling C++ code
+
+115
+00:05:02.900 --> 00:05:05.100
+for React Native's new architecture.
+
+116
+00:05:05.100 --> 00:05:07.800
+For React Native 0.76 and above,
+
+117
+00:05:07.900 --> 00:05:12.000
+the framework strictly mandates NDK version R27 or higher.
+
+118
+00:05:12.000 --> 00:05:14.200
+Ignoring this specific NDK version bump,
+
+119
+00:05:14.200 --> 00:05:16.900
+guarantees native C++ compilation failures
+
+120
+00:05:16.900 --> 00:05:18.500
+during the Gradle build phase.
+
+121
+00:05:18.500 --> 00:05:22.000
+You have to meticulously align these underlying Gradle SDK blocks
+
+122
+00:05:22.000 --> 00:05:25.200
+to satisfy the framework's complex native compilation engine.
+
+123
+00:05:25.200 --> 00:05:27.700
+Before you modify a single line of code base code,
+
+124
+00:05:27.700 --> 00:05:29.700
+you need a systematic method for verifying
+
+125
+00:05:29.700 --> 00:05:31.600
+all of these matrix parameters.
+
+126
+00:05:31.600 --> 00:05:35.000
+You need a pre-upgrade environment validation script.
+
+127
+00:05:35.000 --> 00:05:37.000
+You execute this validation protocol
+
+128
+00:05:37.000 --> 00:05:40.500
+on both the developer's local machine and the CI agent.
+
+129
+00:05:40.500 --> 00:05:43.400
+The order of operations starts at the runtime layer.
+
+130
+00:05:43.400 --> 00:05:45.200
+The script scans your system paths
+
+131
+00:05:45.200 --> 00:05:49.000
+and locks in the exact node and JDK versions required.
+
+132
+00:05:49.000 --> 00:05:52.100
+Next, the validation moves to the iOS environment,
+
+133
+00:05:52.100 --> 00:05:55.600
+verifying the exact Xcode and cocoa pods pinning.
+
+134
+00:05:55.600 --> 00:05:58.000
+The final phase scans the manual SDK
+
+135
+00:05:58.000 --> 00:06:01.600
+and NDK configurations inside the Android Gradle files,
+
+136
+00:06:01.600 --> 00:06:04.300
+ensuring every digit matches the matrix.
+
+137
+00:06:04.300 --> 00:06:07.800
+Achieving this fully validated greenlit environment checklist
+
+138
+00:06:07.800 --> 00:06:10.600
+is the only absolute proof that your system is capable
+
+139
+00:06:10.600 --> 00:06:12.700
+of running a successful upgrade.
+
+140
+00:06:12.700 --> 00:06:16.400
+Explicitly pinning all of your system runtimes and native SDKs
+
+141
+00:06:16.400 --> 00:06:18.400
+is the only reliable way to eliminate
+
+142
+00:06:18.400 --> 00:06:20.600
+the works on my machine paradox.
+
+143
+00:06:20.600 --> 00:06:23.000
+The professional rule of upgrades is simple.
+
+144
+00:06:23.000 --> 00:06:26.000
+Identify and resolve every single environment mismatch
+
+145
+00:06:26.000 --> 00:06:28.500
+against the official matrix before proceeding.
+
+146
+00:06:28.500 --> 00:06:31.000
+Only when your machine environment aligns
+
+147
+00:06:31.000 --> 00:06:33.400
+with your target react native version
+
+148
+00:06:33.400 --> 00:06:36.200
+should you transition to code based tasks.
+
+149
+00:06:36.200 --> 00:06:39.300
+Opening package.json to alter dependencies
+
+150
+00:06:39.300 --> 00:06:41.000
+is not your first step.
+
+151
+00:06:41.000 --> 00:06:44.900
+It is the final step of the environment preparation process.
+
+152
+00:06:44.900 --> 00:06:47.800
+Treating the baseline environment with the same rigor
+
+153
+00:06:47.800 --> 00:06:50.900
+as the code base itself is the most reliable way
+
+154
+00:06:50.900 --> 00:06:53.900
+to ensure your upgrades actually succeed.
+

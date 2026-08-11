@@ -1,0 +1,254 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:04.000
+When building a react native application on a high-end desktop machine,
+
+2
+00:00:04.000 --> 00:00:07.000
+it is easy to operate under a false sense of security.
+
+3
+00:00:07.000 --> 00:00:10.000
+The hardware simply powers through inefficient code.
+
+4
+00:00:10.000 --> 00:00:12.000
+The reality of production is different.
+
+5
+00:00:12.000 --> 00:00:15.000
+Your code will eventually execute on mid-range mobile hardware,
+
+6
+00:00:15.000 --> 00:00:18.000
+with a fraction of that desktop CPU and memory.
+
+7
+00:00:18.000 --> 00:00:23.000
+While the logical mental model of react components and hooks transfers from web to mobile,
+
+8
+00:00:23.000 --> 00:00:25.000
+the margin for waste evaporates.
+
+9
+00:00:25.000 --> 00:00:29.000
+Unnecessary re-renders that are hidden by brute force desktop processing
+
+10
+00:00:29.000 --> 00:00:31.000
+will immediately choke a mobile device.
+
+11
+00:00:31.000 --> 00:00:37.000
+On mobile, a minor inefficiency manifests as a critical, visible failure point known as JANK.
+
+12
+00:00:37.000 --> 00:00:41.000
+This timeline illustrates the strict mathematical constraint of mobile performance,
+
+13
+00:00:41.000 --> 00:00:43.000
+the continuous hardware frame budget.
+
+14
+00:00:43.000 --> 00:00:49.000
+At a 60 Hertz refresh rate, the device has a 16.6 millisecond window to update the screen.
+
+15
+00:00:49.000 --> 00:00:56.000
+All JavaScript execution, layout calculation, and UI painting must completely finish within this window
+
+16
+00:00:56.000 --> 00:00:59.000
+to maintain a fluid 60 frames per second.
+
+17
+00:00:59.000 --> 00:01:03.000
+Many mid-range devices now use 120 Hertz screens,
+
+18
+00:01:03.000 --> 00:01:07.000
+which cuts that processing budget in half to roughly 8.3 milliseconds.
+
+19
+00:01:07.000 --> 00:01:11.000
+If computation exceeds this window, the system drops the frame,
+
+20
+00:01:11.000 --> 00:01:15.000
+creating a visible stutter that breaks the illusion of motion.
+
+21
+00:01:15.000 --> 00:01:23.000
+Mastering react native performance is about engineering your logic to guarantee execution under that 8 millisecond wire.
+
+22
+00:01:23.000 --> 00:01:28.000
+Managing these constraints requires a breakdown of the underlying software architecture.
+
+23
+00:01:28.000 --> 00:01:31.000
+React native utilizes a three-thread model.
+
+24
+00:01:31.000 --> 00:01:37.000
+The first is the JS thread, where typescript, react renders, hooks, and logic execute.
+
+25
+00:01:37.000 --> 00:01:44.000
+The second is the UI thread, handling view rendering, touch events, and native animations independently of your JavaScript code.
+
+26
+00:01:44.000 --> 00:01:50.000
+Finally, native module threads manage internal background work, like IO and networking.
+
+27
+00:01:50.000 --> 00:01:55.000
+The system is vulnerable when an active animation crosses into the JS thread on every frame.
+
+28
+00:01:55.000 --> 00:01:59.000
+If the JS thread stalls for 16 milliseconds, the frame drops.
+
+29
+00:01:59.000 --> 00:02:05.000
+Libraries like react native reanimated solve this by moving animation workloads entirely to the UI thread,
+
+30
+00:02:05.000 --> 00:02:08.000
+making them immune to JavaScript slowdowns.
+
+31
+00:02:08.000 --> 00:02:15.000
+The goal of mobile architecture is isolating the UI thread to ensure it is never blocked by the heavy lifting occurring on the JS thread.
+
+32
+00:02:15.000 --> 00:02:21.000
+Isolating these threads historically exposed a flaw in the legacy architecture, the asynchronous bridge.
+
+33
+00:02:21.000 --> 00:02:26.000
+The legacy bridge worked by queuing and serializing all cross-thread data into discrete packets.
+
+34
+00:02:26.000 --> 00:02:32.000
+This serialization created an asynchronous traffic jam that caused UI jank during complex interactions.
+
+35
+00:02:32.000 --> 00:02:39.000
+The new architecture in react native 0.76 removes this bridge in favor of the JavaScript interface, or JSI.
+
+36
+00:02:40.000 --> 00:02:48.000
+JSI enables JavaScript to invoke C++ methods directly and synchronously via memory pointers, which removes the need for data serialization.
+
+37
+00:02:48.000 --> 00:02:56.000
+This direct access also enables turbo modules, which load lazily on first access, rather than slowing down the initial application startup.
+
+38
+00:02:56.000 --> 00:03:03.000
+Eliminating the serialization queue removes the primary structural barrier to achieving 120 Hertz performance.
+
+39
+00:03:03.000 --> 00:03:09.000
+The transition to synchronous memory access changes how the system handles the drawing of UI components on the screen.
+
+40
+00:03:09.000 --> 00:03:16.000
+This is handled by fabric, a rendering engine that computes the entire react view tree natively in C++.
+
+41
+00:03:16.000 --> 00:03:24.000
+Because layout is computed in C++, the system can shift work between background threads and the main thread, depending on the immediate context.
+
+42
+00:03:25.000 --> 00:03:34.000
+By managing the view tree in C++, the system can hold multiple UI states in memory simultaneously, enabling the concurrent rendering features of react 18.
+
+43
+00:03:34.000 --> 00:03:43.000
+When a high priority interaction like a user tap occurs, the system can pause a heavy low priority render tree computation to process the touch event immediately.
+
+44
+00:03:43.000 --> 00:03:52.000
+While fabric optimizes the rendering pipeline, it cannot compensate for a strategy that triggers thousands of unnecessary component updates.
+
+45
+00:03:52.000 --> 00:04:00.000
+The new architecture provides the infrastructure for speed, but developer disciplines still dictates what data enters that pipeline.
+
+46
+00:04:00.000 --> 00:04:07.000
+We can see these principles in practice, by looking at the most common source of frame drops, large scrolling lists.
+
+47
+00:04:07.000 --> 00:04:15.000
+The web concept of DOM virtualization is handled by the built-in flat list component, which only renders the items currently visible on screen.
+
+48
+00:04:15.000 --> 00:04:26.000
+Nesting a flat list inside a scroll view is a critical error. It prevents the system from calculating the list's height, forcing it to render every item at once and defeating virtualization.
+
+49
+00:04:26.000 --> 00:04:33.000
+Setting a strict window size ensures that items scrolled far away are unmounted, keeping the memory footprint low.
+
+50
+00:04:33.000 --> 00:04:37.000
+The most effective optimization for scrolling is the item layout property.
+
+51
+00:04:37.000 --> 00:04:44.000
+Providing fixed item heights upfront allows the system to bypass expensive layout measurement steps during the scroll.
+
+52
+00:04:44.000 --> 00:04:52.000
+Aggressive virtualization and pre-computation transform an endless memory drain into a strictly managed data window.
+
+53
+00:04:52.000 --> 00:04:58.000
+Even a perfectly virtualized list will stall if the components inside it re-render without cause.
+
+54
+00:04:58.000 --> 00:05:04.000
+Passing inline objects or arrays directly in JSX defeats reacts internal shallow comparison checks.
+
+55
+00:05:04.000 --> 00:05:11.000
+Since every render creates a new memory reference, it triggers a cascade of evaluations across the JS thread.
+
+56
+00:05:11.000 --> 00:05:17.000
+Use memoization hooks for derived data and callbacks to maintain reference stability across render cycles.
+
+57
+00:05:17.000 --> 00:05:22.000
+Protecting the JS thread depends on stopping renders before the pipeline even evaluates them.
+
+58
+00:05:22.000 --> 00:05:27.000
+Finally, developers must systematically diagnose performance leaks in a real-world environment.
+
+59
+00:05:27.000 --> 00:05:33.000
+Never trust a desktop simulator. Its processing power masks the native bottlenecks of mobile hardware.
+
+60
+00:05:33.000 --> 00:05:38.000
+Accurate measurement requires testing on physical, mid-range Android devices.
+
+61
+00:05:38.000 --> 00:05:45.000
+The on-device perf monitor is the first place to look, providing live tracking of JS and UI frames per second.
+
+62
+00:05:45.000 --> 00:05:53.000
+For deeper analysis, the react native dev tools allow for component profiling and network inspection directly from the dev menu.
+
+63
+00:05:53.000 --> 00:06:02.000
+While the new architecture addresses historical bridge constraints, achieving 120 Hertz performance still relies on measuring ruthlessly and defending the frame budget.
+

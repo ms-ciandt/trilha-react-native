@@ -1,0 +1,122 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:09.000
+This split screen displays a styled web card on the left and the syntax error that occurs on the right when that same CSS is applied to a mobile project.
+
+2
+00:00:09.000 --> 00:00:18.000
+Your familiar browser globals are entirely absent here. No document, window, no CSS selectors, and no styling ask aid.
+
+3
+00:00:18.000 --> 00:00:29.000
+Instead, React Native provides a specialized subset of layout properties. You are shifting from a document-based styling system to one that communicates directly with the native ViewTree.
+
+4
+00:00:29.000 --> 00:00:38.000
+Watch as the rigid document-based layout of the web shatters here, reassembling into a strict hierarchy of responsive native mobile components.
+
+5
+00:00:38.000 --> 00:00:49.000
+This animated diagram shows exactly what happens to your layout rules. The display grid property evaporates behind a red X, morphing into React Native's requirement of nested flex containers,
+
+6
+00:00:49.000 --> 00:01:03.000
+flex direction row, and flex wrap wrap. The structural boxes you see here snap into a border box alignment without any extra code, because every single component in React Native acts as a flex container by default.
+
+7
+00:01:03.000 --> 00:01:12.000
+Notice how the layout grid rotates 90 degrees. While the web assumes a horizontal row, React Native defaults to a vertical, column-first structure.
+
+8
+00:01:12.000 --> 00:01:23.000
+To build a perfectly spaced column layout without CSS grid, you implement a dedicated flat list component and pass your desired column count directly into the num columns prop.
+
+9
+00:01:23.000 --> 00:01:31.000
+Dropping the web grid system streamlines the rendering process, which helps the layout maintain structural integrity across different mobile operating systems.
+
+10
+00:01:31.000 --> 00:01:42.000
+To map these layouts accurately, you have to leave relative web typography and layout units behind. Passing strings like RAM, EM, and PX will cause the view to fail.
+
+11
+00:01:42.000 --> 00:01:55.000
+Looking at this code translation snippet, we see standard web units and calculate functions crossed out. They are morphing into raw integers, which represent device independent pixels natively understood by the phone.
+
+12
+00:01:55.000 --> 00:02:06.000
+To set boundaries that match the screen size, we replace viewport height and width by calling the dimensions API, pulling the exact scale directly from the window object.
+
+13
+00:02:06.000 --> 00:02:16.000
+Because you lose the native CSS calculation engine, complex scaling requires you to execute standard JavaScript math directly within your style sheet objects.
+
+14
+00:02:16.000 --> 00:02:26.000
+Native layouts are calculated by the JavaScript thread at runtime, requiring you to define explicit mathematical logic instead of relying on static CSS rules.
+
+15
+00:02:26.000 --> 00:02:36.000
+When your calculated dimensions result in content overflowing a standard view component, the screen will remain static and will not scroll. This diagram demonstrates the fix.
+
+16
+00:02:36.000 --> 00:02:44.000
+The content is bleeding off the bottom of the screen. Once it is encased in a scroll view container, the list responds to vertical touch gestures.
+
+17
+00:02:44.000 --> 00:02:53.000
+You will face similar boundary issues with complex image boundaries since the web's clip path property is not supported and react native.
+
+18
+00:02:53.000 --> 00:03:02.000
+To generate custom shapes, you combine standard border radius values with the overflow dot hidden property, forcing the container to clip its children.
+
+19
+00:03:02.000 --> 00:03:13.000
+A web browser automatically calculates scrolling and clipping bounds for you. React native requires deliberate container wrappers to manage rendering boundaries and preserve system performance.
+
+20
+00:03:13.000 --> 00:03:23.000
+Managing those wrappers gets tricky when visual properties behave differently across operating systems. The standard CSS box shadow property fails completely here.
+
+21
+00:03:23.000 --> 00:03:34.000
+This split screen simulation highlights the divide. The shared code successfully projects a shadow on the iOS UI on the left, but the Android UI on the right remains flat.
+
+22
+00:03:34.000 --> 00:03:44.000
+By adding the elevation property to the code, the Android UI pops off the background using the operating systems default shadow behavior to match the iOS depth.
+
+23
+00:03:44.000 --> 00:03:51.000
+Beyond shadows, typography inheritance is a common source of errors for developers transitioning from the web.
+
+24
+00:03:51.000 --> 00:04:02.000
+Properties like font size, font weight, and text align belong exclusively on dedicated text components. If you place them on a parent view wrapper, the application will reject them.
+
+25
+00:04:02.000 --> 00:04:19.000
+This macro call out graphic isolates another structural difference. Lay out transformations. Notice the brackets flashing. You must use an array of objects syntax to define visual sequences, separating properties like translate acts into distinct objects.
+
+26
+00:04:19.000 --> 00:04:29.000
+Cross-platform capability means writing explicit code that anticipates distinct operating system behaviors rather than relying on a single uniform style sheet.
+
+27
+00:04:29.000 --> 00:04:37.000
+Once those specific behaviors are accounted for, you have a translated react native component running on both iOS and Android.
+
+28
+00:04:37.000 --> 00:04:46.000
+You reach this stage by moving away from the document object model, dropping CSS selectors, and replacing relative measurements with a native layout approach.
+
+29
+00:04:46.000 --> 00:04:55.000
+To understand the deeper algorithmic calculation powering these flex boundaries, you can review the official yoga layout engine documentation online.
+
+30
+00:04:55.000 --> 00:05:03.000
+Mastering react native styling requires letting go of the invisible web cascade and embracing a deliberate component architecture.
+

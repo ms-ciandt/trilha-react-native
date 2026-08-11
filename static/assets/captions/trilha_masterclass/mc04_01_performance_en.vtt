@@ -1,0 +1,378 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:07.360
+On mid-range Android's running React Native 0.76, an 800 millisecond cold start is standard,
+
+2
+00:00:07.360 --> 00:00:11.360
+while 500 milliseconds represents the high-performance benchmark.
+
+3
+00:00:11.360 --> 00:00:15.120
+This timeline illustrates the window available for optimization.
+
+4
+00:00:15.120 --> 00:00:20.320
+Within this sub-second span, every millisecond of execution must be accounted for.
+
+5
+00:00:20.320 --> 00:00:25.920
+A common starting point is placing a console.log timestamp at the top of the JavaScript bundle.
+
+6
+00:00:25.920 --> 00:00:28.640
+This approach creates a significant blind spot.
+
+7
+00:00:28.640 --> 00:00:33.280
+The JS thread doesn't execute until native OS initialization finishes.
+
+8
+00:00:33.280 --> 00:00:36.240
+Measuring here ignores most of the launch sequence.
+
+9
+00:00:36.240 --> 00:00:40.400
+Accurate diagnostics require measuring application startup at the native level.
+
+10
+00:00:40.400 --> 00:00:42.720
+On Android, use the Perfetto UI.
+
+11
+00:00:42.720 --> 00:00:48.640
+On iOS, use the Instruments template, with the RCT profile equals one flag active.
+
+12
+00:00:48.640 --> 00:00:51.360
+Treating startup as pure JavaScript execution,
+
+13
+00:00:51.360 --> 00:00:54.080
+obscures the crucial native latency events.
+
+14
+00:00:54.080 --> 00:00:56.560
+Track performance at the C++ level.
+
+15
+00:00:56.560 --> 00:01:01.920
+Opening a cold start trace in Perfetto provides a high-resolution view of the initialization sequence.
+
+16
+00:01:01.920 --> 00:01:06.240
+Looking at the early moments of the trace, the JavaScript thread lane is empty.
+
+17
+00:01:06.240 --> 00:01:08.960
+The work happening here is entirely native.
+
+18
+00:01:08.960 --> 00:01:12.880
+The sequence begins with phase one, React host start.
+
+19
+00:01:12.880 --> 00:01:16.800
+During this slice, the system performs C++ initialization
+
+20
+00:01:16.800 --> 00:01:19.680
+before the JavaScript bundle is even accessed.
+
+21
+00:01:19.680 --> 00:01:23.040
+Phase two follows, with Hermes executor.load bundle,
+
+22
+00:01:23.040 --> 00:01:26.160
+where the operating system memory maps the bundle.
+
+23
+00:01:26.160 --> 00:01:29.120
+Phase three, labeled runtime.call function,
+
+24
+00:01:29.120 --> 00:01:33.040
+represents the execution of app registry.run application.
+
+25
+00:01:33.040 --> 00:01:38.800
+The sequence concludes with phase four, fabric.comit, the first UI render pass.
+
+26
+00:01:38.800 --> 00:01:43.840
+These four sequential native slices define the architectural limits of the startup metric.
+
+27
+00:01:43.840 --> 00:01:49.120
+Optimization effort is only effective when it targets one of these specific native slices.
+
+28
+00:01:49.120 --> 00:01:52.480
+Shrinking phase one involves eager React host warmup,
+
+29
+00:01:52.480 --> 00:01:57.520
+which moves the C++ initialization to an earlier point in the application lifecycle.
+
+30
+00:01:57.520 --> 00:01:59.920
+This introduces a memory trade-off.
+
+31
+00:01:59.920 --> 00:02:06.320
+Eager warmup consumes RAM regardless of what a user eventually navigates to a React native screen.
+
+32
+00:02:06.320 --> 00:02:12.080
+This strategy is typically reserved for apps where analytics show at least 30 to 40% of users
+
+33
+00:02:12.080 --> 00:02:14.640
+consistently reach an RN surface.
+
+34
+00:02:14.640 --> 00:02:18.720
+For phase two, inline requires is the primary intervention.
+
+35
+00:02:18.800 --> 00:02:23.440
+Instead of executing every module's top-level code during bundle evaluation,
+
+36
+00:02:23.440 --> 00:02:26.960
+inline requires that work until the module is actually called.
+
+37
+00:02:26.960 --> 00:02:31.840
+The impact can be verified by running the React Native bundle command with the profile flag
+
+38
+00:02:31.840 --> 00:02:34.560
+and measuring the change in total load time.
+
+39
+00:02:34.560 --> 00:02:38.800
+Phase three is optimized by moving non-critical logic out of the top-level bundle
+
+40
+00:02:38.800 --> 00:02:42.320
+using interactionmanager.run after interactions.
+
+41
+00:02:42.320 --> 00:02:46.720
+This queues work until touch animations are complete and the first frame has been committed,
+
+42
+00:02:46.720 --> 00:02:49.040
+preventing thread contention during launch.
+
+43
+00:02:49.040 --> 00:02:53.440
+Implementing this can reduce the phase three execution path from 300 milliseconds
+
+44
+00:02:53.440 --> 00:02:55.600
+to approximately 80 milliseconds.
+
+45
+00:02:55.600 --> 00:02:58.400
+Phase four requires an audit of the initial render path
+
+46
+00:02:58.400 --> 00:03:02.160
+to ensure only components required for the first frame are processed.
+
+47
+00:03:02.160 --> 00:03:06.800
+Achieving a 500 millisecond cold start relies on systematically delaying code execution
+
+48
+00:03:06.800 --> 00:03:09.360
+away from these four critical native paths.
+
+49
+00:03:09.360 --> 00:03:14.160
+Beyond the initial render, runtime performance is governed by the Hermes engine's execution model.
+
+50
+00:03:14.240 --> 00:03:18.320
+Hermes utilizes ahead of time execution rather than adjust in time compiler.
+
+51
+00:03:18.320 --> 00:03:20.720
+While jick compilers can achieve higher peak throughput,
+
+52
+00:03:20.720 --> 00:03:23.680
+they introduce unpredictable latency spikes during warm-up.
+
+53
+00:03:23.680 --> 00:03:27.760
+Hermes trades that peak speed for a consistent predictable latency profile.
+
+54
+00:03:27.760 --> 00:03:31.680
+This predictability is the priority for mobile UIs where maintaining a steady frame rate
+
+55
+00:03:31.680 --> 00:03:34.320
+is more important than raw numeric processing power.
+
+56
+00:03:34.320 --> 00:03:38.160
+Severe performance degradation in Hermes typically stems from garbage collection pressure
+
+57
+00:03:38.160 --> 00:03:40.240
+rather than hitting a raw processor ceiling.
+
+58
+00:03:40.240 --> 00:03:42.640
+Hermes uses a generational garbage collector.
+
+59
+00:03:42.720 --> 00:03:45.760
+Most objects are handled in the young generation heap,
+
+60
+00:03:45.760 --> 00:03:48.480
+while long-lived objects move to the old generation.
+
+61
+00:03:49.280 --> 00:03:53.200
+Minor GCs in the young generation are frequent but fast,
+
+62
+00:03:53.200 --> 00:03:56.000
+usually causing pauses of two to five milliseconds.
+
+63
+00:03:56.720 --> 00:04:00.000
+Major GCs in the old generation are more intensive,
+
+64
+00:04:00.000 --> 00:04:03.760
+potentially causing UI freezes between 10 and 50 milliseconds.
+
+65
+00:04:04.400 --> 00:04:09.040
+These events appear in Perfetto as GC slices on the JS thread.
+
+66
+00:04:09.040 --> 00:04:13.520
+If they overlap with UI animations, the app has an allocation problem.
+
+67
+00:04:13.520 --> 00:04:17.840
+To find the source, the engine's heap timeline can be loaded into chrome dev tools
+
+68
+00:04:17.840 --> 00:04:21.920
+to identify which constructors are responsible for the largest retained memory size.
+
+69
+00:04:22.640 --> 00:04:28.400
+CPU diagnostics often reveal that wide bars in a flame chart aren't caused by slow JS logic,
+
+70
+00:04:28.400 --> 00:04:33.360
+but by excessive native bridge serialization or unnecessary derived state calculations.
+
+71
+00:04:34.080 --> 00:04:38.880
+Optimizing Hermes' performance requires managing memory allocation and serialization costs.
+
+72
+00:04:39.200 --> 00:04:45.040
+Rather than focusing on CPU cycles, maintaining a locked 120 frames per second
+
+73
+00:04:45.040 --> 00:04:48.800
+during complex gestures presents a specific challenge.
+
+74
+00:04:48.800 --> 00:04:51.360
+The saturation of the main JavaScript thread.
+
+75
+00:04:52.000 --> 00:04:56.000
+Standard gesture callbacks must cross the bridge to the JS thread
+
+76
+00:04:56.000 --> 00:04:58.720
+before a UI update can be triggered.
+
+77
+00:04:58.720 --> 00:05:02.320
+This introduces a mandatory one to two frame latency.
+
+78
+00:05:03.040 --> 00:05:07.440
+Reanimated three workloads are designed to bypass this bridge entirely.
+
+79
+00:05:07.920 --> 00:05:13.840
+The Worklet directive signals the compiler to run the function inside a secondary Hermes runtime,
+
+80
+00:05:13.840 --> 00:05:16.000
+initialized directly on the UI thread.
+
+81
+00:05:16.560 --> 00:05:18.640
+This secondary runtime is isolated.
+
+82
+00:05:19.200 --> 00:05:22.560
+Worklets cannot access closures from the main JavaScript thread.
+
+83
+00:05:23.120 --> 00:05:27.120
+Communication between these threads must be handled through shared values,
+
+84
+00:05:27.120 --> 00:05:29.360
+which provide a synchronized bridge for state.
+
+85
+00:05:30.000 --> 00:05:33.680
+By detaching the animation loop from the main JavaScript thread,
+
+86
+00:05:33.680 --> 00:05:38.880
+gestures can remain responsive even when the main thread is occupied with background tasks.
+
+87
+00:05:38.880 --> 00:05:43.440
+An optimized react native app moves through a condensed native cold start,
+
+88
+00:05:43.440 --> 00:05:47.600
+maintains predictable latency and isolates gestures on the UI thread.
+
+89
+00:05:48.240 --> 00:05:50.880
+Native tracking, generational memory management,
+
+90
+00:05:50.880 --> 00:05:54.320
+and thread isolation are the pillars of production grade performance.
+
+91
+00:05:55.040 --> 00:05:58.720
+Standard web tools offer little visibility into the native bottlenecks,
+
+92
+00:05:58.720 --> 00:06:00.640
+defining the react native lifecycle.
+
+93
+00:06:01.200 --> 00:06:05.920
+High performance react native engineering is a discipline focused on hardware constraints,
+
+94
+00:06:05.920 --> 00:06:10.960
+requiring an understanding of the C++ and native threading architecture beneath the code.
+

@@ -18,9 +18,9 @@ import os
 import time
 import anthropic
 
-BATCH_SIZE = 20  # cue lines per API call
-MAX_RETRIES = 4
-RETRY_DELAY = 5  # seconds between retries
+BATCH_SIZE = 10  # cue lines per API call (smaller = less likely to hit 500)
+MAX_RETRIES = 6
+RETRY_DELAY = 15  # seconds between retries
 
 
 def parse_vtt(content: str) -> list[dict]:
@@ -74,7 +74,7 @@ def translate_texts(texts: list[str], client: anthropic.Anthropic) -> list[str]:
     for attempt in range(1, MAX_RETRIES + 1):
         try:
             message = client.messages.create(
-                model="claude-haiku-4-5-20251001",
+                model="anthropic.claude-4-6-sonnet",
                 max_tokens=4096,
                 messages=[
                     {

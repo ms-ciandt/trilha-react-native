@@ -1,0 +1,298 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:06.240
+When you first start building a React Native app, throwing everything into one big components folder works fine.
+
+2
+00:00:06.240 --> 00:00:12.560
+But as your project grows, that flat structure quickly turns into a tangled mess of overlapping dependencies.
+
+3
+00:00:12.560 --> 00:00:15.520
+Think about the last time a new developer joined your team.
+
+4
+00:00:15.520 --> 00:00:20.800
+If they have to spend their first three hours just trying to locate the basic code for the login screen,
+
+5
+00:00:20.800 --> 00:00:23.920
+your underlying architecture is simply slowing you down.
+
+6
+00:00:23.920 --> 00:00:26.640
+Let's fix that using a standard sample app.
+
+7
+00:00:26.720 --> 00:00:30.080
+As you can see, this application has three distinct areas,
+
+8
+00:00:30.080 --> 00:00:33.920
+a login flow, a main scrolling feed, and a user profile.
+
+9
+00:00:33.920 --> 00:00:38.240
+Our goal is to reorganize this specific app into a feature-based architecture.
+
+10
+00:00:38.240 --> 00:00:44.320
+By the end, we will map out these exact boundaries and lock them in place with an architecture.md document.
+
+11
+00:00:44.320 --> 00:00:47.520
+Step 1. Open your IDE and start your project.
+
+12
+00:00:47.520 --> 00:00:51.120
+Keep your iOS or Android simulator running right next to your code,
+
+13
+00:00:51.120 --> 00:00:54.640
+so we can verify the app stays stable while we move things around.
+
+14
+00:00:54.640 --> 00:01:02.000
+Moving from a flat list of files to a structured architecture means developers know exactly where to look for a bug.
+
+15
+00:01:02.000 --> 00:01:06.240
+It means new hires can contribute on day one instead of day five.
+
+16
+00:01:06.240 --> 00:01:08.400
+Let's build the new skeleton.
+
+17
+00:01:08.400 --> 00:01:12.560
+Create three root folders, app, features, and shared.
+
+18
+00:01:12.560 --> 00:01:14.640
+Think of them like parts of a house.
+
+19
+00:01:14.640 --> 00:01:18.080
+App is the mechanical room, powering core systems.
+
+20
+00:01:18.080 --> 00:01:20.880
+Features holds individual, isolated rooms,
+
+21
+00:01:20.880 --> 00:01:24.640
+and shared contains the base building blocks used everywhere.
+
+22
+00:01:24.640 --> 00:01:26.960
+Now, open that features folder.
+
+23
+00:01:26.960 --> 00:01:31.280
+Inside it, create three separate subfolders matching our application domains,
+
+24
+00:01:31.280 --> 00:01:33.840
+off, feed, and profile.
+
+25
+00:01:33.840 --> 00:01:36.720
+Go through your code base and start moving the files.
+
+26
+00:01:36.720 --> 00:01:41.040
+Take the login screen, its specific hooks, and the authentication API calls,
+
+27
+00:01:41.040 --> 00:01:44.080
+and drop them entirely inside the auth folder.
+
+28
+00:01:44.080 --> 00:01:47.600
+Do the exact same thing for the feed and profile domains.
+
+29
+00:01:47.600 --> 00:01:52.880
+As you do this, your terminal is going to light up with red arrow messages about broken imports.
+
+30
+00:01:52.880 --> 00:01:59.040
+Use your IDE's auto update paths feature to let it fix those broken links for you automatically.
+
+31
+00:01:59.040 --> 00:02:01.040
+Look over at your running simulator.
+
+32
+00:02:01.040 --> 00:02:06.240
+Force a reload and verify that the login screen still routes correctly to the main feed.
+
+33
+00:02:06.240 --> 00:02:10.160
+By locking domain specific files inside their own feature folders,
+
+34
+00:02:10.160 --> 00:02:16.640
+you guarantee that a developer working on the user profile won't accidentally write code that breaks the main feed.
+
+35
+00:02:16.640 --> 00:02:20.320
+Your main navigation setups, like stack or tab navigators,
+
+36
+00:02:20.320 --> 00:02:24.720
+sit directly inside the app folder, routing users into feature blocks.
+
+37
+00:02:24.720 --> 00:02:26.720
+The same applies to global state.
+
+38
+00:02:26.720 --> 00:02:30.400
+Stores like SueStand or Redux hold application-wide data,
+
+39
+00:02:30.400 --> 00:02:32.960
+so they also live in the app directory.
+
+40
+00:02:32.960 --> 00:02:35.520
+Now, shift in retention to the shared directory.
+
+41
+00:02:35.520 --> 00:02:40.240
+This is where you extract generic UI elements that don't belong to any specific domain,
+
+42
+00:02:40.240 --> 00:02:42.800
+like your standard buttons or typography.
+
+43
+00:02:42.800 --> 00:02:46.720
+The rule of thumb for whether an asset belongs here is straightforward.
+
+44
+00:02:46.720 --> 00:02:50.320
+If you can drop a file into a completely different reactinative app,
+
+45
+00:02:50.320 --> 00:02:53.760
+and it still works without changes, it is truly shared.
+
+46
+00:02:53.760 --> 00:02:56.320
+A generic submit button easily passes,
+
+47
+00:02:56.320 --> 00:03:00.160
+but a specialized feed card fails, staying locked inside the feed folder.
+
+48
+00:03:00.720 --> 00:03:05.680
+Rigidly enforcing the separation prevents the shared folder from turning into a junk drawer.
+
+49
+00:03:05.680 --> 00:03:09.280
+It forces your domain specific logic to stay neatly isolated.
+
+50
+00:03:09.760 --> 00:03:13.280
+To finalize the structure, go to the root of your project directory
+
+51
+00:03:13.280 --> 00:03:16.320
+and create a new file named architecture.md.
+
+52
+00:03:16.880 --> 00:03:20.080
+Start by writing down exactly where screens belong.
+
+53
+00:03:20.080 --> 00:03:25.680
+Specify that a screen view must always reside inside the screen sub-director of its respective feature folder.
+
+54
+00:03:26.400 --> 00:03:29.040
+Next, define the clear rules for hooks.
+
+55
+00:03:29.040 --> 00:03:31.760
+Generic utility hooks go in the shared directory,
+
+56
+00:03:31.760 --> 00:03:35.040
+while domain specific hooks stay local to their feature folder.
+
+57
+00:03:35.040 --> 00:03:38.320
+Add a section defining where API services live
+
+58
+00:03:38.320 --> 00:03:42.640
+and explicitly state that all custom iOS or Android modules
+
+59
+00:03:42.640 --> 00:03:45.520
+must be kept isolated in the root native folder.
+
+60
+00:03:46.080 --> 00:03:51.440
+Writing these decisions down transforms an implicit structure into an explicit map.
+
+61
+00:03:52.000 --> 00:03:56.240
+Every pull request that gets reviewed from now on can be checked against the standard.
+
+62
+00:03:56.800 --> 00:04:00.640
+We've moved from a massive, unsorted list of files on the left
+
+63
+00:04:00.640 --> 00:04:04.000
+to a highly organized, logical directory structure on the right.
+
+64
+00:04:04.640 --> 00:04:06.400
+Check your simulator one last time.
+
+65
+00:04:06.880 --> 00:04:09.840
+Despite moving nearly every file in the project,
+
+66
+00:04:09.840 --> 00:04:13.200
+the user interface functions exactly as it did when we started.
+
+67
+00:04:13.760 --> 00:04:19.200
+Commit your new architecture and distribute the architecture.md file to your development team
+
+68
+00:04:19.200 --> 00:04:22.240
+so everyone starts working from the same blueprint immediately.
+
+69
+00:04:22.800 --> 00:04:26.080
+If you want to dig deeper into the theory behind this organization,
+
+70
+00:04:26.080 --> 00:04:30.080
+search for the guide titled Feature Based folder structure in React Native
+
+71
+00:04:30.080 --> 00:04:32.480
+to see how large teams implement these patterns.
+
+72
+00:04:33.120 --> 00:04:36.160
+Your code base is now structurally prepared.
+
+73
+00:04:36.240 --> 00:04:39.600
+You can add 20 new features and 10 new developers,
+
+74
+00:04:39.600 --> 00:04:43.760
+and the project will remain predictable and easy to maintain.
+

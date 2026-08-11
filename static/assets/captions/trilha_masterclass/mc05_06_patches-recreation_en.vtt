@@ -1,0 +1,398 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:02.320
+Take a look at this terminal window.
+
+2
+00:00:02.320 --> 00:00:05.560
+You run an NPM install during a React Native upgrade,
+
+3
+00:00:05.560 --> 00:00:08.640
+and everything grinds to a halt with a bold red,
+
+4
+00:00:08.640 --> 00:00:10.360
+hunk-failed error.
+
+5
+00:00:10.360 --> 00:00:13.840
+That failure is actually an intentional safety mechanism.
+
+6
+00:00:13.840 --> 00:00:18.440
+Your project relies on patches, temporary edits made to third-party code,
+
+7
+00:00:18.440 --> 00:00:24.240
+and the package manager is refusing to silently apply those old edits to newly updated libraries.
+
+8
+00:00:24.240 --> 00:00:27.440
+We need to clear those errors to get your build working again.
+
+9
+00:00:27.600 --> 00:00:30.320
+In this guide, we will audit your existing patches,
+
+10
+00:00:30.320 --> 00:00:32.240
+delete the ones you no longer need,
+
+11
+00:00:32.240 --> 00:00:35.520
+and safely recreate the rest for your new libraries.
+
+12
+00:00:35.520 --> 00:00:38.560
+This comparison matrix breaks down the tools we use.
+
+13
+00:00:38.560 --> 00:00:41.520
+For standard NPM and Yarn version 1 projects,
+
+14
+00:00:41.520 --> 00:00:43.760
+patch package remains the default tool.
+
+15
+00:00:43.760 --> 00:00:47.760
+If you operate a modern Mono repo using PNPM or YarnBerry,
+
+16
+00:00:47.760 --> 00:00:50.560
+you will use their native patching commands instead.
+
+17
+00:00:50.560 --> 00:00:53.680
+Rather than viewing this broken installation as a disaster,
+
+18
+00:00:53.680 --> 00:00:55.920
+treat it as a mandatory checkpoint.
+
+19
+00:00:55.920 --> 00:01:00.400
+It is an opportunity to clean up the foundational code base of your app.
+
+20
+00:01:00.400 --> 00:01:04.880
+The first critical step happens before you modify any code at all.
+
+21
+00:01:04.880 --> 00:01:07.440
+You need to build a comprehensive inventory
+
+22
+00:01:07.440 --> 00:01:10.560
+of every patch currently sitting in your project.
+
+23
+00:01:10.560 --> 00:01:14.640
+This structured checklist table shows exactly what you need to track.
+
+24
+00:01:14.640 --> 00:01:17.040
+For each patch, list the file name,
+
+25
+00:01:17.040 --> 00:01:18.800
+the library it modifies,
+
+26
+00:01:18.800 --> 00:01:21.120
+the original reason the patch was written,
+
+27
+00:01:21.120 --> 00:01:22.960
+and its current status.
+
+28
+00:01:22.960 --> 00:01:25.600
+The type of file you patched directly dictates
+
+29
+00:01:25.600 --> 00:01:27.680
+how difficult this process will be.
+
+30
+00:01:27.680 --> 00:01:30.240
+Javascript files highlighted here in green
+
+31
+00:01:30.240 --> 00:01:32.560
+are usually straightforward to migrate.
+
+32
+00:01:32.560 --> 00:01:36.960
+If you patch native C++ or JSI files marked in red,
+
+33
+00:01:36.960 --> 00:01:40.800
+those updates are highly volatile and will require more effort.
+
+34
+00:01:40.800 --> 00:01:42.960
+Take the first broken patch on your list
+
+35
+00:01:42.960 --> 00:01:46.960
+and head straight to the upstream library's official GitHub repository.
+
+36
+00:01:46.960 --> 00:01:49.840
+You need to check their change log or issue tracker.
+
+37
+00:01:49.840 --> 00:01:53.680
+This split screen compares the pseudo code of a local patch on the left
+
+38
+00:01:53.680 --> 00:01:56.000
+with a GitHub release note on the right.
+
+39
+00:01:56.000 --> 00:01:59.920
+You are looking to see if the maintainers officially merged a fix
+
+40
+00:01:59.920 --> 00:02:03.440
+that matches the exact intent of your local code.
+
+41
+00:02:03.440 --> 00:02:05.920
+If you find that the fix landed upstream,
+
+42
+00:02:05.920 --> 00:02:09.120
+delete your local dot patch file permanently.
+
+43
+00:02:09.120 --> 00:02:14.160
+Removing an obsolete file is the highest value outcome of this entire process.
+
+44
+00:02:14.160 --> 00:02:16.480
+It instantly reduces your technical debt
+
+45
+00:02:16.480 --> 00:02:19.840
+and lowers your project's long-term maintenance burden.
+
+46
+00:02:19.840 --> 00:02:22.640
+In many cases, you will find that the upstream library
+
+47
+00:02:22.640 --> 00:02:25.120
+has not resolved your specific issue.
+
+48
+00:02:25.120 --> 00:02:28.320
+That means you have to manually recreate the patch.
+
+49
+00:02:28.320 --> 00:02:32.240
+Do not rely on the exact line numbers from your old patch file.
+
+50
+00:02:32.240 --> 00:02:35.840
+The upgraded library has likely changed its internal structure,
+
+51
+00:02:35.840 --> 00:02:39.440
+meaning your original fix will no longer align cleanly.
+
+52
+00:02:39.440 --> 00:02:44.320
+Read the old diff carefully to deduce what the code was actually trying to achieve.
+
+53
+00:02:44.320 --> 00:02:46.880
+You need to know if it was a critical bug fix,
+
+54
+00:02:46.880 --> 00:02:50.640
+a temporary workaround, or a custom feature polyfill.
+
+55
+00:02:50.640 --> 00:02:53.840
+Once you understand the intent, navigate deep
+
+56
+00:02:53.840 --> 00:02:56.480
+into your local node modules directory
+
+57
+00:02:56.480 --> 00:03:00.400
+and locate the newly updated version of the target file.
+
+58
+00:03:00.400 --> 00:03:04.160
+Here in the code editor, we are looking inside a specific file
+
+59
+00:03:04.160 --> 00:03:08.560
+nested under node modules slash react native camera.
+
+60
+00:03:08.560 --> 00:03:10.800
+This is where you write the equivalent fix
+
+61
+00:03:10.800 --> 00:03:14.720
+directly into the raw source code of the upgraded library.
+
+62
+00:03:14.720 --> 00:03:18.080
+You are adapting your old logic to fit the new architecture
+
+63
+00:03:18.080 --> 00:03:20.000
+of the updated dependency.
+
+64
+00:03:20.080 --> 00:03:24.240
+The code might look different, but the outcome needs to be identical.
+
+65
+00:03:24.240 --> 00:03:28.480
+With the edits made and saved, run your package manager's patching command
+
+66
+00:03:28.480 --> 00:03:29.680
+in the terminal.
+
+67
+00:03:29.680 --> 00:03:33.840
+This captures your manual edits and generates a fresh patch file.
+
+68
+00:03:33.840 --> 00:03:37.200
+This manual recreation safely bridges the gap,
+
+69
+00:03:37.200 --> 00:03:40.880
+translating your app's custom requirements into the new reality
+
+70
+00:03:40.880 --> 00:03:42.960
+of your upgraded dependencies.
+
+71
+00:03:42.960 --> 00:03:47.520
+Here in the file explorer, we can verify that the generation process worked.
+
+72
+00:03:47.520 --> 00:03:51.920
+Your old .patch file is gone, replaced by a newly generated file
+
+73
+00:03:51.920 --> 00:03:54.640
+with an incremented version number in its title.
+
+74
+00:03:54.640 --> 00:03:57.520
+Run a fresh installation command in your terminal.
+
+75
+00:03:57.520 --> 00:04:00.800
+You should see that the hunk failed error has been eliminated,
+
+76
+00:04:00.800 --> 00:04:02.960
+confirming the new patch applies smoothly.
+
+77
+00:04:03.600 --> 00:04:06.880
+There is one final non-negotiable step to complete.
+
+78
+00:04:06.880 --> 00:04:11.280
+You must document the exact reason why this custom patch exists.
+
+79
+00:04:11.280 --> 00:04:13.760
+Keep this documentation close to the code.
+
+80
+00:04:13.760 --> 00:04:17.360
+You can write a dedicated markdown file inside your patches directory,
+
+81
+00:04:17.360 --> 00:04:21.840
+or leave a detailed intent comment directly in your package configuration file.
+
+82
+00:04:21.840 --> 00:04:24.000
+If you skip this documentation step,
+
+83
+00:04:24.000 --> 00:04:27.200
+the next developer to upgrade this app will lack context.
+
+84
+00:04:27.200 --> 00:04:29.280
+They will likely delete the mysterious patch
+
+85
+00:04:29.280 --> 00:04:33.280
+and unknowingly reintroduce a critical bug straight into production.
+
+86
+00:04:33.280 --> 00:04:36.560
+Properly documenting your logic transforms a fragile hack
+
+87
+00:04:36.560 --> 00:04:40.080
+into a stable, easily understood piece of your project's history.
+
+88
+00:04:40.080 --> 00:04:44.560
+The reward for this meticulous work is a perfectly clean terminal output
+
+89
+00:04:44.560 --> 00:04:47.680
+following a successful dependency installation.
+
+90
+00:04:47.680 --> 00:04:50.320
+You have successfully audited your technical debt,
+
+91
+00:04:50.320 --> 00:04:51.920
+discarded obsolete files,
+
+92
+00:04:51.920 --> 00:04:55.120
+and migrated your essential patches to the new version.
+
+93
+00:04:55.120 --> 00:04:57.600
+Achieving a stable patch-free foundation
+
+94
+00:04:57.600 --> 00:05:01.200
+is a major milestone in your react native upgrade process.
+
+95
+00:05:01.200 --> 00:05:03.360
+The core system is now intact.
+
+96
+00:05:03.360 --> 00:05:05.360
+With your packages installing cleanly,
+
+97
+00:05:05.360 --> 00:05:07.680
+the immediate next priority is verifying
+
+98
+00:05:07.680 --> 00:05:10.960
+that those upgraded third-party libraries are actually compatible
+
+99
+00:05:10.960 --> 00:05:12.880
+with react native's new architecture.
+

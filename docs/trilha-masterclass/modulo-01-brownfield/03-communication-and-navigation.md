@@ -4,6 +4,7 @@ title: Communication & Navigation
 
 <video width="100%" controls>
   <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc01_03_communication-and-navigation.mp4" type="video/mp4">
+  <track kind="captions" src="/trilha-react-native/assets/captions/trilha_masterclass/mc01_03_communication-and-navigation_en.vtt" srclang="en" label="English" default>
   Your browser does not support the video tag.
 </video>
 

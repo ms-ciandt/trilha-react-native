@@ -1,0 +1,246 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:12.000
+You bump the version to 0.76, run the build command on your legacy-react native code base and immediately hit a wall of catastrophic compilation failures.
+
+2
+00:00:12.000 --> 00:00:18.000
+The standard instinct is to treat these errors as a single, easily traceable code conflict.
+
+3
+00:00:18.000 --> 00:00:22.000
+You assume a package is out of date or a function was deprecated.
+
+4
+00:00:22.000 --> 00:00:33.000
+So you scour the JavaScript chain log, but the specific architecture level crashes flooding your terminal won't be resolved by fixing a syntax error in your JavaScript layer.
+
+5
+00:00:33.000 --> 00:00:42.000
+To get a react native 0.76 build to compile, you must abandon the idea that you are working within a single monolithic framework.
+
+6
+00:00:42.000 --> 00:00:52.000
+These failures originate from hidden entirely separate vectors. A react native application bundle actually operates across three independent execution planes.
+
+7
+00:00:52.000 --> 00:01:01.000
+The framework actually splits into three distinct layers, the JavaScript API surface, the Android build system, and the iOS build system.
+
+8
+00:01:01.000 --> 00:01:10.000
+Because of this structural isolation, a single update can shatter the iOS plane while the Android and JavaScript layers remain perfectly stable.
+
+9
+00:01:10.000 --> 00:01:21.000
+To understand why upgrades fail, we will work backward from version 0.76, deconstructing the specific high impact changes across each of these three layers.
+
+10
+00:01:21.000 --> 00:01:28.000
+Adopting this trial layer perspective allows us to isolate failures and address them as distinct engineering tasks.
+
+11
+00:01:28.000 --> 00:01:36.000
+We will start at the top plane, the JavaScript API layer, and isolate a specific fracture introduced in version 0.74.
+
+12
+00:01:37.000 --> 00:01:45.000
+This flow chart illustrates the Metro Bundler's new behavior. The router strictly respects the exports field in a library's package.json.
+
+13
+00:01:45.000 --> 00:01:55.000
+When third-party libraries configured different exports for node versus react native, traffic routes down an incorrect path, ending in a hard module not found error.
+
+14
+00:01:55.000 --> 00:02:03.000
+Previously stable libraries will abruptly throw missing file errors right after an upgrade because of this invisible shift in module resolution.
+
+15
+00:02:03.000 --> 00:02:12.000
+Resolving breaks at this level requires looking past your own syntax to perform a structural audit of the internal routing inside your third-party dependencies.
+
+16
+00:02:12.000 --> 00:02:20.000
+Moving down to the Android native build layer, we hit a structural enforcement that began in version 0.73.
+
+17
+00:02:20.000 --> 00:02:23.000
+JavaScript Core is no longer bundled with React Native.
+
+18
+00:02:23.000 --> 00:02:27.000
+Hermes is now the exclusive mandatory engine for the framework.
+
+19
+00:02:27.000 --> 00:02:34.000
+If your legacy build configuration explicitly sets enable Hermes to false, your build will instantly fail.
+
+20
+00:02:34.000 --> 00:02:37.000
+There is simply no alternative engine left to process the bundle.
+
+21
+00:02:37.000 --> 00:02:44.000
+Advancing to version 0.76, the framework enforces targeting Android API35.
+
+22
+00:02:44.000 --> 00:02:53.000
+API35 introduces mandatory edge-to-edge layouts, system bars expand, causing legacy UI elements to overlap into the safe area content.
+
+23
+00:02:53.000 --> 00:03:00.000
+Command-setting explicit background colors or relying on hard-coded paddings will now silently fail or cause visual clipping.
+
+24
+00:03:00.000 --> 00:03:09.000
+Version 0.76 also rolls out an Android-specific architectural change. React activity now exposes React host as a public method.
+
+25
+00:03:09.000 --> 00:03:18.000
+If your code accesses the host via reflection or relies on legacy delegates, you must explicitly rewrite those integrations to use this new public API.
+
+26
+00:03:19.000 --> 00:03:28.000
+Fixing the Android layer requires deep modifications to OS-level UI rendering and build scripts, operations completely disconnected from your JavaScript logic.
+
+27
+00:03:28.000 --> 00:03:36.000
+We pivot now to the final architectural plane, the iOS native build system, specifically the updates rolled out in version 0.75.
+
+28
+00:03:36.000 --> 00:03:39.000
+The project template has shifted its foundation.
+
+29
+00:03:39.000 --> 00:03:45.000
+The framework now defaults to Swift instead of Objective-C as the primary language for the app delegate.
+
+30
+00:03:45.000 --> 00:03:47.000
+There is an important nuance here.
+
+31
+00:03:47.000 --> 00:03:56.000
+Legacy Objective-C setups using .MM files will still compile during the initial upgrade, avoiding immediate breakage, but this creates a delayed fracture.
+
+32
+00:03:56.000 --> 00:04:08.000
+As we see with these connecting puzzle pieces, attempting to mix Swift and Objective-C++ in future native code additions demands precise manual updates to the bridging header.
+
+33
+00:04:08.000 --> 00:04:17.000
+While your iOS layer might survive compilation on day one, ignoring this template shift plants a ticking time bomb for any future native integrations.
+
+34
+00:04:17.000 --> 00:04:24.000
+Version 0.76 replaces the central bedrock connecting your JavaScript code to the native systems.
+
+35
+00:04:24.000 --> 00:04:27.000
+The new architecture is now toggled on by default.
+
+36
+00:04:27.000 --> 00:04:32.000
+This diagram shows the complete elimination of the legacy RCT bridge.
+
+37
+00:04:32.000 --> 00:04:39.000
+The old node is replaced by direct pathways, react host for Android, and RCT host for iOS.
+
+38
+00:04:39.000 --> 00:04:41.000
+This introduces immediate risk.
+
+39
+00:04:41.000 --> 00:04:47.000
+Dependencies not migrated to turbo modules are forced down a slower temporary interop layer.
+
+40
+00:04:47.000 --> 00:04:52.000
+Libraries relying on deep native integrations cannot use this interop layer at all.
+
+41
+00:04:52.000 --> 00:04:57.000
+Executing them through the old architecture will trigger catastrophic application crashes.
+
+42
+00:04:57.000 --> 00:05:02.000
+Version 0.76 forces a harsh reality on your dependency tree.
+
+43
+00:05:02.000 --> 00:05:09.000
+A library must be modernized for turbo modules, or it becomes an active structural liability to the entire application.
+
+44
+00:05:09.000 --> 00:05:17.000
+Knowing that breaks execute across three isolated layers is practically useless unless you know exactly where to find the documentation to fix them.
+
+45
+00:05:17.000 --> 00:05:22.000
+Crucial upgrade data is scattered across four distinct, unlinked sources.
+
+46
+00:05:22.000 --> 00:05:25.000
+This flow chart maps the proper diagnostic hierarchy.
+
+47
+00:05:25.000 --> 00:05:30.000
+The official change log is the absolute primary source for strict breaking changes,
+
+48
+00:05:30.000 --> 00:05:34.000
+followed immediately by the working group discussions to catch release candidate bugs.
+
+49
+00:05:34.000 --> 00:05:38.000
+From there, utilize specific GitHub release tags for quick impact scanning
+
+50
+00:05:38.000 --> 00:05:44.000
+and reserve the meta-engineering blog specifically to understand the architectural intent behind the changes.
+
+51
+00:05:44.000 --> 00:05:52.000
+A successful upgrade requires querying the correct source of truth based on which architectural layer is failing, eliminating blind searches through your stack traces.
+
+52
+00:05:52.000 --> 00:05:59.000
+Before writing a single line of code, you must assess your code base against a breaking change impact matrix.
+
+53
+00:05:59.000 --> 00:06:03.000
+This matrix allows you to calculate migration effort upfront.
+
+54
+00:06:03.000 --> 00:06:12.000
+Contrasting simple one-line fixes, like deleting a legacy Hermes toggle, against high effort overhalls, like migrating custom code to turbo modules.
+
+55
+00:06:12.000 --> 00:06:16.000
+The final execution bottleneck is your package dependencies.
+
+56
+00:06:16.000 --> 00:06:25.000
+Manually resolving pure dependency conflicts across this trial layer architecture is mathematically inefficient and highly prone to human error.
+
+57
+00:06:25.000 --> 00:06:27.000
+To solve this, you need automation.
+
+58
+00:06:27.000 --> 00:06:32.000
+Specifically, Microsoft's at-rnxkit-slash-align-debs command-line tool.
+
+59
+00:06:32.000 --> 00:06:36.000
+The aligner programmatically scans your entire dependency tree.
+
+60
+00:06:36.000 --> 00:06:44.000
+It surfaces incompatible package versions and patches them automatically, aligning your project with the correct requirements for version 0.76.
+
+61
+00:06:44.000 --> 00:06:56.000
+By combining the trial layer mental model with rigorous automated alignment, engineering teams can navigate the react native 0.76 upgrade as a controlled predictable operation.
+

@@ -8,6 +8,7 @@ sidebar_position: 3
 
 <video width="100%" controls>
   <source src="/trilha-react-native/assets/videos/trilha_android/compose_03_layout_column_row_vs_flexbox.mp4" type="video/mp4">
+  <track kind="captions" src="/trilha-react-native/assets/captions/trilha_android/compose_03_layout_column_row_vs_flexbox.vtt" srclang="pt" label="Português" default>
   Your browser does not support the video tag.
 </video>
 

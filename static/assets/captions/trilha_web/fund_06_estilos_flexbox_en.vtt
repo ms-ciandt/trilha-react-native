@@ -1,0 +1,402 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:02.000
+You're building a mobile app.
+
+2
+00:00:02.000 --> 00:00:06.400
+You drop in the exact CSS that flawlessly handles your web layouts,
+
+3
+00:00:06.400 --> 00:00:09.000
+expecting everything to snap into place.
+
+4
+00:00:09.000 --> 00:00:13.000
+Instead, you're met with immediate crashes over invalid units
+
+5
+00:00:13.000 --> 00:00:16.000
+or child elements that stack vertically and disappear
+
+6
+00:00:16.000 --> 00:00:19.000
+because the engine doesn't recognize your web first ro logic.
+
+7
+00:00:19.000 --> 00:00:24.000
+The breakdown happens because React Native doesn't use a web browser rendering engine.
+
+8
+00:00:24.000 --> 00:00:26.000
+It isn't reading CSS at all.
+
+9
+00:00:26.000 --> 00:00:28.000
+This diagram shows the difference.
+
+10
+00:00:28.000 --> 00:00:32.000
+On the left is the sprawling complexity of the web document object model.
+
+11
+00:00:32.000 --> 00:00:35.000
+On the right is React Native's actual rendering core,
+
+12
+00:00:35.000 --> 00:00:37.000
+the yoga layout framework.
+
+13
+00:00:37.000 --> 00:00:42.000
+Yoga is a highly constrained mobile optimized emulation of standard flex box.
+
+14
+00:00:42.000 --> 00:00:46.000
+To style successfully on mobile, you have to map the exact points
+
+15
+00:00:46.000 --> 00:00:49.000
+where yoga diverges from standard web behavior.
+
+16
+00:00:49.000 --> 00:00:53.000
+That means adjusting to three constraints, strict syntax rules,
+
+17
+00:00:53.000 --> 00:00:56.000
+single-value flex shorthand, and modern build tools.
+
+18
+00:00:57.000 --> 00:01:01.000
+Understanding yoga's mechanical rules is the only reliable way
+
+19
+00:01:01.000 --> 00:01:06.000
+to bypass constant debugging and write predictable mobile interfaces.
+
+20
+00:01:06.000 --> 00:01:11.000
+The translation from web to mobile begins with how layout properties are formatted.
+
+21
+00:01:11.000 --> 00:01:15.000
+This diagram demonstrates the first absolute rule of yoga.
+
+22
+00:01:15.000 --> 00:01:19.000
+When parsing a standard CSS property like background color,
+
+23
+00:01:19.000 --> 00:01:24.000
+the engine strips out the hyphen and forces strict camel case syntax.
+
+24
+00:01:24.000 --> 00:01:29.000
+In addition, CSS units like pixels or REMs are entirely invalid,
+
+25
+00:01:29.000 --> 00:01:31.000
+leaving only a bare integer.
+
+26
+00:01:31.000 --> 00:01:34.000
+These bare numbers represent density independent pixels.
+
+27
+00:01:34.000 --> 00:01:37.000
+The engine automatically scales that constant integer
+
+28
+00:01:37.000 --> 00:01:41.000
+to match the physical pixel density of the user's specific hardware.
+
+29
+00:01:41.000 --> 00:01:46.000
+Beyond syntax, the core mechanics of how elements align on the screen also change.
+
+30
+00:01:46.000 --> 00:01:50.000
+Standard web flex box automatically aligns child elements horizontally,
+
+31
+00:01:50.000 --> 00:01:53.000
+defaulting to a row orientation.
+
+32
+00:01:53.000 --> 00:01:56.000
+Instead, react native completely switches this default.
+
+33
+00:01:56.000 --> 00:02:00.000
+All layouts inside the yoga engine initialize as a vertical column.
+
+34
+00:02:00.000 --> 00:02:04.000
+This override exists because mobile screens are physically constrained
+
+35
+00:02:04.000 --> 00:02:06.000
+to a portrait-first orientation.
+
+36
+00:02:06.000 --> 00:02:12.000
+These foundational shifts in syntax and orientation show that physical mobile constraints
+
+37
+00:02:12.000 --> 00:02:16.000
+dictate react native's logic over established web conventions.
+
+38
+00:02:16.000 --> 00:02:21.000
+The largest source of layout errors for web developers comes from a single property,
+
+39
+00:02:21.000 --> 00:02:23.000
+the flex shorthand.
+
+40
+00:02:23.000 --> 00:02:28.000
+In standard CSS, the flex property accepts up to three distinct values in a string,
+
+41
+00:02:28.000 --> 00:02:33.000
+controlling how an element grows, shrinks, and sets its base size.
+
+42
+00:02:33.000 --> 00:02:35.000
+The react engine rejects this.
+
+43
+00:02:35.000 --> 00:02:39.000
+The react native flex prop accepts exactly one number.
+
+44
+00:02:39.000 --> 00:02:42.000
+Here is how the engine handles a positive integer.
+
+45
+00:02:42.000 --> 00:02:47.000
+An input of flex one mechanically expands into flex grow one,
+
+46
+00:02:47.000 --> 00:02:50.000
+flex shrink one, and a flex basis of zero.
+
+47
+00:02:50.000 --> 00:02:54.000
+Practically, this commands an element to expand evenly,
+
+48
+00:02:54.000 --> 00:02:56.000
+perfectly filling the available space.
+
+49
+00:02:56.000 --> 00:03:00.000
+When the input changes to zero, the output channels instantly adjust to zero
+
+50
+00:03:00.000 --> 00:03:04.000
+for grow and shrink and set the basis to auto.
+
+51
+00:03:04.000 --> 00:03:08.000
+In this state, the element will not expand or compress to fill space.
+
+52
+00:03:08.000 --> 00:03:12.000
+It is rigidly locked to its explicit width and height properties.
+
+53
+00:03:12.000 --> 00:03:16.000
+Finally, an input of negative one yields a zero for grow,
+
+54
+00:03:16.000 --> 00:03:19.000
+a one for shrink, and an auto basis.
+
+55
+00:03:19.000 --> 00:03:23.000
+Attempting to pass a multi-value string like flex one one auto
+
+56
+00:03:23.000 --> 00:03:26.000
+will completely crash the layout engine.
+
+57
+00:03:26.000 --> 00:03:30.000
+If the standard single number combinations don't meet your design needs,
+
+58
+00:03:30.000 --> 00:03:35.000
+you must write out the grow, shrink, and basis properties explicitly on separate lines.
+
+59
+00:03:35.000 --> 00:03:39.000
+Yoga drops the flexibility of CSS shorthand syntax
+
+60
+00:03:39.000 --> 00:03:43.000
+to ensure predictable constrained memory allocation on mobile hardware.
+
+61
+00:03:43.000 --> 00:03:46.000
+Moving past internal flex box logic,
+
+62
+00:03:46.000 --> 00:03:50.000
+cross-platform rendering introduces another layer of discrepancies,
+
+63
+00:03:50.000 --> 00:03:52.000
+starting with shadows.
+
+64
+00:03:52.000 --> 00:03:56.000
+Under the legacy architecture, casting a shadow meant writing fragmented code,
+
+65
+00:03:56.000 --> 00:04:01.000
+specific shadow properties for iOS, and a separate elevation property for Android.
+
+66
+00:04:01.000 --> 00:04:07.000
+React Native 0.76 and its new architecture unified this fragmentation,
+
+67
+00:04:07.000 --> 00:04:14.000
+introducing a single CSS compatible box shadow property that works across both platforms.
+
+68
+00:04:14.000 --> 00:04:18.000
+Other style properties maintain architectural quirks.
+
+69
+00:04:18.000 --> 00:04:22.000
+The transform property, for example, requires an array of specific objects,
+
+70
+00:04:22.000 --> 00:04:25.000
+not a continuous text string.
+
+71
+00:04:25.000 --> 00:04:30.000
+To bypass these exact quirks, many developers turn to utility frameworks like native wind.
+
+72
+00:04:30.000 --> 00:04:35.000
+Native wind acts as a compiler, translating familiar tailwind CSS classes
+
+73
+00:04:35.000 --> 00:04:39.000
+directly into yoga compatible native objects at build time.
+
+74
+00:04:40.000 --> 00:04:45.000
+But upgrading to native wind version 4 introduces a specific configuration risk,
+
+75
+00:04:45.000 --> 00:04:49.000
+where styles fail to apply despite a successful build.
+
+76
+00:04:49.000 --> 00:04:53.000
+Version 4 strictly demands that you use a babble preset in your configuration,
+
+77
+00:04:53.000 --> 00:04:55.000
+rather than a babble plugin.
+
+78
+00:04:55.000 --> 00:04:59.000
+If you use the old plugin method, the app compiles without errors,
+
+79
+00:04:59.000 --> 00:05:04.000
+but styles never render because the compiler skips processing the utility classes.
+
+80
+00:05:04.000 --> 00:05:10.000
+Furthermore, native wind version 4 is incredibly incompatible with tailwind CSS version 4.
+
+81
+00:05:10.000 --> 00:05:15.000
+You must explicitly pin your project dependencies to the tailwind 3.x range,
+
+82
+00:05:15.000 --> 00:05:18.000
+or the integration will fail to apply your styles.
+
+83
+00:05:18.000 --> 00:05:24.000
+Injecting web based utility tools into a react native environment requires precise synchronization
+
+84
+00:05:24.000 --> 00:05:26.000
+between your bundler and compiler.
+
+85
+00:05:26.000 --> 00:05:30.000
+Modern architecture brings powerful web light convenience to mobile development,
+
+86
+00:05:30.000 --> 00:05:34.000
+but only if you execute the build step configuration with absolute precision.
+
+87
+00:05:34.000 --> 00:05:37.000
+Let's look at the complete functioning ecosystem.
+
+88
+00:05:37.000 --> 00:05:40.000
+This diagram outlines the entire pipeline.
+
+89
+00:05:40.000 --> 00:05:44.000
+Utility classes and styling objects pass through strict compilers,
+
+90
+00:05:44.000 --> 00:05:48.000
+transforming into constraints that lock into the yoga engine below.
+
+91
+00:05:48.000 --> 00:05:52.000
+During translation, hyphens convert to camel case, units are stripped,
+
+92
+00:05:52.000 --> 00:05:54.000
+and flux values compress to single numbers.
+
+93
+00:05:54.000 --> 00:05:57.000
+You must design your layouts anticipating this system,
+
+94
+00:05:57.000 --> 00:05:59.000
+building for columns before rows.
+
+95
+00:05:59.000 --> 00:06:03.000
+Treating a mobile application exactly like a web browser,
+
+96
+00:06:03.000 --> 00:06:06.000
+guarantees technical debt, and endless debugging.
+
+97
+00:06:06.000 --> 00:06:12.000
+These deviations from web CSS provide the mechanical efficiency required for fluid mobile performance.
+
+98
+00:06:12.000 --> 00:06:16.000
+By respecting the strict boundaries of the yoga engine
+
+99
+00:06:16.000 --> 00:06:18.000
+and maintaining precise build configurations,
+
+100
+00:06:18.000 --> 00:06:23.000
+you can execute complex styling for robust, predictable mobile interfaces.
+

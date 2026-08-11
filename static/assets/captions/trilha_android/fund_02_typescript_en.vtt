@@ -1,0 +1,418 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:06.920
+Leaving the JVM ecosystem for a JavaScript engine like V8 or Hermes requires an adjustment.
+
+2
+00:00:06.920 --> 00:00:08.560
+You are jumping tracks.
+
+3
+00:00:08.560 --> 00:00:12.360
+But while the engine changes, the engineering goals remain.
+
+4
+00:00:12.360 --> 00:00:17.600
+TypeScript and Kotlin share a core requirement, catching bugs at compile time rather than letting
+
+5
+00:00:17.600 --> 00:00:19.520
+them crash at runtime.
+
+6
+00:00:19.520 --> 00:00:21.880
+The difference lies in the execution.
+
+7
+00:00:21.880 --> 00:00:26.520
+Kotlin is a true compiler that transforms your code into JVM bytecode.
+
+8
+00:00:26.520 --> 00:00:29.440
+TypeScript is purely a static analysis layer.
+
+9
+00:00:29.440 --> 00:00:33.000
+By definition, TypeScript is a superset of JavaScript.
+
+10
+00:00:33.000 --> 00:00:36.920
+This means all valid JavaScript is inherently valid TypeScript.
+
+11
+00:00:36.920 --> 00:00:41.480
+You can strip away the compiler's safety net and the underlying code will still run.
+
+12
+00:00:41.480 --> 00:00:44.200
+TypeScript's types do not exist at runtime.
+
+13
+00:00:44.200 --> 00:00:49.480
+The compiler uses them to analyze data flow and flag errors, then removes every type annotation
+
+14
+00:00:49.480 --> 00:00:51.640
+entirely before execution.
+
+15
+00:00:51.640 --> 00:00:56.520
+We will map your existing Kotlin mental models directly to TypeScript syntax.
+
+16
+00:00:56.520 --> 00:01:02.000
+One TypeScript involves adopting a new vocabulary to enforce strict, predictable rules on top
+
+17
+00:01:02.000 --> 00:01:04.080
+of dynamic JavaScript.
+
+18
+00:01:04.080 --> 00:01:08.720
+That vocabulary starts with the TSCconfig.json file.
+
+19
+00:01:08.720 --> 00:01:13.360
+This is the central control panel that determines how rigorously the TypeScript compiler will
+
+20
+00:01:13.360 --> 00:01:15.120
+grade your work.
+
+21
+00:01:15.120 --> 00:01:19.880
+Modern React Native and Expo projects generate this file automatically and enable strict
+
+22
+00:01:19.880 --> 00:01:21.720
+mode by default.
+
+23
+00:01:21.720 --> 00:01:26.640
+Using the strict true flag acts as the master switch, activating a suite of type checking
+
+24
+00:01:26.640 --> 00:01:27.840
+rules.
+
+25
+00:01:27.840 --> 00:01:33.080
+For Kotlin developer, the most critical rule inside that suite is strict null checks.
+
+26
+00:01:33.080 --> 00:01:38.080
+This flag prevents null and undefined from being silently assigned to other variables, giving
+
+27
+00:01:38.080 --> 00:01:41.880
+you the same baseline null safety you expect from Kotlin.
+
+28
+00:01:41.880 --> 00:01:47.080
+It also enables no implicit any to prevent untyped variables from slipping through, and strict
+
+29
+00:01:47.080 --> 00:01:51.480
+function types to ensure your function parameters are checked accurately.
+
+30
+00:01:51.480 --> 00:01:56.680
+Knowing that strict mode is enabled is the essential first step to transforming JavaScript's
+
+31
+00:01:56.680 --> 00:02:00.520
+dynamic nature into a structured development environment.
+
+32
+00:02:00.520 --> 00:02:04.280
+In Kotlin, nullability is a native property of a type.
+
+33
+00:02:04.280 --> 00:02:08.800
+You append a question mark, and the compiler knows that a string might not be there.
+
+34
+00:02:08.800 --> 00:02:13.120
+Here is Kotlin's nullable string versus TypeScript's union types.
+
+35
+00:02:13.120 --> 00:02:14.880
+TypeScript uses set theory.
+
+36
+00:02:14.880 --> 00:02:20.440
+The pipe operator combines completely distinct types, making null and undefined independent
+
+37
+00:02:20.440 --> 00:02:22.920
+sets rather than string properties.
+
+38
+00:02:22.920 --> 00:02:27.560
+This achieves identical compiler safety by joining possible values.
+
+39
+00:02:27.560 --> 00:02:29.360
+Navigating sets is identical.
+
+40
+00:02:29.360 --> 00:02:35.280
+The safe call operator, question mark, period, functions the exact same way in both languages.
+
+41
+00:02:35.280 --> 00:02:40.400
+For fallbacks, Kotlin's Elvis operator becomes TypeScript's nullish coalescing operator.
+
+42
+00:02:40.400 --> 00:02:41.800
+Two question marks.
+
+43
+00:02:41.800 --> 00:02:47.000
+To force an unwrap, Kotlin's Dumbledang becomes TypeScript's non-null assertion, a single
+
+44
+00:02:47.000 --> 00:02:48.520
+exclamation point.
+
+45
+00:02:48.520 --> 00:02:50.200
+Treat this as a last resort.
+
+46
+00:02:50.200 --> 00:02:55.120
+Avoid it in TypeScript just as strictly as you avoid the Dumbledang in Kotlin.
+
+47
+00:02:55.120 --> 00:02:59.280
+TypeScript automatically infers primitive types like strings, numbers, and booleans upon
+
+48
+00:02:59.280 --> 00:03:00.280
+assignment.
+
+49
+00:03:00.280 --> 00:03:02.960
+You rarely need to type them out explicitly.
+
+50
+00:03:02.960 --> 00:03:07.160
+Treating union types as a combination of sets provides the foundation for null safety and
+
+51
+00:03:07.160 --> 00:03:09.720
+advanced type composition in TypeScript.
+
+52
+00:03:09.720 --> 00:03:14.600
+When defining the shape of an object in Kotlin, you rely on the data class and the interface.
+
+53
+00:03:14.600 --> 00:03:19.600
+This translation shows a Kotlin data class named user, mapping to TypeScript's parallel constructs.
+
+54
+00:03:19.600 --> 00:03:21.720
+The interface and the type alias.
+
+55
+00:03:21.720 --> 00:03:26.480
+For standard objects shapes like this user, interface and type are largely interchangeable.
+
+56
+00:03:26.480 --> 00:03:29.440
+The distinction comes down to their specific use cases.
+
+57
+00:03:29.440 --> 00:03:34.080
+An interface is better suited for object-oriented patterns like extension and inheritance.
+
+58
+00:03:34.080 --> 00:03:38.560
+A type alias is more flexible and is the preferred choice when composing complex combinations
+
+59
+00:03:38.560 --> 00:03:39.880
+of union types.
+
+60
+00:03:39.880 --> 00:03:43.280
+Again, neither of these constructs compiles into JavaScript.
+
+61
+00:03:43.280 --> 00:03:46.960
+They are blueprints used only by the static analyzer.
+
+62
+00:03:46.960 --> 00:03:49.520
+TypeScript relies on structural typing.
+
+63
+00:03:49.520 --> 00:03:54.520
+The compiler only cares if the incoming data's shape matches the interface's blueprint,
+
+64
+00:03:54.520 --> 00:03:58.160
+regardless of what class actually instantiated it.
+
+65
+00:03:58.160 --> 00:04:03.160
+One of the most common architectural challenges is managing mutually exclusive states, like
+
+66
+00:04:03.160 --> 00:04:07.640
+a network request that is either loading, success, or error.
+
+67
+00:04:07.640 --> 00:04:12.200
+The standard idiomatic Kotlin solution to this problem is the sealed class.
+
+68
+00:04:12.200 --> 00:04:15.040
+This is TypeScript's discriminated union.
+
+69
+00:04:15.040 --> 00:04:18.400
+Success and error types combine into a result type.
+
+70
+00:04:18.400 --> 00:04:23.240
+The core mechanic is the discriminant field, like status, comma, success.
+
+71
+00:04:23.240 --> 00:04:28.160
+The compiler tracks the shared literal to perform exhaustiveness checking, strictly guaranteeing
+
+72
+00:04:28.160 --> 00:04:32.080
+the correct data payload exists within each switch block.
+
+73
+00:04:32.080 --> 00:04:36.520
+This narrowing behavior is the equivalent of how Kotlin's when statement functions against
+
+74
+00:04:36.520 --> 00:04:38.480
+a sealed class hierarchy.
+
+75
+00:04:38.480 --> 00:04:44.600
+To check these types dynamically, TypeScript relies on the type of and in operators, performing
+
+76
+00:04:44.600 --> 00:04:49.240
+the same type guarding role as Kotlin's is keyword.
+
+77
+00:04:49.240 --> 00:04:53.680
+Discriminated unions form the architectural bedrock for predictable, strictly typed state
+
+78
+00:04:53.680 --> 00:04:56.400
+management across React Native.
+
+79
+00:04:56.400 --> 00:04:59.680
+TypeScript also includes built-in utility types.
+
+80
+00:04:59.680 --> 00:05:03.960
+These manipulate the shape of existing data structures, without forcing you to write new
+
+81
+00:05:03.960 --> 00:05:05.440
+boilerplate.
+
+82
+00:05:05.440 --> 00:05:09.680
+The read-only utility type acts like Kotlin's vowel constraint.
+
+83
+00:05:09.680 --> 00:05:13.560
+It makes all fields in an interface immutable after creation.
+
+84
+00:05:13.560 --> 00:05:18.560
+The partial utility type instantly makes all fields in an interface optional, mapping
+
+85
+00:05:18.560 --> 00:05:21.600
+them to union types that include undefined.
+
+86
+00:05:21.600 --> 00:05:23.760
+This brings us to a common trap.
+
+87
+00:05:23.760 --> 00:05:28.800
+Kotlin developers often instinctively reach for the enum keyword when writing TypeScript.
+
+88
+00:05:28.800 --> 00:05:32.360
+This split screen shows why TypeScript enums should be avoided.
+
+89
+00:05:32.360 --> 00:05:36.480
+On the left, enums generate complex JavaScript logic at runtime.
+
+90
+00:05:36.480 --> 00:05:41.160
+On the right, the idiomatic alternative, simple string union types.
+
+91
+00:05:41.160 --> 00:05:45.800
+This provides strict compile time safety, but vanish during compilation, leaving zero
+
+92
+00:05:45.800 --> 00:05:47.880
+execution footprint.
+
+93
+00:05:47.880 --> 00:05:52.720
+Using pure unions and interfaces instead of enums is how you write lightweight, idiomatic
+
+94
+00:05:52.720 --> 00:05:54.320
+React Native code.
+
+95
+00:05:54.320 --> 00:05:59.880
+The architectural patterns and mental models you acquired in Kotlin transfer directly to TypeScript.
+
+96
+00:05:59.880 --> 00:06:02.720
+Look at this React Native component snippet.
+
+97
+00:06:02.720 --> 00:06:07.080
+Interfaces define the blueprints, unions manage the state, and strict mode acts as your safety
+
+98
+00:06:07.080 --> 00:06:08.080
+net.
+
+99
+00:06:08.080 --> 00:06:12.080
+You will use these exact TypeScript structures to define the properties and state of your
+
+100
+00:06:12.080 --> 00:06:14.400
+UI components in React Native.
+
+101
+00:06:14.400 --> 00:06:18.640
+Now that the programming language is mapped out, we can transition to the actual UI rendering
+
+102
+00:06:18.640 --> 00:06:19.640
+layer.
+
+103
+00:06:19.640 --> 00:06:24.480
+In the next video, we will map Native Android views, like TextView and RecyclerView, directly
+
+104
+00:06:24.480 --> 00:06:26.200
+to React Native Core components.
+

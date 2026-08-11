@@ -6,6 +6,7 @@ title: "Fabric — Native Components"
 
 <video width="100%" controls>
   <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc03_04_fabric-components.mp4" type="video/mp4">
+  <track kind="captions" src="/trilha-react-native/assets/captions/trilha_masterclass/mc03_04_fabric-components.vtt" srclang="pt" label="Português" default>
   Your browser does not support the video tag.
 </video>
 

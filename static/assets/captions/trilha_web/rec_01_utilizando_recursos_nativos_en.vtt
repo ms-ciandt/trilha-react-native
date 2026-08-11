@@ -1,0 +1,398 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:02.400
+When you build an application for the web,
+
+2
+00:00:02.400 --> 00:00:06.000
+the environment feels incredibly smooth and predictable.
+
+3
+00:00:06.000 --> 00:00:08.400
+You have built-in tools that just work,
+
+4
+00:00:08.400 --> 00:00:12.200
+allowing you to move fast and focus entirely on your code.
+
+5
+00:00:12.200 --> 00:00:16.200
+That smooth experience is entirely thanks to the web browser.
+
+6
+00:00:16.200 --> 00:00:19.200
+Think of the browser as a universal translator.
+
+7
+00:00:19.200 --> 00:00:22.800
+It sits quietly between your React code and the physical device
+
+8
+00:00:22.800 --> 00:00:27.400
+the user is holding, handling all the complex communication in the background.
+
+9
+00:00:27.600 --> 00:00:30.000
+If your code needs to save a user's settings,
+
+10
+00:00:30.000 --> 00:00:32.400
+you ask for a tool called local storage
+
+11
+00:00:32.400 --> 00:00:36.400
+and the browser translates that request into instructions for the hard drive.
+
+12
+00:00:36.400 --> 00:00:38.400
+If you need to find the user on a map,
+
+13
+00:00:38.400 --> 00:00:41.000
+you call navigator.geolocation
+
+14
+00:00:41.000 --> 00:00:44.600
+and the browser smoothly fetches the GPS coordinates for you.
+
+15
+00:00:44.600 --> 00:00:48.200
+Moving to React Native changes this environment completely.
+
+16
+00:00:48.200 --> 00:00:51.600
+Your React code comes with you, but the browser does not.
+
+17
+00:00:51.600 --> 00:00:54.200
+You are now working directly on the mobile device
+
+18
+00:00:54.200 --> 00:00:56.200
+without your trusty translator.
+
+19
+00:00:56.200 --> 00:01:00.900
+Without that middleman, those familiar requests instantly crash.
+
+20
+00:01:00.900 --> 00:01:05.900
+The mobile device has no idea what local storage or a navigator object is.
+
+21
+00:01:05.900 --> 00:01:11.300
+Your code is asking for tools that simply do not exist outside the browser sandbox.
+
+22
+00:01:11.300 --> 00:01:13.300
+This is exactly what makes the transition
+
+23
+00:01:13.300 --> 00:01:15.800
+to React Native challenging at first.
+
+24
+00:01:15.800 --> 00:01:18.300
+You still know exactly how to write React,
+
+25
+00:01:18.300 --> 00:01:23.000
+but you are temporarily stranded without a built-in way to talk to the phone's hardware.
+
+26
+00:01:23.000 --> 00:01:25.200
+To fix this broken communication,
+
+27
+00:01:25.200 --> 00:01:28.200
+the React Native ecosystem provides a solution.
+
+28
+00:01:28.200 --> 00:01:30.800
+Instead of a single, massive translator,
+
+29
+00:01:30.800 --> 00:01:34.600
+we use specialized direct connections called native bridges.
+
+30
+00:01:34.600 --> 00:01:36.300
+These are external libraries,
+
+31
+00:01:36.300 --> 00:01:38.300
+often from the Expo ecosystem,
+
+32
+00:01:38.300 --> 00:01:41.800
+that wire your React code directly into the mobile hardware.
+
+33
+00:01:41.800 --> 00:01:43.900
+Take saving data, for example.
+
+34
+00:01:43.900 --> 00:01:46.300
+Since we lack a browser's local storage,
+
+35
+00:01:46.300 --> 00:01:48.100
+we install a bridge library.
+
+36
+00:01:48.100 --> 00:01:52.100
+On mobile, you will use tools like MMKV or Async Storage
+
+37
+00:01:52.100 --> 00:01:54.500
+to save data directly to the phone's drive,
+
+38
+00:01:54.600 --> 00:01:57.300
+which is actually much faster than the web equivalent.
+
+39
+00:01:57.300 --> 00:01:59.100
+For finding the user on a map,
+
+40
+00:01:59.100 --> 00:02:02.200
+we replace the web's navigator.geo location
+
+41
+00:02:02.200 --> 00:02:04.800
+with a library called Expo location.
+
+42
+00:02:04.800 --> 00:02:06.400
+And if you want to take a photo,
+
+43
+00:02:06.400 --> 00:02:08.400
+you won't call Get User Media.
+
+44
+00:02:08.400 --> 00:02:10.600
+You will use a library called Expo Camera,
+
+45
+00:02:10.600 --> 00:02:12.300
+which gives you a physical component
+
+46
+00:02:12.300 --> 00:02:16.500
+that you render right inside your React application to display the camera feed.
+
+47
+00:02:16.500 --> 00:02:19.200
+Fortunately, you do not have to replace everything.
+
+48
+00:02:19.200 --> 00:02:21.700
+Network requests like fetch or web sockets
+
+49
+00:02:21.700 --> 00:02:25.200
+do not rely on the browser's document object model to function.
+
+50
+00:02:25.200 --> 00:02:28.000
+Those specific tools work exactly the same on a mobile phone
+
+51
+00:02:28.000 --> 00:02:29.700
+as they do on a laptop.
+
+52
+00:02:29.700 --> 00:02:32.800
+Developing for mobile is largely a phrase book exercise.
+
+53
+00:02:32.800 --> 00:02:34.100
+You keep your React skills
+
+54
+00:02:34.100 --> 00:02:36.100
+and simply swap out web specific tools
+
+55
+00:02:36.100 --> 00:02:38.400
+for mobile specific bridge libraries.
+
+56
+00:02:38.400 --> 00:02:41.200
+There is a catch to having this direct hardware access.
+
+57
+00:02:41.200 --> 00:02:44.400
+You now have to negotiate with iOS and Android directly
+
+58
+00:02:44.400 --> 00:02:45.700
+and mobile operating systems
+
+59
+00:02:45.700 --> 00:02:49.000
+are incredibly strict gatekeepers when it comes to user privacy.
+
+60
+00:02:49.100 --> 00:02:52.300
+On the web, asking to use a camera or microphone
+
+61
+00:02:52.300 --> 00:02:55.200
+is usually a straightforward binary choice.
+
+62
+00:02:55.200 --> 00:02:58.200
+The user clicks accept or they click deny.
+
+63
+00:02:58.200 --> 00:03:02.500
+Mobile devices split this decision into five distinct states.
+
+64
+00:03:02.500 --> 00:03:07.800
+A permission can be granted, denied, blocked, limited or unavailable.
+
+65
+00:03:07.800 --> 00:03:10.100
+For a developer transitioning from the web,
+
+66
+00:03:10.100 --> 00:03:13.700
+the most surprising trap on this list is the blocked state.
+
+67
+00:03:13.700 --> 00:03:17.300
+On a mobile device, if a user permanently denies a permission,
+
+68
+00:03:17.300 --> 00:03:20.000
+say they tap don't allow on a location prompt,
+
+69
+00:03:20.000 --> 00:03:22.400
+the operating system locks the door.
+
+70
+00:03:22.400 --> 00:03:25.000
+Your app is stripped of the ability to ever trigger
+
+71
+00:03:25.000 --> 00:03:27.200
+that native permission prompt again.
+
+72
+00:03:27.200 --> 00:03:30.600
+You cannot write a line of code to force that prompt back open.
+
+73
+00:03:30.600 --> 00:03:33.800
+Instead, you have to build a custom user interface
+
+74
+00:03:33.800 --> 00:03:36.400
+that politely asks the user to leave your app,
+
+75
+00:03:36.400 --> 00:03:38.200
+open their phone's central settings,
+
+76
+00:03:38.200 --> 00:03:40.200
+and manually flip the switch.
+
+77
+00:03:40.200 --> 00:03:42.100
+Requesting hardware access on mobile
+
+78
+00:03:42.100 --> 00:03:44.300
+requires a multi-step design strategy
+
+79
+00:03:44.300 --> 00:03:46.500
+to account for the moments when the operating system
+
+80
+00:03:46.500 --> 00:03:48.200
+refuses to cooperate.
+
+81
+00:03:48.200 --> 00:03:51.200
+Knowing how to ask for permissions is step one.
+
+82
+00:03:51.200 --> 00:03:53.700
+Step two is knowing exactly where to find
+
+83
+00:03:53.700 --> 00:03:56.500
+the right native bridges for your new features.
+
+84
+00:03:56.500 --> 00:03:59.700
+Your first stop is the official Expo documentation
+
+85
+00:03:59.700 --> 00:04:02.100
+at docs.expo.dev.
+
+86
+00:04:02.100 --> 00:04:05.300
+If an official Expo library exists, use it.
+
+87
+00:04:05.300 --> 00:04:07.500
+Next, check the React Native directory
+
+88
+00:04:07.500 --> 00:04:11.400
+to filter community built libraries by platform and maintenance.
+
+89
+00:04:11.400 --> 00:04:15.700
+Finally, search the NPM registry for React Native packages.
+
+90
+00:04:15.700 --> 00:04:19.000
+Following this specific order is a strategic choice.
+
+91
+00:04:19.000 --> 00:04:21.900
+Libraries from the Expo ecosystem are guaranteed
+
+92
+00:04:21.900 --> 00:04:24.700
+to be tested against current versions of React Native
+
+93
+00:04:24.700 --> 00:04:26.700
+and they support rapid development tools
+
+94
+00:04:26.700 --> 00:04:29.900
+like Expo Go immediately upon installation.
+
+95
+00:04:29.900 --> 00:04:33.700
+Navigating this new ecosystem requires a little patience.
+
+96
+00:04:33.700 --> 00:04:37.000
+Fortunately, you already have the most important skill,
+
+97
+00:04:37.000 --> 00:04:39.600
+writing interactive logic with React.
+
+98
+00:04:39.600 --> 00:04:42.700
+Learning this new vocabulary is what allows you to build apps
+
+99
+00:04:42.700 --> 00:04:45.900
+that use the physical sensors living in your user's pocket.
+
