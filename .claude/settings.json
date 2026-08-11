@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__notebook-downloader__download_notebook_videos",
+      "Bash(git checkout -b *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "PowerShell(Copy-Item *)"
+    ]
+  }
+}
