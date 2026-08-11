@@ -4,7 +4,7 @@ title: "React Native Core Components"
 
 # React Native Core Components
 
-<video width="100%" controls>
+<video width="100%" controls controlsList="nodownload">
   <source src="/trilha-react-native/assets/videos/trilha_nativo/fund_06_rn_core_components.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>

@@ -4,7 +4,7 @@ title: "React Fundamentals for Native Developers"
 
 # React Fundamentals for Native Developers
 
-<video width="100%" controls>
+<video width="100%" controls controlsList="nodownload">
   <source src="/trilha-react-native/assets/videos/trilha_nativo/fund_03_react_fundamentals.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>

@@ -2,7 +2,7 @@
 title: "Performance — Profiling & Renders"
 ---
 
-<video width="100%" controls>
+<video width="100%" controls controlsList="nodownload">
   <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc04_02_profiling-and-renders.mp4" type="video/mp4">
   <track kind="captions" src="/trilha-react-native/assets/captions/trilha_masterclass/mc04_02_profiling-and-renders.vtt" srclang="pt" label="Português" default>
   Your browser does not support the video tag.

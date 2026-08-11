@@ -4,7 +4,7 @@ title: Components & Props in Depth
 
 # Components & Props in Depth
 
-<video width="100%" controls>
+<video width="100%" controls controlsList="nodownload">
   <source src="/trilha-react-native/assets/videos/trilha_nativo/fund_04_components_props.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>

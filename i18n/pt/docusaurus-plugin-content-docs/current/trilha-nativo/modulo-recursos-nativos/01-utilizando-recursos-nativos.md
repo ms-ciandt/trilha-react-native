@@ -7,7 +7,7 @@ title: "Utilizando Recursos Nativos"
 
 ## Video Overview
 
-<video width="100%" controls>
+<video width="100%" controls controlsList="nodownload">
   <source src="/trilha-react-native/assets/videos/trilha_nativa_01_utilizando_recursos_nativos_en.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>

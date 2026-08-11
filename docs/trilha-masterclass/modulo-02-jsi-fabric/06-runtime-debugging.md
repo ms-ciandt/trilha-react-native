@@ -4,7 +4,7 @@ title: "Runtime — Debugging & E2E"
 
 # Runtime — Debugging & E2E
 
-<video width="100%" controls>
+<video width="100%" controls controlsList="nodownload">
   <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc03_06_runtime-debugging.mp4" type="video/mp4">
   <track kind="captions" src="/trilha-react-native/assets/captions/trilha_masterclass/mc03_06_runtime-debugging_en.vtt" srclang="en" label="English" default>
   Your browser does not support the video tag.

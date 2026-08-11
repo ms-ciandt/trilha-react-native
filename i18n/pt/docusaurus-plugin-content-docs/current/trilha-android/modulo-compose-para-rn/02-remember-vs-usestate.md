@@ -6,7 +6,7 @@ sidebar_position: 2
 
 ## Video Overview
 
-<video width="100%" controls>
+<video width="100%" controls controlsList="nodownload">
   <source src="/trilha-react-native/assets/videos/trilha_android/compose_02_remember_vs_usestate.mp4" type="video/mp4">
   <track kind="captions" src="/trilha-react-native/assets/captions/trilha_android/compose_02_remember_vs_usestate.vtt" srclang="pt" label="Português" default>
   Your browser does not support the video tag.

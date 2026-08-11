@@ -6,7 +6,7 @@ sidebar_position: 3
 
 ## Video Overview
 
-<video width="100%" controls>
+<video width="100%" controls controlsList="nodownload">
   <source src="/trilha-react-native/assets/videos/trilha_android/compose_03_layout_column_row_vs_flexbox.mp4" type="video/mp4">
   <track kind="captions" src="/trilha-react-native/assets/captions/trilha_android/compose_03_layout_column_row_vs_flexbox_en.vtt" srclang="en" label="English" default>
   Your browser does not support the video tag.

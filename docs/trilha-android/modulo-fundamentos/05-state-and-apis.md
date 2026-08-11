@@ -6,7 +6,7 @@ sidebar_position: 5
 
 ## Video Overview
 
-<video width="100%" controls>
+<video width="100%" controls controlsList="nodownload">
   <source src="/trilha-react-native/assets/videos/trilha_android/fund_05_state_and_apis.mp4" type="video/mp4">
   <track kind="captions" src="/trilha-react-native/assets/captions/trilha_android/fund_05_state_and_apis_en.vtt" srclang="en" label="English" default>
   Your browser does not support the video tag.

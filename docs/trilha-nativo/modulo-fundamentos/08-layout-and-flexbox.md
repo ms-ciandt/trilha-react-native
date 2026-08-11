@@ -4,7 +4,7 @@ title: Layout & Flexbox in React Native
 
 # Layout & Flexbox in React Native
 
-<video width="100%" controls>
+<video width="100%" controls controlsList="nodownload">
   <source src="/trilha-react-native/assets/videos/trilha_nativo/fund_07_layout_flexbox.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>

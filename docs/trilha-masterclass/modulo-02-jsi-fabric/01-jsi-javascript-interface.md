@@ -4,7 +4,7 @@ title: "JSI — JavaScript Interface"
 
 # JSI — JavaScript Interface
 
-<video width="100%" controls>
+<video width="100%" controls controlsList="nodownload">
   <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc03_01_jsi-javascript-interface.mp4" type="video/mp4">
   <track kind="captions" src="/trilha-react-native/assets/captions/trilha_masterclass/mc03_01_jsi-javascript-interface_en.vtt" srclang="en" label="English" default>
   Your browser does not support the video tag.

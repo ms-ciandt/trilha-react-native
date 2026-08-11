@@ -4,7 +4,7 @@ title: State & Hooks in Depth
 
 # State & Hooks in Depth
 
-<video width="100%" controls>
+<video width="100%" controls controlsList="nodownload">
   <source src="/trilha-react-native/assets/videos/trilha_nativo/fund_05_state_hooks.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>

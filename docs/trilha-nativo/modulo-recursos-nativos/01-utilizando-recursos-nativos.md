@@ -5,7 +5,7 @@ title: "Using Native Resources"
 
 # Topic 1 — Using Native Resources (Native Dev Trail)
 
-<video width="100%" controls>
+<video width="100%" controls controlsList="nodownload">
   <source src="/trilha-react-native/assets/videos/trilha_nativo/rec_01_utilizando_recursos_nativos.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
