@@ -6,7 +6,10 @@ sidebar_position: 3
 
 ## Video Overview
 
-> Video for this topic coming soon.
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_android/cicd_03_eas-build.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 ## What EAS Build Is
 
