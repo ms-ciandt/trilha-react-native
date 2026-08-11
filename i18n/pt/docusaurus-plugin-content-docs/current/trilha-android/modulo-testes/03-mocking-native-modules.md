@@ -6,7 +6,10 @@ sidebar_position: 3
 
 ## Visão Geral em Vídeo
 
-> Vídeo deste tópico em breve.
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_android/test_03_mocking-native-modules.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 ## O Problema: Módulos Nativos Não Rodam no Jest
 
