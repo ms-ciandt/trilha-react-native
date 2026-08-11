@@ -1,0 +1,274 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:06.560
+Lançar uma aplicação React Native envolve a orquestração de uma compilação multiplataforma em múltiplos estágios.
+
+2
+00:00:06.560 --> 00:00:13.200
+Cada lançamento começa com um vasto ecossistema de arquivos brutos juntamente com dependências nativas distintas.
+
+3
+00:00:13.200 --> 00:00:21.280
+Para engenheiros de DevOps, o objetivo é orquestrar uma entrega precisa e determinística das ferramentas JavaScript para os compiladores nativos.
+
+4
+00:00:21.280 --> 00:00:28.800
+Um pipeline mal configurado resulta em binários sobrecarregados, pontes nativas corrompidas ou falhas em cascata no ambiente de CICD.
+
+5
+00:00:29.040 --> 00:00:35.680
+Gerenciar esse processo requer controle técnico sobre os três pilares fundamentais do React Native 0.76,
+
+6
+00:00:35.680 --> 00:00:40.400
+Metro, Hermes e as toolchains nativas, Gradle e Xcode 16.
+
+7
+00:00:40.400 --> 00:00:46.000
+Este diagrama mostra a arquitetura da esquerda para a direita, mapeando a jornada do código bruto até o artefato final.
+
+8
+00:00:46.000 --> 00:00:52.720
+O Metro processa o JavaScript, o Hermes compila o bytecode, e o Gradle ou Xcode empacota a aplicação nativa.
+
+9
+00:00:52.720 --> 00:00:57.920
+Controlar essa sequência garante transições estáveis nas plataformas Android e iOS.
+
+10
+00:00:57.920 --> 00:01:05.600
+Entender esses pontos de transição diferencia um script de deploy improvisado de um pipeline de lançamento em produção rigoroso e previsível.
+
+11
+00:01:05.600 --> 00:01:09.600
+Começamos com o primeiro nó no pipeline, o Metro Bundler.
+
+12
+00:01:09.600 --> 00:01:14.640
+Engenheiros web frequentemente tratam o Metro como um bundler web genérico, como webpack ou vite.
+
+13
+00:01:14.640 --> 00:01:21.440
+O Metro é um motor desenvolvido para uma finalidade específica, com uma separação rígida de responsabilidades, projetado exclusivamente para restrições mobile.
+
+14
+00:01:21.440 --> 00:01:24.880
+Este fluxo lógico mostra o primeiro estágio, a resolução.
+
+15
+00:01:24.880 --> 00:01:30.960
+O Metro segue os caminhos de importação e os direciona com base em sufixos, separando o código Android do iOS.
+
+16
+00:01:30.960 --> 00:01:37.600
+Na segunda etapa, transformação, esses módulos passam pelo Babel, transpilando o código em um formato uniforme.
+
+17
+00:01:37.600 --> 00:01:40.400
+O Metro armazena em cache essas transformações por hash de arquivo.
+
+18
+00:01:40.400 --> 00:01:45.200
+Em builds sucessivos, arquivos idênticos ignoram essa etapa, reduzindo o tempo de compilação.
+
+19
+00:01:45.200 --> 00:01:47.520
+A terceira etapa é a serialização.
+
+20
+00:01:47.520 --> 00:01:52.160
+O Metro concatena todos os módulos processados em um único arquivo bundle contínuo.
+
+21
+00:01:52.240 --> 00:01:55.680
+Durante o desenvolvimento, o Metro é executado como um servidor HTTP ativo.
+
+22
+00:01:55.680 --> 00:02:01.440
+Em builds de produção, ele é invocado diretamente pelo Gradle ou Xcode como um processo CLI.
+
+23
+00:02:01.440 --> 00:02:07.120
+Esta tabela de fluxo de dados ilustra como as flags do CLI ditam a geração do bundle de produção.
+
+24
+00:02:07.120 --> 00:02:12.240
+Ativar a flag dev false desativa as variáveis de desenvolvimento, remove os avisos,
+
+25
+00:02:12.240 --> 00:02:14.640
+e prepara o código para minificação.
+
+26
+00:02:14.640 --> 00:02:20.000
+A flag Minify executa o Terser na saída, reduzindo o tamanho total do bundle em 40%.
+
+27
+00:02:20.000 --> 00:02:26.080
+Ao analisá-lo, você identifica dependências desproporcionalmente grandes que introduzem inchaço silencioso.
+
+28
+00:02:26.080 --> 00:02:32.400
+Por exemplo, substituir uma biblioteca pesada como MomentJS por uma alternativa mais leve como DateFNS
+
+29
+00:02:32.400 --> 00:02:35.280
+permite que os módulos ao redor sejam empacotados de forma mais compacta.
+
+30
+00:02:35.280 --> 00:02:38.800
+Bibliotecas de infraestrutura grandes requerem um tratamento específico.
+
+31
+00:02:38.800 --> 00:02:43.280
+Ferramentas como o Sentry devem ser configuradas para fazer upload de source maps apenas no CI,
+
+32
+00:02:43.280 --> 00:02:45.440
+mantendo-os fora dos bundles de produção.
+
+33
+00:02:45.520 --> 00:02:50.560
+Outra fonte de inchaço são versões duplicadas da mesma dependência espalhadas pelo projeto.
+
+34
+00:02:50.560 --> 00:02:55.280
+Executar comandos de desduplicação mescla essas redundâncias em uma única instância compartilhada,
+
+35
+00:02:55.280 --> 00:02:57.840
+reduzindo ainda mais o footprint de dependências.
+
+36
+00:02:57.840 --> 00:03:03.760
+A remoção de código desnecessário do bundle garante que o excesso de JavaScript não impacte o tamanho do binário nativo final.
+
+37
+00:03:03.760 --> 00:03:05.520
+O pipeline chega a um ponto de transferência.
+
+38
+00:03:05.520 --> 00:03:08.800
+O momento em que o bundle JavaScript otimizado deixa o Metro.
+
+39
+00:03:08.800 --> 00:03:13.920
+Em arquiteturas modernas do React Native, o bundle JavaScript não é mais enviado como texto puro.
+
+40
+00:03:13.920 --> 00:03:19.360
+Quando o engine Hermes está habilitado, as ferramentas de build nativas interceptam ativamente o bundle.
+
+41
+00:03:20.000 --> 00:03:23.600
+Este fluxo demonstra o bundle sendo alimentado no Hermes
+
+42
+00:03:23.600 --> 00:03:28.400
+e emergindo como um formato binário denso e otimizado conhecido como Hermes bytecode.
+
+43
+00:03:29.040 --> 00:03:34.240
+Para Android, essa interceptação é tratada por uma tarefa específica do Gradle durante a fase de build.
+
+44
+00:03:34.800 --> 00:03:41.120
+Engenheiros podem usar extra-packager arguments para injetar flags de compilação específicas diretamente no Hermes
+
+45
+00:03:41.120 --> 00:03:47.200
+enquanto essa tarefa é executada. O pipeline do iOS gerencia essa interceptação dentro do ambiente do Xcode.
+
+46
+00:03:47.200 --> 00:03:52.960
+O Xcode utiliza uma fase de script de execução dedicada, responsável por empacotar o código React Native em imagens.
+
+47
+00:03:53.600 --> 00:03:59.280
+Personalizar este comando de bundle do iOS requer adicionar variáveis de ambiente diretamente ao esquema de build do Xcode.
+
+48
+00:03:59.840 --> 00:04:04.800
+Esta etapa de pré-compilação converte a lógica JavaScript em um formato binário de alto desempenho,
+
+49
+00:04:04.800 --> 00:04:07.440
+finalizando o código antes que o empacotamento nativo seja iniciado.
+
+50
+00:04:08.080 --> 00:04:12.720
+A etapa final do pipeline envolve encapsular o bytecode do Hermes na aplicação nativa.
+
+51
+00:04:12.720 --> 00:04:18.960
+shells. Builds de release são executados via comandos CLI para Android e pela definição de opções
+
+52
+00:04:18.960 --> 00:04:24.720
+de exportação específicas para um arquivo iOS. Durante o build de release do Android, a segurança é gerenciada através da
+
+53
+00:04:24.720 --> 00:04:29.760
+configuração do Keystore. O arquivo de propriedades do Gradle contendo essas credenciais do Keystore nunca deve
+
+54
+00:04:29.760 --> 00:04:35.600
+ser commitado no controle de versão. Isso nos leva ao obstáculo final, a fase de shrinking. Ferramentas
+
+55
+00:04:35.600 --> 00:04:40.240
+como o R8 reduzem o código Java e Kotlin nativo para minimizar o tamanho final do deployment.
+
+56
+00:04:40.800 --> 00:04:45.600
+Essa remoção agressiva pode acidentalmente cortar a ponte de comunicação entre o código nativo e o
+
+57
+00:04:45.600 --> 00:04:50.800
+JavaScript. Para evitar isso, as regras keep do React Native devem ser configuradas para proteger módulos
+
+58
+00:04:50.800 --> 00:04:55.600
+nativos críticos do shrinker R8. O shrinking nativo preciso e o empacotamento seguro são as
+
+59
+00:04:55.600 --> 00:05:00.880
+etapas finais que garantem que o artefato seja compacto e pronto para publicação. Este diagrama revela
+
+60
+00:05:00.880 --> 00:05:05.600
+o pipeline de release totalmente montado, traçando o caminho do código bruto ao artefato assinado.
+
+61
+00:05:05.600 --> 00:05:11.120
+A estrutura depende de três pontos críticos de transição, serialização JavaScript,
+
+62
+00:05:11.120 --> 00:05:14.480
+pré-compilação de bytecode e redução de binário nativo.
+
+63
+00:05:15.040 --> 00:05:20.080
+Depender das configurações padrão deixa o processo de build vulnerável a erros de configuração.
+
+64
+00:05:20.080 --> 00:05:25.360
+Controlar essa arquitetura entrega resultados previsíveis. Gerenciar essas transferências precisas é
+
+65
+00:05:25.360 --> 00:05:31.440
+uma responsabilidade central para engenheiros que executam pipelines de CI CD mobile. Implementar essas configurações
+
+66
+00:05:31.440 --> 00:05:38.160
+rules ativa os recursos de otimização integrados ao React Native 0.76. Comandar esse pipeline de release
+
+67
+00:05:38.160 --> 00:05:43.040
+minimiza o footprint geral da aplicação e cria um caminho altamente previsível para o ciclo de vida
+
+68
+00:05:43.040 --> 00:05:45.040
+completo do release.
+

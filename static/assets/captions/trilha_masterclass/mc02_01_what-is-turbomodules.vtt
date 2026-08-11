@@ -1,0 +1,578 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:04.300
+Por anos, o React Native operou sob uma restrição estrutural.
+
+2
+00:00:04.300 --> 00:00:07.500
+Toda vez que o JavaScript precisava comandar o hardware nativo,
+
+3
+00:00:07.500 --> 00:00:10.700
+as instruções cruzavam uma camada intermediária separada.
+
+4
+00:00:10.700 --> 00:00:13.400
+Os engenheiros chamam isso de bridge assíncrona.
+
+5
+00:00:13.400 --> 00:00:16.300
+Ela atuava como um único ponto de gargalo obrigatório.
+
+6
+00:00:16.300 --> 00:00:18.600
+Se seu aplicativo precisava acessar a câmera,
+
+7
+00:00:18.600 --> 00:00:21.200
+ler o nível da bateria ou consultar um banco de dados,
+
+8
+00:00:21.200 --> 00:00:24.200
+a chamada tinha que passar por essa ponte específica.
+
+9
+00:00:24.200 --> 00:00:26.900
+A nova arquitetura do React Native remove essa ponte
+
+10
+00:00:26.900 --> 00:00:28.700
+do caminho de dados completamente.
+
+11
+00:00:28.800 --> 00:00:31.100
+Este esquema mostra a mudança estrutural.
+
+12
+00:00:31.100 --> 00:00:33.900
+A bridge assíncrona é substituída pelo JSI,
+
+13
+00:00:33.900 --> 00:00:35.800
+a JavaScript interface.
+
+14
+00:00:35.800 --> 00:00:38.700
+O JSI estabelece um canal C++ direto
+
+15
+00:00:38.700 --> 00:00:41.500
+entre o ambiente JavaScript e o código nativo,
+
+16
+00:00:41.500 --> 00:00:44.900
+criando um fluxo de informações bidirecional instantâneo.
+
+17
+00:00:44.900 --> 00:00:47.400
+Ao fazer essa mudança, o React Native se afasta
+
+18
+00:00:47.400 --> 00:00:49.600
+de um sistema de passagem de mensagens serializado
+
+19
+00:00:49.600 --> 00:00:51.900
+e entra em um ambiente de memória compartilhada.
+
+20
+00:00:51.900 --> 00:00:54.300
+Isso habilita três capacidades específicas
+
+21
+00:00:54.300 --> 00:00:56.000
+que antes eram impossíveis.
+
+22
+00:00:56.100 --> 00:00:58.600
+Execução síncrona, segurança de tipos absoluta
+
+23
+00:00:58.600 --> 00:01:01.000
+na fronteira, e inicialização lazy.
+
+24
+00:01:01.000 --> 00:01:03.000
+Os Turbo Modules utilizam esses mecanismos
+
+25
+00:01:03.000 --> 00:01:05.500
+para reescrever completamente como os comandos JavaScript
+
+26
+00:01:05.500 --> 00:01:08.500
+o hardware móvel nativo do dispositivo desde o início.
+
+27
+00:01:08.500 --> 00:01:11.100
+Para isolar exatamente por que a bridge assíncrona
+
+28
+00:01:11.100 --> 00:01:13.900
+causava lentidão de desempenho, podemos rastrear a execução
+
+29
+00:01:13.900 --> 00:01:17.300
+de uma única chamada de módulo nativo na arquitetura legada.
+
+30
+00:01:17.300 --> 00:01:19.500
+No pipeline da bridge legada, um objeto de dados
+
+31
+00:01:19.500 --> 00:01:21.100
+não pode cruzar diretamente.
+
+32
+00:01:21.100 --> 00:01:22.840
+É comprimido em uma string JSON,
+
+33
+00:01:22.840 --> 00:01:24.900
+enfileirado e enviado através da lacuna.
+
+34
+00:01:24.900 --> 00:01:27.400
+Cada argumento passava por essa serialização.
+
+35
+00:01:27.400 --> 00:01:30.700
+No lado nativo, ele é desempacotado em um mapa legível genérico.
+
+36
+00:01:30.700 --> 00:01:33.700
+Esse processo de desempacotamento expõe o segundo ponto de falha,
+
+37
+00:01:33.700 --> 00:01:35.800
+a falta de segurança de tipos na fronteira.
+
+38
+00:01:35.800 --> 00:01:38.500
+Como os dados recebidos chegavam como um mapa genérico,
+
+39
+00:01:38.500 --> 00:01:40.500
+o código nativo não tinha garantia estrita
+
+40
+00:01:40.500 --> 00:01:41.700
+do que estava recebendo.
+
+41
+00:01:41.700 --> 00:01:43.400
+Tinha que adivinhar o conteúdo.
+
+42
+00:01:43.400 --> 00:01:46.500
+O lado nativo pescava mecanicamente os valores
+
+43
+00:01:46.500 --> 00:01:49.700
+procurando por chaves de string específicas em tempo de execução,
+
+44
+00:01:49.700 --> 00:01:52.600
+esperando que o tipo de dado correto estivesse associado a elas.
+
+45
+00:01:52.600 --> 00:01:54.500
+Se o JavaScript enviasse um número,
+
+46
+00:01:54.500 --> 00:01:56.800
+mas o código nativo esperava uma string,
+
+47
+00:01:56.800 --> 00:01:59.700
+o sistema não detectaria o erro durante o build.
+
+48
+00:01:59.700 --> 00:02:02.800
+O app simplesmente travaria nas mãos do usuário.
+
+49
+00:02:02.800 --> 00:02:06.000
+Como toda a fila operava de forma assíncrona,
+
+50
+00:02:06.000 --> 00:02:08.100
+a thread JavaScript não conseguia pausar
+
+51
+00:02:08.100 --> 00:02:10.700
+e aguardar para ver se a operação foi bem-sucedida.
+
+52
+00:02:10.700 --> 00:02:14.000
+Ele disparou a mensagem e imediatamente seguiu em frente.
+
+53
+00:02:14.000 --> 00:02:16.800
+A arquitetura legada trocava velocidade de processamento
+
+54
+00:02:16.800 --> 00:02:19.900
+e segurança de tipos por um modelo de conexão mais simples,
+
+55
+00:02:20.000 --> 00:02:23.500
+impondo um limite rígido na complexidade e na responsividade
+
+56
+00:02:23.500 --> 00:02:25.800
+de aplicações React Native.
+
+57
+00:02:25.800 --> 00:02:27.400
+Sob a nova arquitetura,
+
+58
+00:02:27.400 --> 00:02:30.200
+esse limite é removido ao integrar diretamente
+
+59
+00:02:30.200 --> 00:02:32.500
+com o motor JavaScript Hermes.
+
+60
+00:02:32.500 --> 00:02:35.000
+Este diagrama mostra a nova pilha.
+
+61
+00:02:35.000 --> 00:02:38.200
+JSI é uma camada de abstração em C++,
+
+62
+00:02:38.200 --> 00:02:40.800
+conectando-se diretamente ao engine Hermes.
+
+63
+00:02:40.800 --> 00:02:44.800
+Dentro dessa camada está o primitivo central, o host object.
+
+64
+00:02:44.800 --> 00:02:47.400
+O Hermes interage com esse bloco diretamente,
+
+65
+00:02:47.400 --> 00:02:50.500
+tratando-o exatamente como um objeto JavaScript nativo.
+
+66
+00:02:50.500 --> 00:02:53.800
+Para a thread JavaScript, um host object parece e se comporta
+
+67
+00:02:53.800 --> 00:02:56.100
+exatamente como um objeto JS normal.
+
+68
+00:02:56.100 --> 00:03:00.000
+Mas mecanicamente, seus métodos são lambdas C++ reais.
+
+69
+00:03:00.000 --> 00:03:02.900
+Essa relação é a base para o novo sistema.
+
+70
+00:03:02.900 --> 00:03:06.000
+Todo turbo module é implementado como um host object.
+
+71
+00:03:06.000 --> 00:03:09.200
+Podemos ver exatamente como isso contorna o antigo gargalo
+
+72
+00:03:09.200 --> 00:03:11.700
+rastreando uma execução de código prática.
+
+73
+00:03:11.700 --> 00:03:16.000
+Quando a thread JavaScript dispara nativecalculator.add1.2,
+
+74
+00:03:16.000 --> 00:03:19.200
+a entrada é rastreada diretamente no bloco de execução C++
+
+75
+00:03:19.200 --> 00:03:20.500
+com 0Q.
+
+76
+00:03:20.500 --> 00:03:22.800
+Como nativecalculator é um host object,
+
+77
+00:03:22.800 --> 00:03:25.000
+nenhuma serialização JSON ocorre.
+
+78
+00:03:25.000 --> 00:03:27.400
+O C++ calcula o resultado instantaneamente
+
+79
+00:03:27.400 --> 00:03:30.400
+e o retorna pelo mesmo caminho de memória compartilhada.
+
+80
+00:03:30.400 --> 00:03:33.200
+O JSI runtime chama o lambda C++ diretamente
+
+81
+00:03:33.200 --> 00:03:35.000
+na própria thread JavaScript.
+
+82
+00:03:35.000 --> 00:03:38.500
+Ao eliminar a fila ASync e operar na memória compartilhada,
+
+83
+00:03:38.500 --> 00:03:41.400
+os TurboModules podem finalmente expor métodos nativos síncronos
+
+84
+00:03:41.400 --> 00:03:42.500
+para o JavaScript.
+
+85
+00:03:42.500 --> 00:03:45.400
+Enquanto o JSI resolve o problema de velocidade,
+
+86
+00:03:45.400 --> 00:03:48.200
+a arquitetura ainda precisa de uma forma de garantir
+
+87
+00:03:48.200 --> 00:03:52.200
+que o lado nativo saiba exatamente quais dados o JavaScript está enviando.
+
+88
+00:03:52.200 --> 00:03:55.000
+Para resolver isso, todo TurboModule requer
+
+89
+00:03:55.000 --> 00:03:57.500
+um arquivo de especificação TypeScript estrito
+
+90
+00:03:57.500 --> 00:04:00.700
+definindo as entradas e saídas exatas.
+
+91
+00:04:00.700 --> 00:04:04.000
+Esse documento de especificação é processado pelo Cogen,
+
+92
+00:04:04.000 --> 00:04:06.500
+dividindo em interfaces com tipagem estrita
+
+93
+00:04:06.500 --> 00:04:10.400
+para C++, Java e Objective C++.
+
+94
+00:04:10.400 --> 00:04:13.500
+O Cogen lê a especificação TypeScript em tempo de build,
+
+95
+00:04:13.500 --> 00:04:15.600
+gerando interfaces nativas tipadas
+
+96
+00:04:15.600 --> 00:04:17.600
+antes do aplicativo compilar completamente
+
+97
+00:04:17.600 --> 00:04:21.700
+elimina a extração cega de valores de mapas em tempo de execução.
+
+98
+00:04:21.700 --> 00:04:24.300
+Além da velocidade de execução e segurança de tipos,
+
+99
+00:04:24.300 --> 00:04:28.100
+os Turbo Modules também alteram o desempenho de inicialização do aplicativo.
+
+100
+00:04:28.100 --> 00:04:30.400
+A bridge legada instanciava ansiosamente
+
+101
+00:04:30.400 --> 00:04:33.700
+cada módulo nativo no momento em que o aplicativo era aberto,
+
+102
+00:04:33.700 --> 00:04:36.300
+desperdiçando ciclos de CPU e memória em funcionalidades
+
+103
+00:04:36.300 --> 00:04:38.400
+que o usuário nem havia tocado ainda.
+
+104
+00:04:38.400 --> 00:04:40.700
+Este gráfico rastreia a carga de CPU e memória
+
+105
+00:04:40.700 --> 00:04:42.600
+durante a inicialização do aplicativo.
+
+106
+00:04:42.600 --> 00:04:44.900
+O Legacy apresenta picos elevados em zero segundos
+
+107
+00:04:44.900 --> 00:04:46.400
+enquanto todos os módulos são carregados.
+
+108
+00:04:46.400 --> 00:04:48.800
+Os Turbo Modules mantêm uma linha plana,
+
+109
+00:04:48.800 --> 00:04:52.400
+utilizando um padrão de factory para inicialização lazy.
+
+110
+00:04:52.400 --> 00:04:56.200
+Por padrão, os módulos são configurados para evitar a inicialização eager.
+
+111
+00:04:56.200 --> 00:04:59.000
+A memória é consumida apenas no exato milissegundo
+
+112
+00:04:59.000 --> 00:05:01.100
+em que a thread JavaScript solicita ativamente
+
+113
+00:05:01.100 --> 00:05:03.100
+o módulo do registro.
+
+114
+00:05:03.100 --> 00:05:05.500
+Ao combinar a segurança em tempo de build do Cogen
+
+115
+00:05:05.500 --> 00:05:07.800
+com a inicialização lazy em tempo de execução,
+
+116
+00:05:07.800 --> 00:05:10.500
+turbo modules criam um sistema que é type safe
+
+117
+00:05:10.600 --> 00:05:13.800
+e usa menos recursos do dispositivo durante a inicialização.
+
+118
+00:05:13.800 --> 00:05:16.300
+Migrar um ecossistema para uma nova arquitetura
+
+119
+00:05:16.300 --> 00:05:19.000
+requer gerenciar bases de código existentes,
+
+120
+00:05:19.000 --> 00:05:21.100
+particularmente apps que dependem de versões mais antigas,
+
+121
+00:05:21.100 --> 00:05:23.600
+módulos de terceiros não migrados.
+
+122
+00:05:23.600 --> 00:05:26.200
+Esta matriz de comparação detalha o comportamento dos módulos
+
+123
+00:05:26.200 --> 00:05:28.000
+entre arquiteturas.
+
+124
+00:05:28.000 --> 00:05:30.000
+Para evitar que código legado quebre,
+
+125
+00:05:30.000 --> 00:05:32.600
+React Native 0.76 e acima
+
+126
+00:05:32.600 --> 00:05:36.000
+inclui uma camada de interoperabilidade automática de turbo module.
+
+127
+00:05:36.000 --> 00:05:38.400
+A camada de interoperabilidade envolve módulos nativos antigos
+
+128
+00:05:38.400 --> 00:05:40.120
+em uma fachada de turbo module,
+
+129
+00:05:40.120 --> 00:05:42.600
+funcionando sem reescritas imediatas.
+
+130
+00:05:42.600 --> 00:05:45.400
+No entanto, essa fachada fornece apenas compatibilidade,
+
+131
+00:05:45.400 --> 00:05:46.800
+não desempenho.
+
+132
+00:05:46.800 --> 00:05:50.000
+Um módulo encapsulado ainda carece de inicialização lazy
+
+133
+00:05:50.000 --> 00:05:51.300
+e segurança de tipos.
+
+134
+00:05:51.300 --> 00:05:53.900
+Para realizar os benefícios arquiteturais completos,
+
+135
+00:05:53.900 --> 00:05:56.900
+um módulo deve satisfazer quatro propriedades definitivas
+
+136
+00:05:56.900 --> 00:06:00.100
+para ser classificado como um verdadeiro turbo module nativo.
+
+137
+00:06:00.100 --> 00:06:02.200
+Ele deve possuir uma spec em TypeScript.
+
+138
+00:06:02.200 --> 00:06:04.500
+Ele deve ser compilado usando Cogen.
+
+139
+00:06:04.500 --> 00:06:07.300
+Ele deve se comunicar diretamente via JSI.
+
+140
+00:06:07.300 --> 00:06:09.400
+Ele deve ser lazy por padrão.
+
+141
+00:06:09.400 --> 00:06:12.700
+Satisfying essas propriedades remove o gargalo assíncrono.
+
+142
+00:06:12.700 --> 00:06:14.600
+Isso completa a evolução do React Native
+
+143
+00:06:14.600 --> 00:06:16.200
+de um framework dependente de bridge
+
+144
+00:06:16.200 --> 00:06:19.200
+para um ambiente de memória compartilhada totalmente unificado.
+

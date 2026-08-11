@@ -18,9 +18,9 @@ import os
 import time
 import anthropic
 
-BATCH_SIZE = 10  # cue lines per API call (smaller = less likely to hit 500)
+BATCH_SIZE = 5   # cue lines per API call
 MAX_RETRIES = 6
-RETRY_DELAY = 15  # seconds between retries
+RETRY_DELAY = 10  # seconds between retries
 
 
 def parse_vtt(content: str) -> list[dict]:

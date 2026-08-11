@@ -1,0 +1,518 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:05.560
+Jetpack Compose e React Native expressam conceitos idênticos de UI declarativa.
+
+2
+00:00:05.560 --> 00:00:08.480
+Ambos constroem interfaces como funções de estado.
+
+3
+00:00:08.480 --> 00:00:13.520
+Mas por baixo da superfície, eles executam esses conceitos usando motores internos distintos,
+
+4
+00:00:13.520 --> 00:00:17.960
+um impulsionado por um compilador, o outro totalmente vinculado por regras de tempo de execução.
+
+5
+00:00:17.960 --> 00:00:20.440
+Observe esses componentes de contador padrão.
+
+6
+00:00:20.440 --> 00:00:24.960
+Compose em Kotlin à esquerda, React Native em JavaScript à direita.
+
+7
+00:00:24.960 --> 00:00:29.280
+Se removermos o destaque de sintaxe, eles são arquiteturalmente idênticos.
+
+8
+00:00:29.560 --> 00:00:32.040
+Ambos dependem de funções para armazenar memória.
+
+9
+00:00:32.040 --> 00:00:35.200
+Os equivalentes aqui são remember e use state.
+
+10
+00:00:35.200 --> 00:00:38.240
+Mas os mecanismos que alimentam essas funções são diferentes.
+
+11
+00:00:38.240 --> 00:00:41.920
+O Compose depende de transformações profundas no nível do compilador.
+
+12
+00:00:41.920 --> 00:00:45.400
+Seu sistema de snapshots funciona nos bastidores para rastrear dependências
+
+13
+00:00:45.400 --> 00:00:48.080
+e acionar recomposições automaticamente.
+
+14
+00:00:48.080 --> 00:00:50.840
+O React Native não possui essa intervenção do compilador.
+
+15
+00:00:50.840 --> 00:00:55.520
+Em vez disso, ele depende de contratos de execução em tempo de execução chamados hooks.
+
+16
+00:00:55.520 --> 00:00:58.800
+Estas são funções JavaScript simples executando sequencialmente.
+
+17
+00:00:58.800 --> 00:01:04.240
+Mover entre esses frameworks requer adotar um modelo mental assistido por compilador
+
+18
+00:01:04.240 --> 00:01:07.200
+e adaptá-lo a um ambiente de runtime rígido
+
+19
+00:01:07.200 --> 00:01:10.160
+sem quebrar o ciclo de renderização da aplicação.
+
+20
+00:01:10.160 --> 00:01:12.560
+Para migrar do Compose para o React,
+
+21
+00:01:12.560 --> 00:01:17.200
+você deve assumir manualmente a propriedade da alocação de memória e o rastreamento de dependências
+
+22
+00:01:17.200 --> 00:01:20.360
+que o compilador Kotlin costumava lidar automaticamente.
+
+23
+00:01:20.360 --> 00:01:22.840
+O mapeamento começa com o estado local.
+
+24
+00:01:22.840 --> 00:01:26.200
+No Compose, você mantém dados entre ciclos de renderização
+
+25
+00:01:26.200 --> 00:01:29.800
+usando um bloco remember envolvido em mutable state of.
+
+26
+00:01:29.800 --> 00:01:33.720
+No React, você consegue isso diretamente com o hook use state.
+
+27
+00:01:33.720 --> 00:01:37.640
+Embora o propósito seja idêntico, a saída estrutural é diferente.
+
+28
+00:01:37.640 --> 00:01:41.600
+O use state retorna uma tupla contendo exatamente dois elementos,
+
+29
+00:01:41.600 --> 00:01:46.280
+o valor atual do estado e uma função setter dedicada para atualizá-lo.
+
+30
+00:01:46.280 --> 00:01:48.880
+Toda vez que um componente React é re-renderizado,
+
+31
+00:01:48.880 --> 00:01:51.400
+a função executa de cima para baixo.
+
+32
+00:01:51.400 --> 00:01:55.160
+Quando ela atinge a linha do use state, ela não cria uma nova variável.
+
+33
+00:01:55.160 --> 00:02:00.600
+Ela puxa esse valor de um índice de array externo invisível mapeado especificamente para aquele hook.
+
+34
+00:02:00.600 --> 00:02:03.800
+Quando você aciona atualizações, o React as agrupa em lote.
+
+35
+00:02:03.800 --> 00:02:06.640
+Muito parecido com o sistema de snapshot atômico do Compose,
+
+36
+00:02:06.640 --> 00:02:09.360
+agrupa mudanças de estado dentro de manipuladores de eventos,
+
+37
+00:02:09.360 --> 00:02:17.040
+O React 18 agrupa automaticamente múltiplos setters do useState em um único ciclo de renderização para economizar desempenho.
+
+38
+00:02:17.040 --> 00:02:23.400
+No entanto, essa execução em tempo de execução cria uma vulnerabilidade específica conhecida como stale closure.
+
+39
+00:02:23.400 --> 00:02:29.040
+Imagine um braço mecânico agarrando um objeto no exato milissegundo em que ele se transforma.
+
+40
+00:02:29.040 --> 00:02:32.800
+No momento em que ele fecha, capturou material obsoleto.
+
+41
+00:02:32.800 --> 00:02:37.200
+Isso acontece no React quando um novo estado depende de um valor anterior.
+
+42
+00:02:37.200 --> 00:02:39.280
+Como o React agrupa atualizações,
+
+43
+00:02:39.280 --> 00:02:44.000
+a variável referenciada pode estar agendada para atualização, mas ainda não ter sido re-renderizada.
+
+44
+00:02:44.000 --> 00:02:48.400
+Depender diretamente dessa variável fará com que seus dados fiquem fora de sincronia.
+
+45
+00:02:48.400 --> 00:02:52.160
+Para evitar isso, o React fornece a forma de atualização funcional.
+
+46
+00:02:52.160 --> 00:02:57.520
+Ao passar uma arrow function para o setter, como set count C igual a C mais um,
+
+47
+00:02:57.520 --> 00:03:02.480
+você ignora a variável local e opera diretamente no endereço de memória mais recente.
+
+48
+00:03:02.480 --> 00:03:07.360
+Como o React agrupa essas atualizações em tempo de execução, sem supervisão do compilador,
+
+49
+00:03:07.360 --> 00:03:13.600
+você deve usar proativamente esses updaters funcionais para garantir a interação com os dados mais recentes.
+
+50
+00:03:13.600 --> 00:03:17.000
+Atualizar o estado da UI é apenas metade da equação.
+
+51
+00:03:17.000 --> 00:03:20.640
+Você também precisa de uma forma de armazenar valores mutáveis em segundo plano.
+
+52
+00:03:20.640 --> 00:03:26.240
+Dados que sobrevivem a re-renderizações, mas não disparam um ciclo de renderização quando modificados.
+
+53
+00:03:26.240 --> 00:03:32.440
+No Compose, você escreveria remember em algum objeto e omite o estado mutável do wrapper.
+
+54
+00:03:32.440 --> 00:03:35.240
+No React, você usa o hook use-ref.
+
+55
+00:03:35.240 --> 00:03:38.440
+O contrato de execução do use-ref é específico.
+
+56
+00:03:38.440 --> 00:03:42.640
+Ele mantém um valor mutável em sua propriedade dot current entre renderizações,
+
+57
+00:03:42.640 --> 00:03:47.040
+mas previne ativamente um ciclo de re-renderização quando essa propriedade é modificada.
+
+58
+00:03:47.240 --> 00:03:50.840
+Isso o torna ideal para timers em segundo plano ou cache de dados,
+
+59
+00:03:50.840 --> 00:03:55.840
+mas também serve a um propósito secundário, mantendo referências a instâncias de views nativas
+
+60
+00:03:55.840 --> 00:03:57.840
+para que você possa manipulá-las diretamente.
+
+61
+00:03:57.840 --> 00:04:02.840
+Isso mapeia para o padrão Compose, onde você pode combinar remember coroutine scope
+
+62
+00:04:02.840 --> 00:04:08.240
+com FindViewTree lifecycle owner para interagir com views Android subjacentes.
+
+63
+00:04:08.240 --> 00:04:12.840
+Use-ref fornece uma saída de emergência essencial do mecanismo reativo do React.
+
+64
+00:04:12.840 --> 00:04:16.640
+Ele permite que você gerencie dados puros ou interaja com elementos nativos
+
+65
+00:04:16.640 --> 00:04:18.640
+sem poluir a fila de renderização.
+
+66
+00:04:18.640 --> 00:04:21.440
+Essa válvula de escape nos leva aos efeitos colaterais.
+
+67
+00:04:21.440 --> 00:04:26.440
+Essas são as pontes entre sua UI declarativa e operações imperativas
+
+68
+00:04:26.440 --> 00:04:30.440
+como buscar dados de rede ou consultar um banco de dados local.
+
+69
+00:04:30.440 --> 00:04:34.240
+O Compose lida com isso usando launched effect e side effect.
+
+70
+00:04:34.240 --> 00:04:38.440
+O React condensa essa lógica em um único hook, use-effect,
+
+71
+00:04:38.440 --> 00:04:42.840
+mas a forma como esses efeitos são disparados revela a divergência arquitetural
+
+72
+00:04:42.840 --> 00:04:45.240
+entre o Compose e o React Native.
+
+73
+00:04:45.240 --> 00:04:49.240
+Esta matriz mostra como os dois sistemas lidam com a lógica de execução,
+
+74
+00:04:49.240 --> 00:04:53.840
+enquanto o Compose rastreia automaticamente as dependências de efeito via seu compilador.
+
+75
+00:04:53.840 --> 00:04:57.640
+o React exige que você forneça manualmente um array de dependências
+
+76
+00:04:57.640 --> 00:05:00.640
+para ditar exatamente quando o efeito deve ser executado.
+
+77
+00:05:00.640 --> 00:05:05.040
+O primeiro modo envolve fornecer um array contendo variáveis específicas.
+
+78
+00:05:05.040 --> 00:05:08.040
+Isso imita o launched effect com chaves definidas.
+
+79
+00:05:08.040 --> 00:05:13.440
+O efeito é executado uma vez na montagem e depois novamente apenas quando essas variáveis específicas mudam.
+
+80
+00:05:13.440 --> 00:05:15.640
+O segundo modo é um array vazio.
+
+81
+00:05:15.640 --> 00:05:18.040
+Isso mapeia para a unidade launch-defect.
+
+82
+00:05:18.040 --> 00:05:21.840
+O efeito é executado estritamente uma vez quando o componente é montado
+
+83
+00:05:21.840 --> 00:05:25.240
+e opcionalmente executa uma função de limpeza quando é desmontado.
+
+84
+00:05:25.240 --> 00:05:28.040
+O terceiro modo é omitir o array completamente.
+
+85
+00:05:28.040 --> 00:05:30.640
+Isso não tem um análogo direto no Compose.
+
+86
+00:05:30.640 --> 00:05:34.840
+Sem um array, o efeito é executado após cada sequência de renderização.
+
+87
+00:05:35.040 --> 00:05:39.840
+Omitir o array de dependências involuntariamente é uma fonte frequente de bugs no React.
+
+88
+00:05:39.840 --> 00:05:43.240
+Se o efeito atualiza o estado e o estado dispara uma renderização
+
+89
+00:05:43.240 --> 00:05:47.240
+e a renderização dispara o efeito, você cria um loop infinito de renderização.
+
+90
+00:05:47.240 --> 00:05:51.240
+O array de dependências representa a transferência explícita de responsabilidade
+
+91
+00:05:51.240 --> 00:05:53.440
+do compilador para o desenvolvedor.
+
+92
+00:05:53.440 --> 00:05:58.040
+Isso exige controle manual preciso sobre o ciclo de vida dos seus efeitos colaterais.
+
+93
+00:05:58.040 --> 00:06:02.240
+Gerenciar ciclos de renderização também significa gerenciar o custo de desempenho da renderização.
+
+94
+00:06:02.240 --> 00:06:07.040
+Para reduzir esse custo, usamos estado derivado e estabilizamos nossas referências de memória.
+
+95
+00:06:07.040 --> 00:06:12.640
+O Compose usa derivedStateOf para armazenar em cache valores computacionalmente custosos entre renderizações.
+
+96
+00:06:12.640 --> 00:06:16.040
+O React resolve esse problema com o hook use memo,
+
+97
+00:06:16.040 --> 00:06:19.840
+armazenando em cache o resultado de uma operação até que sua dependência mude.
+
+98
+00:06:19.840 --> 00:06:23.440
+Mas o React introduz um problema único com callbacks.
+
+99
+00:06:23.440 --> 00:06:26.840
+Quando você passa uma função padrão para um componente filho,
+
+100
+00:06:26.840 --> 00:06:32.040
+o runtime do React gera um novo endereço de memória para essa função a cada renderização do componente pai.
+
+101
+00:06:32.040 --> 00:06:37.040
+Se esse componente filho estiver envolvido em uma barreira de memoização para evitar renderizações desnecessárias,
+
+102
+00:06:37.040 --> 00:06:40.240
+esse novo endereço de memória quebra essa barreira.
+
+103
+00:06:40.240 --> 00:06:44.840
+Como o endereço de memória da função é novo, o React assume que os dados foram alterados.
+
+104
+00:06:44.840 --> 00:06:50.640
+Isso quebra o bailout do memo do filho, forçando-o a renderizar novamente mesmo que logicamente nada seja diferente.
+
+105
+00:06:50.640 --> 00:06:53.240
+A solução é o hook use callback.
+
+106
+00:06:53.440 --> 00:06:58.640
+Isso funciona de forma semelhante a como o Compose preserva instâncias de lambda para evitar sobrecarregar o sistema.
+
+107
+00:06:58.640 --> 00:07:03.640
+Envolver uma função com useCallback estabiliza seu endereço de memória entre re-renderizações do componente pai.
+
+108
+00:07:03.640 --> 00:07:06.440
+Isso diz ao React para manter a referência original,
+
+109
+00:07:06.440 --> 00:07:10.040
+protegendo com sucesso a barreira de memoização do componente filho.
+
+110
+00:07:10.040 --> 00:07:14.440
+Em um motor de runtime, a igualdade referencial determina a performance.
+
+111
+00:07:14.440 --> 00:07:20.240
+Use memo e use callback são ferramentas obrigatórias para garantir manualmente referências estáveis.
+
+112
+00:07:20.240 --> 00:07:24.040
+Como o React não possui um compilador para definir onde essas ferramentas devem ser colocadas,
+
+113
+00:07:24.040 --> 00:07:31.040
+a integridade da arquitetura depende da adesão dos desenvolvedores a um contrato rígido conhecido como regras dos hooks.
+
+114
+00:07:31.040 --> 00:07:32.040
+Regra 1.
+
+115
+00:07:32.040 --> 00:07:35.940
+Hooks devem ser chamados apenas no nível superior absoluto de um componente.
+
+116
+00:07:35.940 --> 00:07:40.340
+Eles nunca podem ser aninhados dentro de instruções if, loops for, ou funções aninhadas,
+
+117
+00:07:40.340 --> 00:07:44.640
+porque o React depende da ordem exata das chamadas para mapear a memória externa.
+
+118
+00:07:44.640 --> 00:07:45.640
+Regra 2.
+
+119
+00:07:45.640 --> 00:07:50.140
+Hooks só podem ser chamados de dentro de componentes de função React ou outros hooks personalizados.
+
+120
+00:07:50.240 --> 00:07:53.340
+Eles falharão se invocados a partir de funções JavaScript simples.
+
+121
+00:07:53.340 --> 00:07:58.940
+Para evitar falhas, você pode usar ferramentas de linting, especificamente o plugin ESLint React hooks,
+
+122
+00:07:58.940 --> 00:08:03.340
+que sinalizará essas violações no nível do editor antes que o código seja executado.
+
+123
+00:08:03.340 --> 00:08:07.540
+Uma vez que você respeita essas regras, conceitos avançados de composição mapeiam de forma previsível.
+
+124
+00:08:07.540 --> 00:08:13.340
+Transições de estado local complexas, como usar um padrão de reducer V-model com sealed classes,
+
+125
+00:08:13.340 --> 00:08:18.240
+mapeiam para o hook use reducer do React, e o compartilhamento implícito de dados em subárvores,
+
+126
+00:08:18.240 --> 00:08:23.040
+tratado no Compose por composition local, traduz-se para o contexto do React.
+
+127
+00:08:23.040 --> 00:08:25.240
+Os conceitos permanecem idênticos.
+
+128
+00:08:25.240 --> 00:08:30.040
+A transição do Jetpack Compose para o React Native exige que você aplique manualmente
+
+129
+00:08:30.040 --> 00:08:35.240
+os contratos de execução e alocações de memória que um compilador anteriormente automatizava.
+

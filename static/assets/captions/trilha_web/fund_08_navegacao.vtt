@@ -1,0 +1,218 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:09.000
+Um desenvolvedor React Web experiente migra suas habilidades para o React Native, constrói uma navegação padrão de lista para detalhes, e encontra uma barreira invisível.
+
+2
+00:00:09.000 --> 00:00:15.000
+O código compila, a renderização inicial é perfeita, mas os lifecycle hooks falham ao executar.
+
+3
+00:00:15.000 --> 00:00:23.000
+O usuário toca o botão de voltar para retornar ao dashboard, esperando uma nova busca de dados, mas a interface não apresenta absolutamente nenhuma resposta.
+
+4
+00:00:23.000 --> 00:00:28.000
+A UI está congelada em um estado desatualizado, ignorando os inputs completamente.
+
+5
+00:00:28.000 --> 00:00:37.000
+A falha técnica acontece no array de dependências. Um use effect projetado para disparar no carregamento da página opera exatamente conforme instruído durante a visita inicial.
+
+6
+00:00:37.000 --> 00:00:45.000
+Mas quando o usuário navega de volta para aquela tela específica, a função fetch fica ociosa. O componente se recusa a remontar.
+
+7
+00:00:45.000 --> 00:00:55.000
+Essa falha surge de uma tradução equivocada de ambientes. Desenvolvedores web assumem logicamente que a navegação mobile é simplesmente um roteamento web sem uma barra de endereço URL visível.
+
+8
+00:00:55.000 --> 00:01:00.000
+Eles escrevem seus componentes esperando que o roteador destrua e recrie as páginas a cada visita.
+
+9
+00:01:00.000 --> 00:01:10.000
+Esse modelo mental entra em colapso em um ambiente nativo. Não há document object model para manipular, e não há um histórico linear de URL para o navegador percorrer.
+
+10
+00:01:10.000 --> 00:01:21.000
+O roteamento mobile opera inteiramente em pilhas físicas, persistentes e de memória. Quando um usuário navega por um aplicativo mobile, ele está empilhando componentes ativos uns sobre os outros.
+
+11
+00:01:21.000 --> 00:01:31.000
+Para arquitetar aplicações mobile estáveis, precisamos abandonar o ciclo de renderização destrutivo da web. Uma arquitetura mobile confiável exige projetar para persistência nativa de memória.
+
+12
+00:01:31.000 --> 00:01:40.000
+Este diagrama de tela dividida ilustra a divisão arquitetural. À esquerda, as rotas web são inerentemente destrutivas — navegar desmonta a árvore atual.
+
+13
+00:01:40.000 --> 00:01:47.000
+À direita, avançar empilha uma nova tela diretamente no topo. As telas abaixo permanecem totalmente montadas e ativas na memória do dispositivo.
+
+14
+00:01:47.000 --> 00:02:00.000
+O sistema operacional exige essa persistência para funcionar. Manter as telas anteriores ativas na memória permite transições com aceleração de hardware e aqueles gestos de deslizar para voltar instantâneos e fluidos, sem acionar pesadas mudanças de layout.
+
+15
+00:02:00.000 --> 00:02:10.000
+Este empilhamento físico resulta no nosso bug inicial de ciclo de vida. Como a tela anterior nunca foi desmontada da memória, retornar a ela simplesmente remove a camada do topo.
+
+16
+00:02:10.000 --> 00:02:17.000
+A tela subjacente já está montada, então um useEffect padrão com um array de dependências vazio não tem gatilho para disparar.
+
+17
+00:02:17.000 --> 00:02:24.000
+A solução nativa para esse modelo de persistência requer um hook específico do framework. Use o useFocusEffect.
+
+18
+00:02:24.000 --> 00:02:31.000
+Em vez de depender da fase de montagem do componente, o useFocusEffect vincula a execução da sua lógica diretamente à visibilidade da tela.
+
+19
+00:02:31.000 --> 00:02:39.000
+Quando o card do topo é removido e a tela subjacente volta ao foco, o hook dispara, buscando dados atualizados exatamente como esperado.
+
+20
+00:02:39.000 --> 00:02:48.000
+Entender como as stacks nativas persistem na memória marca a linha divisória entre escrever código React Native confiável e estar constantemente lutando contra o ciclo de vida do framework.
+
+21
+00:02:48.000 --> 00:03:00.000
+Esse modelo de memória exige uma hierarquia rígida para ser gerenciado. No topo absoluto, o navigation container atua como o nó raiz absoluto, armazenando todo o estado de navegação da aplicação em um único memory store.
+
+22
+00:03:00.000 --> 00:03:07.000
+Abaixo desse container, aplicações de produção complexas utilizam uma regra específica de aninhamento: breadth first, depth later.
+
+23
+00:03:07.000 --> 00:03:14.000
+Analisando essa decomposição isométrica, a camada mais externa é o drawer navigator, mapeado diretamente para gestos nativos de deslizamento horizontal.
+
+24
+00:03:14.000 --> 00:03:20.000
+Um nível mais abaixo está o tab navigator, que executa um propósito estrutural completamente diferente.
+
+25
+00:03:20.000 --> 00:03:25.000
+Cada tab mobile individual mantém seu próprio estado de memória interno persistente completamente independente.
+
+26
+00:03:25.000 --> 00:03:32.000
+Alternar para outra aba e retornar depois leva o usuário de volta à posição exata de rolagem e à tela aninhada que ele deixou para trás.
+
+27
+00:03:32.000 --> 00:03:42.000
+Para evitar um consumo excessivo de memória, o navegador de abas inferiores é lazy por padrão. Ele simplesmente se recusa a renderizar as árvores de componentes de abas não visitadas até que o usuário as solicite explicitamente.
+
+28
+00:03:42.000 --> 00:03:52.000
+Na camada mais interna está o navegador de pilha. Essa camada gerencia a navegação em profundidade e a passagem de parâmetros dentro dos limites de uma aba específica.
+
+29
+00:03:52.000 --> 00:04:00.000
+Por causa da hierarquia, empilhar novas telas na pilha da aba de perfil não tem nenhum efeito sobre a pilha que reside na aba de configurações.
+
+30
+00:04:00.000 --> 00:04:04.000
+Esses estados locais são completamente isolados uns dos outros.
+
+31
+00:04:04.000 --> 00:04:16.000
+Aninhar explicitamente esses navegadores independentes fornece os limites rígidos necessários para gerenciar estados complexos de UI, eliminando completamente a necessidade de uma barra de endereço URL atuar como fonte da verdade.
+
+32
+00:04:16.000 --> 00:04:21.000
+Na web, proteger uma rota geralmente envolve um componente wrapper imperativo.
+
+33
+00:04:21.000 --> 00:04:29.000
+Os desenvolvedores constroem um módulo de rota privada para verificar um token, interceptar a requisição de navegação e forçar um redirecionamento caso o usuário falhe na autorização.
+
+34
+00:04:29.000 --> 00:04:34.000
+Tentar interceptar rotas dinamicamente é um anti-pattern grave no React Navigation.
+
+35
+00:04:34.000 --> 00:04:44.000
+Essa árvore de lógica mostra o padrão declarativo nativo. Em vez de proteger telas individuais, um operador ternário no nível da rota determina qual grupo de navegadores pode existir.
+
+36
+00:04:44.000 --> 00:04:53.000
+O React Navigation monitora constantemente a árvore de componentes declarada. Ele observa mudanças estruturais na rota, em vez de avaliar caminhos de string ao clicar.
+
+37
+00:04:54.000 --> 00:05:00.000
+Quando um usuário faz login e o estado de autenticação é atualizado de false para true, a árvore é atualizada.
+
+38
+00:05:00.000 --> 00:05:05.000
+A stack de autenticação é destruída instantaneamente, e a stack da aplicação é montada.
+
+39
+00:05:05.000 --> 00:05:14.000
+O navigator executa essa troca estrutural complexa automaticamente. Nenhum comando navigate manual é escrito, e nenhuma função de redirecionamento explícita é chamada.
+
+40
+00:05:14.000 --> 00:05:23.000
+Gerenciar sessões renderizando condicionalmente a estrutura da árvore garante que telas não autorizadas nunca sejam montadas na memória, eliminando completamente os estados órfãos.
+
+41
+00:05:23.000 --> 00:05:35.000
+O deep linking fornece a ponte necessária entre a infraestrutura web e essas stacks nativas. Usando esquemas personalizados ou universal links, URLs externas podem ignorar a lógica de roteamento padrão para acessar telas específicas diretamente.
+
+42
+00:05:35.000 --> 00:05:46.000
+O processo começa com um handshake no nível do sistema operacional. O sistema operacional móvel intercepta o universal link recebido e passa a string bruta para o React Navigation antes que a interface da aplicação seja totalmente inicializada.
+
+43
+00:05:46.000 --> 00:05:59.000
+Aqui, a URL web padrão é analisada e injetada na hierarquia móvel. O caminho determina qual tela será focada, enquanto segmentos dinâmicos são inseridos em um objeto route.params estritamente estruturado.
+
+44
+00:05:59.000 --> 00:06:10.000
+Ao contrário da web, que depende de um hook implícito use params para extrair dados da barra de endereço, esses parâmetros de rota nativos precisam ser explicitamente tipados e mapeados antes de serem injetados no componente montado.
+
+45
+00:06:10.000 --> 00:06:18.000
+Para equipes migrando do Next JS, o padrão atual é o Expo Router, uma camada de roteamento baseada em arquivos projetada para imitar os padrões de desenvolvimento web.
+
+46
+00:06:18.000 --> 00:06:27.000
+O Expo Router usa sua estrutura de pastas para definir rotas, replicando com sucesso o mapeamento automático de URL para componente com o qual os desenvolvedores web estão familiarizados.
+
+47
+00:06:27.000 --> 00:06:38.000
+Mas o Expo Router é puramente uma camada de abstração construída diretamente sobre o React Navigation. Por baixo da familiar estrutura de arquivos, ele ainda compila para stacks nativas persistentes e tabs isoladas.
+
+48
+00:06:38.000 --> 00:06:52.000
+O roteamento baseado em arquivos simplesmente oferece conveniência e açúcar sintático. Mas se um desenvolvedor depende disso sem entender a memória do navigator subjacente, ele inevitavelmente encontrará os mesmos erros silenciosos de ciclo de vida.
+
+49
+00:06:52.000 --> 00:07:00.000
+A arquitetura mobile não funciona com endereços de strings visitadas. Ela depende inteiramente de camadas de componentes físicos e montados.
+
+50
+00:07:00.000 --> 00:07:13.000
+Traduzir a lógica web para mobile requer seguir algumas restrições rígidas. Primeiro, prefira usar o useFocusEffect em vez dos hooks de montagem padrão sempre que precisar disparar lógica com base em visitas à tela.
+
+51
+00:07:13.000 --> 00:07:22.000
+Segundo, estruture sua hierarquia para respeitar os estados de memória independentes e o comportamento de lazy loading padrão de navegadores de abas aninhados.
+
+52
+00:07:22.000 --> 00:07:30.000
+Terceiro, controle os fluxos de autenticação estritamente por meio de renderização declarativa da árvore no nível raiz, nunca tente interceptar rotas dinamicamente.
+
+53
+00:07:30.000 --> 00:07:43.000
+Quando essas restrições arquiteturais são respeitadas, os componentes nativos se alinham corretamente. Você evita vazamentos de memória causados por pilhas de navegação abandonadas e garante que os hooks de ciclo de vida sejam disparados exatamente quando o usuário os espera.
+
+54
+00:07:43.000 --> 00:07:54.000
+Projetar diretamente com primitivos de navegação nativos garante que sua aplicação realmente aproveite a performance fluida com aceleração de hardware que o sistema operacional mobile foi construído para fornecer.
+

@@ -1,0 +1,190 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:05.500
+Para entender como a nova arquitetura do React Native alcança execução zero-copy,
+
+2
+00:00:05.500 --> 00:00:10.500
+precisamos analisar o gargalo mecânico que ela substituiu, a fila de mensagens assíncrona.
+
+3
+00:00:10.500 --> 00:00:14.300
+Essa fila forçava dados de alta velocidade a sofrerem um gargalo severo.
+
+4
+00:00:14.300 --> 00:00:18.700
+Na arquitetura legada, o motor JavaScript, geralmente o JavaScript Core,
+
+5
+00:00:18.700 --> 00:00:21.900
+e a camada nativa operavam em total isolamento.
+
+6
+00:00:21.900 --> 00:00:26.500
+Eram ambientes completamente isolados, conectados apenas por esta única fila de mensagens.
+
+7
+00:00:26.500 --> 00:00:30.500
+Sem acesso direto à memória, os dados eram transformados para o transporte.
+
+8
+00:00:30.500 --> 00:00:36.500
+Números, strings e arrays do JS eram completamente achatados em uma string JSON para cruzar a lacuna,
+
+9
+00:00:36.500 --> 00:00:41.500
+forçando o lado nativo a executar um parse JSON completo para reconstruir o objeto na memória.
+
+10
+00:00:41.500 --> 00:00:48.500
+A serialização contínua entre ambientes de execução limita a largura de banda de comunicação de qualquer aplicação de alta frequência.
+
+11
+00:00:48.500 --> 00:00:51.500
+Este processo incorre em três penalidades específicas.
+
+12
+00:00:51.500 --> 00:00:58.000
+A primeira é o overhead de CPU, dedicado inteiramente à execução dos algoritmos de serialização e desserialização.
+
+13
+00:00:58.000 --> 00:01:08.500
+Em termos absolutos, esse pipeline de parse e string extrai uma penalidade de 0,1 a 5 milissegundos de tempo de execução para cada chamada de função grande.
+
+14
+00:01:08.500 --> 00:01:12.500
+Isso ilustra a segunda penalidade: um severo inchaço de memória.
+
+15
+00:01:12.500 --> 00:01:19.000
+À medida que o JavaScript aloca memória para o payload, a serialização força uma cópia exata no heap nativo.
+
+16
+00:01:19.000 --> 00:01:28.000
+Isso garante uma alocação de memória dupla para cada mensagem entre fronteiras, mantendo ambas as cópias simultaneamente até que o garbage collection seja executado.
+
+17
+00:01:28.000 --> 00:01:35.000
+A terceira penalidade é uma restrição arquitetural estrita. Toda comunicação entre fronteiras deve ser assíncrona.
+
+18
+00:01:35.000 --> 00:01:39.500
+Por causa da fila, nenhuma chamada pode bloquear e aguardar uma resposta.
+
+19
+00:01:39.500 --> 00:01:46.000
+Isso se torna problemático ao interagir com APIs nativas que exigem estritamente execução síncrona para funcionar corretamente,
+
+20
+00:01:46.000 --> 00:01:50.500
+como listeners de eventos de scroll ou medições de layout a 60 frames por segundo.
+
+21
+00:01:50.500 --> 00:02:02.500
+Forçar requisitos nativos síncronos por meio de um pipeline inerentemente assíncrono exigia que os engenheiros construíssem soluções alternativas complexas, como o interaction manager, apenas para manter a estabilidade básica da UI.
+
+22
+00:02:02.500 --> 00:02:08.000
+O React Native 0.76 introduz o JavaScript interface, ou JSI.
+
+23
+00:02:08.000 --> 00:02:13.000
+Essa arquitetura foi projetada especificamente para contornar completamente a fila JSON.
+
+24
+00:02:13.000 --> 00:02:19.000
+O JSI não é um framework. É uma biblioteca C++ pura, thin e somente de cabeçalho.
+
+25
+00:02:19.000 --> 00:02:24.000
+Ele envolve o motor JavaScript em uma interface C++, o que elimina a barreira central de fila.
+
+26
+00:02:24.000 --> 00:02:32.000
+Esta interface é completamente agnóstica em relação ao engine. Ela não está acoplada exclusivamente ao Hermes, nem ao JavaScript core, ou mesmo ao V8.
+
+27
+00:02:32.000 --> 00:02:41.000
+Através da interface JSI.Runtime, trocar o engine JavaScript subjacente requer zero alterações no código C++ que interage com ela acima dessa camada.
+
+28
+00:02:41.000 --> 00:02:49.000
+Remover a fila central de mensagens redefine a camada de comunicação, substituindo a troca de mensagens assíncrona pelo acesso direto e sincronizado à memória.
+
+29
+00:02:49.000 --> 00:03:00.000
+O acesso direto à memória introduz um risco central: permitir que o C++ leia dados JavaScript pode causar vazamentos de memória ou violar o garbage collector do JavaScript.
+
+30
+00:03:00.000 --> 00:03:10.000
+Para lidar com isso de forma segura, a arquitetura utiliza JSI.value como a abstração central para armazenar valores JavaScript no espaço C++.
+
+31
+00:03:10.000 --> 00:03:19.000
+JSI.value opera como uma união marcada. Ele aponta diretamente para qualquer tipo de dado JavaScript na memória, sem nunca copiar os dados subjacentes.
+
+32
+00:03:19.000 --> 00:03:24.000
+Para manter a segurança, a cópia da subtração é intencionalmente desabilitada por design.
+
+33
+00:03:24.000 --> 00:03:31.000
+Copiar a referência sem que o garbage collector a rastreie cria um ponteiro pendente no momento em que a memória original é liberada.
+
+34
+00:03:31.000 --> 00:03:42.000
+Em vez disso, o JSI impõe semânticas exclusivas de movimentação. A propriedade da referência exata de memória é transferida de forma limpa para uma nova variável C++, mantendo estritamente uma linha de referência ativa.
+
+35
+00:03:42.000 --> 00:03:49.000
+Esse design explícito de propriedade previne ativamente o custo de duplicação de memória que assolava a arquitetura legada.
+
+36
+00:03:49.000 --> 00:03:57.000
+Indo além das estruturas de dados, precisamos ver como funções executáveis e módulos nativos personalizados são realmente construídos nessa arquitetura.
+
+37
+00:03:58.000 --> 00:04:05.000
+JSI.host object é a estrutura de classe C++ específica usada para expor hardware nativo diretamente ao JavaScript.
+
+38
+00:04:05.000 --> 00:04:12.000
+Quando o código JavaScript lê uma propriedade nesse objeto, ele aciona um método get nativo por meio de um caminho de execução ininterrupto.
+
+39
+00:04:12.000 --> 00:04:19.000
+O inverso também é verdadeiro: gravar dados em uma propriedade JavaScript aciona imediatamente o método set nativo em C++.
+
+40
+00:04:19.000 --> 00:04:28.000
+Expor classes nativas diretamente via host object elimina completamente a necessidade de mapear arquiteturas complexas de callback ao acessar APIs profundas do sistema operacional.
+
+41
+00:04:28.000 --> 00:04:36.000
+Vamos analisar um caso extremo do mundo real: lendo dados imediatos de um sensor de hardware nativo usando JSI puro, sem nenhum scaffolding ou geração de código.
+
+42
+00:04:36.000 --> 00:04:45.000
+No lado do consumo em JavaScript, o código simplesmente atribui um valor da propriedade sensor.lastreading. Observe a ausência de operadores assíncronos nessa execução.
+
+43
+00:04:45.000 --> 00:04:50.000
+Não há await, não há dot then e nem cadeia de promises.
+
+44
+00:04:50.000 --> 00:05:01.000
+Na camada C++, a classe do sensor de hardware é definida nativamente como um JSI host object e seu método get verifica especificamente a string last reading.
+
+45
+00:05:01.000 --> 00:05:13.000
+No momento em que o motor JavaScript avalia sensor dot last reading, a thread JavaScript é interrompida, e então invoca de forma imediata e síncrona o método get em C++ para fisicamente acionar o sensor de hardware.
+
+46
+00:05:13.000 --> 00:05:21.000
+O método C++ avalia o sensor físico e retorna o valor double preciso diretamente de volta para a thread JavaScript em tempo real.
+
+47
+00:05:21.000 --> 00:05:33.000
+Ao substituir sinais JSON por ponteiros de memória compartilhada e execução síncrona em C++, o React Native alcança a interoperabilidade de latência zero necessária para aplicações nativas complexas de 60 quadros por segundo.
+

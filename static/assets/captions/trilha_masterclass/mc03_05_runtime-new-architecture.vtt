@@ -1,0 +1,314 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:04.360
+Para construir uma aplicação de nível nativo, o padrão é rigoroso.
+
+2
+00:00:04.360 --> 00:00:10.880
+Quando os dados mudam, a interface do usuário deve reagir instantaneamente com zero de latência perceptível.
+
+3
+00:00:10.880 --> 00:00:19.320
+React Native 0.76 e posteriores alcançam isso migrando para uma arquitetura estritamente sem bridge e baseada em JSI.
+
+4
+00:00:19.320 --> 00:00:24.640
+Anteriormente, as threads JavaScript e nativa se comunicavam por meio de uma bridge assíncrona.
+
+5
+00:00:24.640 --> 00:00:29.400
+Cada atualização de UI precisava ser serializada, enfileirada e desserializada,
+
+6
+00:00:29.560 --> 00:00:31.560
+o que causava falhas visuais.
+
+7
+00:00:31.560 --> 00:00:34.200
+Para engenheiros que estão adotando a nova arquitetura,
+
+8
+00:00:34.200 --> 00:00:39.320
+o desafio é entender exatamente como os componentes isolados do sistema,
+
+9
+00:00:39.320 --> 00:00:43.960
+Hermes, Cogen e Fabric se conectam de ponta a ponta.
+
+10
+00:00:43.960 --> 00:00:47.000
+Vamos rastrear o pipeline de execução completo,
+
+11
+00:00:47.000 --> 00:00:50.000
+começando a partir do bytecode pré-compilado no dispositivo,
+
+12
+00:00:50.000 --> 00:00:52.880
+até um commit de UI síncrono.
+
+13
+00:00:52.880 --> 00:00:57.640
+Entender esse pipeline permite que os engenheiros produzam a performance determinística
+
+14
+00:00:57.640 --> 00:01:00.280
+necessária para aplicações complexas.
+
+15
+00:01:00.280 --> 00:01:07.160
+Para entender o pipeline, precisamos observar o que ocorre antes mesmo de um único componente React tentar renderizar.
+
+16
+00:01:07.160 --> 00:01:13.160
+Esta linha do tempo contrasta o modelo antigo de compilação just-in-time com a compilação ahead of time do Hermes.
+
+17
+00:01:13.160 --> 00:01:16.040
+O dispositivo nunca analisa JavaScript bruto.
+
+18
+00:01:16.040 --> 00:01:22.000
+A compilação acontece no momento do build, entregando apenas o binário pré-compilado .hbc.
+
+19
+00:01:22.000 --> 00:01:24.600
+Em vez de gerar código de máquina em tempo de execução,
+
+20
+00:01:24.600 --> 00:01:28.360
+o Hermes interpreta diretamente um conjunto de instruções baseado em registradores.
+
+21
+00:01:28.360 --> 00:01:31.080
+A única exceção é durante builds de depuração.
+
+22
+00:01:31.080 --> 00:01:35.000
+Aqui, o Hermes facilita a interpretação sem jit de JavaScript em texto
+
+23
+00:01:35.000 --> 00:01:38.440
+para que você mantenha source maps precisos, linha por linha.
+
+24
+00:01:38.440 --> 00:01:42.520
+Mover a compilação para o momento do build remove a sobrecarga de análise e execução
+
+25
+00:01:42.520 --> 00:01:44.920
+da fase de cold start da aplicação.
+
+26
+00:01:44.920 --> 00:01:49.480
+No passado, o método padrão para melhorar os tempos de inicialização era usar RAM bundles
+
+27
+00:01:49.480 --> 00:01:53.000
+para carregar apenas os módulos específicos necessários na memória.
+
+28
+00:01:53.000 --> 00:01:56.680
+Se você estiver usando Hermes, deve parar de usar RAM bundles.
+
+29
+00:01:56.680 --> 00:02:01.160
+O formato .hbc supera inerentemente em eficiência por si só.
+
+30
+00:02:01.160 --> 00:02:06.280
+A otimização moderna para gerenciar o carregamento de módulos é a avaliação lazy de módulos
+
+31
+00:02:06.280 --> 00:02:09.640
+especificamente através da configuração de requires inline.
+
+32
+00:02:09.640 --> 00:02:12.200
+Este fluxograma compara os caminhos de execução.
+
+33
+00:02:12.200 --> 00:02:15.960
+Um require de nível superior avalia o módulo quando o arquivo é carregado.
+
+34
+00:02:15.960 --> 00:02:21.000
+A configuração inline adia a avaliação até que uma função específica precise do byte code.
+
+35
+00:02:21.000 --> 00:02:25.080
+Para aplicativos com grandes dependências, isso reduz o tempo até a interatividade.
+
+36
+00:02:25.080 --> 00:02:30.200
+Ao criar perfis no Android Studio Perfetto, você rastreia esses ganhos monitorando o método load bundle
+
+37
+00:02:30.200 --> 00:02:33.640
+no executor do Hermes e a função call dentro do runtime.
+
+38
+00:02:33.640 --> 00:02:37.960
+Na nova arquitetura, os ganhos de desempenho vêm do adiamento estrito da avaliação do byte code
+
+39
+00:02:37.960 --> 00:02:40.520
+até que seja necessário pelo caminho de execução.
+
+40
+00:02:40.520 --> 00:02:45.960
+Depois que o byte code do Hermes é avaliado, ele precisa de uma forma segura de se comunicar com as APIs nativas do dispositivo.
+
+41
+00:02:45.960 --> 00:02:50.120
+A arquitetura legada dependia de strings mágicas e pesquisas em dicionários em tempo de execução.
+
+42
+00:02:50.120 --> 00:02:54.040
+Se o nome de um método fosse digitado incorretamente, ele frequentemente falhava silenciosamente durante a execução.
+
+43
+00:02:54.040 --> 00:02:55.720
+O Code Gen resolve esse problema.
+
+44
+00:02:55.720 --> 00:03:00.680
+Ele lê um arquivo de especificação TypeScript e age como um gerador em tempo de build,
+
+45
+00:03:00.680 --> 00:03:03.720
+gerando um arquivo de cabeçalho C++ nativo.
+
+46
+00:03:03.720 --> 00:03:06.840
+Seu fluxo de trabalho se simplifica em pegar este header gerado
+
+47
+00:03:06.840 --> 00:03:09.960
+e criar uma subclasse dele para construir seu módulo nativo.
+
+48
+00:03:09.960 --> 00:03:14.920
+Como a implementação nativa é forçada a estar em conformidade com a estrutura do header gerado,
+
+49
+00:03:14.920 --> 00:03:18.120
+você tem Type Safety através da fronteira entre JavaScript e nativo.
+
+50
+00:03:18.760 --> 00:03:23.240
+O Code Gen transfere a responsabilidade da validação de tipos do dispositivo do usuário em tempo de execução
+
+51
+00:03:23.240 --> 00:03:25.480
+para a máquina do desenvolvedor em tempo de build,
+
+52
+00:03:25.480 --> 00:03:27.800
+eliminando uma categoria de crashes nativos.
+
+53
+00:03:28.600 --> 00:03:33.640
+Saber como o código nativo é tipado leva diretamente a como esse código é carregado na memória
+
+54
+00:03:33.640 --> 00:03:34.920
+durante a inicialização do aplicativo.
+
+55
+00:03:35.560 --> 00:03:40.760
+A arquitetura antiga penalizava os tempos de boot porque cada módulo nativo era instanciado de forma antecipada
+
+56
+00:03:40.760 --> 00:03:43.320
+quando o aplicativo é iniciado, independentemente do comportamento do usuário.
+
+57
+00:03:44.040 --> 00:03:48.680
+Este mapa de memória ilustra o paradigma de instanciação lazy dos TurboModules.
+
+58
+00:03:48.680 --> 00:03:51.240
+Os nós principais de inicialização são carregados imediatamente,
+
+59
+00:03:51.240 --> 00:03:55.240
+mas módulos especializados como este componente Bluetooth permanecem inativos na inicialização.
+
+60
+00:03:55.960 --> 00:04:00.920
+O módulo é criado exclusivamente no exato milissegundo em que o JavaScript faz uma chamada para
+
+61
+00:04:00.920 --> 00:04:02.600
+turbo-moduleregistry.get.
+
+62
+00:04:03.400 --> 00:04:07.640
+Em vez de desperdiçar memória, ele age exatamente como uma ponte de hardware nativa em repouso,
+
+63
+00:04:07.640 --> 00:04:10.280
+acordando instantaneamente e entrando em ação sob demanda.
+
+64
+00:04:11.080 --> 00:04:15.640
+Aplicações de grande escala reduzem seu consumo de memória porque telas não visitadas e recursos não utilizados
+
+65
+00:04:15.640 --> 00:04:20.760
+nunca acionam ciclos de inicialização. O teste definitivo dessa arquitetura é se
+
+66
+00:04:20.760 --> 00:04:25.240
+ele pode executar uma função nativa, retornar um valor para o JavaScript e atualizar a UI
+
+67
+00:04:25.240 --> 00:04:30.360
+tudo dentro do mesmo frame. Esta linha do tempo representa uma regra crítica do sistema.
+
+68
+00:04:30.360 --> 00:04:34.680
+Não há nenhum tick do event loop entre uma chamada de turbo-module e seu retorno síncrono,
+
+69
+00:04:34.680 --> 00:04:37.640
+limitado aqui por um frame V-sync de 16,6 milissegundos.
+
+70
+00:04:38.200 --> 00:04:42.760
+O passo um começa quando o JavaScript chama uma função como set auth token, fazendo com que o React agende
+
+71
+00:04:42.760 --> 00:04:49.480
+uma atualização de prioridade discreta. Passo dois, o reconciliador do React processa esses dados e produz uma nova
+
+72
+00:04:49.480 --> 00:04:57.400
+árvore de elementos. Passo três, através da JavaScript Interface, ou JSI, a camada C++ do Fabric recebe
+
+73
+00:04:57.400 --> 00:05:04.040
+essa nova árvore de forma síncrona. Passo quatro, o layout matemático para a UI é computado diretamente
+
+74
+00:05:04.120 --> 00:05:10.040
+dentro da camada C++. Por fim, uma transação de montagem é despachada para a thread de UI,
+
+75
+00:05:10.040 --> 00:05:15.800
+atualizando as views nativas logo antes do frame atingir seu limite. A fila assíncrona legada iria
+
+76
+00:05:15.800 --> 00:05:21.400
+exigiria um atraso de ida e volta, perdendo esse frame e forçando uma gagueira visual. Agora, a execução
+
+77
+00:05:21.400 --> 00:05:26.920
+permanece sincronizada com a taxa de atualização do display. Ao interligar bytecode compilado antecipadamente,
+
+78
+00:05:26.920 --> 00:05:33.160
+bindings C++ gerados e JSI síncrono, o React Native alcança um desempenho determinístico.
+

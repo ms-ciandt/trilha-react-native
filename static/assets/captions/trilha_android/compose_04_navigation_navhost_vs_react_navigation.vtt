@@ -1,0 +1,286 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:06.740
+Quando engenheiros Android fazem a transição para React Native, eles encontram uma superfície de API diferente para navegação.
+
+2
+00:00:06.740 --> 00:00:10.960
+Embora a tradução de rotas e o gerenciamento de pilhas possam parecer desconhecidos,
+
+3
+00:00:10.960 --> 00:00:14.320
+os objetivos arquiteturais de ambas as plataformas estão alinhados.
+
+4
+00:00:14.320 --> 00:00:22.120
+A filosofia de roteamento declarativo subjacente entre Jetpack Compose e React Navigation 7 segue a mesma lógica central.
+
+5
+00:00:22.120 --> 00:00:29.560
+Esses sistemas compartilham três pilares: um container de navegação, um grafo de rotas combinável e o gerenciamento de backstack.
+
+6
+00:00:29.960 --> 00:00:36.360
+Ambos usam rotas tipadas para detectar incompatibilidades durante as builds, suportam arquiteturas aninhadas para tabs isoladas,
+
+7
+00:00:36.360 --> 00:00:40.520
+e dependem de hooks programáticos para navegar os usuários entre os nós.
+
+8
+00:00:40.520 --> 00:00:48.840
+A divergência está na execução específica, em como cada sistema define a tipagem de rotas e como eles modelam seus respectivos estados de backstack.
+
+9
+00:00:48.840 --> 00:00:56.440
+Com essa base compartilhada estabelecida, a tarefa do engenheiro Android é mapear seus modelos mentais existentes para essa nova sintaxe.
+
+10
+00:00:56.440 --> 00:01:00.360
+No Compose, o padrão standard utiliza um único nav host.
+
+11
+00:01:00.360 --> 00:01:06.600
+Esta entidade gerencia tanto o controller provider quanto o composable graph scope em um único bloco.
+
+12
+00:01:06.600 --> 00:01:12.040
+O React Navigation 7 divide essa responsabilidade em dois componentes distintos.
+
+13
+00:01:12.040 --> 00:01:17.600
+O primeiro é o navigation container, que hospeda o controller provider e gerencia o estado.
+
+14
+00:01:17.600 --> 00:01:23.960
+O segundo é o stack.navigator, o composable graph scope que contém as definições de rotas individuais.
+
+15
+00:01:23.960 --> 00:01:29.080
+Uma vez que o container e o graph scope estão estabelecidos, definimos as telas dentro desse graph.
+
+16
+00:01:29.080 --> 00:01:36.040
+A familiar função Composable do Compose se traduz diretamente no componente stack.screen do React Navigation.
+
+17
+00:01:36.040 --> 00:01:43.000
+Ao separar o container do grafo, o React Navigation fornece uma base modular que imita a arquitetura nativa do Android,
+
+18
+00:01:43.000 --> 00:01:45.640
+enquanto se encaixa na árvore de componentes do React.
+
+19
+00:01:45.640 --> 00:01:53.920
+Mover dados entre essas telas requer segurança de tipos rígida para garantir que os parâmetros enviados por uma tela correspondam ao que o destino espera receber.
+
+20
+00:01:54.080 --> 00:01:58.640
+O Jetpack Compose lida com isso nativamente utilizando rotas baseadas em objetos Kotlin.
+
+21
+00:01:58.640 --> 00:02:04.880
+O React Navigation 7 alcança o mesmo resultado usando tipos de parâmetros TypeScript para reforçar esses contratos.
+
+22
+00:02:04.880 --> 00:02:09.840
+O núcleo dessa segurança de tipos é a interface TypeScript native stack screen props.
+
+23
+00:02:09.840 --> 00:02:15.520
+Os componentes de tela React consomem essa interface, definindo exatamente quais parâmetros podem receber.
+
+24
+00:02:15.520 --> 00:02:20.000
+Validados pelo compilador, você os acessa com a mesma confiança que no Kotlin.
+
+25
+00:02:20.000 --> 00:02:23.760
+O mecanismo muda de objetos Kotlin para interfaces TypeScript.
+
+26
+00:02:23.760 --> 00:02:28.000
+Mas o resultado, conformidade estrita de tipos para a aplicação, é o mesmo.
+
+27
+00:02:28.000 --> 00:02:34.240
+Para acionar essas transições, o nav controller do Compose corresponde ao Hook Use Navigation do React Navigation.
+
+28
+00:02:34.240 --> 00:02:37.920
+Podemos mapear as operações mais comuns diretamente de um para o outro.
+
+29
+00:02:37.920 --> 00:02:43.040
+A navegação para frente usando NavigateRoot é idêntica a chamar Navigation.Navigate,
+
+30
+00:02:43.040 --> 00:02:47.760
+reverter a pilha com popback stack corresponde a Navigation.GoBack.
+
+31
+00:02:47.760 --> 00:02:51.840
+A navegação Up usando NavigateUp também mapeia diretamente para GoBack.
+
+32
+00:02:51.840 --> 00:02:55.600
+Para ações destrutivas como limpar a pilha com popup2,
+
+33
+00:02:55.600 --> 00:03:00.160
+O React Navigation usa Navigation.Reset ou pop to top.
+
+34
+00:03:00.160 --> 00:03:05.760
+Por fim, inspecionar o estado atual mapeia para Navigation.State ou UseRoute.
+
+35
+00:03:05.760 --> 00:03:10.240
+A API baseada em hooks cobre a mesma área de superfície programática que o Compose,
+
+36
+00:03:10.240 --> 00:03:12.800
+mas com nomes de métodos mais consolidados.
+
+37
+00:03:12.800 --> 00:03:18.480
+Transições simples são fáceis de mapear, mas fluxos complexos como autenticação requerem uma abordagem diferente
+
+38
+00:03:18.480 --> 00:03:20.720
+para manter o usuário no estado correto.
+
+39
+00:03:20.720 --> 00:03:26.400
+Uma abordagem imperativa, disparando manualmente o popback stack várias vezes para limpar as telas de login,
+
+40
+00:03:26.400 --> 00:03:29.280
+é frágil e frequentemente leva a condições de corrida.
+
+41
+00:03:29.280 --> 00:03:33.360
+A UI declarativa moderna desencoraja essa manipulação manual da pilha
+
+42
+00:03:33.360 --> 00:03:38.080
+porque depende do desenvolvedor para rastrear perfeitamente o histórico da pilha em todos os momentos.
+
+43
+00:03:38.080 --> 00:03:43.280
+Em vez disso, usamos um paradigma declarativo onde o estado global determina qual parte da navegação
+
+44
+00:03:43.280 --> 00:03:48.080
+existe no grafo. Definimos um toggle Boolean global para o estado de autenticação.
+
+45
+00:03:48.160 --> 00:03:53.520
+Quando falso, o sistema renderiza um grafo de autenticação isolado contendo telas de login.
+
+46
+00:03:53.520 --> 00:03:58.480
+No Compose, você usaria um bloco if padrão dentro do Navhost para alternar entre árvores de composables.
+
+47
+00:03:59.040 --> 00:04:03.200
+O React Navigation renderiza condicionalmente diferentes componentes stack.navigator
+
+48
+00:04:03.200 --> 00:04:06.480
+com base nesse mesmo estado. Quando o estado se torna verdadeiro,
+
+49
+00:04:06.480 --> 00:04:09.680
+o grafo de autenticação é destruído e substituído pelo grafo principal.
+
+50
+00:04:09.680 --> 00:04:12.960
+Como as telas de login não existem mais na árvore de componentes,
+
+51
+00:04:12.960 --> 00:04:15.920
+o botão físico de voltar não consegue retornar o usuário a elas.
+
+52
+00:04:16.000 --> 00:04:20.320
+O sucesso no React Navigation requer abandonar as ações de pop manuais
+
+53
+00:04:20.320 --> 00:04:22.960
+e deixar a renderização condicional gerenciar a existência da pilha.
+
+54
+00:04:23.520 --> 00:04:28.480
+Quando fazemos um zoom out, podemos ver como esses blocos modulares constroem uma arquitetura de app de produção.
+
+55
+00:04:28.480 --> 00:04:32.560
+Um padrão comum é colocar um tab.navigator na raiz da aplicação.
+
+56
+00:04:32.560 --> 00:04:36.800
+As abas individuais encapsulam suas próprias árvores stack.navigator aninhadas.
+
+57
+00:04:36.800 --> 00:04:40.160
+O React Navigation suporta esse aninhamento hierárquico nativamente,
+
+58
+00:04:40.160 --> 00:04:43.440
+mantendo o histórico de cada aba isolado de forma organizada.
+
+59
+00:04:43.760 --> 00:04:49.040
+Além da navegação interna, também precisamos considerar os pontos de entrada externos.
+
+60
+00:04:49.040 --> 00:04:54.400
+A configuração de deep linking no React Navigation mapeia diretamente para o roteamento nativo do sistema operacional.
+
+61
+00:04:54.400 --> 00:04:58.480
+No Android, você ainda registra intent filters no manifesto do Android
+
+62
+00:04:58.480 --> 00:05:03.440
+para rotear URIs no container React, que então direciona para o nó correto no seu grafo.
+
+63
+00:05:04.000 --> 00:05:07.120
+Ao combinar essas stacks aninhadas com deep linking nativo,
+
+64
+00:05:07.120 --> 00:05:11.120
+o React Navigation alcança o mesmo conjunto de recursos que o Jetpack Compose.
+
+65
+00:05:11.120 --> 00:05:14.400
+Como vimos, os modelos mentais que você construiu no desenvolvimento Android
+
+66
+00:05:14.400 --> 00:05:16.720
+se transferem diretamente para o React Native.
+
+67
+00:05:16.720 --> 00:05:21.520
+O sucesso é uma questão de mapear esses conceitos para TypeScript e esses novos contêineres de componentes.
+
+68
+00:05:21.520 --> 00:05:24.000
+Agora que mapeamos o comportamento da aplicação,
+
+69
+00:05:24.000 --> 00:05:25.600
+podemos observar sua aparência.
+
+70
+00:05:25.600 --> 00:05:28.160
+Em nosso vídeo final, vamos traduzir o material three
+
+71
+00:05:28.160 --> 00:05:37.040
+padrões de temas em sistemas de estilização do React Native.
+

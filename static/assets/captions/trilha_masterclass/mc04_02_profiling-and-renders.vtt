@@ -1,0 +1,522 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:03.680
+À esquerda, uma rolagem suave de 60 quadros por segundo.
+
+2
+00:00:03.680 --> 00:00:05.920
+À direita, uma trepidação radical.
+
+3
+00:00:05.920 --> 00:00:09.360
+Sobrepor a faixa do coreógrafo do Perfetto revela o motivo.
+
+4
+00:00:09.360 --> 00:00:13.200
+A esquerda atinge intervalos consistentes de 16,6 milissegundos.
+
+5
+00:00:13.200 --> 00:00:16.400
+A direita mostra seções alongadas que perdem o prazo,
+
+6
+00:00:16.400 --> 00:00:18.160
+descartando frames completamente.
+
+7
+00:00:18.160 --> 00:00:21.040
+O instinto de muitos desenvolvedores é começar imediatamente a
+
+8
+00:00:21.040 --> 00:00:23.200
+refatorar o código para corrigir a lentidão,
+
+9
+00:00:23.200 --> 00:00:26.400
+mas a regra fundamental da engenharia de performance é simples.
+
+10
+00:00:26.400 --> 00:00:29.040
+Não otimize o que você não mediu.
+
+11
+00:00:29.120 --> 00:00:31.840
+Frames perdidos são indicadores tardios de um gargalo,
+
+12
+00:00:31.840 --> 00:00:33.840
+tipicamente localizado na thread JavaScript,
+
+13
+00:00:33.840 --> 00:00:36.000
+ou na bridge do JS para o nativo.
+
+14
+00:00:36.000 --> 00:00:39.440
+Isolar esse gargalo requer um ciclo de diagnóstico rigoroso.
+
+15
+00:00:39.440 --> 00:00:42.640
+Você forma uma hipótese, a mede com uma ferramenta de profiling,
+
+16
+00:00:42.640 --> 00:00:46.400
+aplicar uma correção direcionada e medir novamente para verificar o impacto.
+
+17
+00:00:46.400 --> 00:00:49.920
+Ignorar esse processo empírico significa que você está codando às cegas,
+
+18
+00:00:49.920 --> 00:00:53.440
+adivinhar falhas estruturais sem dados raramente resolve o problema
+
+19
+00:00:53.440 --> 00:00:56.560
+e geralmente introduz regressões de performance completamente novas
+
+20
+00:00:56.560 --> 00:00:58.000
+na aplicação.
+
+21
+00:00:58.000 --> 00:01:02.320
+Esta árvore de componentes do React Native é atualizada através de um contrato rígido.
+
+22
+00:01:02.320 --> 00:01:06.480
+Regra um, um componente é re-renderizado quando seu estado local muda.
+
+23
+00:01:06.480 --> 00:01:08.560
+Regra dois, quando o componente pai é atualizado,
+
+24
+00:01:08.560 --> 00:01:12.000
+uma reação em cadeia força cada filho conectado a re-renderizar,
+
+25
+00:01:12.000 --> 00:01:14.400
+a menos que seja protegido pelo react.memo.
+
+26
+00:01:14.400 --> 00:01:17.600
+A regra três afirma que um componente vai re-renderizar sempre que
+
+27
+00:01:17.600 --> 00:01:20.560
+um contexto global que ele consome receber uma atualização.
+
+28
+00:01:20.560 --> 00:01:23.120
+E a regra quatro aciona uma re-renderização sempre que um hook
+
+29
+00:01:23.120 --> 00:01:26.320
+do qual o componente depende retorna uma nova referência na memória.
+
+30
+00:01:26.320 --> 00:01:28.720
+Internalizar essa arquitetura de design precisa
+
+31
+00:01:28.720 --> 00:01:32.000
+que intencionalmente evita ciclos de computação desnecessários,
+
+32
+00:01:32.000 --> 00:01:34.800
+você protege a thread de UI de ser sobrecarregada.
+
+33
+00:01:34.800 --> 00:01:37.280
+Quando você suspeita que a execução do próprio JavaScript
+
+34
+00:01:37.280 --> 00:01:38.880
+está prejudicando sua taxa de quadros,
+
+35
+00:01:38.880 --> 00:01:42.720
+o principal instrumento de diagnóstico é o profiler do React Dev Tools.
+
+36
+00:01:42.720 --> 00:01:45.760
+Observar um gráfico de chamas do profiler rastreia os tempos de commit.
+
+37
+00:01:45.760 --> 00:01:50.080
+Para diagnosticar problemas, ative o registro do motivo pelo qual cada componente foi renderizado
+
+38
+00:01:50.080 --> 00:01:53.360
+para isolar exatamente qual prop está forçando o commit.
+
+39
+00:01:53.360 --> 00:01:57.040
+Essa visualização frequentemente expõe uma falha arquitetural comum,
+
+40
+00:01:57.040 --> 00:01:59.840
+a armadilha do Uselector do Redux Toolkit.
+
+41
+00:01:59.840 --> 00:02:03.120
+Essa cascata acontece porque cada chamada do Uselector
+
+42
+00:02:03.120 --> 00:02:06.960
+é reavaliada a cada dispatch para o store global.
+
+43
+00:02:06.960 --> 00:02:10.640
+Mesmo que a fatia de dados específica de um componente permaneça idêntica,
+
+44
+00:02:10.640 --> 00:02:14.560
+o hook pode retornar uma nova referência de memória, acionando a regra quatro.
+
+45
+00:02:14.560 --> 00:02:17.520
+Migrar para o ZooStand resolve esse overhead específico
+
+46
+00:02:17.520 --> 00:02:20.400
+mudando como os componentes interagem com o store.
+
+47
+00:02:20.400 --> 00:02:22.880
+ZooStand evita a armadilha do dispatch global
+
+48
+00:02:22.960 --> 00:02:25.200
+através de uma arquitetura baseada em granularidade fina
+
+49
+00:02:25.200 --> 00:02:27.120
+por assinaturas de selector.
+
+50
+00:02:27.120 --> 00:02:30.320
+Um componente só recalcula quando a parte exata do estado
+
+51
+00:02:30.320 --> 00:02:32.560
+ele aponta para mudanças reais.
+
+52
+00:02:32.560 --> 00:02:34.800
+Migrar de avaliações de dispatch globais
+
+53
+00:02:34.800 --> 00:02:37.920
+para assinaturas localizadas evita violações de contrato acidentais
+
+54
+00:02:37.920 --> 00:02:39.520
+em escala.
+
+55
+00:02:39.520 --> 00:02:42.640
+Isso garante que a thread JavaScript permaneça completamente ociosa
+
+56
+00:02:42.640 --> 00:02:46.320
+até que uma atualização específica exija absolutamente seu poder de processamento.
+
+57
+00:02:46.320 --> 00:02:50.240
+Às vezes o próprio código JavaScript é altamente otimizado,
+
+58
+00:02:50.240 --> 00:02:52.800
+mas a aplicação ainda perde frames.
+
+59
+00:02:52.880 --> 00:02:56.080
+Nesses casos, o atrito está na fronteira complexa
+
+60
+00:02:56.080 --> 00:02:59.280
+onde o JavaScript se comunica com os módulos nativos.
+
+61
+00:02:59.280 --> 00:03:03.520
+Este é um cronograma do Perfetto, mapeando operações assíncronas.
+
+62
+00:03:03.520 --> 00:03:06.240
+Ao investigar a criação lenta de views nativas,
+
+63
+00:03:06.240 --> 00:03:09.040
+isolamos a trilha fabric.commit.
+
+64
+00:03:09.040 --> 00:03:12.160
+Ler esta faixa de commit rastreia quanto tempo a shadow tree leva
+
+65
+00:03:12.160 --> 00:03:13.840
+para calcular layouts.
+
+66
+00:03:13.840 --> 00:03:17.600
+A categoria JSI especificamente expõe a função host
+
+67
+00:03:17.600 --> 00:03:18.880
+durações de chamada.
+
+68
+00:03:18.880 --> 00:03:21.920
+Ela mede exatamente quantos milissegundos são perdidos,
+
+69
+00:03:21.920 --> 00:03:25.120
+aguardando os dados cruzarem a bridge entre os ambientes.
+
+70
+00:03:25.120 --> 00:03:27.920
+Uma reação comum a atrasos profundos de execução
+
+71
+00:03:27.920 --> 00:03:30.720
+está defensivamente envolvendo cada componente JavaScript
+
+72
+00:03:30.720 --> 00:03:34.080
+em um hook use memo, na esperança de cachear a saída de renderização.
+
+73
+00:03:34.080 --> 00:03:37.120
+Mas a memoização tem um custo de execução oculto.
+
+74
+00:03:37.120 --> 00:03:40.560
+O motor ainda é forçado a executar uma comparação de array de dependências
+
+75
+00:03:40.560 --> 00:03:43.040
+em cada ciclo de renderização para determinar
+
+76
+00:03:43.040 --> 00:03:45.120
+se o valor em cache permanece válido.
+
+77
+00:03:45.120 --> 00:03:47.920
+O use memo não é um ganho de performance gratuito.
+
+78
+00:03:47.920 --> 00:03:49.840
+Ele só gera um resultado positivo
+
+79
+00:03:49.840 --> 00:03:52.080
+quando o processamento bruto que está sendo ignorado
+
+80
+00:03:52.080 --> 00:03:53.920
+é mais pesado do que o custo de processamento
+
+81
+00:03:53.920 --> 00:03:56.000
+da comparação de dependências.
+
+82
+00:03:56.000 --> 00:03:59.920
+Outro custo oculto na thread JS vem da alocação de memória.
+
+83
+00:03:59.920 --> 00:04:02.480
+Montar e desmontar elementos continuamente
+
+84
+00:04:02.480 --> 00:04:04.160
+aciona a coleta de lixo.
+
+85
+00:04:04.160 --> 00:04:05.840
+Isso força a thread JavaScript
+
+86
+00:04:05.840 --> 00:04:08.880
+para interromper agressivamente todas as suas operações primárias,
+
+87
+00:04:08.880 --> 00:04:10.480
+congelando a interface completamente
+
+88
+00:04:10.480 --> 00:04:12.560
+enquanto ela freneticamente enfileira memória.
+
+89
+00:04:12.560 --> 00:04:15.040
+A esquerda, a flat list gera ansiosamente
+
+90
+00:04:15.040 --> 00:04:17.440
+e destrói elementos de UI fora da tela.
+
+91
+00:04:17.520 --> 00:04:20.400
+Certo, o flash list usa um pool fixo de itens,
+
+92
+00:04:20.400 --> 00:04:22.720
+voltando ao início para trocar os dados.
+
+93
+00:04:22.720 --> 00:04:24.560
+Como os contêineres são reciclados,
+
+94
+00:04:24.560 --> 00:04:27.840
+uma propriedade de tamanho estimado do item precisa e correta é fundamental.
+
+95
+00:04:27.840 --> 00:04:29.520
+Caso contrário, o mecanismo calcula incorretamente,
+
+96
+00:04:29.520 --> 00:04:31.440
+causando saltos bruscos de layout.
+
+97
+00:04:31.440 --> 00:04:35.120
+Essa lógica de pooling de recursos se aplica diretamente aos assets de imagem.
+
+98
+00:04:35.120 --> 00:04:37.200
+Uma imagem sem cache força o dispositivo
+
+99
+00:04:37.200 --> 00:04:40.080
+a executar uma operação cara de re-download e re-decodificação
+
+100
+00:04:40.080 --> 00:04:42.160
+toda vez que a interface é renderizada.
+
+101
+00:04:42.160 --> 00:04:45.680
+Você contorna isso implementando disco rígido e memória
+
+102
+00:04:45.680 --> 00:04:49.920
+em cache, usando bibliotecas como fast image ou expo image.
+
+103
+00:04:49.920 --> 00:04:51.920
+Para assets que raramente mudam,
+
+104
+00:04:51.920 --> 00:04:54.400
+você usa URLs endereçadas por conteúdo,
+
+105
+00:04:54.400 --> 00:04:56.880
+permitindo que a própria string de URL funcione
+
+106
+00:04:56.880 --> 00:04:58.800
+como uma chave de cache permanente.
+
+107
+00:04:58.800 --> 00:05:01.200
+A camada final desta arquitetura de cache
+
+108
+00:05:01.200 --> 00:05:03.200
+se estende às suas requisições de rede,
+
+109
+00:05:03.200 --> 00:05:05.680
+usando ferramentas como TanStack Query.
+
+110
+00:05:05.680 --> 00:05:09.520
+TanStack Query opera em um modelo stale-while-revalidate.
+
+111
+00:05:09.520 --> 00:05:12.320
+Se um usuário navegar de volta para uma tela já visitada,
+
+112
+00:05:12.320 --> 00:05:14.800
+a UI renderiza instantaneamente a partir do cache,
+
+113
+00:05:14.800 --> 00:05:17.920
+buscando silenciosamente dados atualizados em segundo plano.
+
+114
+00:05:17.920 --> 00:05:21.920
+Ao reciclar views de UI e fazer cache agressivo de assets externos,
+
+115
+00:05:21.920 --> 00:05:25.120
+você efetivamente priva o garbage collector de trabalho.
+
+116
+00:05:25.120 --> 00:05:28.480
+Isso garante que a thread JavaScript permanece desbloqueada
+
+117
+00:05:28.480 --> 00:05:32.080
+e totalmente responsiva durante interações intensas do usuário.
+
+118
+00:05:32.080 --> 00:05:35.280
+A otimização requer alinhar o contrato de renderização
+
+119
+00:05:35.280 --> 00:05:39.200
+com as capacidades do engine por meio de medição empírica rigorosa.
+
+120
+00:05:39.200 --> 00:05:42.960
+Esta matriz de seleção de ferramentas mapeia sua hipótese específica
+
+121
+00:05:42.960 --> 00:05:46.000
+ao instrumento de diagnóstico exato necessário.
+
+122
+00:05:46.000 --> 00:05:48.880
+Suspeita de que um script está reduzindo as taxas de quadros.
+
+123
+00:05:48.880 --> 00:05:53.280
+O Hermes isola esse hotspot de CPU do JS em um gráfico de chamas.
+
+124
+00:05:53.280 --> 00:05:54.800
+Carregamento de dados lento,
+
+125
+00:05:54.800 --> 00:05:58.240
+o Flipper mapeia os tempos exatos do fluxo de requisições,
+
+126
+00:05:58.240 --> 00:06:00.400
+aplicando rigorosamente o contrato de renderização
+
+127
+00:06:00.400 --> 00:06:02.400
+e utilizando a ferramenta de diagnóstico correta
+
+128
+00:06:02.400 --> 00:06:04.080
+em cada camada suspeita,
+
+129
+00:06:04.080 --> 00:06:06.880
+permite que os desenvolvedores mantenham tempos de quadro estáveis
+
+130
+00:06:06.880 --> 00:06:10.400
+e comportamento previsível em arquiteturas complexas.
+

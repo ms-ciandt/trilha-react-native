@@ -1,0 +1,402 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:04.000
+Na web, adicionar um novo recurso é um processo sem atritos.
+
+2
+00:00:04.000 --> 00:00:09.500
+Digite NPM install e veja o código se integrar perfeitamente ao seu pipeline digital.
+
+3
+00:00:09.500 --> 00:00:13.500
+Desenvolvedores web construíram um hábito operacional inteiro em torno disso.
+
+4
+00:00:13.500 --> 00:00:18.000
+Você executa um gerenciador de pacotes, deixa o bundler cuidar do tree shaking para eliminar código morto,
+
+5
+00:00:18.000 --> 00:00:20.500
+e segue em frente para construir a UI.
+
+6
+00:00:20.500 --> 00:00:22.500
+Mas quando você faz a transição para React Native,
+
+7
+00:00:22.500 --> 00:00:27.500
+a suposição de que dependências são operacionalmente baratas quebra imediatamente.
+
+8
+00:00:27.500 --> 00:00:31.500
+Uma dependência mobile não fica apenas em um único ambiente de navegador.
+
+9
+00:00:31.500 --> 00:00:36.000
+Ela precisa navegar dois modelos de execução completamente diferentes simultaneamente,
+
+10
+00:00:36.000 --> 00:00:41.000
+comunicando entre sua lógica JavaScript e o sistema operacional mobile subjacente.
+
+11
+00:00:41.000 --> 00:00:45.000
+Se você tratar uma árvore de dependências do React Native exatamente como a de um aplicativo web,
+
+12
+00:00:45.000 --> 00:00:49.000
+você garante atrito no pipeline e falhas de build inevitáveis.
+
+13
+00:00:49.000 --> 00:00:52.500
+Para evitar esse atrito, você precisa reconhecer que os pacotes do React Native
+
+14
+00:00:52.500 --> 00:00:56.500
+são estritamente divididos em dois perfis de risco distintos.
+
+15
+00:00:56.500 --> 00:01:00.000
+O primeiro perfil consiste em pacotes exclusivamente JavaScript.
+
+16
+00:01:00.000 --> 00:01:05.000
+Estas são suas bibliotecas utilitárias padrão, como low-dash ou ferramentas de gerenciamento de estado,
+
+17
+00:01:05.000 --> 00:01:07.000
+como Zustand e Redux.
+
+18
+00:01:07.000 --> 00:01:10.000
+Estas carregam um perfil de risco muito baixo.
+
+19
+00:01:10.000 --> 00:01:12.500
+Porque contêm apenas código JavaScript,
+
+20
+00:01:12.500 --> 00:01:15.500
+elas são resolvidas inteiramente pelo Metro Bundler.
+
+21
+00:01:15.500 --> 00:01:20.500
+Eles se comportam exatamente como no DOM, sem necessidade de compilação especial.
+
+22
+00:01:20.500 --> 00:01:24.500
+O segundo perfil envolve pacotes que contêm código nativo.
+
+23
+00:01:24.500 --> 00:01:29.500
+Esses interagem diretamente com o hardware do dispositivo, como câmera, módulos de mapeamento GPS,
+
+24
+00:01:29.500 --> 00:01:31.500
+ou sensores de giroscópio.
+
+25
+00:01:31.500 --> 00:01:34.500
+Olhe dentro desses pacotes na sua pasta Node modules,
+
+26
+00:01:34.500 --> 00:01:41.000
+e você encontrará subdiretórios aninhados de Android e iOS contendo arquivos brutos de Kotlin, Java ou Swift.
+
+27
+00:01:41.000 --> 00:01:43.500
+Eles ignoram as ferramentas padrão de JavaScript.
+
+28
+00:01:43.500 --> 00:01:45.100
+Eles não podem ser empacotados.
+
+29
+00:01:45.100 --> 00:01:49.500
+Eles devem ser compilados por toolchains nativas toda vez que você fizer o build.
+
+30
+00:01:49.500 --> 00:01:52.500
+Identificar em qual categoria um pacote se enquadra
+
+31
+00:01:52.500 --> 00:01:57.000
+permite mapear seu impacto no processo de build antes que a primeira linha de código seja escrita.
+
+32
+00:01:57.000 --> 00:02:01.000
+Esse custo arquitetural se manifesta de quatro formas distintas.
+
+33
+00:02:01.000 --> 00:02:03.500
+A primeira é o borbulhamento de versão de dependência.
+
+34
+00:02:03.500 --> 00:02:07.000
+Um pacote nativo é altamente sensível ao ambiente ao seu redor.
+
+35
+00:02:07.000 --> 00:02:12.000
+Ele deve se alinhar perfeitamente com a versão específica do core do React Native que você está utilizando.
+
+36
+00:02:12.000 --> 00:02:16.000
+Esta matriz mostra uma dependência nativa central vinculada a quatro pilares.
+
+37
+00:02:16.000 --> 00:02:21.000
+React Native core, Android Gradle, Xcode e seu Expo SDK.
+
+38
+00:02:21.000 --> 00:02:23.500
+Isso cria um estado de falha em cascata.
+
+39
+00:02:23.500 --> 00:02:28.000
+Se você atualizar o framework principal, essa dependência precisa ter uma atualização compatível disponível,
+
+40
+00:02:28.000 --> 00:02:30.000
+caso contrário, a compilação falha.
+
+41
+00:02:30.000 --> 00:02:34.000
+Adotar um pacote nativo significa que o cronograma de atualização do seu projeto fica refém
+
+42
+00:02:34.000 --> 00:02:37.000
+dos mantenedores open source daquela biblioteca específica.
+
+43
+00:02:37.000 --> 00:02:40.500
+O segundo custo envolve os tempos de build e o domínio de debugging.
+
+44
+00:02:40.500 --> 00:02:43.000
+Na web, se você introduz um pacote problemático,
+
+45
+00:02:43.000 --> 00:02:46.500
+os erros aparecem de forma clara no output do terminal do seu Bundler.
+
+46
+00:02:46.500 --> 00:02:50.000
+Você corrige a sintaxe, salva o arquivo e o navegador recarrega.
+
+47
+00:02:50.000 --> 00:02:53.500
+Erros de dependências nativas ignoram completamente o JavaScript Bundler.
+
+48
+00:02:53.500 --> 00:02:59.500
+O Metro reportará um build bem-sucedido mesmo enquanto o próprio app falha ao compilar e iniciar.
+
+49
+00:02:59.500 --> 00:03:02.000
+Quando um build falha devido a um pacote nativo,
+
+50
+00:03:02.000 --> 00:03:08.000
+erros de sintaxe ou versão disparam stack traces massivos e complexos dentro do Gradle ou Xcode.
+
+51
+00:03:08.000 --> 00:03:13.000
+Depurar essas falhas é uma habilidade operacional completamente diferente de depurar JavaScript.
+
+52
+00:03:13.000 --> 00:03:18.000
+Requer uma fluência básica na leitura de logs de toolchain específicos da plataforma.
+
+53
+00:03:18.000 --> 00:03:22.500
+O terceiro centro de custo gira em torno de depreciação arquitetural e compatibilidade.
+
+54
+00:03:22.500 --> 00:03:26.000
+O React Native está passando por uma enorme transição estrutural,
+
+55
+00:03:26.000 --> 00:03:31.500
+se afastando de sua ponte de comunicação assíncrona original entre as threads JavaScript e nativas.
+
+56
+00:03:31.500 --> 00:03:37.500
+O framework está adotando um novo modelo de execução síncrona baseado em interfaces C++.
+
+57
+00:03:37.500 --> 00:03:41.000
+Essa nova arquitetura é o padrão exigido daqui para frente.
+
+58
+00:03:41.000 --> 00:03:46.000
+No entanto, milhares de pacotes nativos da comunidade ainda dependem da bridge legada.
+
+59
+00:03:46.500 --> 00:03:52.000
+Se você integrar um desses pacotes, seu app é forçado a rotear dados pelo pipeline antigo e mais lento,
+
+60
+00:03:52.000 --> 00:03:54.000
+criando um gargalo de desempenho.
+
+61
+00:03:54.000 --> 00:04:02.000
+Ao instalar uma dependência nativa legada, você vincula sua aplicação moderna às limitações de desempenho da antiga ponte de comunicação.
+
+62
+00:04:02.000 --> 00:04:05.000
+O quarto e último custo oculto é a rigidez de implantação.
+
+63
+00:04:05.000 --> 00:04:13.000
+Em um ciclo de vida padrão do React Native, atualizações over-the-air permitem que você substitua rapidamente o bundle JavaScript para corrigir bugs instantaneamente,
+
+64
+00:04:13.000 --> 00:04:15.500
+contornando o processo de revisão da App Store.
+
+65
+00:04:15.500 --> 00:04:18.000
+Este fluxograma contrasta os caminhos de atualização.
+
+66
+00:04:18.000 --> 00:04:23.000
+No topo, um payload JavaScript leve ignora as lojas diretamente para o dispositivo.
+
+67
+00:04:23.000 --> 00:04:27.000
+Na parte inferior, alterações em código nativo exigem grandes blocos binários.
+
+68
+00:04:27.000 --> 00:04:33.000
+Como dependências nativas alteram o binário compilado, elas são imunes ao deployment over-the-air,
+
+69
+00:04:33.000 --> 00:04:35.500
+ficando limitadas à revisão da App Store.
+
+70
+00:04:35.500 --> 00:04:40.000
+Se você perceber que uma biblioteca nativa está quebrada ou causando crashes em produção,
+
+71
+00:04:40.000 --> 00:04:43.000
+você precisa executar uma reconstrução nativa completa,
+
+72
+00:04:43.000 --> 00:04:48.000
+atualizar seus perfis de provisionamento e enviar uma versão totalmente nova para a Apple e o Google.
+
+73
+00:04:48.000 --> 00:04:51.000
+Uma vez que uma dependência nativa é publicada em um app em produção,
+
+74
+00:04:51.000 --> 00:04:56.000
+a equipe de engenharia perde permanentemente a capacidade de corrigir rapidamente aquela funcionalidade específica.
+
+75
+00:04:56.000 --> 00:05:02.000
+Esses quatro custos se aplicam a projetos Greenfield, construídos inteiramente em React Native desde o início.
+
+76
+00:05:02.000 --> 00:05:05.000
+Mas eles escalam rapidamente em um ambiente brownfield,
+
+77
+00:05:05.000 --> 00:05:10.000
+onde o React Native está incorporado dentro de um grande aplicativo nativo pré-existente.
+
+78
+00:05:10.000 --> 00:05:16.000
+Nesse contexto, os riscos operacionais de introduzir uma dependência nativa são multiplicados significativamente.
+
+79
+00:05:16.000 --> 00:05:20.000
+Um pacote React Native traz suas próprias dependências transitivas,
+
+80
+00:05:20.000 --> 00:05:23.000
+clientes de rede nativos ou ferramentas de processamento de imagens,
+
+81
+00:05:23.000 --> 00:05:28.000
+que muitas vezes passam despercebidos até conflitarem com o ambiente existente do app host.
+
+82
+00:05:28.000 --> 00:05:34.000
+Este diagrama mostra um grande contêiner de aplicativo host contendo um contêiner React Native incorporado.
+
+83
+00:05:34.000 --> 00:05:37.000
+Veja o que acontece quando o pacote React Native
+
+84
+00:05:37.000 --> 00:05:41.000
+injeta uma versão de biblioteca que o app host já utiliza.
+
+85
+00:05:41.000 --> 00:05:46.000
+Eles colidem, resultando em símbolos duplicados e falhas fatais de compilação.
+
+86
+00:05:46.000 --> 00:05:51.000
+Em um ambiente brownfield, adicionar uma dependência nativa é uma ação altamente invasiva.
+
+87
+00:05:51.000 --> 00:05:55.000
+Requer coordenação arquitetural direta com o time nativo responsável pelo projeto
+
+88
+00:05:55.000 --> 00:05:59.000
+para resolver conflitos de versão antes que qualquer código possa ser executado.
+
+89
+00:05:59.000 --> 00:06:03.000
+Para gerenciar esses riscos, você deve implementar um rigoroso checklist operacional de pré-voo
+
+90
+00:06:03.000 --> 00:06:07.000
+antes de executar qualquer comando de instalação em um projeto mobile.
+
+91
+00:06:07.000 --> 00:06:09.000
+A primeira verificação é simples.
+
+92
+00:06:09.000 --> 00:06:15.000
+Investigue o repositório do pacote, especificamente quanto à presença de diretórios nativos Android ou iOS.
+
+93
+00:06:15.000 --> 00:06:18.000
+Se existir, o perfil de risco aumenta.
+
+94
+00:06:18.000 --> 00:06:22.000
+A segunda verificação confirma a compatibilidade com a nova arquitetura.
+
+95
+00:06:22.000 --> 00:06:28.000
+Faça uma referência cruzada da biblioteca nos bancos de dados do diretório da comunidade para garantir que ela suporta o modelo de bridge síncrono.
+
+96
+00:06:28.000 --> 00:06:31.000
+Por fim, audite o status de manutenção dos pacotes.
+
+97
+00:06:31.000 --> 00:06:35.000
+Verifique sua fila de issues abertas e pesquise rigorosamente por uma alternativa apenas em JavaScript
+
+98
+00:06:35.000 --> 00:06:39.000
+que possa atender exatamente ao mesmo caso de uso sem tocar na camada nativa.
+
+99
+00:06:39.000 --> 00:06:43.000
+Cada dependência nativa se vincula ao processo de compilação do seu app,
+
+100
+00:06:43.000 --> 00:06:48.000
+criando um compromisso de manutenção de longo prazo que requer o mesmo nível de escrutínio que sua infraestrutura principal.
+

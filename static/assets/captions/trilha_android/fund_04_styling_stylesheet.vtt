@@ -1,0 +1,222 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:06.000
+Um desenvolvedor Android que procura arquivos de layout em um projeto React Native encontrará um vazio total.
+
+2
+00:00:06.000 --> 00:00:10.000
+O sistema XML padrão da plataforma foi completamente removido.
+
+3
+00:00:10.000 --> 00:00:13.000
+Essa remoção se estende também aos arquivos CSS.
+
+4
+00:00:13.000 --> 00:00:19.000
+Apesar das origens do React Native no desenvolvimento web, você não usará folhas de estilo web para definir sua UI mobile.
+
+5
+00:00:19.000 --> 00:00:25.000
+Neste ambiente, estilos e layouts são gerados durante a execução do aplicativo por meio de objetos JavaScript padrão.
+
+6
+00:00:26.000 --> 00:00:30.000
+À esquerda, o XML do Android é inflado diretamente em uma view nativa.
+
+7
+00:00:30.000 --> 00:00:35.000
+À direita, o React Native envia um objeto JavaScript através de uma ponte de comunicação.
+
+8
+00:00:35.000 --> 00:00:40.000
+Atributos XML como Android dot padding são mapeados diretamente para uma propriedade padding em camel case.
+
+9
+00:00:40.000 --> 00:00:43.000
+As views nativas resultantes são matematicamente idênticas.
+
+10
+00:00:43.000 --> 00:00:51.000
+O sucesso na estilização com React Native depende de dominar como esses objetos JavaScript são mapeados para componentes nativos ao atravessar a ponte do framework.
+
+11
+00:00:51.000 --> 00:00:57.000
+Agora vamos mapear sistematicamente cada parte do pipeline de estilização nativa do Android no motor JavaScript do React Native.
+
+12
+00:00:57.000 --> 00:01:00.000
+Pense nisso como uma camada de tradução.
+
+13
+00:01:00.000 --> 00:01:05.000
+Você está pegando restrições nativas da plataforma e as expressando através da execução JavaScript.
+
+14
+00:01:05.000 --> 00:01:12.000
+Esta é a anatomia de um objeto de estilo JavaScript inline bruto aplicado a um botão de interface padrão.
+
+15
+00:01:12.000 --> 00:01:17.000
+Os valores de padding e dimensões dentro deste objeto são números brutos.
+
+16
+00:01:17.000 --> 00:01:21.000
+Eles nunca são envolvidos em strings ou seguidos por sufixos de unidade.
+
+17
+00:01:21.000 --> 00:01:29.000
+No motor do React Native, esses números de lista de unidades representam pixels independentes de densidade, o equivalente direto ao DP do Android.
+
+18
+00:01:29.000 --> 00:01:33.000
+Isso permite que o framework lide com a densidade de tela automaticamente.
+
+19
+00:01:33.000 --> 00:01:40.000
+Ele escala sua UI para displays de alta densidade sem exigir declarações manuais de SP ou DP.
+
+20
+00:01:40.000 --> 00:01:48.000
+Enquanto objetos simples lidam com casos básicos, construir layouts complexos requer um método para combinar estilos sem herança XML.
+
+21
+00:01:48.000 --> 00:01:52.000
+React Native resolve isso por meio de composição de estilos usando um único array.
+
+22
+00:01:52.000 --> 00:01:58.000
+Ao passar um array de objetos para um componente, você pode mesclar múltiplos estados de estilo juntos.
+
+23
+00:01:58.000 --> 00:02:04.000
+Para quem vem do Kotlin, essa mesclagem baseada em array funciona de forma semelhante à função copy em uma data class.
+
+24
+00:02:04.000 --> 00:02:07.000
+A ordem no array determina o resultado.
+
+25
+00:02:07.000 --> 00:02:11.000
+Entradas posteriores sobrescrevem quaisquer propriedades conflitantes das anteriores.
+
+26
+00:02:11.000 --> 00:02:20.000
+Se sua lógica introduzir valores nulos ou falsos no array, o engine os ignora automaticamente, então você não precisa filtrar manualmente suas listas de estilos.
+
+27
+00:02:20.000 --> 00:02:28.000
+Suas propriedades de layout são resolvidas em um objeto matemático final no lado do JavaScript antes que o framework tente se comunicar com a camada nativa.
+
+28
+00:02:28.000 --> 00:02:34.000
+Depender exclusivamente de objetos JavaScript puros para cada estilo cria um risco específico de performance.
+
+29
+00:02:34.000 --> 00:02:40.000
+Cada vez que um componente React Native é re-renderizado, um objeto de estilo inline cria uma nova alocação de memória.
+
+30
+00:02:40.000 --> 00:02:48.000
+Essas alocações constroem um payload de dados que precisa cruzar a bridge a cada frame, forçando o sistema a reprocessar informações que ele já deveria ter.
+
+31
+00:02:48.000 --> 00:02:57.000
+Para UIs complexas ou animações rápidas, essa transmissão contínua de dados leva a um gargalo de serialização que reduz sua taxa de quadros.
+
+32
+00:02:57.000 --> 00:03:05.000
+A API StyleSheet.create extrai as definições de estilo do ciclo de renderização dos componentes, colocando-as em um cache estático.
+
+33
+00:03:05.000 --> 00:03:12.000
+Em vez de enviar o objeto completo repetidamente, o cache processa o estilo uma vez e atribui a ele um ID inteiro único.
+
+34
+00:03:12.000 --> 00:03:19.000
+Durante as re-renderizações, apenas esse ID leve atravessa a bridge. O trabalho pesado de serialização é eliminado.
+
+35
+00:03:19.000 --> 00:03:28.000
+Ao usar StyleSheet.create, você garante que os estilos sejam enviados para a camada nativa uma vez durante o carregamento do módulo, em vez de durante o processo de renderização da UI.
+
+36
+00:03:28.000 --> 00:03:35.000
+Isso também fornece verificação de tipos TypeScript, detectando propriedades de estilo inválidas durante o desenvolvimento em vez de em tempo de execução.
+
+37
+00:03:35.000 --> 00:03:46.000
+Use StyleSheet.create para todas as definições estáticas. Reserve estilos inline para valores que só podem ser calculados durante a renderização, como larguras dinâmicas baseadas nas dimensões atuais da janela.
+
+38
+00:03:46.000 --> 00:03:53.000
+Esta API fornece a otimização de bridge necessária para manter 60 quadros por segundo consistentes na camada nativa.
+
+39
+00:03:53.000 --> 00:04:00.000
+Embora o bridge lide com a maioria das traduções, diferenças específicas de plataforma nos mecanismos de renderização subjacentes ainda podem surgir.
+
+40
+00:04:00.000 --> 00:04:15.000
+Vemos isso claramente com sombras. Android e iOS lidam com a renderização de sombras por meio de lógicas completamente diferentes. O Android usa uma única propriedade de elevation, enquanto o iOS requer quatro propriedades específicas para definir o deslocamento, opacidade e raio da sombra.
+
+41
+00:04:15.000 --> 00:04:21.000
+Para manter uma aparência consistente, você deve definir ambos os conjuntos de instruções de sombra dentro do seu objeto de estilo.
+
+42
+00:04:21.000 --> 00:04:30.000
+O framework escolherá as propriedades relevantes para o sistema operacional atual. Para gerenciar essas diferenças com segurança, o React Native fornece ferramentas para ramificar sua lógica com base no dispositivo.
+
+43
+00:04:30.000 --> 00:04:39.000
+Você pode usar platform.OS para verificações rápidas, ou platform.select para fornecer diferentes objetos de estilo para cada plataforma dentro do mesmo arquivo.
+
+44
+00:04:39.000 --> 00:04:50.000
+Para diferenças de layout mais significativas, o Bundler pode trocar arquivos automaticamente com base nas extensões, escolhendo entre .iOS.js e .Android.js em tempo de build.
+
+45
+00:04:50.000 --> 00:04:58.000
+Uma estilização confiável vem de saber quando usar a abstração multiplataforma e quando emitir comandos específicos para as camadas de renderização individuais.
+
+46
+00:04:58.000 --> 00:05:04.000
+Essas regras se unem em um requisito padrão de produção: o alternador dinâmico de temas.
+
+47
+00:05:04.000 --> 00:05:10.000
+Ao alternar temas entre os modos claro e escuro, você precisa atualizar a UI sem sobrecarregar a bridge.
+
+48
+00:05:10.000 --> 00:05:18.000
+O hook de tema injeta as cores atuais nos seus layouts pré-existentes, combinando estado dinâmico com as definições do seu StyleSheet em cache.
+
+49
+00:05:18.000 --> 00:05:24.000
+Para manter isso eficiente, você deve evitar chamar stylesheet.create dentro do próprio corpo do componente.
+
+50
+00:05:24.000 --> 00:05:34.000
+Colocar a lógica de criação dentro do corpo da função força o app a reconstruir todo o cache de estilos a cada renderização, o que cria exatamente o gargalo que a API foi projetada para resolver.
+
+51
+00:05:34.000 --> 00:05:41.000
+A abordagem padrão é usar estilos base armazenados em cache de forma estática e combiná-los com pequenas injeções dinâmicas direcionadas.
+
+52
+00:05:41.000 --> 00:05:47.000
+Dominar essa ponte de UI é apenas a primeira parte da transição do desenvolvimento Android.
+
+53
+00:05:47.000 --> 00:05:53.000
+Completar a transição requer sair da lógica de layout para a mecânica do gerenciamento de estado e busca de dados.
+
+54
+00:05:53.000 --> 00:06:03.000
+Você encontrará equivalentes para os view models e repositórios do Android em ferramentas como Zustand para estado, TanStack Query para networking e MMKV para armazenamento local.
+
+55
+00:06:03.000 --> 00:06:10.000
+Ao finalmente consolidar a ponte de UI, você pode agora se concentrar em orquestrar os fluxos de dados dentro do ecossistema JavaScript.
+

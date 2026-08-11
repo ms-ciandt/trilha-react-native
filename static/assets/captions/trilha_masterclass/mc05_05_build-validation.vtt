@@ -1,0 +1,270 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:07.500
+Você executa seus gerenciadores de pacotes. O terminal exibe uma parede de texto e, finalmente, você vê aquela barra verde brilhante de sucesso.
+
+2
+00:00:07.500 --> 00:00:13.000
+É muito tentador olhar para essas janelas do terminal e assumir que o upgrade do React Native está concluído.
+
+3
+00:00:13.000 --> 00:00:17.500
+Mas um yarn install ou pod install bem-sucedido é um falso positivo.
+
+4
+00:00:17.500 --> 00:00:22.000
+Todo aquele texto verde significa apenas que seu ambiente local resolveu a árvore de dependências.
+
+5
+00:00:22.000 --> 00:00:26.500
+Ele não diz nada sobre se a aplicação vai realmente compilar ou executar.
+
+6
+00:00:26.500 --> 00:00:33.500
+Atualizar o React Native significa substituir a bridge nativa subjacente e trocar os artefatos de compilação reais.
+
+7
+00:00:33.500 --> 00:00:39.500
+Para saber se essas mudanças de arquitetura estão estáveis, você precisa executar uma compilação nativa completamente do zero.
+
+8
+00:00:39.500 --> 00:00:45.500
+Quando você tenta compilar, você expõe a primeira categoria de falhas pós-atualização: falhas em tempo de compilação.
+
+9
+00:00:45.500 --> 00:00:53.500
+Esses são erros de configuração profundos, como uma versão incompatível do plugin Gradle no Android, ou um conflito de resolução do CocoaPods no iOS.
+
+10
+00:00:53.500 --> 00:00:57.500
+Se a build for bem-sucedida, você então enfrenta crashes em tempo de execução.
+
+11
+00:00:57.500 --> 00:01:05.500
+Esses erros só aparecem no momento em que você realmente inicia o app, causados por uma incompatibilidade de tipo no JSI ou por um módulo nativo que falha ao carregar.
+
+12
+00:01:05.500 --> 00:01:16.000
+Por fim, há regressões de comportamento. O app compila e roda, mas um gesto de navegação crítico está quebrado, ou o layout de uma tela ultrapassa as bordas do dispositivo.
+
+13
+00:01:16.000 --> 00:01:19.500
+"Funciona na minha máquina" não é uma estratégia de validação.
+
+14
+00:01:19.500 --> 00:01:26.500
+Para lançar uma mudança de arquitetura com segurança, você precisa de um pipeline determinístico e multiplataforma que comece do zero absoluto.
+
+15
+00:01:26.500 --> 00:01:30.500
+Esse zero absoluto começa com a invalidação dos caches de build.
+
+16
+00:01:30.500 --> 00:01:36.500
+Artefatos em cache da sua versão anterior do React Native são a principal causa de resultados de build não determinísticos.
+
+17
+00:01:36.500 --> 00:01:39.500
+Se você deixar caches antigos no lugar, corre o risco de dois resultados.
+
+18
+00:01:39.500 --> 00:01:44.500
+Você obtém um falso positivo, onde o build passa apenas porque depende de arquivos desatualizados.
+
+19
+00:01:44.500 --> 00:01:51.500
+Ou você obtém um falso negativo, um build que falha puramente por causa de uma referência obsoleta, não porque seu código atualizado está quebrado.
+
+20
+00:01:51.500 --> 00:01:54.500
+Este é o layout estrutural de um projeto Xcode.
+
+21
+00:01:54.500 --> 00:02:03.500
+As linhas vermelhas representam como artefatos obsoletos da versão anterior do React Native permanecem fortemente injetados diretamente nas referências do projeto.
+
+22
+00:02:03.500 --> 00:02:06.500
+Você não pode simplesmente construir sobre eles.
+
+23
+00:02:06.500 --> 00:02:13.500
+Executar o comando pod deintegrate fisicamente rompe essas referências obsoletas injetadas pelo pod do arquivo de projeto do Xcode.
+
+24
+00:02:13.500 --> 00:02:19.500
+Ele deixa o nó principal do projeto completamente isolado. Seguindo isso com um novo pod install,
+
+25
+00:02:19.500 --> 00:02:25.500
+reconstrói deterministicamente essas conexões, extraindo estritamente do seu arquivo pod recém-atualizado.
+
+26
+00:02:25.500 --> 00:02:34.500
+Executar uma limpeza rigorosa de cache é a única maneira de garantir que os erros encontrados na próxima fase, compilação Nativa, sejam problemas reais e acionáveis.
+
+27
+00:02:34.500 --> 00:02:39.500
+Agora você pode avançar para compilar o build de release Nativo do Android inteiramente a partir do código-fonte.
+
+28
+00:02:39.500 --> 00:02:45.500
+Esta tabela detalha as falhas de compilação Android mais comuns que surgem após uma atualização de arquitetura principal.
+
+29
+00:02:45.500 --> 00:02:51.500
+Se você encontrar um conflito de plugin do Gradle, significa que a versão do seu plugin está fora de sincronização com o seu Gradle wrapper.
+
+30
+00:02:51.500 --> 00:02:56.500
+Você resolve isso alinhando ambas as versões com base no diff do React Native upgrade helper.
+
+31
+00:02:56.500 --> 00:02:59.500
+A seguir, temos erros de namespace ausente.
+
+32
+00:02:59.500 --> 00:03:06.500
+Isso requer abrir o arquivo build.gradle e definir explicitamente a string Android.namespace para o seu app.
+
+33
+00:03:06.500 --> 00:03:12.500
+Se você está migrando para o React Native 0.76 ou superior e visando a nova arquitetura,
+
+34
+00:03:12.500 --> 00:03:18.500
+você encontrará erros de stay a menos que aumente a versão mínima do SDK para 24.
+
+35
+00:03:18.500 --> 00:03:23.500
+Você também pode ver erros de runtime afirmando que um módulo está ausente no registro do turbo module.
+
+36
+00:03:23.500 --> 00:03:30.500
+Isso acontece quando módulos nativos são registrados com o nome incorreto ou completamente omitidos da lista get packages.
+
+37
+00:03:30.500 --> 00:03:36.500
+Por fim, falhas de build no CMake e JNI geralmente se originam de saídas cogen desatualizadas.
+
+38
+00:03:36.500 --> 00:03:41.500
+Você precisa limpar esses artefatos e regerá-los diretamente do schema antes de reconstruir.
+
+39
+00:03:41.500 --> 00:03:47.500
+Esses são erros de compilação na camada nativa profunda. Ferramentas de validação apenas em JavaScript nunca os detectarão.
+
+40
+00:03:47.500 --> 00:03:51.500
+O processo paralelo é compilar o build de release do iOS a partir do código-fonte.
+
+41
+00:03:51.500 --> 00:03:56.500
+Temos uma tabela semelhante para as falhas de compilação específicas do iOS que surgem após o upgrade.
+
+42
+00:03:56.500 --> 00:04:05.500
+Um erro de arquivo rctapplicate.h ausente requer que você adicione explicitamente o import do pod react rctapplicate na sua aplicação principal.
+
+43
+00:04:05.500 --> 00:04:10.500
+Conflitos de versão do Cocoa pods acontecem porque os ambientes locais de gems do Ruby ficam desatualizados.
+
+44
+00:04:10.500 --> 00:04:16.500
+Você provavelmente precisará atualizar manualmente sua instalação local do cocoa pods para atender aos novos requisitos do React Native.
+
+45
+00:04:16.500 --> 00:04:21.500
+Se você encontrar conflitos na fase de build do xcode, verifique se há arquivos info.plist duplicados.
+
+46
+00:04:21.500 --> 00:04:28.500
+Esses devem ser removidos manualmente através das configurações do target. A partir da versão 0.76, você pode encontrar erros no compilador Swift.
+
+47
+00:04:28.500 --> 00:04:36.500
+Como o rctapplicate subjacente foi alterado, as assinaturas de substituição personalizadas da sua aplicação não corresponderão mais e exigirão refatoração manual.
+
+48
+00:04:36.500 --> 00:04:43.500
+Obter uma build nativa limpa e bem-sucedida tanto no Android quanto no iOS comprova que seu código compila estruturalmente.
+
+49
+00:04:43.500 --> 00:04:48.500
+Mas a compilação não garante estabilidade comportamental ou em tempo de execução.
+
+50
+00:04:48.500 --> 00:04:54.500
+Nesta etapa, seus testes de unidade automatizados podem falhar. Após o upgrade, isso raramente significa que sua lógica está quebrada.
+
+51
+00:04:54.500 --> 00:05:01.500
+Geralmente significa que um módulo nativo mockado está sem um novo método ou que um teste de snapshot está simplesmente capturando um comportamento depreciado.
+
+52
+00:05:01.500 --> 00:05:06.500
+Para encontrar os erros reais de runtime, você precisa executar um smoke test em um dispositivo físico.
+
+53
+00:05:06.500 --> 00:05:10.500
+Emuladores e simuladores são inadequados para validação de arquitetura.
+
+54
+00:05:10.500 --> 00:05:15.500
+Em nível de hardware, emuladores contornam a latência de rede real usando a conexão da máquina host,
+
+55
+00:05:15.500 --> 00:05:21.500
+e eles não conseguem replicar com precisão as restrições exatas de CPU e GPU do hardware físico.
+
+56
+00:05:21.500 --> 00:05:30.500
+Eles também mascaram a pressão real de memória, falham em testar APIs de hardware como biometria corretamente, e executam a coleta de lixo do Hermes de forma diferente de um processador móvel.
+
+57
+00:05:30.500 --> 00:05:36.500
+Essa matriz dividida detalha os níveis exatos de hardware físico necessários para revelar esses pontos cegos.
+
+58
+00:05:36.500 --> 00:05:46.500
+No lado do Android, testar em um dispositivo de baixo custo com três gigabytes de RAM ou menos é obrigatório para expor vazamentos de memória ocultos e regressões no tempo de inicialização.
+
+59
+00:05:46.500 --> 00:05:56.500
+Você também precisa de um dispositivo intermediário para representar seu usuário mediano, e um dispositivo mais antigo rodando API24 para verificar se o seu baseline mínimo absoluto ainda funciona.
+
+60
+00:05:56.500 --> 00:06:05.500
+Testar no Android 15 é especificamente necessário para identificar estouros de layout em casos extremos causados pelos novos comportamentos da barra de navegação por gestos.
+
+61
+00:06:05.500 --> 00:06:19.500
+Para a matriz iOS, você deve validar contra o iOS mais recente para testar recursos como as APIs da Dynamic Island, e contrastar isso com uma versão mais antiga do iOS para garantir que o baseline do seu deployment target não tenha sido quebrado.
+
+62
+00:06:19.500 --> 00:06:27.500
+Apenas uma matriz rigorosa de hardware físico pode expor as regressões comportamentais complexas introduzidas por uma atualização profunda de framework.
+
+63
+00:06:27.500 --> 00:06:38.500
+Uma vez estabelecida, toda essa sequência — limpeza de caches, compilação nativa e matrizes de hardware — deve ser codificada em um pipeline de CI automatizado.
+
+64
+00:06:38.500 --> 00:06:45.500
+Automatizar essas verificações é a maneira de evitar que regressões no nível do framework se infiltrem silenciosamente em atualizações futuras de recursos menores.
+
+65
+00:06:45.500 --> 00:06:52.500
+Mas um build testado de forma limpa ainda é apenas um baseline. Não é uma garantia de zero impacto em produção.
+
+66
+00:06:52.500 --> 00:07:04.500
+No passado, rastreamos a taxa de crash nas 48 horas após o lançamento, picos anormais, acionamento de remediação, crashes de JS exigem rollbacks de code push, enquanto crashes nativos requerem hot fixes imediatos na app store.
+
+67
+00:07:04.500 --> 00:07:17.500
+Ao abandonar o falso positivo de uma instalação local bem-sucedida e tratar os upgrades do React Native como um pipeline rigoroso e verificado por hardware, as equipes de engenharia podem executar mudanças de arquitetura com total confiança.
+

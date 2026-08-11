@@ -1,0 +1,378 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:04.640
+Imagine uma ponte de dados crítica carregando milhões de requisições por segundo.
+
+2
+00:00:04.640 --> 00:00:08.480
+Se essa ponte de repente se romper, o sistema inteiro para.
+
+3
+00:00:08.480 --> 00:00:13.760
+No React Native, essa quebra catastrófica acontece quando você chama um TurboModule sem verificação.
+
+4
+00:00:13.760 --> 00:00:16.800
+É fácil assumir que, se você criou um módulo nativo,
+
+5
+00:00:16.800 --> 00:00:21.520
+ele está garantidamente disponível em tempo de execução, aguardando seu JavaScript ser executado.
+
+6
+00:00:21.520 --> 00:00:25.680
+Este diagrama mostra a bridge literal, o registro de turbo modules.
+
+7
+00:00:25.680 --> 00:00:29.120
+Ele conecta o JavaScript à esquerda ao código nativo à direita.
+
+8
+00:00:29.120 --> 00:00:32.880
+Quando em sincronia, as chamadas síncronas fluem perfeitamente.
+
+9
+00:00:32.880 --> 00:00:38.240
+Mas se o módulo nativo receptor estiver ausente, isso desencadeia um crash silencioso em todo o sistema.
+
+10
+00:00:38.240 --> 00:00:42.240
+Chamar um módulo ausente às cegas causa um erro sem tipo em produção,
+
+11
+00:00:42.240 --> 00:00:44.640
+deixando quase nenhum rastro para depuração.
+
+12
+00:00:44.640 --> 00:00:48.720
+A realidade é que um runtime moderno do React Native é altamente fragmentado,
+
+13
+00:00:48.720 --> 00:00:52.320
+e o ambiente que executa seu código está constantemente mudando.
+
+14
+00:00:52.320 --> 00:00:56.240
+Para prevenir esses crashes, vamos mapear os sete ambientes distintos
+
+15
+00:00:56.240 --> 00:01:01.120
+onde módulos nativos desaparecem e implementar três padrões defensivos de carregamento.
+
+16
+00:01:01.120 --> 00:01:05.440
+Uma arquitetura mobile robusta exige que você antecipe módulos ausentes,
+
+17
+00:01:05.440 --> 00:01:08.400
+e absorva essa incerteza diretamente na fronteira do sistema.
+
+18
+00:01:09.040 --> 00:01:13.760
+Este grid mapeia os sete ambientes voláteis específicos que os desenvolvedores precisam navegar.
+
+19
+00:01:14.320 --> 00:01:19.520
+O problema central é que o ambiente de execução frequentemente não possui um runtime nativo completo.
+
+20
+00:01:20.160 --> 00:01:25.360
+Primeiro, temos os ambientes exclusivamente JavaScript: web, Storybook e testes gist.
+
+21
+00:01:25.920 --> 00:01:30.640
+Nesses ambientes, não há runtime nativo, chamadas nativas personalizadas falham por natureza.
+
+22
+00:01:31.360 --> 00:01:35.280
+Em seguida, o Expo Go executa apenas módulos oficialmente incluídos no bundle.
+
+23
+00:01:35.280 --> 00:01:38.480
+Seu código nativo personalizado fisicamente não está dentro do binário.
+
+24
+00:01:39.120 --> 00:01:44.320
+Além disso, runtimes parciais: um sensor específico do iOS simplesmente não pode existir no Android.
+
+25
+00:01:44.800 --> 00:01:49.920
+Da mesma forma, uma aplicação brownfield pode omitir seletivamente o registro de certos módulos,
+
+26
+00:01:49.920 --> 00:01:52.160
+dependendo de qual superfície específica está ativa.
+
+27
+00:01:52.800 --> 00:01:54.560
+Por fim, atualizações over-the-air.
+
+28
+00:01:55.360 --> 00:01:58.880
+Este sétimo ambiente é excepcionalmente perigoso,
+
+29
+00:01:58.880 --> 00:02:02.880
+usando a aplicação estrita padrão ou get enforcing
+
+30
+00:02:02.880 --> 00:02:07.120
+em todo esse cenário fragmentado garante uma falha na aplicação
+
+31
+00:02:07.120 --> 00:02:08.880
+em pelo menos um desses cenários.
+
+32
+00:02:09.520 --> 00:02:12.560
+Como você não pode controlar o ambiente de execução,
+
+33
+00:02:12.560 --> 00:02:18.000
+você deve construir mecanismos de defesa diretamente na forma como o JavaScript bundle interage com o registry.
+
+34
+00:02:18.720 --> 00:02:23.760
+Vamos contrastar uma chamada de TurboModule bruta e desprotegida com nosso primeiro padrão defensivo.
+
+35
+00:02:24.320 --> 00:02:27.840
+O Padrão 1 combina o método get com optional chaining.
+
+36
+00:02:27.840 --> 00:02:31.920
+Isso lida com extras opcionais, como incluir uma biblioteca de terceiros.
+
+37
+00:02:31.920 --> 00:02:33.920
+Você não sabe o ambiente do consumidor,
+
+38
+00:02:33.920 --> 00:02:36.160
+então o recurso degrada graciosamente se ausente.
+
+39
+00:02:36.720 --> 00:02:38.960
+Mas para módulos exclusivos de hardware,
+
+40
+00:02:38.960 --> 00:02:41.840
+o fluxo de execução deve ser explicitamente dividido.
+
+41
+00:02:42.400 --> 00:02:46.640
+Este é o Padrão 2, aplicando verificações de plataforma antes de chamar get.
+
+42
+00:02:47.120 --> 00:02:52.400
+Isso é obrigatório para APIs específicas de SO que fisicamente não possuem equivalente em outras plataformas.
+
+43
+00:02:53.040 --> 00:02:56.400
+Os Padrões 1 e 2 mantêm a aplicação em execução,
+
+44
+00:02:56.400 --> 00:03:01.600
+mas forçam componentes de UI individuais a lidar com limitações do sistema.
+
+45
+00:03:01.600 --> 00:03:04.400
+Em escala, isso é difícil de manter.
+
+46
+00:03:04.400 --> 00:03:09.680
+Espalhar verificações de nulo por componentes de UI individuais cria uma base de código frágil.
+
+47
+00:03:09.680 --> 00:03:12.400
+Uma arquitetura mais limpa insere uma camada de proteção
+
+48
+00:03:12.400 --> 00:03:15.120
+bem entre a UI e o registro nativo.
+
+49
+00:03:15.120 --> 00:03:19.600
+Isso nos leva ao Padrão 3, abstração de serviço com um novo fallback.
+
+50
+00:03:19.600 --> 00:03:22.720
+A camada de serviço intercepta eventos de dados da UI.
+
+51
+00:03:22.720 --> 00:03:25.920
+Ele verifica o registro uma vez e, se o módulo nativo estiver ausente,
+
+52
+00:03:25.920 --> 00:03:28.560
+ele bloqueia os eventos e os descarta silenciosamente.
+
+53
+00:03:28.560 --> 00:03:32.560
+Este mecanismo nupe substitui métodos de módulos ausentes por funções vazias,
+
+54
+00:03:32.560 --> 00:03:35.200
+permitindo que a aplicação execute sem problemas.
+
+55
+00:03:35.200 --> 00:03:37.360
+Use este padrão para serviços em segundo plano,
+
+56
+00:03:37.360 --> 00:03:40.000
+análise de dados, relatório de falhas e flags de funcionalidades.
+
+57
+00:03:40.000 --> 00:03:44.320
+É o padrão de produção mais limpo porque toda a camada de UI opera normalmente,
+
+58
+00:03:44.320 --> 00:03:48.080
+completamente protegida da incerteza do registro nativo subjacente.
+
+59
+00:03:48.080 --> 00:03:52.800
+Imagine dois corpos em movimento operando em velocidades muito diferentes.
+
+60
+00:03:52.800 --> 00:03:57.200
+Isso visualiza nosso ambiente de execução final e mais perigoso,
+
+61
+00:03:57.200 --> 00:03:59.920
+o cenário de atualização over-the-air.
+
+62
+00:03:59.920 --> 00:04:02.240
+Em uma incompatibilidade de timeline OTA,
+
+63
+00:04:02.240 --> 00:04:05.040
+um novo bundle JavaScript é implantado para os usuários
+
+64
+00:04:05.040 --> 00:04:08.160
+antes que o binário nativo armazenado do aplicativo seja atualizado.
+
+65
+00:04:08.160 --> 00:04:11.920
+O JavaScript da versão 2 tentará chamar um método recém-adicionado
+
+66
+00:04:11.920 --> 00:04:13.440
+que ainda não existe.
+
+67
+00:04:13.440 --> 00:04:16.640
+O registry verifica que o módulo em si existe,
+
+68
+00:04:16.640 --> 00:04:18.000
+retornando true.
+
+69
+00:04:18.000 --> 00:04:21.760
+Mas quando a chamada do novo método específico atinge um vazio na memória nativa,
+
+70
+00:04:21.760 --> 00:04:23.280
+você aciona um crash.
+
+71
+00:04:23.280 --> 00:04:25.360
+A aplicação estrita falha aqui.
+
+72
+00:04:25.360 --> 00:04:27.840
+Ela verifica se o objeto do módulo existe,
+
+73
+00:04:27.840 --> 00:04:32.240
+mas não consegue verificar se a nova assinatura do método está definida em tempo de execução.
+
+74
+00:04:32.240 --> 00:04:34.640
+Para se defender contra incompatibilidades de OTA,
+
+75
+00:04:34.640 --> 00:04:39.440
+você deve explicitamente versionar os novos métodos dentro do payload JavaScript.
+
+76
+00:04:39.440 --> 00:04:43.360
+Implantações OTA desacoplam seus ciclos de lançamento JS e nativo.
+
+77
+00:04:43.360 --> 00:04:45.520
+Antecipar essa incompatibilidade temporal
+
+78
+00:04:45.520 --> 00:04:48.240
+é um requisito arquitetural obrigatório.
+
+79
+00:04:48.240 --> 00:04:51.760
+Podemos mapear nossos padrões defensivos de volta aos seus casos de uso adequados.
+
+80
+00:04:51.760 --> 00:04:53.200
+Como regra padrão,
+
+81
+00:04:53.200 --> 00:04:56.960
+utilize os novos fallbacks do padrão 3 para serviços em segundo plano,
+
+82
+00:04:56.960 --> 00:04:59.200
+onde falhas silenciosas são aceitáveis.
+
+83
+00:04:59.200 --> 00:05:02.560
+Para integração com hardware, use os guardas de plataforma do padrão 2,
+
+84
+00:05:02.560 --> 00:05:05.200
+exclusivamente para recursos específicos do sistema operacional.
+
+85
+00:05:05.200 --> 00:05:07.840
+O único caso de uso válido para imposição de struct
+
+86
+00:05:07.840 --> 00:05:10.400
+é uma funcionalidade absolutamente central da aplicação
+
+87
+00:05:10.400 --> 00:05:13.840
+onde a ausência de código nativo deve intencionalmente interromper a execução.
+
+88
+00:05:13.840 --> 00:05:16.400
+Os desenvolvedores devem parar de tratar o registro nativo
+
+89
+00:05:16.400 --> 00:05:19.200
+como um componente interno garantido e seguro.
+
+90
+00:05:19.200 --> 00:05:22.480
+Chamar um módulo nativo deve ser tratado com exatamente o mesmo cuidado
+
+91
+00:05:22.480 --> 00:05:25.440
+como fazer uma requisição de rede para um servidor não confiável.
+
+92
+00:05:25.440 --> 00:05:29.040
+Ao tratar o registro de TurboModules como uma API externa,
+
+93
+00:05:29.040 --> 00:05:30.960
+o carregamento defensivo se torna a base
+
+94
+00:05:30.960 --> 00:05:34.240
+de uma arquitetura React Native robusta e resistente a falhas.
+

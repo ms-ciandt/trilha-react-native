@@ -1,0 +1,150 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:09.000
+Olha essa grade enorme! Essa onda de cores uniforme e instantânea representa a expectativa padrão para implantação web.
+
+2
+00:00:09.000 --> 00:00:18.000
+Na web, um deploy é atômico e universal. Quando você envia uma atualização, a mudança de estado se aplica a todos, em todo lugar, ao mesmo tempo.
+
+3
+00:00:18.000 --> 00:00:29.000
+A mecânica é simples. Você envia um novo build, invalida o cache do CDN, e no próximo refresh, o navegador de cada cliente baixa exatamente a mesma versão nova da sua aplicação.
+
+4
+00:00:30.000 --> 00:00:40.000
+No mobile, esse fluxo de trabalho assumido encontra uma barreira estrutural rígida, a revisão da loja. Apple e Google ficam diretamente entre o seu código e sua base de usuários.
+
+5
+00:00:40.000 --> 00:00:52.000
+Essa tela dividida mostra a divergência. O código web chega instantaneamente a todos os usuários. O código mobile esbarra no bloqueio de revisão da loja e aguarda. Após a aprovação, os usuários decidem quando atualizar.
+
+6
+00:00:52.000 --> 00:01:07.000
+Assim, um aplicativo é uma distribuição fragmentada das versões 1.0, 1.1 e 2.0 operando simultaneamente. Desenvolvedores back-end migrando da web frequentemente operam sob a concepção equivocada de que controlam quando um cliente recebe novo código.
+
+7
+00:01:07.000 --> 00:01:19.000
+No ecossistema mobile, você abre mão desse controle completamente. Os playbooks padrão de resposta a incidentes assumem que, se uma linha de código problemática entrar em produção, você pode reverter instantaneamente o CDN para o estado anterior.
+
+8
+00:01:19.000 --> 00:01:30.000
+Usar lógica web atômica para gerenciar esse cenário fragmentado leva a falhas imediatas, onde as atualizações de back-end e as versões do cliente deixam de estar sincronizadas, deixando os usuários sem solução.
+
+9
+00:01:30.000 --> 00:01:40.000
+A fase de revisão de políticas da App Store e do Google Play interrompe abruptamente a entrega contínua, criando um período distinto de vulnerabilidade para qualquer equipe de desenvolvimento.
+
+10
+00:01:40.000 --> 00:01:49.000
+Verificações padrão de conformidade, privacidade e segurança podem manter um binário submetido em revisão por períodos que variam de várias horas a múltiplos dias.
+
+11
+00:01:49.000 --> 00:01:59.000
+Esse atraso elimina o hot fix de segurança fora de banda. Enquanto um incidente web se resolve em cinco minutos, o fix mobile fica preso em uma enorme e opaca fila de revisão da store.
+
+12
+00:01:59.000 --> 00:02:15.000
+Um patch crítico é uma solicitação atrasada que pode não ser resolvida em 48 horas. Os runbooks de operações precisam se adaptar. Isso nos leva a uma regra estrita da engenharia mobile. Não existe botão de rollback. Não existe desfazer instantâneo para um deploy mal feito.
+
+13
+00:02:15.000 --> 00:02:25.000
+Times mobile operam sob um requisito estrito de fix-forward. Reverter um código ruim ainda significa gerar um novo binário e submetê-lo ao final da fila de revisão da store.
+
+14
+00:02:25.000 --> 00:02:34.000
+Quando uma release com problema chega à produção, os desenvolvedores são forçados a assistir usuários sofrendo crashes em tempo real, enquanto a mitigação fica impotente na fila da store.
+
+15
+00:02:34.000 --> 00:02:44.000
+Como hot fixes estão descartados e rollbacks são impossíveis, a sua sobrevivência depende inteiramente de limitar o raio de impacto do novo código antes que ele alcance toda a base de usuários.
+
+16
+00:02:44.000 --> 00:02:57.000
+Para limitar esse raio de explosão, as equipes mobile dependem do equivalente a um canary deployment, o staged rollout. O Google Play usa um staged rollout manual, 1, 10, 50, 100%.
+
+17
+00:02:57.000 --> 00:03:09.000
+A App Store automatiza uma curva de sete dias. Ambos exigem telemetria de crash rigorosa. Se a taxa de crash aumentar violentamente em 10%, você pausa imediatamente o rollout, protegendo os usuários restantes.
+
+18
+00:03:09.000 --> 00:03:18.000
+Ferramentas de infraestrutura padrão como Firebase Crashlytics ou Sentry fornecem o filtro necessário em nível de versão para isolar esses dados em tempo real.
+
+19
+00:03:18.000 --> 00:03:31.000
+Interromper um rollout é o mecanismo mais próximo que um desenvolvedor mobile tem de um rollback. Ao combinar um algoritmo de staged rollout com telemetria de crash em tempo real, um desastre sem controle é contido em um incidente localizado e de baixo impacto.
+
+20
+00:03:31.000 --> 00:03:41.000
+Os staged rollouts mantêm o app cliente seguro, mas impõem uma realidade difícil à arquitetura de backend. Um backend mobile lida simultaneamente com tráfego de versões de clientes dispersas.
+
+21
+00:03:41.000 --> 00:03:53.000
+Se um engenheiro deletar um campo JSON, clientes na versão 2.0 processam normalmente, mas as versões 1 e 1.2 falham instantaneamente, travando porque esperam uma estrutura de dados que não existe mais.
+
+22
+00:03:53.000 --> 00:04:12.000
+Isso estabelece uma regra inviolável. Uma API mobile deve permanecer estritamente compatível com versões anteriores indefinidamente. Os desenvolvedores gerenciam isso usando padrões de implementação padrão de versionamento de API, atribuindo caminhos de rota distintos como barra v1 e barra v2, ou utilizando headers estritos de versão.
+
+23
+00:04:12.000 --> 00:04:21.000
+Dentro de um único contrato de versão, as mudanças só podem ser aditivas. Você pode introduzir novos campos opcionais, mas nunca pode modificar ou remover os existentes.
+
+24
+00:04:21.000 --> 00:04:32.000
+Deprecar código exige um ciclo de vida prolongado. A lógica do endpoint antigo deve permanecer totalmente operacional junto com a nova estrutura até que a telemetria confirme zero tráfego de clientes mais antigos.
+
+25
+00:04:32.000 --> 00:04:40.000
+No desenvolvimento mobile, a evolução de API é permanente. Você não pode quebrar um contrato de forma atômica porque não pode forçar o cliente a atualizar de forma atômica.
+
+26
+00:04:40.000 --> 00:04:54.000
+Manter a compatibilidade com versões anteriores resolve a maioria dos deployments, mas casos extremos permanecem. Falhas críticas de segurança ou o encerramento de APIs de terceiros podem tornar impossível manter versões mais antigas.
+
+27
+00:04:54.000 --> 00:05:06.000
+Para desativar uma versão antiga do app, os desenvolvedores usam o padrão de atualização forçada. Ao iniciar, o dispositivo envia um ping para um nó de verificação de versão no backend. Ele compara a versão em execução com um limite mínimo.
+
+28
+00:05:06.000 --> 00:05:19.000
+Se a versão for muito antiga, o servidor retorna um sinal de bloqueio. O usuário é então impedido de acessar a interface por uma tela intransponível, forçando-o a instalar manualmente a atualização da loja antes que qualquer funcionalidade do app seja retomada.
+
+29
+00:05:19.000 --> 00:05:29.000
+Para correções imediatas de bugs que não justificam bloquear os usuários, as equipes usam uma saída alternativa secundária. Atualizações over the air, ou OTA, para bundles JavaScript.
+
+30
+00:05:29.000 --> 00:05:43.000
+Ferramentas como o EAS update ignoram completamente o processo de revisão da loja, enviando JavaScript diretamente para o dispositivo do usuário, funcionando de forma semelhante a um deploy web. No entanto, essas atualizações OTA têm limitações técnicas rígidas.
+
+31
+00:05:43.000 --> 00:05:51.000
+Eles só podem notificar a camada JavaScript. Não podem tocar nos binários nativos de Kotlin ou Swift sem acionar uma rejeição da store.
+
+32
+00:05:51.000 --> 00:06:01.000
+Tanto as atualizações forçadas quanto os patches OTA são mecanismos de bypass projetados. Eles existem especificamente para recuperar o controle sobre o rígido gargalo de revisão das stores.
+
+33
+00:06:01.000 --> 00:06:18.000
+A camada final e talvez mais granular de controle em tempo de execução está nos feature flags e kill switches. Se um novo componente de UI travar em produção, os feature flags permitem que você desative remotamente esse componente específico para todos os usuários instantaneamente, sem compilar ou lançar um novo binário.
+
+34
+00:06:18.000 --> 00:06:30.000
+As flags desacoplam os lançamentos de funcionalidades do ciclo da app store. Você pode fazer o merge do código, enviar o binário, passar pela revisão e então executar um rollout gradual e controlado da funcionalidade, completamente no seu próprio cronograma.
+
+35
+00:06:30.000 --> 00:06:42.000
+Enquanto a engenharia web prioriza o controle no momento do deploy, sabendo que um push está ativo instantaneamente, a engenharia mobile prioriza o controle em tempo de execução, construindo os mecanismos para gerenciar o código muito depois de ele sair das suas mãos.
+
+36
+00:06:43.000 --> 00:06:53.000
+Este dashboard visualiza um pipeline mobile completo, integrando um rollout em fases, monitoramento de crashes em tempo real, feature flags ativas e um bypass OTA.
+
+37
+00:06:53.000 --> 00:07:02.000
+Se uma nova feature registra uma falha, o kill switch isola o componente. O sistema se reestabiliza com o rollout pausado com segurança em 10 segundos.
+
