@@ -6,7 +6,10 @@ sidebar_position: 5
 
 ## Visão Geral em Vídeo
 
-> Vídeo deste tópico em breve.
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_android/cicd_05_ota-updates.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 ## O que são Atualizações OTA
 
