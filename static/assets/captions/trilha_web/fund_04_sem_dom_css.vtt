@@ -1,0 +1,122 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:09.000
+Esta tela dividida exibe um card web estilizado à esquerda e o erro de sintaxe que ocorre à direita quando esse mesmo CSS é aplicado a um projeto mobile.
+
+2
+00:00:09.000 --> 00:00:18.000
+Suas variáveis globais de browser familiares estão completamente ausentes aqui. Sem document, window, sem seletores CSS e sem auxílio de estilização.
+
+3
+00:00:18.000 --> 00:00:29.000
+Em vez disso, o React Native fornece um subconjunto especializado de propriedades de layout. Você está migrando de um sistema de estilização baseado em documento para um que se comunica diretamente com a ViewTree nativa.
+
+4
+00:00:29.000 --> 00:00:38.000
+Observe como o layout rígido baseado em documento da web se fragmenta aqui, se remontando em uma hierarquia estrita de componentes mobile nativos responsivos.
+
+5
+00:00:38.000 --> 00:00:49.000
+Este diagrama animado mostra exatamente o que acontece com suas regras de layout. A propriedade display grid se evapora atrás de um X vermelho, se transformando no requisito do React Native de containers flex aninhados,
+
+6
+00:00:49.000 --> 00:01:03.000
+flex direction row e flex wrap wrap. As caixas estruturais que você vê aqui se encaixam em um alinhamento de border box sem nenhum código extra, porque cada componente no React Native age como um flex container por padrão.
+
+7
+00:01:03.000 --> 00:01:12.000
+Observe como o grid de layout rotaciona 90 graus. Enquanto a web assume uma linha horizontal, o React Native usa como padrão uma estrutura vertical, com prioridade para colunas.
+
+8
+00:01:12.000 --> 00:01:23.000
+Para construir um layout de colunas perfeitamente espaçado sem CSS grid, você implementa um componente flat list dedicado e passa a quantidade de colunas desejada diretamente na prop num columns.
+
+9
+00:01:23.000 --> 00:01:31.000
+Abandonar o sistema de grid da web simplifica o processo de renderização, o que ajuda o layout a manter a integridade estrutural em diferentes sistemas operacionais móveis.
+
+10
+00:01:31.000 --> 00:01:42.000
+Para mapear esses layouts com precisão, você precisa deixar para trás as unidades tipográficas e de layout relativas da web. Passar strings como RAM, EM e PX fará com que a view falhe.
+
+11
+00:01:42.000 --> 00:01:55.000
+Observando este trecho de código de tradução, vemos unidades web padrão e funções de cálculo riscadas. Elas estão se transformando em inteiros brutos, que representam pixels independentes de dispositivo compreendidos nativamente pelo telefone.
+
+12
+00:01:55.000 --> 00:02:06.000
+Para definir limites que correspondam ao tamanho da tela, substituímos viewport height e width chamando a API dimensions, obtendo a escala exata diretamente do objeto window.
+
+13
+00:02:06.000 --> 00:02:16.000
+Como você perde o mecanismo de cálculo CSS nativo, dimensionamentos complexos exigem que você execute operações matemáticas padrão do JavaScript diretamente dentro dos objetos de folha de estilo.
+
+14
+00:02:16.000 --> 00:02:26.000
+Layouts nativos são calculados pela thread do JavaScript em tempo de execução, exigindo que você defina lógica matemática explícita em vez de depender de regras CSS estáticas.
+
+15
+00:02:26.000 --> 00:02:36.000
+Quando suas dimensões calculadas resultam em conteúdo ultrapassando os limites de um componente view padrão, a tela permanecerá estática e não rolará. Este diagrama demonstra a solução.
+
+16
+00:02:36.000 --> 00:02:44.000
+O conteúdo está extrapolando a parte inferior da tela. Uma vez encapsulado em um contêiner scroll view, a lista responde a gestos de toque verticais.
+
+17
+00:02:44.000 --> 00:02:53.000
+Você enfrentará problemas semelhantes de delimitação com bordas de imagens complexas, pois a propriedade clip path da web não é suportada no React Native.
+
+18
+00:02:53.000 --> 00:03:02.000
+Para gerar formas personalizadas, você combina valores padrão de border radius com a propriedade overflow dot hidden, forçando o contêiner a recortar seus elementos filhos.
+
+19
+00:03:02.000 --> 00:03:13.000
+Um navegador web calcula automaticamente os limites de rolagem e recorte para você. O React Native requer contêineres wrapper deliberados para gerenciar os limites de renderização e preservar o desempenho do sistema.
+
+20
+00:03:13.000 --> 00:03:23.000
+Gerenciar esses wrappers fica complicado quando propriedades visuais se comportam de forma diferente entre sistemas operacionais. A propriedade padrão CSS box shadow falha completamente aqui.
+
+21
+00:03:23.000 --> 00:03:34.000
+Esta simulação de tela dividida destaca a diferença. O código compartilhado projeta com sucesso uma sombra na interface iOS à esquerda, mas a interface Android à direita permanece plana.
+
+22
+00:03:34.000 --> 00:03:44.000
+Ao adicionar a propriedade elevation ao código, a interface Android se destaca do fundo usando o comportamento de sombra padrão do sistema operacional para corresponder à profundidade do iOS.
+
+23
+00:03:44.000 --> 00:03:51.000
+Além das sombras, a herança de tipografia é uma fonte comum de erros para desenvolvedores que estão migrando da web.
+
+24
+00:03:51.000 --> 00:04:02.000
+Propriedades como font size, font weight e text align pertencem exclusivamente a componentes de texto dedicados. Se você as colocar em um componente view pai, a aplicação irá rejeitá-las.
+
+25
+00:04:02.000 --> 00:04:19.000
+Este gráfico de destaque macro isola outra diferença estrutural: as transformações de layout. Observe os colchetes piscando. Você deve usar uma sintaxe de array de objetos para definir sequências visuais, separando propriedades como translate em objetos distintos.
+
+26
+00:04:19.000 --> 00:04:29.000
+A capacidade multiplataforma significa escrever código explícito que antecipa comportamentos distintos do sistema operacional, em vez de depender de uma única folha de estilos uniforme.
+
+27
+00:04:29.000 --> 00:04:37.000
+Uma vez que esses comportamentos específicos são considerados, você tem um componente React Native traduzido rodando tanto no iOS quanto no Android.
+
+28
+00:04:37.000 --> 00:04:46.000
+Você chega a esse estágio se afastando do document object model, abandonando os seletores CSS e substituindo medidas relativas por uma abordagem de layout nativa.
+
+29
+00:04:46.000 --> 00:04:55.000
+Para entender o cálculo algorítmico mais profundo que alimenta esses limites flex, você pode consultar a documentação oficial do Yoga layout engine online.
+
+30
+00:04:55.000 --> 00:05:03.000
+Dominar o estilo no React Native requer abrir mão da cascata invisível da web e abraçar uma arquitetura de componentes deliberada.
+

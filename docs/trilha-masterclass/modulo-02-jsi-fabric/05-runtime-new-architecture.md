@@ -4,7 +4,7 @@ title: "Runtime — Hermes & Codegen"
 
 # Runtime — New Architecture
 
-<video width="100%" controls>
+<video width="100%" controls controlsList="nodownload">
   <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc03_05_runtime-new-architecture.mp4" type="video/mp4">
   <track kind="captions" src="/trilha-react-native/assets/captions/trilha_masterclass/mc03_05_runtime-new-architecture_en.vtt" srclang="en" label="English" default>
   Your browser does not support the video tag.

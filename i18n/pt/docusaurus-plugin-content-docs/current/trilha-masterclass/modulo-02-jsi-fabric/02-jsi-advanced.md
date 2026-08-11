@@ -2,7 +2,7 @@
 title: "JSI — Padroes Avancados"
 ---
 
-<video width="100%" controls>
+<video width="100%" controls controlsList="nodownload">
   <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc03_02_jsi-advanced.mp4" type="video/mp4">
   <track kind="captions" src="/trilha-react-native/assets/captions/trilha_masterclass/mc03_02_jsi-advanced.vtt" srclang="pt" label="Português" default>
   Your browser does not support the video tag.
@@ -340,7 +340,7 @@ Cada chamada de `HostFunction` aparece como uma fatia `JSI::HostFunction::<nome>
 
 | Recurso | O que fazer |
 |---|---|
-| [MMKV — GitHub](https://github.com/mrousavy/react-native-mmkv) | Código-fonte, benchmarks e guia de integração |
+| [Expo Snack — JSI via MMKV](https://snack.expo.dev/@mrousavy/react-native-mmkv) | Execute MMKV no browser — observe leituras sincronas em acao |
 | [react-native-jsi-example](https://github.com/ospfranco/react-native-jsi-template) | Template minimal: um HostObject, CMakeLists, iOS + Android — faca fork e compile |
 
 ---

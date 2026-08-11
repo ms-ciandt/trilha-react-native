@@ -1,0 +1,434 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:04.700
+Você passa semanas montando cuidadosamente um projeto massivo e intrincado.
+
+2
+00:00:04.700 --> 00:00:07.400
+Você coloca a última peça no lugar,
+
+3
+00:00:07.400 --> 00:00:11.900
+recua, e observa enquanto tudo se despedaça
+
+4
+00:00:11.900 --> 00:00:15.400
+por causa de um bloco ruim enterrado bem no fundo.
+
+5
+00:00:15.400 --> 00:00:17.700
+Construir um aplicativo mobile com código padrão
+
+6
+00:00:17.700 --> 00:00:22.300
+é exatamente como construir livremente a partir de um enorme recipiente cheio de blocos de plástico.
+
+7
+00:00:22.300 --> 00:00:25.700
+Liberdade total soa ótimo, mas é arriscado.
+
+8
+00:00:25.700 --> 00:00:29.500
+Você pode acidentalmente pegar um trecho de código frágil ou incorreto,
+
+9
+00:00:29.500 --> 00:00:33.000
+encaixá-lo diretamente na sua base, e nada te impede.
+
+10
+00:00:33.000 --> 00:00:34.800
+Não há nenhum aviso imediato.
+
+11
+00:00:34.800 --> 00:00:37.900
+Esse erro estrutural fica oculto enquanto você está desenvolvendo.
+
+12
+00:00:37.900 --> 00:00:40.100
+Você só o descobre semanas depois,
+
+13
+00:00:40.100 --> 00:00:41.800
+como uma falha grave no app.
+
+14
+00:00:41.800 --> 00:00:45.100
+No momento em que um usuário real toca um botão no celular dele.
+
+15
+00:00:45.100 --> 00:00:48.200
+Quando não há regras para verificar o trabalho enquanto ele está sendo feito,
+
+16
+00:00:48.200 --> 00:00:51.900
+pequenas fraquezas eventualmente levam a um colapso total.
+
+17
+00:00:51.900 --> 00:00:54.500
+Mas e se esses blocos de construção fossem inteligentes?
+
+18
+00:00:54.500 --> 00:00:57.800
+E se você tentasse encaixar duas peças que não se encaixam
+
+19
+00:00:57.800 --> 00:01:01.000
+e elas realmente resistissem, recusando-se a conectar?
+
+20
+00:01:01.000 --> 00:01:06.500
+Para desenvolvedores de aplicativos mobile, uma ferramenta chamada TypeScript age como esses blocos inteligentes.
+
+21
+00:01:06.500 --> 00:01:08.900
+Isso exige que você defina o tipo,
+
+22
+00:01:08.900 --> 00:01:11.400
+a forma precisa e o propósito pretendido
+
+23
+00:01:11.400 --> 00:01:15.400
+de cada parte do código antes de começar a construir.
+
+24
+00:01:15.400 --> 00:01:19.000
+Esse sistema funciona como um blueprint ativo e mágico.
+
+25
+00:01:19.000 --> 00:01:21.000
+Ele verifica constantemente o seu trabalho.
+
+26
+00:01:21.000 --> 00:01:23.900
+Se você tentar forçar peças que não se encaixam,
+
+27
+00:01:23.900 --> 00:01:26.100
+ele te para ali mesmo na hora.
+
+28
+00:01:26.200 --> 00:01:28.700
+O verdadeiro poder aqui é que ele encontra os erros
+
+29
+00:01:28.700 --> 00:01:31.400
+enquanto o app ainda está na mesa do desenvolvedor,
+
+30
+00:01:31.400 --> 00:01:34.300
+muito antes de chegar ao telefone do usuário.
+
+31
+00:01:34.300 --> 00:01:37.200
+Vamos ver como isso funciona em uma parte básica de um aplicativo
+
+32
+00:01:37.200 --> 00:01:40.500
+como um botão padrão que você pode tocar para enviar um formulário.
+
+33
+00:01:40.500 --> 00:01:44.400
+Para aparecer corretamente, este botão precisa de instruções específicas.
+
+34
+00:01:44.400 --> 00:01:47.100
+Por exemplo, ele precisa de um código de cor válido
+
+35
+00:01:47.100 --> 00:01:50.000
+para que o aplicativo saiba como deve ser o seu plano de fundo.
+
+36
+00:01:50.000 --> 00:01:52.700
+Neste diagrama, um desenvolvedor está cometendo um erro
+
+37
+00:01:52.700 --> 00:01:56.600
+ao dizer acidentalmente ao botão que sua cor é a palavra Tuesday (terça-feira).
+
+38
+00:01:56.600 --> 00:02:00.000
+Como Tuesday é um momento no tempo e não uma cor,
+
+39
+00:02:00.000 --> 00:02:03.300
+o sistema reconhece a incompatibilidade imediatamente.
+
+40
+00:02:03.300 --> 00:02:05.400
+A instrução incorreta é rejeitada imediatamente
+
+41
+00:02:05.400 --> 00:02:08.300
+e o app não avançará até que seja corrigido.
+
+42
+00:02:08.300 --> 00:02:10.600
+Isso garante que as partes visuais do app
+
+43
+00:02:10.600 --> 00:02:12.500
+sigam uma lógica estrita,
+
+44
+00:02:12.500 --> 00:02:16.200
+evitando que falhas gráficas estranhas cheguem ao usuário.
+
+45
+00:02:16.200 --> 00:02:20.000
+Essa mesma lógica se aplica a como navegamos entre telas.
+
+46
+00:02:20.000 --> 00:02:23.100
+Um único aplicativo móvel pode ter dezenas de telas diferentes
+
+47
+00:02:23.100 --> 00:02:25.900
+que precisam se conectar perfeitamente.
+
+48
+00:02:25.900 --> 00:02:27.400
+Para manter as coisas organizadas,
+
+49
+00:02:27.400 --> 00:02:29.500
+os desenvolvedores criam um mapa principal
+
+50
+00:02:29.500 --> 00:02:31.900
+que lista cada destino
+
+51
+00:02:31.900 --> 00:02:36.300
+e exatamente que tipo de informação cada tela espera receber.
+
+52
+00:02:36.300 --> 00:02:38.700
+Se vincularmos um botão à tela de configurações,
+
+53
+00:02:38.700 --> 00:02:41.600
+mas cometermos um erro de digitação, escrevendo com 1T,
+
+54
+00:02:41.600 --> 00:02:43.900
+o sistema verifica o mapa principal.
+
+55
+00:02:43.900 --> 00:02:47.100
+Ele vê que uma tela de configurações com erro de digitação não existe
+
+56
+00:02:47.100 --> 00:02:49.100
+e a conexão é restabelecida.
+
+57
+00:02:49.100 --> 00:02:52.300
+Isso te obriga a apontar para um destino válido.
+
+58
+00:02:52.300 --> 00:02:54.000
+Isso elimina becos sem saída,
+
+59
+00:02:54.000 --> 00:02:56.000
+garantindo que cada toque no botão
+
+60
+00:02:56.000 --> 00:02:58.300
+realmente leve para onde deveria ir.
+
+61
+00:02:58.300 --> 00:03:01.000
+Agora, pense em como um aplicativo obtém informações
+
+62
+00:03:01.000 --> 00:03:02.400
+do mundo exterior,
+
+63
+00:03:02.400 --> 00:03:05.500
+como baixar uma foto de perfil da internet.
+
+64
+00:03:05.500 --> 00:03:07.600
+Isso é sempre incerto.
+
+65
+00:03:07.600 --> 00:03:09.300
+A internet pode funcionar perfeitamente,
+
+66
+00:03:09.300 --> 00:03:12.600
+ou a conexão pode cair no momento em que o usuário entra em um túnel.
+
+67
+00:03:12.600 --> 00:03:13.600
+Para lidar com isso,
+
+68
+00:03:13.600 --> 00:03:15.000
+o blueprint usa uma regra
+
+69
+00:03:15.000 --> 00:03:17.000
+que força o desenvolvedor a considerar
+
+70
+00:03:17.000 --> 00:03:18.600
+cada resultado possível
+
+71
+00:03:18.600 --> 00:03:20.900
+antes mesmo de o app estar concluído.
+
+72
+00:03:20.900 --> 00:03:21.900
+Neste diagrama,
+
+73
+00:03:21.900 --> 00:03:24.000
+o caminho da nuvem se divide.
+
+74
+00:03:24.000 --> 00:03:25.700
+O desenvolvedor deve fornecer instruções
+
+75
+00:03:25.700 --> 00:03:27.000
+para o caminho de sucesso,
+
+76
+00:03:27.000 --> 00:03:29.100
+mas também um caminho para um erro.
+
+77
+00:03:29.100 --> 00:03:30.300
+Se eles ignorarem o erro,
+
+78
+00:03:30.300 --> 00:03:32.100
+o sistema não aceitará o código.
+
+79
+00:03:32.100 --> 00:03:33.200
+Ele para tudo
+
+80
+00:03:33.200 --> 00:03:34.600
+até que eles expliquem o que acontece
+
+81
+00:03:34.600 --> 00:03:36.200
+se a internet falhar.
+
+82
+00:03:36.200 --> 00:03:38.100
+Isso força o aplicativo a estar preparado
+
+83
+00:03:38.100 --> 00:03:40.000
+para a bagunça do mundo real,
+
+84
+00:03:40.000 --> 00:03:41.400
+evitando que ele trave
+
+85
+00:03:41.400 --> 00:03:43.200
+quando as coisas não saem perfeitamente.
+
+86
+00:03:43.200 --> 00:03:45.300
+Todo esse processo de medição e seguimento de regras
+
+87
+00:03:45.300 --> 00:03:46.800
+exige muito esforço extra
+
+88
+00:03:46.800 --> 00:03:48.700
+do desenvolvedor logo no início.
+
+89
+00:03:48.700 --> 00:03:49.900
+É uma troca.
+
+90
+00:03:49.900 --> 00:03:52.600
+Você gasta tempo definindo meticulosamente
+
+91
+00:03:52.600 --> 00:03:54.200
+cada peça no projeto
+
+92
+00:03:54.200 --> 00:03:55.900
+antes de ter a satisfação
+
+93
+00:03:55.900 --> 00:03:57.700
+de ver tudo se encaixar,
+
+94
+00:03:57.700 --> 00:04:01.100
+mas a recompensa é um nível muito maior de estabilidade.
+
+95
+00:04:01.100 --> 00:04:04.000
+Quando o código é finalmente transformado em um aplicativo funcional,
+
+96
+00:04:04.000 --> 00:04:05.700
+os erros estruturais mais comuns
+
+97
+00:04:05.700 --> 00:04:08.200
+já foram identificados e eliminados.
+
+98
+00:04:08.200 --> 00:04:09.800
+Para a pessoa usando o aplicativo,
+
+99
+00:04:09.800 --> 00:04:11.500
+tudo simplesmente funciona.
+
+100
+00:04:11.500 --> 00:04:13.200
+Eles veem transições suaves
+
+101
+00:04:13.200 --> 00:04:15.000
+e mensagens de erro úteis,
+
+102
+00:04:15.000 --> 00:04:17.600
+sem perceber quantos crashes potenciais
+
+103
+00:04:17.600 --> 00:04:19.100
+foram evitados pelas regras
+
+104
+00:04:19.100 --> 00:04:21.000
+operando por baixo da superfície.
+
+105
+00:04:21.000 --> 00:04:23.800
+TypeScript não muda o que um app pode fazer.
+
+106
+00:04:23.800 --> 00:04:26.100
+Isso apenas muda quão bem ela é construída,
+
+107
+00:04:26.100 --> 00:04:28.000
+transformando uma coleção frágil de partes
+
+108
+00:04:28.000 --> 00:04:30.200
+em uma estrutura sólida e confiável.
+

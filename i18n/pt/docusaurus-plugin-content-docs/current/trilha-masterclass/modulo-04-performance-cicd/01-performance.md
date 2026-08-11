@@ -6,7 +6,7 @@ title: Performance
 
 ## Video Overview
 
-<video width="100%" controls>
+<video width="100%" controls controlsList="nodownload">
   <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc04_01_performance.mp4" type="video/mp4">
   <track kind="captions" src="/trilha-react-native/assets/captions/trilha_masterclass/mc04_01_performance.vtt" srclang="pt" label="Português" default>
   Your browser does not support the video tag.
@@ -744,7 +744,7 @@ Com configuracao adequada de `staleTime`, navegar de volta para uma tela ja visi
 | Recurso | O que fazer |
 |---|---|
 | [Perfetto UI](https://ui.perfetto.dev/) | Carregue um arquivo HTML do Systrace — explore flame charts online |
-| [Reanimated — Documentação de Worklets](https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/worklets) | Conceito de worklet, modelo de threads e exemplos |
+| [Expo Snack — Reanimated worklet](https://snack.expo.dev/@reanimated/worklet-demo) | Execute uma animacao com worklet e observe 60 fps mesmo com o JS bloqueado |
 | [Yoga playground](https://yogalayout.dev/playground) | Depure performance de layout — veja quais propriedades flexbox disparam re-layout |
 | [TanStack Query DevTools](https://tanstack.com/query/latest/docs/framework/react/devtools) | Inspecione cache de queries, stale times, re-fetch em segundo plano |
 

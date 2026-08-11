@@ -1,0 +1,710 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:03.040
+Quando uma equipe de engenharia depende de etapas manuais
+
+2
+00:00:03.040 --> 00:00:04.920
+para lançar um aplicativo mobile,
+
+3
+00:00:04.920 --> 00:00:07.120
+ela está construindo um sistema frágil.
+
+4
+00:00:07.120 --> 00:00:10.440
+Com apenas um comando esquecido ou uma configuração negligenciada,
+
+5
+00:00:10.440 --> 00:00:12.760
+todo o processo de implantação é comprometido à força
+
+6
+00:00:12.760 --> 00:00:14.680
+e para abruptamente.
+
+7
+00:00:14.680 --> 00:00:16.560
+Compilar um build de produção diretamente
+
+8
+00:00:16.560 --> 00:00:20.320
+do laptop de um desenvolvedor introduz variáveis invisíveis.
+
+9
+00:00:20.320 --> 00:00:23.880
+Discrepâncias no ambiente local garantem desvios de configuração,
+
+10
+00:00:23.880 --> 00:00:26.320
+e dependências não testadas podem vazar silenciosamente
+
+11
+00:00:26.320 --> 00:00:29.000
+permissões excessivas no produto final.
+
+12
+00:00:29.040 --> 00:00:31.280
+O React Native aumenta essa complexidade
+
+13
+00:00:31.280 --> 00:00:33.880
+porque o processo de build deve eventualmente se dividir.
+
+14
+00:00:33.880 --> 00:00:36.160
+Uma única base de código JavaScript deve ser empacotada
+
+15
+00:00:36.160 --> 00:00:38.240
+em dois artefatos distintos,
+
+16
+00:00:38.240 --> 00:00:41.800
+um IPA para iOS e um AAB para Android.
+
+17
+00:00:41.800 --> 00:00:43.880
+Para eliminar o risco de erro humano,
+
+18
+00:00:43.880 --> 00:00:45.840
+um lançamento mobile de nível de produção requer
+
+19
+00:00:45.840 --> 00:00:49.000
+um pipeline rígido, totalmente automatizado e determinístico.
+
+20
+00:00:49.000 --> 00:00:51.560
+O GitHub Actions fornece a camada de infraestrutura ideal
+
+21
+00:00:51.560 --> 00:00:54.520
+para hospedar essa automação, executando workflows predefinidos
+
+22
+00:00:54.520 --> 00:00:57.400
+em ambientes de servidor isolados e reproduzíveis.
+
+23
+00:00:57.440 --> 00:00:59.400
+Dentro desses ambientes de runner,
+
+24
+00:00:59.400 --> 00:01:02.280
+o Fastlane serve como a camada de orquestração.
+
+25
+00:01:02.280 --> 00:01:05.840
+Ele usa uma DSL Ruby combinável para abstrair
+
+26
+00:01:05.840 --> 00:01:10.160
+os comandos densos e complexos exigidos pelas ferramentas nativas subjacentes
+
+27
+00:01:10.160 --> 00:01:12.640
+como XcodeBuild e RattleU.
+
+28
+00:01:12.640 --> 00:01:15.960
+Isso descreve a arquitetura de um pipeline de sete etapas
+
+29
+00:01:15.960 --> 00:01:18.120
+desde o linting até a distribuição.
+
+30
+00:01:18.120 --> 00:01:20.360
+A lógica de sequência é absoluta.
+
+31
+00:01:20.360 --> 00:01:24.040
+Cada etapa deve ser concluída com sucesso antes que a próxima seja executada.
+
+32
+00:01:24.040 --> 00:01:26.640
+A regra principal é o isolamento estrito.
+
+33
+00:01:26.640 --> 00:01:30.360
+Após o código ser enviado, nenhuma interação humana é permitida.
+
+34
+00:01:30.360 --> 00:01:33.360
+Ao remover completamente o elemento humano do caminho de implantação
+
+35
+00:01:33.360 --> 00:01:36.720
+e substituí-lo inteiramente por etapas automatizadas e rígidas,
+
+36
+00:01:36.720 --> 00:01:39.280
+garante que cada binário entregue a um usuário
+
+37
+00:01:39.280 --> 00:01:42.320
+é exatamente o binário que você pretendia construir.
+
+38
+00:01:42.320 --> 00:01:44.760
+O primeiro passo nessa sequência automatizada
+
+39
+00:01:44.760 --> 00:01:46.720
+é estabelecer a identidade.
+
+40
+00:01:46.720 --> 00:01:48.560
+O pipeline deve analisar o código-fonte
+
+41
+00:01:48.560 --> 00:01:51.240
+para determinar exatamente qual versão da aplicação
+
+42
+00:01:51.240 --> 00:01:52.360
+está sendo construída.
+
+43
+00:01:52.360 --> 00:01:55.120
+Esta tabela detalha os dois números de versão distintos
+
+44
+00:01:55.120 --> 00:01:56.520
+em todo aplicativo nativo.
+
+45
+00:01:56.520 --> 00:01:59.960
+A string de versão semântica é o identificador legível por humanos
+
+46
+00:01:59.960 --> 00:02:03.480
+como 1.3.0 exibido aos usuários.
+
+47
+00:02:03.480 --> 00:02:06.280
+O código de build é um número inteiro único usado internamente
+
+48
+00:02:06.280 --> 00:02:08.520
+pelas lojas de aplicativos para rastreamento de binários
+
+49
+00:02:08.520 --> 00:02:10.360
+e simbolização de crashes.
+
+50
+00:02:10.360 --> 00:02:12.360
+Enquanto a versão semântica permanece a mesma
+
+51
+00:02:12.360 --> 00:02:14.280
+em múltiplos release candidates,
+
+52
+00:02:14.280 --> 00:02:17.320
+o número de build inteiro opera sob uma regra estrita.
+
+53
+00:02:17.320 --> 00:02:20.280
+Ele deve ser incrementado a cada tentativa de upload,
+
+54
+00:02:20.280 --> 00:02:22.480
+mesmo que o upload anterior tenha falhado.
+
+55
+00:02:22.480 --> 00:02:23.800
+Para evitar discrepâncias,
+
+56
+00:02:23.800 --> 00:02:26.640
+o pipeline designa o arquivo root package.json
+
+57
+00:02:26.640 --> 00:02:28.560
+como a única fonte de verdade.
+
+58
+00:02:28.560 --> 00:02:30.600
+O Fastlane analisa automaticamente este arquivo
+
+59
+00:02:30.600 --> 00:02:32.320
+para extrair tanto a versão semântica
+
+60
+00:02:32.320 --> 00:02:35.080
+quanto o número de build antes que a compilação comece.
+
+61
+00:02:35.080 --> 00:02:37.560
+Uma vez bloqueado, o fluxo de trabalho chega ao gate de build,
+
+62
+00:02:37.560 --> 00:02:39.240
+dividindo-se em duas trilhas simultâneas
+
+63
+00:02:39.240 --> 00:02:40.880
+para cada sistema operacional.
+
+64
+00:02:40.880 --> 00:02:42.720
+Como a Apple requer o Xcode,
+
+65
+00:02:42.720 --> 00:02:46.080
+o GitHub Actions provisiona um runner Mac OS para o build do iOS.
+
+66
+00:02:46.080 --> 00:02:48.320
+Simultaneamente, um novo runner Ubuntu executa
+
+67
+00:02:48.320 --> 00:02:49.680
+a trilha de build do Android.
+
+68
+00:02:49.680 --> 00:02:52.760
+Derivando os metadados de versão de um único arquivo
+
+69
+00:02:52.760 --> 00:02:55.960
+através desses dois ambientes paralelos distintos
+
+70
+00:02:55.960 --> 00:02:59.320
+garante que quando ambos os binários finalmente chegam ao usuário,
+
+71
+00:02:59.320 --> 00:03:02.240
+seus estados de versão estão perfeitamente sincronizados.
+
+72
+00:03:02.240 --> 00:03:03.840
+Com os binários compilados,
+
+73
+00:03:03.840 --> 00:03:06.880
+o pipeline entra na fase mais notoriamente frágil
+
+74
+00:03:06.880 --> 00:03:10.640
+dos fluxos de CI mobile, a assinatura criptográfica de código.
+
+75
+00:03:10.640 --> 00:03:14.200
+Os sistemas operacionais nativos impõem um modelo de segurança rígido.
+
+76
+00:03:14.200 --> 00:03:16.520
+Eles exigem que cada aplicativo seja assinado
+
+77
+00:03:16.520 --> 00:03:18.560
+com credenciais criptográficas verificadas
+
+78
+00:03:18.560 --> 00:03:21.280
+antes da instalação no dispositivo do usuário.
+
+79
+00:03:21.280 --> 00:03:23.760
+Historicamente, as equipes de engenharia manualmente
+
+80
+00:03:23.760 --> 00:03:25.320
+certificados expirados.
+
+81
+00:03:25.320 --> 00:03:27.920
+Essa prática cria problemas de exploração rápida,
+
+82
+00:03:27.920 --> 00:03:30.680
+conflitos de keychain local e perfis revogados
+
+83
+00:03:30.680 --> 00:03:32.080
+que quebram as builds.
+
+84
+00:03:32.080 --> 00:03:35.640
+O Fastlane match existe para resolver exatamente esse gargalo.
+
+85
+00:03:35.640 --> 00:03:38.480
+É o padrão moderno para abstrair a assinatura de código
+
+86
+00:03:38.480 --> 00:03:39.880
+do ambiente vulnerável
+
+87
+00:03:39.880 --> 00:03:42.200
+da máquina de um desenvolvedor individual.
+
+88
+00:03:42.200 --> 00:03:44.920
+Este diagrama ilustra a arquitetura do match.
+
+89
+00:03:44.920 --> 00:03:47.080
+Em vez de arquivos descentralizados,
+
+90
+00:03:47.080 --> 00:03:49.760
+ele cria uma única fonte central de verdade
+
+91
+00:03:49.760 --> 00:03:51.960
+para toda a sua organização.
+
+92
+00:03:51.960 --> 00:03:54.880
+O Match gera e armazena todos os certificados
+
+93
+00:03:54.880 --> 00:03:57.760
+e perfis de provisionamento dentro de um repositório
+
+94
+00:03:57.760 --> 00:04:00.760
+Git privado altamente criptografado.
+
+95
+00:04:00.760 --> 00:04:04.400
+Como o executor de CI opera como uma máquina isolada,
+
+96
+00:04:04.400 --> 00:04:06.880
+é necessário um mecanismo de autenticação seguro
+
+97
+00:04:06.880 --> 00:04:10.720
+para acessar este repositório de forma autônoma durante a execução do pipeline.
+
+98
+00:04:10.720 --> 00:04:14.240
+Isso é feito configurando a autorização básica do Git do match
+
+99
+00:04:14.240 --> 00:04:17.120
+como uma variável de ambiente no workflow de CI.
+
+100
+00:04:17.120 --> 00:04:21.080
+Este token codificado em base 64 concede acesso somente leitura.
+
+101
+00:04:21.080 --> 00:04:23.720
+Isso permite que o runner clone o repositório privado,
+
+102
+00:04:23.720 --> 00:04:26.160
+descriptografe os perfis específicos de que precisa,
+
+103
+00:04:26.160 --> 00:04:30.480
+e assine o binário sem exigir manipulação manual do keychain.
+
+104
+00:04:30.480 --> 00:04:34.120
+Ao tratar certificados criptográficos como estado Git sincronizável,
+
+105
+00:04:34.120 --> 00:04:36.960
+tanto os desenvolvedores locais quanto o runner de CI remoto
+
+106
+00:04:36.960 --> 00:04:40.240
+sempre obtém do exatamente mesmo fonte criptográfica.
+
+107
+00:04:40.240 --> 00:04:42.280
+Centralizar credenciais dessa forma
+
+108
+00:04:42.280 --> 00:04:45.400
+elimina permanentemente o, funciona na minha máquina,
+
+109
+00:04:45.400 --> 00:04:47.840
+erro de assinatura dos fluxos de trabalho de produção.
+
+110
+00:04:47.840 --> 00:04:51.080
+Imediatamente após uma compilação assinada bem-sucedida,
+
+111
+00:04:51.080 --> 00:04:53.440
+o binário entra no portão de pré-voo.
+
+112
+00:04:53.440 --> 00:04:56.040
+Testes unitários padrão e análise estática de código
+
+113
+00:04:56.040 --> 00:04:57.560
+avaliam o código-fonte.
+
+114
+00:04:57.560 --> 00:04:58.880
+Eles são altamente eficazes,
+
+115
+00:04:58.880 --> 00:05:02.640
+mas não conseguem inspecionar o artefato nativo empacotado final.
+
+116
+00:05:02.640 --> 00:05:05.680
+Isso deixa a aplicação vulnerável ao acúmulo de permissões,
+
+117
+00:05:05.680 --> 00:05:09.120
+à injeção silenciosa de requisitos nativos perigosos do dispositivo,
+
+118
+00:05:09.120 --> 00:05:11.120
+o que frequentemente ocorre quando engenheiros atualizam
+
+119
+00:05:11.120 --> 00:05:13.440
+bibliotecas React Native de terceiros.
+
+120
+00:05:13.480 --> 00:05:15.480
+Para detectar essas regressões antes que elas cheguem
+
+121
+00:05:15.480 --> 00:05:16.840
+os revisores da app store,
+
+122
+00:05:16.840 --> 00:05:19.160
+o Fastlane executa uma inspeção direcionada
+
+123
+00:05:19.160 --> 00:05:20.600
+do artefato compilado.
+
+124
+00:05:20.600 --> 00:05:21.600
+Na track do Android,
+
+125
+00:05:21.600 --> 00:05:24.520
+o pipeline invoca uma ferramenta específica do Android SDK
+
+126
+00:05:24.520 --> 00:05:26.680
+chamado AAPT2.
+
+127
+00:05:26.680 --> 00:05:30.280
+Este utilitário desempacota forçosamente o bundle de assets Android compilado
+
+128
+00:05:30.280 --> 00:05:32.640
+para ler seu manifesto interno bruto.
+
+129
+00:05:32.640 --> 00:05:35.720
+Esta demonstração visual mostra a lógica central de pré-voo.
+
+130
+00:05:35.720 --> 00:05:38.200
+O Fastlane compara as permissões extraídas
+
+131
+00:05:38.200 --> 00:05:40.240
+contra um estado seguro conhecido,
+
+132
+00:05:40.240 --> 00:05:42.680
+definido por um arquivo de texto do repositório chamado
+
+133
+00:05:42.680 --> 00:05:44.640
+de linha de base de permissões.
+
+134
+00:05:44.640 --> 00:05:46.520
+Se o Fastlane detectar uma incompatibilidade,
+
+135
+00:05:46.520 --> 00:05:48.360
+como um novo acesso de localização,
+
+136
+00:05:48.360 --> 00:05:50.880
+o pipeline registra uma falha crítica.
+
+137
+00:05:50.880 --> 00:05:53.760
+Ele interrompe todo o processo de deploy instantaneamente,
+
+138
+00:05:53.760 --> 00:05:55.800
+bloqueando o binário potencialmente comprometido
+
+139
+00:05:55.800 --> 00:05:58.200
+de avançar para o portão de distribuição.
+
+140
+00:05:58.200 --> 00:06:01.240
+Para prosseguir, é necessária intervenção humana.
+
+141
+00:06:01.240 --> 00:06:04.320
+Um desenvolvedor deve revisar a permissão recém-detectada,
+
+142
+00:06:04.320 --> 00:06:07.280
+atualizar o arquivo de texto base para permitir explicitamente,
+
+143
+00:06:07.280 --> 00:06:10.200
+e fazer o commit dessa alteração de volta ao repositório.
+
+144
+00:06:10.200 --> 00:06:11.760
+Aplicar essa baseline rígida
+
+145
+00:06:11.760 --> 00:06:13.720
+age como um firewall final.
+
+146
+00:06:13.720 --> 00:06:15.800
+Isso garante que dependências não verificadas
+
+147
+00:06:15.800 --> 00:06:18.280
+não possam comprometer silenciosamente a privacidade do usuário
+
+148
+00:06:18.280 --> 00:06:19.960
+ou provocar rejeições inesperadas
+
+149
+00:06:19.960 --> 00:06:22.000
+das equipes de revisão da App Store.
+
+150
+00:06:22.000 --> 00:06:25.240
+Com os binários compilados, assinados e totalmente validados,
+
+151
+00:06:25.240 --> 00:06:27.400
+o pipeline inicia a etapa final,
+
+152
+00:06:27.400 --> 00:06:30.040
+enviando os artefatos para os canais de distribuição.
+
+153
+00:06:30.040 --> 00:06:33.240
+Para iOS, o Fastlane autentica com segurança
+
+154
+00:06:33.240 --> 00:06:35.440
+com a API do App Store Connect,
+
+155
+00:06:35.440 --> 00:06:38.000
+fazendo upload do IPA diretamente para o TestFlight
+
+156
+00:06:38.000 --> 00:06:40.720
+e gerenciando configurações de lançamento em fases.
+
+157
+00:06:40.720 --> 00:06:42.560
+Em paralelo, o fluxo de trabalho do Android
+
+158
+00:06:42.560 --> 00:06:46.080
+utiliza a Play Developer API para fazer upload do AAB
+
+159
+00:06:46.080 --> 00:06:49.360
+para o Google Play Console, gerenciando de forma programática os lançamentos
+
+160
+00:06:49.360 --> 00:06:51.360
+graduais e as faixas de lançamento.
+
+161
+00:06:51.360 --> 00:06:53.560
+Se a equipe utiliza distribuição interna
+
+162
+00:06:53.560 --> 00:06:56.040
+para atualizações menores, o pipeline pode opcionalmente
+
+163
+00:06:56.040 --> 00:06:57.920
+rotear bundles over the air diretamente
+
+164
+00:06:57.920 --> 00:06:59.800
+para uma infraestrutura auto-hospedada.
+
+165
+00:06:59.800 --> 00:07:03.520
+Um único push de código atravessa todos os sete estágios com sucesso,
+
+166
+00:07:03.520 --> 00:07:05.840
+roteando assets para os destinos de implantação.
+
+167
+00:07:05.840 --> 00:07:08.000
+Após o lançamento, o CI runner faz o upload
+
+168
+00:07:08.000 --> 00:07:09.840
+dos React Native Source Maps para o Sentry
+
+169
+00:07:09.840 --> 00:07:11.920
+para Simbolização Precisa de Crashes.
+
+170
+00:07:11.920 --> 00:07:14.200
+Em seguida, ele gera automaticamente um changelog de lançamento
+
+171
+00:07:14.200 --> 00:07:17.720
+de commits do Git, disparando uma notificação final no Slack,
+
+172
+00:07:17.720 --> 00:07:20.640
+arquitetando um pipeline determinístico de sete etapas
+
+173
+00:07:20.640 --> 00:07:22.880
+substitui processos manuais frágeis
+
+174
+00:07:22.880 --> 00:07:25.160
+por um sistema de engenharia zero-touch.
+
+175
+00:07:25.160 --> 00:07:28.640
+O resultado é um ciclo de deploy altamente previsível
+
+176
+00:07:28.640 --> 00:07:31.200
+que permite aos engenheiros focar no código,
+
+177
+00:07:31.200 --> 00:07:34.160
+em vez da mecânica de lançá-lo.
+

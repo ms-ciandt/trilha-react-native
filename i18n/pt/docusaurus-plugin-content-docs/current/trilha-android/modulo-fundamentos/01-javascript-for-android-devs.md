@@ -6,11 +6,15 @@ sidebar_position: 1
 
 ## Video Overview
 
-<video width="100%" controls>
+<video width="100%" controls controlsList="nodownload">
   <source src="/trilha-react-native/assets/videos/trilha_android/fund_01_javascript.mp4" type="video/mp4">
   <track kind="captions" src="/trilha-react-native/assets/captions/trilha_android/fund_01_javascript.vtt" srclang="pt" label="Português" default>
   Your browser does not support the video tag.
 </video>
+
+## Video Overview
+
+> Video para este tópico em breve.
 
 ## Voce Ja Sabe Escrever Software
 

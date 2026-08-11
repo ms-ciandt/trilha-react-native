@@ -6,11 +6,15 @@ sidebar_position: 5
 
 ## Video Overview
 
-<video width="100%" controls>
+<video width="100%" controls controlsList="nodownload">
   <source src="/trilha-react-native/assets/videos/trilha_android/fund_05_state_and_apis.mp4" type="video/mp4">
   <track kind="captions" src="/trilha-react-native/assets/captions/trilha_android/fund_05_state_and_apis_en.vtt" srclang="en" label="English" default>
   Your browser does not support the video tag.
 </video>
+
+## Video Overview
+
+> Video for this topic coming soon.
 
 ## Mapping Android Architecture to React Native
 
@@ -459,6 +463,8 @@ function ProductScreen({ route }: NativeStackScreenProps<RootStack, 'Product'>) 
 ---
 
 ## Interactive Example
+
+[![Open in Expo Snack](https://img.shields.io/badge/Open%20in-Expo%20Snack-000020?logo=expo)](https://snack.expo.dev/@react-native-community/network)
 
 ---
 

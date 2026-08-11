@@ -1,0 +1,266 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:06.160
+Por anos, renderizar uma interface no React Native significava passar instruções através de uma
+
+2
+00:00:06.160 --> 00:00:11.600
+ponte de comunicação assíncrona, uma estrutura que frequentemente criava gargalos sob atualizações intensas e complexas.
+
+3
+00:00:12.160 --> 00:00:17.280
+Anteriormente, a thread JavaScript se comunicava com as views nativas roteando instruções
+
+4
+00:00:17.280 --> 00:00:25.040
+através de um gargalo central conhecido como UI manager. Na versão 0.76, o UI manager legado é completamente
+
+5
+00:00:25.040 --> 00:00:31.120
+removido. Ele é substituído pelos componentes Fabric, estabelecendo uma conexão direta e unificada entre
+
+6
+00:00:31.120 --> 00:00:37.760
+JavaScript e a camada nativa. Um componente Fabric é, em sua essência, uma view nativa do sistema operacional
+
+7
+00:00:37.760 --> 00:00:43.040
+que é exposta diretamente ao React. Ao contrário da antiga bridge assíncrona, onde o JavaScript
+
+8
+00:00:43.040 --> 00:00:48.560
+despachava uma atualização e aguardava uma renderização atrasada, essa arquitetura permite que o React meça e
+
+9
+00:00:48.560 --> 00:00:54.560
+manipule views nativas de forma síncrona. A UI renderiza sem o lag anterior. Construir UI
+
+10
+00:00:54.560 --> 00:00:59.280
+sob esse motor de renderização exige que os desenvolvedores sigam um conjunto de código padronizado e rigoroso
+
+11
+00:00:59.280 --> 00:01:05.280
+artefatos. Para entender esse sistema, vamos construir um componente fabric, rastrear seu fluxo de eventos
+
+12
+00:01:05.280 --> 00:01:13.520
+ao vivo e examinar a migração de código legado. Na versão 0.76, o contrato C++ do fabric se torna o padrão
+
+13
+00:01:13.520 --> 00:01:18.720
+nativo para cada view, seja escrita como um novo componente ou encapsulada para compatibilidade retroativa.
+
+14
+00:01:19.280 --> 00:01:23.840
+Esta grade representa o diretório do seu projeto. Construir qualquer novo componente fabric
+
+15
+00:01:23.840 --> 00:01:30.640
+requer exatamente quatro arquivos distintos. O passo 1 é definir a API do componente. Você escreve um estrito
+
+16
+00:01:30.640 --> 00:01:36.320
+Arquivo de especificação TypeScript, detalhando exatamente quais propriedades e eventos a view aceitará.
+
+17
+00:01:36.320 --> 00:01:41.360
+Esta especificação atua como a única fonte de verdade para o seu componente. Nada pode ser passado para
+
+18
+00:01:41.360 --> 00:01:46.560
+a view nativa a menos que seja explicitamente declarado aqui primeiro. Essa rigidez existe para alimentar o
+
+19
+00:01:46.560 --> 00:01:52.160
+mecanismo automatizado no centro da arquitetura. Code Gen. Durante a fase de build, o Code Gen lê sua
+
+20
+00:01:52.160 --> 00:01:58.080
+especificação TypeScript. Ele analisa seus tipos JavaScript e os traduz em C++ fabric
+
+21
+00:01:58.080 --> 00:02:04.320
+bindings, gerando o segundo artefato necessário sem qualquer intervenção manual. Esses bindings C++
+
+22
+00:02:04.320 --> 00:02:09.360
+garantem segurança de tipos rigorosa através da fronteira entre JavaScript e o sistema operacional nativo.
+
+23
+00:02:09.360 --> 00:02:13.680
+Se um tipo de propriedade não corresponder, o build falha antes que um crash em tempo de execução possa ocorrer.
+
+24
+00:02:14.240 --> 00:02:19.120
+Os passos 3 e 4 são a implementação. Você escreve o código real específico de cada plataforma,
+
+25
+00:02:19.120 --> 00:02:23.920
+uma view nativa para iOS e uma view nativa para Android. Essas views nativas são programadas para se encaixar
+
+26
+00:02:23.920 --> 00:02:29.840
+diretamente nas interfaces C++ geradas automaticamente, satisfazendo o contrato estabelecido pelo Code Gen.
+
+27
+00:02:29.840 --> 00:02:34.640
+Anteriormente, os desenvolvedores passavam manualmente tipos fracos para objetos JSON pela bridge, esperando que o
+
+28
+00:02:34.640 --> 00:02:39.840
+lado nativo os interpretasse corretamente. Agora, esse pipeline de quatro etapas força tanto o código JavaScript quanto o nativo
+
+29
+00:02:39.840 --> 00:02:45.760
+a aderir a um contrato C++ estrito, eliminando toda a classe de erros de serialização de payload.
+
+30
+00:02:45.760 --> 00:02:51.760
+Com os arquivos estáticos compilados, podemos observar exatamente como esse contrato C++ se comporta quando um
+
+31
+00:02:51.760 --> 00:02:58.640
+o componente está sendo executado ao vivo em um dispositivo. Esta tela dividida mostra o ambiente oficial do Expo Snack Slider.
+
+32
+00:02:58.640 --> 00:03:04.640
+À esquerda há um dispositivo físico exibindo um slider de UI. À direita está o React Dev Tools Inspector.
+
+33
+00:03:05.200 --> 00:03:09.920
+Usamos o Expo Go aqui porque ele está configurado para rotear componentes nativos através do bridge do Fabric
+
+34
+00:03:09.920 --> 00:03:15.600
+por padrão. Para monitorar os dados internos, você chacoalha fisicamente o dispositivo de teste para acionar
+
+35
+00:03:15.600 --> 00:03:21.600
+o menu do desenvolvedor e abrir o painel do inspector. Observe o sistema responder enquanto o usuário arrasta o slider
+
+36
+00:03:21.600 --> 00:03:27.280
+para frente e para trás na tela. A interação física na tela gera imediatamente um
+
+37
+00:03:27.280 --> 00:03:32.880
+pacote de dados nativo contendo as novas coordenadas de posição. Esse payload atravessa instantaneamente a nova
+
+38
+00:03:32.880 --> 00:03:39.040
+bridge Fabric síncrona. Ele chega a uma entidade C++ conhecida como shadow node, que reside na memória
+
+39
+00:03:39.040 --> 00:03:44.800
+gerenciando o layout e o estado dos componentes. O shadow node processa as coordenadas, atualiza seu
+
+40
+00:03:44.800 --> 00:03:50.160
+estado interno e envia os novos valores de propriedade diretamente para a thread JavaScript.
+
+41
+00:03:50.160 --> 00:03:54.560
+No lado direito da tela, você vê essas coordenadas exatas chegando no Dev Tools,
+
+42
+00:03:54.560 --> 00:03:59.680
+sincronizadas perfeitamente com o movimento do polegar do usuário. Como as interações físicas agora atualizam
+
+43
+00:03:59.680 --> 00:04:06.800
+o shadow node via C++, as mudanças de estado são determinísticas. A UI responde instantaneamente, ignorando completamente
+
+44
+00:04:06.960 --> 00:04:12.080
+a latência imprevisível da antiga bridge de renderização. Isso introduz um problema imediato.
+
+45
+00:04:12.080 --> 00:04:17.600
+Se o UI manager foi removido, por que os milhares de bibliotecas React Native de terceiros existentes
+
+46
+00:04:17.600 --> 00:04:24.640
+travar instantaneamente no 0.76? A solução lançada no 0.76 é um sistema de compatibilidade retroativa chamado
+
+47
+00:04:24.640 --> 00:04:30.400
+de camada de interoperabilidade. Mecanicamente, a camada de interoperabilidade intercepta e envolve chamadas legadas baseadas no UI manager
+
+48
+00:04:30.400 --> 00:04:36.000
+de criação de views. Ela age como um shell compatível com Fabric, traduzindo dinamicamente comandos assíncronos antigos
+
+49
+00:04:36.000 --> 00:04:40.960
+em um formato que o pipeline de renderização síncrona moderno entende. Para desenvolvedores,
+
+50
+00:04:40.960 --> 00:04:46.560
+a principal vantagem dessa camada é sua transparência para o JavaScript. Você não precisa reescrever seu
+
+51
+00:04:46.560 --> 00:04:51.920
+código ou alterar uma única instrução de importação para ativar essa compatibilidade retroativa. Por padrão,
+
+52
+00:04:51.920 --> 00:04:57.680
+essa tradução automática cobre com sucesso aproximadamente 95% das bibliotecas da comunidade atualmente
+
+53
+00:04:57.680 --> 00:05:03.760
+em uso. A camada de interoperabilidade serve como uma rede de segurança crítica. Ela evita um ecossistema fragmentado,
+
+54
+00:05:03.760 --> 00:05:09.680
+permitindo que equipes atualizem sua arquitetura principal para a versão 0.76 hoje, enquanto adiam extensas
+
+55
+00:05:09.680 --> 00:05:15.280
+reescritas de componentes. Isso deixa os desenvolvedores operando em uma realidade dupla. Novos componentes usam o estrito
+
+56
+00:05:15.280 --> 00:05:21.200
+Pipeline do TypeScript para o Code Gen, enquanto as dependências existentes operam com segurança dentro do shell de interoperabilidade.
+
+57
+00:05:21.200 --> 00:05:26.560
+No entanto, isso deixa os 5% restantes, os casos extremos onde a camada de interoperabilidade não consegue fornecer uma
+
+58
+00:05:26.560 --> 00:05:31.440
+tradução perfeita. O primeiro gatilho técnico que quebra a compatibilidade é a forte
+
+59
+00:05:31.520 --> 00:05:37.600
+dependência de uma biblioteca no método set native props para manipular views diretamente. O segundo gatilho é uma integração
+
+60
+00:05:37.600 --> 00:05:43.680
+profunda e complexa com a lógica interna do UI manager que não pode ser abstraída com segurança. Para esses
+
+61
+00:05:43.680 --> 00:05:49.360
+casos extremos específicos, a camada de interoperabilidade falhará. Componentes que dependem desses padrões irão travar
+
+62
+00:05:49.360 --> 00:05:55.840
+na versão 0.76. A única solução para os mantenedores dessas bibliotecas complexas é reescrever manualmente sua
+
+63
+00:05:55.840 --> 00:06:01.280
+lógica de renderização do zero. Isso requer retornar à etapa 1, definindo uma especificação TypeScript estrita
+
+64
+00:06:01.280 --> 00:06:07.600
+e deixando o code Gen gerar os bindings. O React Native 0.76 fornece uma rede de segurança para
+
+65
+00:06:07.600 --> 00:06:12.720
+a grande maioria das aplicações, mas acessar todos os benefícios de desempenho da arquitetura
+
+66
+00:06:12.720 --> 00:06:19.760
+em última análise, requer abraçar completamente o contrato C++ do Fabric.
+

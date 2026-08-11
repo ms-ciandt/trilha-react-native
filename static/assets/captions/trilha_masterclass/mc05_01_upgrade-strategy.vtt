@@ -1,0 +1,278 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:04.000
+Atualizações bem-sucedidas do React Native exigem uma migração estruturada,
+
+2
+00:00:04.000 --> 00:00:07.000
+Comparar, Aplicar, Validar e Repetir.
+
+3
+00:00:07.000 --> 00:00:11.000
+Os desenvolvedores que fazem isso corretamente tratam o processo como uma refatoração planejada,
+
+4
+00:00:11.000 --> 00:00:14.000
+em vez de uma simples atualização de dependência.
+
+5
+00:00:14.000 --> 00:00:17.000
+Para manter a estabilidade, contamos com uma estratégia rigorosa de quatro fases
+
+6
+00:00:17.000 --> 00:00:21.000
+que garante que cada mudança seja isolada e verificada.
+
+7
+00:00:21.000 --> 00:00:24.000
+Este fluxograma ilustra a regra de ouro do caminho de atualização.
+
+8
+00:00:24.000 --> 00:00:28.000
+Incrementos de versão minor, como mover de 0.74 para 0.75,
+
+9
+00:00:28.000 --> 00:00:31.000
+exigem etapas sequenciais obrigatórias.
+
+10
+00:00:31.000 --> 00:00:34.000
+Você deve fazê-las uma minor de cada vez.
+
+11
+00:00:34.000 --> 00:00:38.000
+Mas para atualizações de patch, como 0.76.0 para 0.76.5,
+
+12
+00:00:38.000 --> 00:00:42.000
+é seguro consolidar as correções em um único salto.
+
+13
+00:00:42.000 --> 00:00:45.000
+Avançando, a versão 0.74 é uma parada crítica,
+
+14
+00:00:45.000 --> 00:00:47.000
+introduzindo a camada de interoperabilidade do turbo-module.
+
+15
+00:00:47.000 --> 00:00:51.000
+Ignorá-la garante falhas ao fazer a transição para a nova arquitetura.
+
+16
+00:00:51.000 --> 00:00:57.000
+Pular várias versões menores de uma vez torna impossível isolar qual mudança causou qual problema.
+
+17
+00:00:57.000 --> 00:01:03.000
+Seguir um caminho sequencial estrito garante que seu upgrade permaneça determinístico e fácil de depurar.
+
+18
+00:01:03.000 --> 00:01:07.000
+A Fase 1 começa antes de você modificar qualquer código.
+
+19
+00:01:07.000 --> 00:01:11.000
+Os erros mais custosos acontecem quando você começa a aplicar os Diffs
+
+20
+00:01:11.000 --> 00:01:14.000
+sem primeiro entender o panorama específico do release.
+
+21
+00:01:14.000 --> 00:01:17.000
+Este é o registro oficial de alterações do React Native.
+
+22
+00:01:17.000 --> 00:01:23.000
+Primeiro, verifique especificamente as APIs depreciadas e as breaking changes que exigem ajustes manuais no código.
+
+23
+00:01:24.000 --> 00:01:27.000
+Em seguida, consulte o fórum de discussões de releases do React Native.
+
+24
+00:01:27.000 --> 00:01:30.000
+Ele exibe problemas conhecidos identificados durante o ciclo de release candidate,
+
+25
+00:01:30.000 --> 00:01:33.000
+que não estão incluídos no registro de alterações principal.
+
+26
+00:01:33.000 --> 00:01:36.000
+Identificar essas mudanças de comportamento exclusivas do nativo na documentação
+
+27
+00:01:36.000 --> 00:01:41.000
+evita que você depure às cegas problemas que nunca aparecerão em um diff de código JavaScript padrão.
+
+28
+00:01:41.000 --> 00:01:45.000
+A Fase 2 constrói um plano usando o React Native upgrade helper.
+
+29
+00:01:45.000 --> 00:01:50.000
+Essa ferramenta essencial gera um diff limpo de código nativo entre as versões atual e alvo.
+
+30
+00:01:50.000 --> 00:01:54.000
+A ferramenta funciona executando uma inicialização de novo projeto em ambas as versões
+
+31
+00:01:54.000 --> 00:01:58.000
+e comparando as saídas brutas dos templates para mostrar exatamente o que mudou.
+
+32
+00:01:58.000 --> 00:02:03.000
+Você vai trabalhar nessas mudanças de arquivos de cima para baixo, começando com itens de baixo risco,
+
+33
+00:02:03.000 --> 00:02:06.000
+como atualizações padrão de versão no seu package.json.
+
+34
+00:02:06.000 --> 00:02:10.000
+Este gráfico categoriza o nível de risco de diferentes arquivos do projeto.
+
+35
+00:02:10.000 --> 00:02:13.000
+Enquanto o package.json é geralmente simples,
+
+36
+00:02:13.000 --> 00:02:19.000
+arquivos como o build.gradle do Android e o app delegate do iOS entram na zona de alto risco.
+
+37
+00:02:19.000 --> 00:02:23.000
+Erros nesses arquivos levam a falhas imediatas de build ou crashes na inicialização.
+
+38
+00:02:23.000 --> 00:02:28.000
+O diff resultante serve como um blueprint personalizado para os ajustes nativos necessários,
+
+39
+00:02:28.000 --> 00:02:31.000
+eliminando suposições da transição de framework.
+
+40
+00:02:31.000 --> 00:02:34.000
+A Fase 3 é a aplicação dessas mudanças.
+
+41
+00:02:34.000 --> 00:02:39.000
+Embora comandos de atualização automatizados estejam disponíveis, eles frequentemente criam conflitos irresolvíveis
+
+42
+00:02:39.000 --> 00:02:41.000
+em aplicações muito modificadas.
+
+43
+00:02:41.000 --> 00:02:45.000
+Esta comparação mostra um template genérico ao lado de um arquivo local personalizado.
+
+44
+00:02:45.000 --> 00:02:47.000
+Evite o erro de copiar e colar.
+
+45
+00:02:47.000 --> 00:02:51.000
+Sobrescrever seu arquivo completamente apagará suas configurações únicas.
+
+46
+00:02:51.000 --> 00:02:57.000
+Em vez disso, você deve mapear as alterações do template manualmente nos seus arquivos locais no nível de propriedade específico.
+
+47
+00:02:57.000 --> 00:03:01.000
+Neste trecho, atualizamos apenas um único inteiro,
+
+48
+00:03:01.000 --> 00:03:05.000
+alterando a versão do SDK alvo de 34 para 35,
+
+49
+00:03:05.000 --> 00:03:08.000
+enquanto deixamos o código personalizado ao redor intocado.
+
+50
+00:03:08.000 --> 00:03:13.000
+O mapeamento manual no nível de propriedade é a única forma de absorver atualizações do framework principal.
+
+51
+00:03:13.000 --> 00:03:18.000
+enquanto protege quaisquer integrações nativas não documentadas de serem apagadas.
+
+52
+00:03:18.000 --> 00:03:24.000
+A Fase 4 envolve uma auditoria final do seu código aplicado em relação à lista de verificação de breaking changes que você criou na Fase 1.
+
+53
+00:03:24.000 --> 00:03:27.000
+Antes de tentar a primeira compilação pós-atualização,
+
+54
+00:03:27.000 --> 00:03:29.000
+você deve realizar uma etapa obrigatória.
+
+55
+00:03:29.000 --> 00:03:32.000
+Limpe completamente o cache de build local.
+
+56
+00:03:32.000 --> 00:03:37.000
+Compilar sobre artefatos antigos em cache gera falhas falsas e não determinísticas.
+
+57
+00:03:37.000 --> 00:03:42.000
+Começar a partir de um estado completamente limpo garante que os resultados do seu build sejam totalmente precisos.
+
+58
+00:03:42.000 --> 00:03:48.000
+Esse estado limpo garante que quaisquer erros de build resultantes sejam problemas legítimos do framework que requerem atenção,
+
+59
+00:03:48.000 --> 00:03:50.000
+em vez de corrupção de artefatos residuais.
+
+60
+00:03:50.000 --> 00:03:53.000
+Uma vez que a aplicação compila com sucesso,
+
+61
+00:03:53.000 --> 00:03:57.000
+você está pronto para lançar e iniciar a validação final.
+
+62
+00:03:57.000 --> 00:04:01.000
+Para o teste de fumaça inicial, você deve seguir uma regra rígida de hardware.
+
+63
+00:04:01.000 --> 00:04:05.000
+Use um dispositivo físico de baixo desempenho em vez de um simulador.
+
+64
+00:04:05.000 --> 00:04:09.000
+Dispositivos flagship possuem poder de processamento bruto suficiente
+
+65
+00:04:09.000 --> 00:04:15.000
+para mascarar completamente regressões sutis de desempenho que podem ter sido introduzidas pela nova versão do framework.
+
+66
+00:04:15.000 --> 00:04:20.000
+Se o aplicativo funcionar sem problemas neste hardware mais antigo, fixe a versão validada.
+
+67
+00:04:20.000 --> 00:04:24.000
+Agora você está pronto para repetir esse ciclo para o próximo incremento de versão.
+
+68
+00:04:24.000 --> 00:04:29.000
+Ao tratar as atualizações como refatorações estruturadas, incrementais e rigorosamente validadas,
+
+69
+00:04:29.000 --> 00:04:33.000
+você garante uma progressão estável em direção à nova arquitetura.
+

@@ -1,0 +1,262 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:04.000
+Você já conhece React, então criar um aplicativo mobile deve parecer intuitivo,
+
+2
+00:00:04.000 --> 00:00:09.000
+mas aplicar técnicas web em um celular faz com que os componentes não se comportem como esperado.
+
+3
+00:00:09.000 --> 00:00:13.000
+Desenvolvedores web ouviram por anos que podem aprender uma vez,
+
+4
+00:00:13.000 --> 00:00:15.000
+escrever em qualquer lugar com React.
+
+5
+00:00:15.000 --> 00:00:18.000
+Embora o React Native use a biblioteca React,
+
+6
+00:00:18.000 --> 00:00:22.000
+ele substitui as APIs padrão do navegador por um ambiente mobile nativo.
+
+7
+00:00:22.000 --> 00:00:25.000
+Essa comparação em tela dividida destaca a divergência.
+
+8
+00:00:25.000 --> 00:00:29.000
+O sandbox do navegador lida com tarefas diferentes das do engine Hermes.
+
+9
+00:00:29.000 --> 00:00:32.000
+Em um navegador, você depende do document object model,
+
+10
+00:00:32.000 --> 00:00:36.000
+um engine de CSS e uma barra de URL para gerenciar estado e navegação.
+
+11
+00:00:36.000 --> 00:00:38.000
+O motor Hermes remove essas ferramentas.
+
+12
+00:00:38.000 --> 00:00:42.000
+Não há janela de documento global ou roteamento baseado em URL.
+
+13
+00:00:42.000 --> 00:00:46.000
+Em vez disso, o motor prioriza gestos de toque e acesso direto ao armazenamento.
+
+14
+00:00:46.000 --> 00:00:50.000
+Depender de ferramentas específicas do navegador leva a layouts quebrados e dados ausentes
+
+15
+00:00:50.000 --> 00:00:52.000
+que impedem um app de ser publicável.
+
+16
+00:00:52.000 --> 00:00:55.000
+A transição começa com a ausência de HTML.
+
+17
+00:00:55.000 --> 00:01:00.000
+As tags padrão div ou span não são suportadas no React Native,
+
+18
+00:01:00.000 --> 00:01:03.000
+incluí-las faz o aplicativo travar imediatamente.
+
+19
+00:01:03.000 --> 00:01:07.000
+Você substitui a marcação web por primitivos específicos para mobile.
+
+20
+00:01:07.000 --> 00:01:11.000
+Você constrói sua interface usando blocos fundamentais como View e Text.
+
+21
+00:01:11.000 --> 00:01:15.000
+O estilo também se afasta de um sistema global em cascata.
+
+22
+00:01:15.000 --> 00:01:20.000
+Cada componente recebe seus próprios estilos definidos como objetos JavaScript independentes.
+
+23
+00:01:20.000 --> 00:01:22.000
+A lógica principal do React permanece a mesma.
+
+24
+00:01:23.000 --> 00:01:27.000
+Você ainda usa state, hooks e a fetch API para gerenciar os dados da sua aplicação.
+
+25
+00:01:27.000 --> 00:01:31.000
+A forma como os componentes atualizam e lidam com o fluxo de dados é familiar,
+
+26
+00:01:31.000 --> 00:01:33.000
+mesmo que o motor de renderização seja diferente.
+
+27
+00:01:33.000 --> 00:01:38.000
+O sucesso no desenvolvimento mobile requer pensar em termos desses primitivos de UI isolados,
+
+28
+00:01:38.000 --> 00:01:40.000
+em vez de um documento vinculado.
+
+29
+00:01:40.000 --> 00:01:43.000
+Aplicativos mobile também operam sem uma barra de URL.
+
+30
+00:01:43.000 --> 00:01:48.000
+Sistemas operacionais mobile não usam mudanças de URL para alternar entre telas.
+
+31
+00:01:48.000 --> 00:01:50.000
+Em vez disso, você usa padrões de navegação,
+
+32
+00:01:50.000 --> 00:01:54.000
+onde as telas são empilhadas umas sobre as outras ou organizadas em abas.
+
+33
+00:01:54.000 --> 00:02:00.000
+A persistência padrão do navegador, como local storage e session storage, não está disponível aqui.
+
+34
+00:02:00.000 --> 00:02:07.000
+Salvar dados do usuário requer a integração de bibliotecas de armazenamento assíncrono como MMKV para lidar com a persistência.
+
+35
+00:02:07.000 --> 00:02:12.000
+Navegação e memória são estruturas que você deve construir e gerenciar ativamente
+
+36
+00:02:12.000 --> 00:02:14.000
+como parte do estado interno do aplicativo.
+
+37
+00:02:14.000 --> 00:02:18.000
+O desenvolvimento mobile também significa considerar o hardware físico.
+
+38
+00:02:19.000 --> 00:02:23.000
+O espaço da tela é interrompido por notches de câmera e indicadores de início.
+
+39
+00:02:23.000 --> 00:02:29.000
+Sem os ajustes adequados, o sistema operacional renderiza elementos de UI diretamente atrás dessas obstruções físicas,
+
+40
+00:02:29.000 --> 00:02:32.000
+tornando os botões impossíveis de pressionar.
+
+41
+00:02:32.000 --> 00:02:35.000
+Você evita isso definindo áreas seguras para o seu conteúdo.
+
+42
+00:02:35.000 --> 00:02:40.000
+Usar o safe area context garante que seu layout permaneça longe das bordas,
+
+43
+00:02:40.000 --> 00:02:44.000
+efetivamente reduzindo a área utilizável para caber dentro da tela visível.
+
+44
+00:02:45.000 --> 00:02:47.000
+O software também altera o layout em tempo real,
+
+45
+00:02:47.000 --> 00:02:50.000
+especificamente quando o teclado virtual aparece.
+
+46
+00:02:50.000 --> 00:02:55.000
+Quando o teclado aparece, ele frequentemente oculta o campo de entrada que o usuário está digitando.
+
+47
+00:02:55.000 --> 00:02:59.000
+Você resolve isso envolvendo formulários em uma keyboard avoiding view,
+
+48
+00:02:59.000 --> 00:03:03.000
+que detecta o teclado e responde ajustando a altura da view.
+
+49
+00:03:03.000 --> 00:03:08.000
+Uma UI mobile muda constantemente com base no dispositivo físico e nas sobreposições de software ativas.
+
+50
+00:03:08.000 --> 00:03:13.000
+A interação do usuário muda de cliques de alta precisão para toques táteis,
+
+51
+00:03:13.000 --> 00:03:20.000
+tratar uma tela mobile como uma interface controlada por mouse resulta em um app que parece não responsivo e difícil de usar.
+
+52
+00:03:20.000 --> 00:03:26.000
+Usuários modernos esperam gestos intuitivos como swipes laterais fluidos e long presses deliberados
+
+53
+00:03:26.000 --> 00:03:29.000
+para navegar e interagir de forma eficaz com o app mobile.
+
+54
+00:03:29.000 --> 00:03:35.000
+O desenvolvimento requer a adição de gesture handlers para interpretar essas entradas complexas sensíveis à pressão.
+
+55
+00:03:35.000 --> 00:03:41.000
+Para criar uma experiência nativa, você deve substituir a lógica de cursor por sistemas projetados para polegares e momentum.
+
+56
+00:03:41.000 --> 00:03:47.000
+Migrar para o mobile é um exercício de trabalho dentro das restrições físicas específicas do hardware portátil.
+
+57
+00:03:47.000 --> 00:03:52.000
+Este gráfico mostra a curva de aprendizado esperada com base nas suas habilidades existentes em desenvolvimento web.
+
+58
+00:03:52.000 --> 00:03:58.000
+Se você é especializado em lógica de aplicação e gerenciamento de estado, muitas das suas habilidades se transferem facilmente,
+
+59
+00:03:58.000 --> 00:04:00.000
+levando a uma transição mais rápida.
+
+60
+00:04:00.000 --> 00:04:07.000
+Se o seu trabalho é predominantemente orientado a UI e depende de cascatas CSS, você enfrentará um ajuste significativo,
+
+61
+00:04:07.000 --> 00:04:09.000
+conforme você aprende as regras de layout nativo.
+
+62
+00:04:09.000 --> 00:04:15.000
+Ferramentas modernas como Expo e templates pré-configurados de TypeScript cuidam da configuração da infraestrutura,
+
+63
+00:04:15.000 --> 00:04:18.000
+permitindo que você se concentre nessas diferenças de ambiente.
+
+64
+00:04:18.000 --> 00:04:23.000
+Desenvolver para dispositivos móveis requer trabalhar ativamente com as limitações dos dispositivos físicos
+
+65
+00:04:23.000 --> 00:04:27.000
+a fim de criar experiências nativas verdadeiramente responsivas.
+

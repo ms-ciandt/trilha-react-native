@@ -1,0 +1,398 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:02.400
+Quando você desenvolve uma aplicação para a web,
+
+2
+00:00:02.400 --> 00:00:06.000
+o ambiente parece incrivelmente fluido e previsível.
+
+3
+00:00:06.000 --> 00:00:08.400
+Você tem ferramentas integradas que simplesmente funcionam,
+
+4
+00:00:08.400 --> 00:00:12.200
+permitindo que você avance rapidamente e foque inteiramente no seu código.
+
+5
+00:00:12.200 --> 00:00:16.200
+Essa experiência fluida é totalmente graças ao navegador web.
+
+6
+00:00:16.200 --> 00:00:19.200
+Pense no navegador como um tradutor universal.
+
+7
+00:00:19.200 --> 00:00:22.800
+Ele fica silenciosamente entre seu código React e o dispositivo físico
+
+8
+00:00:22.800 --> 00:00:27.400
+que o usuário está segurando, gerenciando toda a comunicação complexa em segundo plano.
+
+9
+00:00:27.600 --> 00:00:30.000
+Se seu código precisa salvar as configurações de um usuário,
+
+10
+00:00:30.000 --> 00:00:32.400
+você solicita uma ferramenta chamada local storage
+
+11
+00:00:32.400 --> 00:00:36.400
+e o navegador traduz essa requisição em instruções para o disco rígido.
+
+12
+00:00:36.400 --> 00:00:38.400
+Se você precisar encontrar o usuário em um mapa,
+
+13
+00:00:38.400 --> 00:00:41.000
+você chama navigator.geolocation
+
+14
+00:00:41.000 --> 00:00:44.600
+e o navegador busca suavemente as coordenadas GPS para você.
+
+15
+00:00:44.600 --> 00:00:48.200
+Migrar para React Native muda completamente esse ambiente.
+
+16
+00:00:48.200 --> 00:00:51.600
+Seu código React vem com você, mas o navegador não.
+
+17
+00:00:51.600 --> 00:00:54.200
+Agora você está trabalhando diretamente no dispositivo móvel
+
+18
+00:00:54.200 --> 00:00:56.200
+sem o seu fiel tradutor.
+
+19
+00:00:56.200 --> 00:01:00.900
+Sem esse intermediário, essas requisições familiares travam instantaneamente.
+
+20
+00:01:00.900 --> 00:01:05.900
+O dispositivo móvel não faz ideia do que é local storage ou um objeto navigator.
+
+21
+00:01:05.900 --> 00:01:11.300
+Seu código está pedindo ferramentas que simplesmente não existem fora do sandbox do navegador.
+
+22
+00:01:11.300 --> 00:01:13.300
+É exatamente isso que torna a transição
+
+23
+00:01:13.300 --> 00:01:15.800
+para o React Native desafiadora no início.
+
+24
+00:01:15.800 --> 00:01:18.300
+Você ainda sabe exatamente como escrever React,
+
+25
+00:01:18.300 --> 00:01:23.000
+mas está temporariamente sem uma forma nativa de se comunicar com o hardware do telefone.
+
+26
+00:01:23.000 --> 00:01:25.200
+Para corrigir essa comunicação quebrada,
+
+27
+00:01:25.200 --> 00:01:28.200
+o ecossistema do React Native fornece uma solução.
+
+28
+00:01:28.200 --> 00:01:30.800
+Em vez de um único tradutor massivo,
+
+29
+00:01:30.800 --> 00:01:34.600
+usamos conexões diretas especializadas chamadas native bridges.
+
+30
+00:01:34.600 --> 00:01:36.300
+Estas são bibliotecas externas,
+
+31
+00:01:36.300 --> 00:01:38.300
+frequentemente do ecossistema Expo,
+
+32
+00:01:38.300 --> 00:01:41.800
+que conectam seu código React diretamente ao hardware móvel.
+
+33
+00:01:41.800 --> 00:01:43.900
+Considere salvar dados, por exemplo.
+
+34
+00:01:43.900 --> 00:01:46.300
+Como não temos o armazenamento local de um navegador,
+
+35
+00:01:46.300 --> 00:01:48.100
+instalamos uma biblioteca bridge.
+
+36
+00:01:48.100 --> 00:01:52.100
+No mobile, você usará ferramentas como MMKV ou Async Storage
+
+37
+00:01:52.100 --> 00:01:54.500
+para salvar dados diretamente no armazenamento do telefone,
+
+38
+00:01:54.600 --> 00:01:57.300
+o que é na verdade muito mais rápido do que o equivalente na web.
+
+39
+00:01:57.300 --> 00:01:59.100
+Para encontrar o usuário em um mapa,
+
+40
+00:01:59.100 --> 00:02:02.200
+substituímos o navigator.geo location da web
+
+41
+00:02:02.200 --> 00:02:04.800
+com uma biblioteca chamada Expo Location.
+
+42
+00:02:04.800 --> 00:02:06.400
+E se você quiser tirar uma foto,
+
+43
+00:02:06.400 --> 00:02:08.400
+você não vai chamar Get User Media.
+
+44
+00:02:08.400 --> 00:02:10.600
+Você vai usar uma biblioteca chamada Expo Camera,
+
+45
+00:02:10.600 --> 00:02:12.300
+que te dá um componente físico
+
+46
+00:02:12.300 --> 00:02:16.500
+que você renderiza diretamente dentro da sua aplicação React para exibir a transmissão da câmera.
+
+47
+00:02:16.500 --> 00:02:19.200
+Felizmente, você não precisa substituir tudo.
+
+48
+00:02:19.200 --> 00:02:21.700
+Requisições de rede como fetch ou web sockets
+
+49
+00:02:21.700 --> 00:02:25.200
+não dependem do modelo de objeto de documento do navegador para funcionar.
+
+50
+00:02:25.200 --> 00:02:28.000
+Essas ferramentas específicas funcionam exatamente da mesma forma em um celular
+
+51
+00:02:28.000 --> 00:02:29.700
+como fazem em um laptop.
+
+52
+00:02:29.700 --> 00:02:32.800
+Desenvolver para mobile é basicamente um exercício de livro de frases.
+
+53
+00:02:32.800 --> 00:02:34.100
+Você mantém suas habilidades em React
+
+54
+00:02:34.100 --> 00:02:36.100
+e simplesmente substitui as ferramentas específicas da web
+
+55
+00:02:36.100 --> 00:02:38.400
+por bibliotecas de bridge específicas para mobile.
+
+56
+00:02:38.400 --> 00:02:41.200
+Há uma ressalva em ter esse acesso direto ao hardware.
+
+57
+00:02:41.200 --> 00:02:44.400
+Agora você precisa negociar diretamente com iOS e Android
+
+58
+00:02:44.400 --> 00:02:45.700
+e os sistemas operacionais móveis
+
+59
+00:02:45.700 --> 00:02:49.000
+são guardiões incrivelmente rígidos quando se trata de privacidade do usuário.
+
+60
+00:02:49.100 --> 00:02:52.300
+Na web, solicitar o uso de uma câmera ou microfone
+
+61
+00:02:52.300 --> 00:02:55.200
+geralmente é uma escolha binária simples.
+
+62
+00:02:55.200 --> 00:02:58.200
+O usuário clica em aceitar ou clica em negar.
+
+63
+00:02:58.200 --> 00:03:02.500
+Dispositivos móveis dividem essa decisão em cinco estados distintos.
+
+64
+00:03:02.500 --> 00:03:07.800
+Uma permissão pode ser concedida, negada, bloqueada, limitada ou indisponível.
+
+65
+00:03:07.800 --> 00:03:10.100
+Para um desenvolvedor vindo do desenvolvimento web,
+
+66
+00:03:10.100 --> 00:03:13.700
+A armadilha mais surpreendente desta lista é o estado bloqueado.
+
+67
+00:03:13.700 --> 00:03:17.300
+Em um dispositivo móvel, se um usuário nega permanentemente uma permissão,
+
+68
+00:03:17.300 --> 00:03:20.000
+digamos que ele toca em "não permitir" em um prompt de localização,
+
+69
+00:03:20.000 --> 00:03:22.400
+o sistema operacional tranca a porta.
+
+70
+00:03:22.400 --> 00:03:25.000
+Seu aplicativo perde a capacidade de acionar
+
+71
+00:03:25.000 --> 00:03:27.200
+aquele prompt de permissão nativa novamente.
+
+72
+00:03:27.200 --> 00:03:30.600
+Você não pode escrever uma linha de código para forçar esse prompt a abrir novamente.
+
+73
+00:03:30.600 --> 00:03:33.800
+Em vez disso, você precisa criar uma interface de usuário personalizada
+
+74
+00:03:33.800 --> 00:03:36.400
+que peça educadamente ao usuário para sair do seu app,
+
+75
+00:03:36.400 --> 00:03:38.200
+abrir as configurações centrais do telefone,
+
+76
+00:03:38.200 --> 00:03:40.200
+e virar o interruptor manualmente.
+
+77
+00:03:40.200 --> 00:03:42.100
+Solicitar acesso ao hardware em dispositivos móveis
+
+78
+00:03:42.100 --> 00:03:44.300
+requer uma estratégia de design de múltiplas etapas
+
+79
+00:03:44.300 --> 00:03:46.500
+para lidar com os momentos em que o sistema operacional
+
+80
+00:03:46.500 --> 00:03:48.200
+se recusa a cooperar.
+
+81
+00:03:48.200 --> 00:03:51.200
+Saber como solicitar permissões é o primeiro passo.
+
+82
+00:03:51.200 --> 00:03:53.700
+O segundo passo é saber exatamente onde encontrar
+
+83
+00:03:53.700 --> 00:03:56.500
+as bridges nativas certas para seus novos recursos.
+
+84
+00:03:56.500 --> 00:03:59.700
+Seu primeiro destino é a documentação oficial do Expo
+
+85
+00:03:59.700 --> 00:04:02.100
+em docs.expo.dev.
+
+86
+00:04:02.100 --> 00:04:05.300
+Se uma biblioteca oficial do Expo existir, use-a.
+
+87
+00:04:05.300 --> 00:04:07.500
+Em seguida, verifique o diretório do React Native
+
+88
+00:04:07.500 --> 00:04:11.400
+para filtrar bibliotecas criadas pela comunidade por plataforma e manutenção.
+
+89
+00:04:11.400 --> 00:04:15.700
+Por fim, pesquise no registro do NPM por pacotes React Native.
+
+90
+00:04:15.700 --> 00:04:19.000
+Seguir essa ordem específica é uma escolha estratégica.
+
+91
+00:04:19.000 --> 00:04:21.900
+As bibliotecas do ecossistema Expo são garantidas
+
+92
+00:04:21.900 --> 00:04:24.700
+para serem testadas com as versões atuais do React Native
+
+93
+00:04:24.700 --> 00:04:26.700
+e elas suportam ferramentas de desenvolvimento rápido
+
+94
+00:04:26.700 --> 00:04:29.900
+como o Expo Go imediatamente após a instalação.
+
+95
+00:04:29.900 --> 00:04:33.700
+Navegar por esse novo ecossistema requer um pouco de paciência.
+
+96
+00:04:33.700 --> 00:04:37.000
+Felizmente, você já tem a habilidade mais importante,
+
+97
+00:04:37.000 --> 00:04:39.600
+escrever lógica interativa com React.
+
+98
+00:04:39.600 --> 00:04:42.700
+Aprender esse novo vocabulário é o que permite que você construa apps
+
+99
+00:04:42.700 --> 00:04:45.900
+que usam os sensores físicos que vivem no bolso do seu usuário.
+

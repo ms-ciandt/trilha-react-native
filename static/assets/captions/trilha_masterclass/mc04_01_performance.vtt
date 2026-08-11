@@ -1,0 +1,378 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:07.360
+Em dispositivos Android intermediários rodando React Native 0.76, um cold start de 800 milissegundos é o padrão,
+
+2
+00:00:07.360 --> 00:00:11.360
+enquanto 500 milissegundos representa o benchmark de alta performance.
+
+3
+00:00:11.360 --> 00:00:15.120
+Esta linha do tempo ilustra a janela disponível para otimização.
+
+4
+00:00:15.120 --> 00:00:20.320
+Dentro deste intervalo de menos de um segundo, cada milissegundo de execução deve ser contabilizado.
+
+5
+00:00:20.320 --> 00:00:25.920
+Um ponto de partida comum é inserir um timestamp de console.log no início do bundle JavaScript.
+
+6
+00:00:25.920 --> 00:00:28.640
+Essa abordagem cria um ponto cego significativo.
+
+7
+00:00:28.640 --> 00:00:33.280
+A thread JS não executa até que a inicialização nativa do SO seja concluída.
+
+8
+00:00:33.280 --> 00:00:36.240
+Medir aqui ignora a maior parte da sequência de inicialização.
+
+9
+00:00:36.240 --> 00:00:40.400
+Diagnósticos precisos exigem medir a inicialização do aplicativo no nível nativo.
+
+10
+00:00:40.400 --> 00:00:42.720
+No Android, use o Perfetto UI.
+
+11
+00:00:42.720 --> 00:00:48.640
+No iOS, use o template do Instruments, com a flag RCT profile igual a um ativa.
+
+12
+00:00:48.640 --> 00:00:51.360
+Tratar o startup como pura execução JavaScript
+
+13
+00:00:51.360 --> 00:00:54.080
+obscurece os eventos cruciais de latência nativa.
+
+14
+00:00:54.080 --> 00:00:56.560
+Rastreie a performance no nível C++.
+
+15
+00:00:56.560 --> 00:01:01.920
+Abrir um trace de cold start no Perfetto fornece uma visão de alta resolução da sequência de inicialização.
+
+16
+00:01:01.920 --> 00:01:06.240
+Olhando os primeiros momentos do trace, a faixa da thread JavaScript está vazia.
+
+17
+00:01:06.240 --> 00:01:08.960
+O trabalho que acontece aqui é inteiramente nativo.
+
+18
+00:01:08.960 --> 00:01:12.880
+A sequência começa com a fase um, React host start.
+
+19
+00:01:12.880 --> 00:01:16.800
+Durante esse intervalo, o sistema realiza a inicialização em C++
+
+20
+00:01:16.800 --> 00:01:19.680
+antes mesmo que o bundle JavaScript seja acessado.
+
+21
+00:01:19.680 --> 00:01:23.040
+A fase dois segue, com o Hermes executor.load bundle,
+
+22
+00:01:23.040 --> 00:01:26.160
+onde o sistema operacional mapeia o bundle na memória.
+
+23
+00:01:26.160 --> 00:01:29.120
+A fase três, denominada runtime.call function,
+
+24
+00:01:29.120 --> 00:01:33.040
+representa a execução do app registry.run application.
+
+25
+00:01:33.040 --> 00:01:38.800
+A sequência conclui com a fase quatro, fabric.comit, o primeiro ciclo de renderização da UI.
+
+26
+00:01:38.800 --> 00:01:43.840
+Essas quatro fatias nativas sequenciais definem os limites arquiteturais da métrica de inicialização.
+
+27
+00:01:43.840 --> 00:01:49.120
+O esforço de otimização só é eficaz quando tem como alvo uma dessas fatias nativas específicas.
+
+28
+00:01:49.120 --> 00:01:52.480
+Reduzir a primeira fase envolve o aquecimento antecipado do React host,
+
+29
+00:01:52.480 --> 00:01:57.520
+o que move a inicialização do C++ para um momento anterior no ciclo de vida da aplicação.
+
+30
+00:01:57.520 --> 00:01:59.920
+Isso introduz uma troca de memória.
+
+31
+00:01:59.920 --> 00:02:06.320
+O aquecimento antecipado consome RAM independentemente de para qual tela React Native o usuário eventualmente navega.
+
+32
+00:02:06.320 --> 00:02:12.080
+Essa estratégia é normalmente reservada para apps onde as análises mostram que pelo menos 30 a 40% dos usuários
+
+33
+00:02:12.080 --> 00:02:14.640
+consistentemente chegam a uma superfície RN.
+
+34
+00:02:14.640 --> 00:02:18.720
+Para a fase dois, inline requires é a principal intervenção.
+
+35
+00:02:18.800 --> 00:02:23.440
+Em vez de executar o código de nível superior de cada módulo durante a avaliação do bundle,
+
+36
+00:02:23.440 --> 00:02:26.960
+requires inline que funcionam até que o módulo seja realmente chamado.
+
+37
+00:02:26.960 --> 00:02:31.840
+O impacto pode ser verificado executando o comando React Native bundle com a flag de perfil
+
+38
+00:02:31.840 --> 00:02:34.560
+e medindo a mudança no tempo total de carregamento.
+
+39
+00:02:34.560 --> 00:02:38.800
+A fase três é otimizada movendo a lógica não crítica para fora do bundle de nível superior
+
+40
+00:02:38.800 --> 00:02:42.320
+usando interactionmanager.run after interactions.
+
+41
+00:02:42.320 --> 00:02:46.720
+Isso enfileira o trabalho até que as animações de toque estejam concluídas e o primeiro frame tenha sido confirmado,
+
+42
+00:02:46.720 --> 00:02:49.040
+prevenindo contenção de threads durante a inicialização.
+
+43
+00:02:49.040 --> 00:02:53.440
+Implementar isso pode reduzir o caminho de execução da fase três de 300 milissegundos
+
+44
+00:02:53.440 --> 00:02:55.600
+para aproximadamente 80 milissegundos.
+
+45
+00:02:55.600 --> 00:02:58.400
+A fase quatro requer uma auditoria do caminho de renderização inicial
+
+46
+00:02:58.400 --> 00:03:02.160
+para garantir que apenas os componentes necessários para o primeiro frame sejam processados.
+
+47
+00:03:02.160 --> 00:03:06.800
+Alcançar um cold start de 500 milissegundos depende de atrasar sistematicamente a execução do código
+
+48
+00:03:06.800 --> 00:03:09.360
+para longe desses quatro caminhos nativos críticos.
+
+49
+00:03:09.360 --> 00:03:14.160
+Além da renderização inicial, o desempenho em tempo de execução é governado pelo modelo de execução do engine Hermes.
+
+50
+00:03:14.240 --> 00:03:18.320
+O Hermes utiliza execução ahead of time em vez de compilador just in time.
+
+51
+00:03:18.320 --> 00:03:20.720
+Embora compiladores JIT possam atingir um throughput de pico mais alto,
+
+52
+00:03:20.720 --> 00:03:23.680
+eles introduzem picos de latência imprevisíveis durante o aquecimento.
+
+53
+00:03:23.680 --> 00:03:27.760
+O Hermes troca essa velocidade de pico por um perfil de latência consistente e previsível.
+
+54
+00:03:27.760 --> 00:03:31.680
+Essa previsibilidade é a prioridade para UIs mobile, onde manter uma taxa de quadros estável
+
+55
+00:03:31.680 --> 00:03:34.320
+é mais importante do que poder de processamento numérico bruto.
+
+56
+00:03:34.320 --> 00:03:38.160
+A degradação severa de desempenho no Hermes normalmente tem origem na pressão do garbage collection
+
+57
+00:03:38.160 --> 00:03:40.240
+em vez de atingir um limite bruto do processador.
+
+58
+00:03:40.240 --> 00:03:42.640
+O Hermes usa um garbage collector geracional.
+
+59
+00:03:42.720 --> 00:03:45.760
+A maioria dos objetos é tratada no heap da geração jovem,
+
+60
+00:03:45.760 --> 00:03:48.480
+enquanto objetos de longa duração são movidos para a geração antiga.
+
+61
+00:03:49.280 --> 00:03:53.200
+GCs menores na geração jovem são frequentes, mas rápidos,
+
+62
+00:03:53.200 --> 00:03:56.000
+geralmente causando pausas de dois a cinco milissegundos.
+
+63
+00:03:56.720 --> 00:04:00.000
+GCs maiores na geração antiga são mais intensivos,
+
+64
+00:04:00.000 --> 00:04:03.760
+potencialmente causando congelamentos de UI entre 10 e 50 milissegundos.
+
+65
+00:04:04.400 --> 00:04:09.040
+Esses eventos aparecem no Perfetto como fatias de GC na thread JS.
+
+66
+00:04:09.040 --> 00:04:13.520
+Se eles se sobrepõem a animações de UI, o app tem um problema de alocação.
+
+67
+00:04:13.520 --> 00:04:17.840
+Para encontrar a origem, o heap timeline da engine pode ser carregado no chrome dev tools
+
+68
+00:04:17.840 --> 00:04:21.920
+para identificar quais construtores são responsáveis pelo maior tamanho de memória retida.
+
+69
+00:04:22.640 --> 00:04:28.400
+Diagnósticos de CPU frequentemente revelam que barras largas em um flame chart não são causadas por lógica JS lenta,
+
+70
+00:04:28.400 --> 00:04:33.360
+mas por serialização excessiva na native bridge ou cálculos desnecessários de estado derivado.
+
+71
+00:04:34.080 --> 00:04:38.880
+Otimizar o desempenho do Hermes requer gerenciar a alocação de memória e os custos de serialização.
+
+72
+00:04:39.200 --> 00:04:45.040
+Em vez de focar em ciclos de CPU, manter um bloqueio de 120 frames por segundo
+
+73
+00:04:45.040 --> 00:04:48.800
+durante gestos complexos apresenta um desafio específico.
+
+74
+00:04:48.800 --> 00:04:51.360
+A saturação da thread principal do JavaScript.
+
+75
+00:04:52.000 --> 00:04:56.000
+Os callbacks de gestos padrão precisam cruzar a bridge para a thread do JS
+
+76
+00:04:56.000 --> 00:04:58.720
+antes que uma atualização de UI possa ser disparada.
+
+77
+00:04:58.720 --> 00:05:02.320
+Isso introduz uma latência obrigatória de um a dois frames.
+
+78
+00:05:03.040 --> 00:05:07.440
+As workloads do Reanimated três são projetadas para contornar essa bridge completamente.
+
+79
+00:05:07.920 --> 00:05:13.840
+A diretiva Worklet sinaliza ao compilador para executar a função dentro de um runtime secundário do Hermes,
+
+80
+00:05:13.840 --> 00:05:16.000
+inicializado diretamente na thread de UI.
+
+81
+00:05:16.560 --> 00:05:18.640
+Este tempo de execução secundário é isolado.
+
+82
+00:05:19.200 --> 00:05:22.560
+Worklets não podem acessar closures da thread principal do JavaScript.
+
+83
+00:05:23.120 --> 00:05:27.120
+A comunicação entre essas threads deve ser tratada por meio de shared values,
+
+84
+00:05:27.120 --> 00:05:29.360
+que fornecem uma ponte sincronizada para o estado.
+
+85
+00:05:30.000 --> 00:05:33.680
+Ao desacoplar o loop de animação da thread principal do JavaScript,
+
+86
+00:05:33.680 --> 00:05:38.880
+os gestos podem permanecer responsivos mesmo quando a thread principal está ocupada com tarefas em segundo plano.
+
+87
+00:05:38.880 --> 00:05:43.440
+Um app React Native otimizado passa por uma inicialização nativa a frio condensada,
+
+88
+00:05:43.440 --> 00:05:47.600
+mantém latência previsível e isola gestos na UI thread.
+
+89
+00:05:48.240 --> 00:05:50.880
+Rastreamento nativo, gerenciamento de memória geracional,
+
+90
+00:05:50.880 --> 00:05:54.320
+e isolamento de threads são os pilares do desempenho em nível de produção.
+
+91
+00:05:55.040 --> 00:05:58.720
+As ferramentas web padrão oferecem pouca visibilidade nos gargalos nativos,
+
+92
+00:05:58.720 --> 00:06:00.640
+definindo o ciclo de vida do React Native.
+
+93
+00:06:01.200 --> 00:06:05.920
+Engenharia de alto desempenho em React Native é uma disciplina focada em restrições de hardware,
+
+94
+00:06:05.920 --> 00:06:10.960
+exigindo uma compreensão da arquitetura de threading nativa e de C++ por baixo do código.
+

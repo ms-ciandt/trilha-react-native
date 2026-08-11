@@ -1,0 +1,618 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:02.800
+Upgrades do React Native têm uma reputação.
+
+2
+00:00:02.800 --> 00:00:04.600
+Você começa a atualizar um número de versão
+
+3
+00:00:04.600 --> 00:00:07.600
+e de repente todo o seu pipeline de build colapsa
+
+4
+00:00:07.600 --> 00:00:09.400
+em uma falha que consome muito tempo.
+
+5
+00:00:09.400 --> 00:00:12.800
+Seu terminal é inundado com erros incompreensíveis de C++ do Xcode
+
+6
+00:00:12.800 --> 00:00:15.100
+erros de compilação ou o Gradle trava
+
+7
+00:00:15.100 --> 00:00:17.300
+antes mesmo da build começar corretamente.
+
+8
+00:00:17.300 --> 00:00:18.500
+Você olha para o stack trace
+
+9
+00:00:18.500 --> 00:00:20.900
+e nada disso aponta para o JavaScript ou TypeScript
+
+10
+00:00:20.900 --> 00:00:22.100
+que você realmente escreveu.
+
+11
+00:00:22.100 --> 00:00:24.100
+Os erros parecem completamente desconectados
+
+12
+00:00:24.100 --> 00:00:25.800
+da lógica da sua aplicação.
+
+13
+00:00:25.800 --> 00:00:27.300
+Isso porque a grande maioria
+
+14
+00:00:27.300 --> 00:00:29.100
+desses erros nativos não tem nada a ver
+
+15
+00:00:29.100 --> 00:00:31.700
+com regressões de código ou atualizações ruins de pacotes.
+
+16
+00:00:31.700 --> 00:00:33.400
+Essas falhas são o resultado direto
+
+17
+00:00:33.400 --> 00:00:35.100
+de uma divergência invisível e não rastreada
+
+18
+00:00:35.100 --> 00:00:36.900
+entre o ambiente da sua máquina local
+
+19
+00:00:36.900 --> 00:00:38.500
+e as ferramentas de plataforma subjacentes
+
+20
+00:00:38.500 --> 00:00:40.300
+necessárias para compilar o aplicativo.
+
+21
+00:00:40.300 --> 00:00:41.500
+Quando chega a hora de atualizar,
+
+22
+00:00:41.500 --> 00:00:42.900
+o instinto padrão do desenvolvedor
+
+23
+00:00:42.900 --> 00:00:46.500
+é abrir o package.json e começar a incrementar as versões das dependências.
+
+24
+00:00:46.500 --> 00:00:49.100
+Executar essa etapa primeiro é um erro de processo.
+
+25
+00:00:49.100 --> 00:00:52.200
+Isso garante falhas de build falsas positivas
+
+26
+00:00:52.200 --> 00:00:54.400
+porque seu sistema não está pronto para compilar
+
+27
+00:00:54.400 --> 00:00:56.500
+o código que você está pedindo para ele executar.
+
+28
+00:00:56.600 --> 00:00:58.100
+Para preparar seu sistema,
+
+29
+00:00:58.100 --> 00:01:01.900
+você precisa da matriz de compatibilidade oficial do React Native.
+
+30
+00:01:01.900 --> 00:01:05.200
+Esta é a fonte oficial de verdade para o seu projeto.
+
+31
+00:01:05.200 --> 00:01:08.000
+A matriz dita o alinhamento exato de versões
+
+32
+00:01:08.000 --> 00:01:11.600
+necessário em múltiplas camadas de software desconectadas
+
+33
+00:01:11.600 --> 00:01:14.400
+desde runtimes JavaScript até compiladores nativos
+
+34
+00:01:14.400 --> 00:01:17.300
+antes que uma única linha de código possa compilar.
+
+35
+00:01:17.300 --> 00:01:20.700
+Alcançar o alinhamento exato com essa matriz de compatibilidade
+
+36
+00:01:20.700 --> 00:01:23.700
+é o primeiro passo real de qualquer atualização.
+
+37
+00:01:23.700 --> 00:01:26.900
+Ele deve preceder qualquer modificação de código.
+
+38
+00:01:26.900 --> 00:01:29.500
+Esta tabela é a matriz de compatibilidade.
+
+39
+00:01:29.500 --> 00:01:31.700
+Ela mapeia cada versão do React Native
+
+40
+00:01:31.700 --> 00:01:35.700
+de 0.72 até 0.84 e além
+
+41
+00:01:35.700 --> 00:01:38.500
+às suas dependências ambientais específicas.
+
+42
+00:01:38.500 --> 00:01:42.100
+Ele fornece as versões mínimas necessárias para node, JDK,
+
+43
+00:01:42.100 --> 00:01:45.300
+Xcode, cocoa pods e Android SDKs.
+
+44
+00:01:45.300 --> 00:01:46.800
+Olhando para a coluna do node,
+
+45
+00:01:46.800 --> 00:01:49.200
+observe o salto do node 18 para o 20
+
+46
+00:01:49.200 --> 00:01:51.400
+no React Native 0.80
+
+47
+00:01:51.400 --> 00:01:54.300
+e ao node 22 no 0.84.
+
+48
+00:01:54.300 --> 00:01:57.300
+Se você instalar o node globalmente usando um gerenciador de pacotes
+
+49
+00:01:57.300 --> 00:02:00.700
+como app ou brew, você garante incompatibilidades.
+
+50
+00:02:00.700 --> 00:02:02.200
+Diferentes desenvolvedores no seu time
+
+51
+00:02:02.200 --> 00:02:04.200
+acabarão em diferentes versões do node
+
+52
+00:02:04.200 --> 00:02:06.000
+levando a bugs localizados.
+
+53
+00:02:06.000 --> 00:02:09.200
+A solução necessária é usar um gerenciador de versão local
+
+54
+00:02:09.200 --> 00:02:11.300
+como NVM ou FNM.
+
+55
+00:02:11.300 --> 00:02:13.700
+Essas ferramentas permitem isolar o runtime do node
+
+56
+00:02:13.700 --> 00:02:15.500
+por projeto individualmente.
+
+57
+00:02:15.500 --> 00:02:18.700
+Você aplica esse isolamento usando um arquivo NVM RC
+
+58
+00:02:18.700 --> 00:02:20.000
+no seu repositório.
+
+59
+00:02:20.100 --> 00:02:22.500
+Isso declara a versão exata do node necessária,
+
+60
+00:02:22.500 --> 00:02:26.200
+forçando sua máquina e o CI a lerem a mesma especificação.
+
+61
+00:02:26.200 --> 00:02:29.200
+Ao incluir um arquivo NVM RC no seu repositório,
+
+62
+00:02:29.200 --> 00:02:31.500
+você elimina completamente problemas relacionados ao node
+
+63
+00:02:31.500 --> 00:02:34.600
+do tipo "funciona na minha máquina" durante seus pipelines de CI.
+
+64
+00:02:34.600 --> 00:02:36.100
+Avançando na matriz, chegamos
+
+65
+00:02:36.100 --> 00:02:38.700
+à causa mais frequente de builds de CI quebradas,
+
+66
+00:02:38.700 --> 00:02:40.300
+a transição do JDK.
+
+67
+00:02:40.300 --> 00:02:44.100
+Entre o React Native 0.72 e 0.73,
+
+68
+00:02:44.100 --> 00:02:47.800
+o framework migrou do JDK 11 para o JDK 17.
+
+69
+00:02:47.900 --> 00:02:50.500
+Isso introduz uma armadilha séria de depuração.
+
+70
+00:02:50.500 --> 00:02:54.200
+Você pode verificar seu terminal e ver o Java 17 instalado,
+
+71
+00:02:54.200 --> 00:02:57.000
+mas a ferramenta de build Gradle ainda está lendo silenciosamente
+
+72
+00:02:57.000 --> 00:02:59.200
+uma versão antiga e incorreta.
+
+73
+00:02:59.200 --> 00:03:03.800
+Para corrigir isso, defina explicitamente a variável de ambiente Java home.
+
+74
+00:03:03.800 --> 00:03:06.800
+Essa configuração força o Gradle a apontar diretamente
+
+75
+00:03:06.800 --> 00:03:09.400
+para o diretório do JDK 17.
+
+76
+00:03:09.400 --> 00:03:11.400
+Você deve espelhar este roteamento explícito
+
+77
+00:03:11.400 --> 00:03:14.000
+nos workflows do GitHub Actions utilizando
+
+78
+00:03:14.000 --> 00:03:16.100
+o passo setup-java.
+
+79
+00:03:16.100 --> 00:03:18.800
+Isso fixa a distribuição e a versão.
+
+80
+00:03:18.800 --> 00:03:22.100
+Sem vincular explicitamente o Gradle ao JDK correto
+
+81
+00:03:22.100 --> 00:03:24.000
+via a variável Java home,
+
+82
+00:03:24.000 --> 00:03:28.000
+seus builds de CI do Android permanecerão inerentemente não determinísticos.
+
+83
+00:03:28.000 --> 00:03:30.700
+Mudando o foco para o ecossistema da Apple
+
+84
+00:03:30.700 --> 00:03:33.700
+revela as cadeias de dependência mais rígidas
+
+85
+00:03:33.700 --> 00:03:36.000
+em todo o processo de atualização.
+
+86
+00:03:36.000 --> 00:03:39.500
+A compilação iOS opera em uma regra estrita.
+
+87
+00:03:39.500 --> 00:03:41.800
+As versões do Xcode são imutavelmente vinculadas
+
+88
+00:03:41.800 --> 00:03:44.100
+a versões específicas do Mac OS.
+
+89
+00:03:44.100 --> 00:03:49.900
+O Xcode 15.1 requer Sonoma e o 16.1 requer Sequoia.
+
+90
+00:03:49.900 --> 00:03:52.000
+Este é um salto de infraestrutura crítico
+
+91
+00:03:52.000 --> 00:03:54.500
+para o React Native 0.81,
+
+92
+00:03:54.500 --> 00:03:57.600
+exigindo estritamente o Xcode 16.1.
+
+93
+00:03:57.600 --> 00:04:01.600
+Se a sua configuração YAML solicitar um runner de Mac OS mais antigo,
+
+94
+00:04:01.600 --> 00:04:04.900
+esse requisito quebra seus pipelines de CI imediatamente.
+
+95
+00:04:04.900 --> 00:04:08.700
+O build falha antes mesmo das dependências começarem a ser instaladas.
+
+96
+00:04:08.700 --> 00:04:11.100
+Uma vez que o sistema operacional está definido,
+
+97
+00:04:11.200 --> 00:04:14.600
+você precisa gerenciar o gerenciamento de dependências via CocoaPods.
+
+98
+00:04:14.600 --> 00:04:17.700
+Fazer commit do seu gem file dot lock é obrigatório.
+
+99
+00:04:17.700 --> 00:04:20.200
+É o único mecanismo confiável para fixar
+
+100
+00:04:20.200 --> 00:04:22.400
+a versão exata do CocoaPods necessária
+
+101
+00:04:22.400 --> 00:04:24.400
+em todos os seus ambientes.
+
+102
+00:04:24.400 --> 00:04:26.200
+Falhar em fixar seu Mac OS,
+
+103
+00:04:26.200 --> 00:04:29.700
+suas versões específicas de Xcode e CocoaPods em sincronia,
+
+104
+00:04:29.700 --> 00:04:32.400
+garante que suas builds iOS irão falhar.
+
+105
+00:04:32.400 --> 00:04:35.500
+A camada crítica final da matriz de compatibilidade
+
+106
+00:04:35.500 --> 00:04:39.500
+envolve os requisitos do Android SDK e NDK.
+
+107
+00:04:39.500 --> 00:04:43.200
+Ao contrário do iOS, que depende dos SDKs internos do Xcode,
+
+108
+00:04:43.200 --> 00:04:45.400
+o Android requer alinhamento manual de versões
+
+109
+00:04:45.400 --> 00:04:48.000
+diretamente nos arquivos Gradle do seu projeto.
+
+110
+00:04:48.000 --> 00:04:50.300
+À medida que você avança pelas versões do React Native,
+
+111
+00:04:50.300 --> 00:04:53.200
+os requisitos mínimos de SDK avançam constantemente,
+
+112
+00:04:53.200 --> 00:04:56.700
+subindo da API21 para a API24.
+
+113
+00:04:56.700 --> 00:04:59.800
+Depois há o kit de desenvolvimento nativo ou NDK.
+
+114
+00:04:59.800 --> 00:05:02.900
+O NDK é responsável por compilar código C++
+
+115
+00:05:02.900 --> 00:05:05.100
+para a nova arquitetura do React Native.
+
+116
+00:05:05.100 --> 00:05:07.800
+Para React Native 0.76 e acima,
+
+117
+00:05:07.900 --> 00:05:12.000
+o framework exige estritamente a versão NDK R27 ou superior.
+
+118
+00:05:12.000 --> 00:05:14.200
+Ignorar essa atualização específica de versão do NDK
+
+119
+00:05:14.200 --> 00:05:16.900
+garante falhas de compilação nativa em C++
+
+120
+00:05:16.900 --> 00:05:18.500
+durante a fase de build do Gradle.
+
+121
+00:05:18.500 --> 00:05:22.000
+Você precisa alinhar meticulosamente esses blocos Gradle SDK subjacentes
+
+122
+00:05:22.000 --> 00:05:25.200
+para satisfazer o complexo mecanismo de compilação nativa do framework.
+
+123
+00:05:25.200 --> 00:05:27.700
+Antes de modificar uma única linha do código base,
+
+124
+00:05:27.700 --> 00:05:29.700
+você precisa de um método sistemático para verificar
+
+125
+00:05:29.700 --> 00:05:31.600
+todos esses parâmetros de matriz.
+
+126
+00:05:31.600 --> 00:05:35.000
+Você precisa de um script de validação de ambiente pré-atualização.
+
+127
+00:05:35.000 --> 00:05:37.000
+Você executa esse protocolo de validação
+
+128
+00:05:37.000 --> 00:05:40.500
+tanto na máquina local do desenvolvedor quanto no agente de CI.
+
+129
+00:05:40.500 --> 00:05:43.400
+A ordem das operações começa na camada de runtime.
+
+130
+00:05:43.400 --> 00:05:45.200
+O script varre os caminhos do seu sistema
+
+131
+00:05:45.200 --> 00:05:49.000
+e fixa as versões exatas do node e do JDK necessárias.
+
+132
+00:05:49.000 --> 00:05:52.100
+Em seguida, a validação passa para o ambiente iOS,
+
+133
+00:05:52.100 --> 00:05:55.600
+verificando o Xcode exato e o pinning do cocoa pods.
+
+134
+00:05:55.600 --> 00:05:58.000
+A fase final verifica as configurações manuais do SDK
+
+135
+00:05:58.000 --> 00:06:01.600
+e do NDK dentro dos arquivos Gradle do Android,
+
+136
+00:06:01.600 --> 00:06:04.300
+garantindo que cada dígito corresponde à matriz.
+
+137
+00:06:04.300 --> 00:06:07.800
+Alcançar este checklist de ambiente totalmente validado e aprovado
+
+138
+00:06:07.800 --> 00:06:10.600
+é a única prova absoluta de que seu sistema é capaz
+
+139
+00:06:10.600 --> 00:06:12.700
+de executar uma atualização bem-sucedida.
+
+140
+00:06:12.700 --> 00:06:16.400
+Fixando explicitamente todos os runtimes do sistema e SDKs nativos
+
+141
+00:06:16.400 --> 00:06:18.400
+é a única maneira confiável de eliminar
+
+142
+00:06:18.400 --> 00:06:20.600
+o paradoxo do "funciona na minha máquina".
+
+143
+00:06:20.600 --> 00:06:23.000
+A regra profissional de atualizações é simples.
+
+144
+00:06:23.000 --> 00:06:26.000
+Identifique e resolva cada incompatibilidade de ambiente
+
+145
+00:06:26.000 --> 00:06:28.500
+em relação à matriz oficial antes de prosseguir.
+
+146
+00:06:28.500 --> 00:06:31.000
+Somente quando o ambiente da sua máquina estiver alinhado
+
+147
+00:06:31.000 --> 00:06:33.400
+com a versão do React Native que você está utilizando
+
+148
+00:06:33.400 --> 00:06:36.200
+é que você deve partir para tarefas baseadas em código.
+
+149
+00:06:36.200 --> 00:06:39.300
+Abrir o package.json para alterar dependências
+
+150
+00:06:39.300 --> 00:06:41.000
+não é o seu primeiro passo.
+
+151
+00:06:41.000 --> 00:06:44.900
+É o passo final do processo de preparação do ambiente.
+
+152
+00:06:44.900 --> 00:06:47.800
+Tratar o ambiente base com o mesmo rigor
+
+153
+00:06:47.800 --> 00:06:50.900
+que a base de código em si é a maneira mais confiável
+
+154
+00:06:50.900 --> 00:06:53.900
+de garantir que suas atualizações realmente sejam bem-sucedidas.
+

@@ -1,0 +1,506 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:05.000
+React Native 0.76 ativa a nova arquitetura por padrão.
+
+2
+00:00:05.000 --> 00:00:07.000
+Após anos de testes opcionais,
+
+3
+00:00:07.000 --> 00:00:09.000
+o framework agora adota uma nova base
+
+4
+00:00:09.000 --> 00:00:12.000
+para como o JavaScript se comunica com o código nativo.
+
+5
+00:00:12.000 --> 00:00:14.000
+Para a maioria das equipes de engenharia,
+
+6
+00:00:14.000 --> 00:00:16.000
+o próprio framework principal atualiza de forma limpa.
+
+7
+00:00:16.000 --> 00:00:19.000
+As mudanças internas do React Native são extensivamente testadas
+
+8
+00:00:19.000 --> 00:00:21.000
+e raramente causam falha no build.
+
+9
+00:00:21.000 --> 00:00:23.000
+A maior fonte de atrito
+
+10
+00:00:23.000 --> 00:00:25.000
+e o motivo pelo qual a maioria das migrações trava
+
+11
+00:00:25.000 --> 00:00:27.000
+é a árvore de dependências de terceiros
+
+12
+00:00:28.000 --> 00:00:30.000
+Antes de se comprometer com um cronograma de atualização
+
+13
+00:00:30.000 --> 00:00:32.000
+ou escrever uma única linha de código de funcionalidade,
+
+14
+00:00:32.000 --> 00:00:35.000
+as equipes devem pausar e executar uma auditoria estrutural completa
+
+15
+00:00:35.000 --> 00:00:37.000
+do seu package.json.
+
+16
+00:00:37.000 --> 00:00:41.000
+Migrar para a versão 0.76 é um exercício de triagem de dependências.
+
+17
+00:00:41.000 --> 00:00:43.000
+O sucesso da atualização depende inteiramente
+
+18
+00:00:43.000 --> 00:00:46.000
+de identificar quais bibliotecas suportam nativamente a nova arquitetura
+
+19
+00:00:46.000 --> 00:00:48.000
+e quais vão bloquear o seu lançamento.
+
+20
+00:00:48.000 --> 00:00:52.000
+Você encontrará duas categorias distintas de problemas de compatibilidade.
+
+21
+00:00:52.000 --> 00:00:54.000
+O primeiro é uma falha funcional,
+
+22
+00:00:55.000 --> 00:00:58.000
+uma biblioteca que depende de APIs nativas depreciadas
+
+23
+00:00:58.000 --> 00:01:02.000
+e não possui suporte à nova arquitetura para a versão 0.76.
+
+24
+00:01:02.000 --> 00:01:05.000
+O segundo é uma incompatibilidade superficial de metadados.
+
+25
+00:01:05.000 --> 00:01:08.000
+Uma biblioteca pode ser estruturalmente perfeitamente compatível
+
+26
+00:01:08.000 --> 00:01:10.000
+com a nova arquitetura,
+
+27
+00:01:10.000 --> 00:01:13.000
+mas a configuração do seu pacote declara uma peer dependency estrita
+
+28
+00:01:13.000 --> 00:01:15.000
+no React Native 0.74.
+
+29
+00:01:15.000 --> 00:01:18.000
+Quando você executa o comando de instalação no 0.76,
+
+30
+00:01:18.000 --> 00:01:20.000
+o gerenciador de pacotes o rejeita.
+
+31
+00:01:20.000 --> 00:01:23.000
+Um é uma falha de código, exigindo uma correção estrutural
+
+32
+00:01:23.000 --> 00:01:25.000
+ou substituição completa.
+
+33
+00:01:25.000 --> 00:01:29.000
+O outro é um bloqueio artificial imposto por um gerenciador de pacotes.
+
+34
+00:01:29.000 --> 00:01:32.000
+Distinguir uma quebra funcional de uma regra rígida de metadados
+
+35
+00:01:32.000 --> 00:01:34.000
+evita que equipes de engenharia percam dias
+
+36
+00:01:34.000 --> 00:01:38.000
+tentando reescrever bibliotecas que simplesmente precisam de uma substituição de instalação.
+
+37
+00:01:38.000 --> 00:01:42.000
+Com uma aplicação corporativa típica carregando 50 ou mais dependências,
+
+38
+00:01:42.000 --> 00:01:45.000
+adivinhar linha por linha é ineficiente.
+
+39
+00:01:45.000 --> 00:01:48.000
+A fase de inventário requer verificação de compatibilidade em massa.
+
+40
+00:01:48.000 --> 00:01:54.000
+Você pode escanear seu repositório local usando a ferramenta React Native Checked New Archie CLI.
+
+41
+00:01:54.000 --> 00:01:57.000
+Ele faz uma verificação cruzada da sua instalação atual
+
+42
+00:01:57.000 --> 00:01:59.000
+com listas de compatibilidade conhecidas.
+
+43
+00:01:59.000 --> 00:02:03.000
+Como alternativa, você pode usar o verificador de pacotes React Native baseado na web.
+
+44
+00:02:03.000 --> 00:02:07.000
+Ao colar todo o bloco de dependências do seu package.json,
+
+45
+00:02:07.000 --> 00:02:11.000
+você gera uma tabela de saída em massa detalhando o status exato de suporte
+
+46
+00:02:11.000 --> 00:02:14.000
+e última atualização para cada biblioteca no seu projeto.
+
+47
+00:02:14.000 --> 00:02:17.000
+Para resultados ambíguos, faça uma referência cruzada do pacote
+
+48
+00:02:17.000 --> 00:02:19.000
+no diretório do React Native.
+
+49
+00:02:19.000 --> 00:02:23.000
+Filtre explicitamente pelo selo de suporte à nova arquitetura.
+
+50
+00:02:23.000 --> 00:02:26.000
+Esses dados são informados pelos próprios mantenedores das bibliotecas
+
+51
+00:02:26.000 --> 00:02:29.000
+e fornece o sinal mais confiável de suporte contínuo.
+
+52
+00:02:29.000 --> 00:02:31.000
+Ao utilizar essas ferramentas de verificação,
+
+53
+00:02:31.000 --> 00:02:34.000
+uma atualização monolítica imprevisível é decomposta
+
+54
+00:02:34.000 --> 00:02:37.000
+em um checklist de engenharia quantificável.
+
+55
+00:02:37.000 --> 00:02:39.000
+Este diagrama descreve o algoritmo de triagem,
+
+56
+00:02:39.000 --> 00:02:42.000
+classificando dependências em três grupos.
+
+57
+00:02:42.000 --> 00:02:44.000
+Começamos com o Cenário A.
+
+58
+00:02:44.000 --> 00:02:47.000
+Bibliotecas ativamente mantidas e totalmente compatíveis.
+
+59
+00:02:47.000 --> 00:02:51.000
+A maioria dos pacotes ativos se enquadra aqui, exigindo apenas uma atualização de versão.
+
+60
+00:02:51.000 --> 00:02:56.000
+No entanto, o Cenário A frequentemente requer ultrapassar limites rígidos de versão principal.
+
+61
+00:02:56.000 --> 00:03:00.000
+React Native reanimated requer exatamente a versão três.
+
+62
+00:03:00.000 --> 00:03:02.000
+A versão dois irá travar.
+
+63
+00:03:02.000 --> 00:03:06.000
+Da mesma forma, React Native screens deve atingir a versão 3.29
+
+64
+00:03:06.000 --> 00:03:10.000
+e React Native gesture handler requer a versão 2.21
+
+65
+00:03:10.000 --> 00:03:13.000
+ou superior para renderizar corretamente na nova camada Fabric.
+
+66
+00:03:13.000 --> 00:03:16.000
+Processar o Cenário A primeiro
+
+67
+00:03:16.000 --> 00:03:18.000
+elimina a maior parte do ruído da árvore de dependências,
+
+68
+00:03:18.000 --> 00:03:22.000
+permitindo que você isole os nós específicos que requerem intervenção manual.
+
+69
+00:03:22.000 --> 00:03:24.000
+O próximo grupo é o Cenário B.
+
+70
+00:03:24.000 --> 00:03:28.000
+Estas são bibliotecas que ainda dependem de mecanismos legados de bridge,
+
+71
+00:03:28.000 --> 00:03:31.000
+como módulos nativos ou eventos nativos emitidos.
+
+72
+00:03:31.000 --> 00:03:34.000
+Ao executar essas bibliotecas na versão 0.76,
+
+73
+00:03:34.000 --> 00:03:38.000
+o Metro Bundler exibirá avisos de depreciação em vermelho bem visíveis.
+
+74
+00:03:38.000 --> 00:03:42.000
+Um equívoco comum é que esses avisos significam que a biblioteca está completamente quebrada
+
+75
+00:03:42.000 --> 00:03:45.000
+e requer substituição imediata.
+
+76
+00:03:45.000 --> 00:03:47.000
+Olha este esquema arquitetural.
+
+77
+00:03:47.000 --> 00:03:50.000
+Quando uma biblioteca do Cenário B chama a legacy bridge ausente,
+
+78
+00:03:50.000 --> 00:03:55.000
+uma camada intermediária em C++ chamada interrupt layer intercepta essa chamada.
+
+79
+00:03:55.000 --> 00:03:58.000
+Ela traduz de forma transparente a requisição da legacy API
+
+80
+00:03:58.000 --> 00:04:02.000
+e a encaminha diretamente para os novos turbo modules ou arquitetura Fabric.
+
+81
+00:04:02.000 --> 00:04:05.000
+React Navigation versão seis é um exemplo claro disso.
+
+82
+00:04:06.000 --> 00:04:09.000
+Enquanto a Navigation versão sete é nativamente compatível,
+
+83
+00:04:09.000 --> 00:04:14.000
+a versão seis funciona de forma confiável no 0.76 inteiramente por meio desse mecanismo de interoperabilidade
+
+84
+00:04:14.000 --> 00:04:17.000
+apesar de gerar extensos avisos no terminal.
+
+85
+00:04:17.000 --> 00:04:20.000
+A regra operacional para o Cenário B é simples.
+
+86
+00:04:20.000 --> 00:04:22.000
+Se a funcionalidade específica funciona no dispositivo,
+
+87
+00:04:22.000 --> 00:04:25.000
+não entre em pânico desativando a nova arquitetura.
+
+88
+00:04:25.000 --> 00:04:29.000
+Abra uma issue ou um pull request com o mantenedor da biblioteca para migrar para Turbo Modules
+
+89
+00:04:29.000 --> 00:04:30.000
+e continue avançando.
+
+90
+00:04:31.000 --> 00:04:35.000
+Avisos de depreciação para essas bibliotecas intermediárias representam dívida técnica
+
+91
+00:04:35.000 --> 00:04:40.000
+você precisará resolver no futuro, não é um bloqueio imediato para o seu lançamento do 0.76.
+
+92
+00:04:40.000 --> 00:04:42.000
+O último grupo é o Cenário C.
+
+93
+00:04:42.000 --> 00:04:45.000
+Essas bibliotecas estão completamente abandonadas
+
+94
+00:04:45.000 --> 00:04:48.000
+ou são funcionalmente incompatíveis com as novas camadas nativas.
+
+95
+00:04:48.000 --> 00:04:52.000
+Essa falha acontece porque as bibliotecas contêm integrações nativas profundas,
+
+96
+00:04:52.000 --> 00:04:56.000
+código C++ personalizado ou implementações diretas de JSI.
+
+97
+00:04:56.000 --> 00:04:59.000
+Esses ignoram completamente a camada de interrupção.
+
+98
+00:04:59.000 --> 00:05:01.000
+Se a bridge for removida, eles quebram o build.
+
+99
+00:05:01.000 --> 00:05:04.000
+Esta tabela mostra substituições diretas para pacotes abandonados.
+
+100
+00:05:04.000 --> 00:05:08.000
+Bibliotecas legadas devem ser trocadas por alternativas modernas.
+
+101
+00:05:08.000 --> 00:05:11.000
+Por exemplo, react native camera é substituído por vision camera
+
+102
+00:05:11.000 --> 00:05:15.000
+e implementações antigas do Firebase exigem a versão 21 ou superior.
+
+103
+00:05:15.000 --> 00:05:22.000
+Alternativamente, se uma biblioteca totalmente compatível estiver bloqueada apenas por uma incompatibilidade estrita de peer dependency do 0.74,
+
+104
+00:05:22.000 --> 00:05:27.000
+você pode usar dash dash legacy peer depths ou overrides do gerenciador de pacotes para forçar a instalação.
+
+105
+00:05:27.000 --> 00:05:30.000
+O Cenário C requer uma ação decisiva.
+
+106
+00:05:30.000 --> 00:05:34.000
+Você substitui cirurgicamente o código morto por equivalentes modernos
+
+107
+00:05:34.000 --> 00:05:38.000
+ou substitui à força restrições arbitrárias do gerenciador de pacotes.
+
+108
+00:05:38.000 --> 00:05:41.000
+Ocasionalmente, uma equipe vai bater em uma parede intransponível,
+
+109
+00:05:41.000 --> 00:05:45.000
+uma única dependência legada profundamente integrada e sem manutenção
+
+110
+00:05:45.000 --> 00:05:50.000
+que bloqueia todo o release de produção sem nenhuma substituição imediata disponível.
+
+111
+00:05:50.000 --> 00:05:54.000
+Neste cenário exato, execute o protocolo de fallback.
+
+112
+00:05:55.000 --> 00:06:01.000
+Conclua a atualização para o React Native 0.76 para capturar as melhorias do framework principal,
+
+113
+00:06:01.000 --> 00:06:06.000
+mas desative explicitamente o flag da nova arquitetura para essa versão específica.
+
+114
+00:06:06.000 --> 00:06:08.000
+Esta é uma medida temporária.
+
+115
+00:06:08.000 --> 00:06:11.000
+Desativar o flag gera débito técnico imediato.
+
+116
+00:06:11.000 --> 00:06:15.000
+Você deve definir um prazo interno rígido para substituir essa biblioteca bloqueante
+
+117
+00:06:15.000 --> 00:06:17.000
+e reativar a nova arquitetura.
+
+118
+00:06:17.000 --> 00:06:23.000
+Um único pacote desatualizado não deve congelar o ciclo de atualização do framework de aplicativo inteiro da sua organização.
+
+119
+00:06:23.000 --> 00:06:26.000
+Ampliando a visão para além dos arquivos de pacotes individuais,
+
+120
+00:06:26.000 --> 00:06:30.000
+o ecossistema mais amplo do React Native já cruzou completamente o ponto de inflexão.
+
+121
+00:06:30.000 --> 00:06:37.000
+Mais de 61% das 400 bibliotecas React Native mais instaladas atualmente suportam a nova arquitetura,
+
+122
+00:06:37.000 --> 00:06:40.000
+e essa métrica aumenta constantemente a cada mês.
+
+123
+00:06:40.000 --> 00:06:44.000
+Você pode monitorar o suporte contínuo para quaisquer bibliotecas ainda pendentes no seu projeto
+
+124
+00:06:44.000 --> 00:06:48.000
+acompanhando o rastreador oficial de status de bibliotecas do React working group.
+
+125
+00:06:48.000 --> 00:06:52.000
+A nova arquitetura representa o baseline atual de produção.
+
+126
+00:06:52.000 --> 00:06:58.000
+Dominar a triagem de dependências é o padrão para qualquer equipe que mantém aplicações mobile modernas.
+

@@ -1,0 +1,246 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:05.760
+Lag de UI e frames perdidos são os principais sintomas do renderer legado do React Native.
+
+2
+00:00:05.760 --> 00:00:10.560
+Sob carga pesada, interações fluidas frequentemente travam ou congelam completamente.
+
+3
+00:00:10.560 --> 00:00:13.360
+Os dados de View vivem em quatro ambientes.
+
+4
+00:00:13.360 --> 00:00:19.680
+JavaScript, C++ yoga, Java, Objective-C, passando pela bridge quando alterados.
+
+5
+00:00:19.680 --> 00:00:24.960
+As informações de layout são serializadas em JSON para cruzar, adicionando uma sobrecarga massiva.
+
+6
+00:00:24.960 --> 00:00:27.120
+Com dados duplicados quatro vezes,
+
+7
+00:00:27.200 --> 00:00:30.960
+o sistema requer bloqueios rígidos para evitar conflitos e atualizações.
+
+8
+00:00:30.960 --> 00:00:35.600
+Esses bloqueios criam uma dependência onde as threads de UI e JavaScript frequentemente bloqueiam uma à
+
+9
+00:00:35.600 --> 00:00:38.400
+outra, aguardando que a outra libere os dados de layout.
+
+10
+00:00:39.040 --> 00:00:43.760
+A serialização entre linguagens criou um gargalo estrutural que impedia o React Native
+
+11
+00:00:43.760 --> 00:00:50.000
+de suportar um modelo de renderização concorrente. O React Native 0.76 resolve isso com o renderer Fabric
+
+12
+00:00:50.000 --> 00:00:55.520
+O objetivo principal é a remoção completa da bridge JSON. O Fabric elimina
+
+13
+00:00:55.520 --> 00:01:01.200
+o problema de cópia de dados movendo toda a descrição de visualização para um ambiente C++ centralizado.
+
+14
+00:01:01.200 --> 00:01:07.760
+Essa arquitetura permite comunicação direta entre JavaScript e C++ via JSI.
+
+15
+00:01:07.760 --> 00:01:13.360
+A thread JS agora pode acessar o núcleo C++ sem os atrasos de uma fila de serialização.
+
+16
+00:01:14.000 --> 00:01:18.480
+Embora as views nativas em Java e Objective-C ainda existam para exibir a UI,
+
+17
+00:01:18.480 --> 00:01:23.120
+elas se tornaram fachadas finas que representam o modelo de dados C++ subjacente.
+
+18
+00:01:23.760 --> 00:01:29.040
+Ao contornar a bridge, o Fabric garante que as mutações de view sejam atômicas e os layouts
+
+19
+00:01:29.040 --> 00:01:35.360
+executem sem atrasos de alternância de threads. Para gerenciar a UI e o C++, o Fabric usa uma estrutura
+
+20
+00:01:35.360 --> 00:01:40.320
+chamada shadow tree, que funciona como o equivalente em C++ do virtual DOM do React.
+
+21
+00:01:40.880 --> 00:01:44.560
+Todo componente JSX que você escreve, como uma tag view ou text,
+
+22
+00:01:44.560 --> 00:01:51.360
+corresponde a um shadow node C++ específico. Cada shadow node contém props armazenadas em uma struct C++
+
+23
+00:01:51.360 --> 00:01:57.280
+tipada. Essas são geradas pelo Cogen com base nas suas especificações TypeScript. Como esses campos
+
+24
+00:01:57.280 --> 00:02:02.720
+são tipados, o renderer não precisa mais realizar buscas lentas em dicionários em tempo de execução para encontrar
+
+25
+00:02:02.720 --> 00:02:09.120
+propriedades do componente. O shadow node também contém um yoga layout node embutido. Esse yoga node é responsável
+
+26
+00:02:09.120 --> 00:02:14.800
+para todo o cálculo do Flexbox, calculando as métricas físicas precisas como o tamanho e a posição do
+
+27
+00:02:14.800 --> 00:02:21.200
+componente. Consolidar props tipadas e lógica de layout em uma única struct C++ fornece uma
+
+28
+00:02:21.200 --> 00:02:27.440
+fonte de verdade direta e autoritativa para a UI. O Fabric opera com uma regra inquebrável.
+
+29
+00:02:27.440 --> 00:02:32.880
+Uma vez que um shadow node é confirmado na árvore, ele é estritamente imutável. Para alterar a UI,
+
+30
+00:02:32.880 --> 00:02:37.600
+o sistema segue um processo de clone ao modificar. Ele duplica o nó existente,
+
+31
+00:02:37.600 --> 00:02:43.360
+aplica as alterações ao clone e, em seguida, constrói uma nova árvore. Isso permite a reconciliação,
+
+32
+00:02:43.360 --> 00:02:49.200
+gerenciando múltiplas árvores de UI simultaneamente. A árvore atual é o layout que o usuário vê agora.
+
+33
+00:02:49.200 --> 00:02:54.240
+A árvore de trabalho em progresso é montada em segundo plano. A árvore de renderização está sendo transferida
+
+34
+00:02:54.240 --> 00:02:59.920
+para facades nativas. Manter esses estados imutáveis distintos é o requisito mecânico para
+
+35
+00:02:59.920 --> 00:03:06.640
+lidar com atualizações complexas de UI em múltiplos estágios com segurança. A shadow tree imutável habilita os recursos concorrentes
+
+36
+00:03:06.640 --> 00:03:13.440
+encontradas no React 18, especificamente a capacidade de realizar renders interrompíveis. Imagine um cenário onde
+
+37
+00:03:13.440 --> 00:03:19.200
+uma tarefa de baixa prioridade, como renderizar uma lista enorme de resultados de busca, começa a construir uma árvore complexa
+
+38
+00:03:19.200 --> 00:03:24.400
+em segundo plano. Se o usuário tocar em um botão enquanto essa busca ainda está sendo calculada, o sistema precisa
+
+39
+00:03:24.400 --> 00:03:29.760
+reagir imediatamente. Um renderer legado finalizaria o layout antes de processar o toque,
+
+40
+00:03:29.760 --> 00:03:36.240
+causando frames sem resposta. O Fabric, por sua vez, descarta a árvore de trabalho em progresso para priorizar a interação.
+
+41
+00:03:36.240 --> 00:03:41.680
+Ele imediatamente começa a construir uma pequena nova árvore para o evento principal. Isso só é possível por causa da
+
+42
+00:03:41.680 --> 00:03:47.680
+imutabilidade. Como a árvore de trabalho em progresso não havia sido confirmada, descartá-la não tem efeitos colaterais.
+
+43
+00:03:47.680 --> 00:03:52.400
+A árvore atual original permanece ativa na tela, mantendo a UI estável enquanto a tarefa em
+
+44
+00:03:52.400 --> 00:03:59.520
+segundo plano é abortada. Alcançar concorrência requer um motor C++ interrompível que pode priorizar a interação
+
+45
+00:03:59.520 --> 00:04:05.760
+humana sobre cálculos em segundo plano. O Fabric executa o trabalho em um modelo de três threads,
+
+46
+00:04:05.760 --> 00:04:10.880
+a thread JavaScript, a thread de commit em segundo plano e a thread de UI. Quando o estado muda,
+
+47
+00:04:10.880 --> 00:04:16.320
+a atualização passa da lane JS para o segundo plano via JSI. A thread de commit em segundo plano
+
+48
+00:04:16.320 --> 00:04:22.080
+calcula layouts yoga para eventos assíncronos como rolagem. Quando pronto, é enviado para a thread de UI
+
+49
+00:04:22.080 --> 00:04:27.840
+como uma transação de montagem, um conjunto atômico de instruções para atualizar as views nativas. Essa estrutura
+
+50
+00:04:27.840 --> 00:04:32.960
+permite que o React roteie automaticamente as atualizações de dados em segundo plano para a lane assíncrona, mantendo o
+
+51
+00:04:32.960 --> 00:04:38.240
+thread principal livre. Essa divisão de trabalho evita os deadlocks comuns na arquitetura de bridge,
+
+52
+00:04:38.240 --> 00:04:43.200
+garantindo que cálculos pesados não travem a interface. Para os eventos discretos de maior prioridade,
+
+53
+00:04:43.200 --> 00:04:49.200
+como o toque de um usuário, o Fabric pode ser ainda mais rápido. Nesses casos, o Fabric ignora o
+
+54
+00:04:49.200 --> 00:04:56.560
+roteamento em background completamente. A atualização é processada inteiramente na thread de UI. Isso é renderização síncrona.
+
+55
+00:04:56.560 --> 00:05:02.640
+A atualização de estado, o cálculo de layout e o commit nativo acontecem em uma única sequência ininterrupta
+
+56
+00:05:02.720 --> 00:05:07.920
+sequência. Isso permite que a tela seja atualizada no mesmo frame em que o toque foi registrado,
+
+57
+00:05:07.920 --> 00:05:13.280
+criando uma sensação de responsividade instantânea. Para desenvolvedores que escrevem componentes nativos,
+
+58
+00:05:13.280 --> 00:05:18.720
+essa velocidade exige cautela. Você nunca deve chamar métodos de UI view a partir das threads de background shadow node
+
+59
+00:05:18.720 --> 00:05:25.120
+threads. Essa transição da bridge para um pipeline direto JSI remove a comunicação legada
+
+60
+00:05:25.120 --> 00:05:31.680
+com atrasos que antes limitavam o framework. O Fabric move o React Native além de suas origens como um wrapper de view,
+
+61
+00:05:31.680 --> 00:05:39.920
+fornecendo um motor de renderização C++ concorrente que alcança responsividade imediata da interface do usuário.
+

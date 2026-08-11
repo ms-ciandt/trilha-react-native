@@ -6,11 +6,15 @@ sidebar_position: 2
 
 ## Video Overview
 
-<video width="100%" controls>
+<video width="100%" controls controlsList="nodownload">
   <source src="/trilha-react-native/assets/videos/trilha_android/compose_02_remember_vs_usestate.mp4" type="video/mp4">
   <track kind="captions" src="/trilha-react-native/assets/captions/trilha_android/compose_02_remember_vs_usestate_en.vtt" srclang="en" label="English" default>
   Your browser does not support the video tag.
 </video>
+
+## Video Overview
+
+> Video for this topic coming soon.
 
 ## What You Already Know
 
@@ -383,6 +387,8 @@ function Fixed({ show }: { show: boolean }) {
 ---
 
 ## Interactive Example
+
+[![Open in Expo Snack](https://img.shields.io/badge/Open%20in-Expo%20Snack-000020?logo=expo)](https://snack.expo.dev/@react-native-community/hooks)
 
 ---
 

@@ -1,0 +1,242 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:05.500
+Olha esse diagrama. À esquerda, temos o heap nativo. À direita, o heap do JavaScript.
+
+2
+00:00:05.500 --> 00:00:10.500
+Em uma aplicação brown field, esses dois ambientes operam em total isolamento.
+
+3
+00:00:10.500 --> 00:00:15.500
+São como duas pessoas trabalhando em salas à prova de som, que não conseguem ver os quadros brancos uma da outra.
+
+4
+00:00:15.500 --> 00:00:17.500
+Não há memória global compartilhada.
+
+5
+00:00:17.500 --> 00:00:23.000
+Cada dado que se move entre eles deve ser explicitamente passado por um slot muito estreito.
+
+6
+00:00:23.000 --> 00:00:27.000
+A maneira absolutamente mais simples de passar esses dados é através das props iniciais.
+
+7
+00:00:27.000 --> 00:00:31.500
+Este é o canal 1. Quando o lado nativo cria a surface do React Native,
+
+8
+00:00:31.500 --> 00:00:37.500
+ele agrupa os dados necessários e os desliza pelo slot para o ambiente JS, bem no momento em que é inicializado.
+
+9
+00:00:37.500 --> 00:00:42.500
+Mas esse mecanismo de entrega tem uma limitação estrita. Ele acontece exatamente uma vez.
+
+10
+00:00:42.500 --> 00:00:46.000
+Após a surface ser montada, esses dados iniciais se tornam imutáveis.
+
+11
+00:00:46.000 --> 00:00:48.500
+Você não pode usar este canal para enviar atualizações posteriormente.
+
+12
+00:00:48.500 --> 00:00:54.000
+Como você não pode compartilhar memória global nativamente, você deve abandonar a suposição de acesso contínuo aos dados.
+
+13
+00:00:54.000 --> 00:01:01.000
+Cada interação entre suas camadas nativa e JS requer uma transferência explícita e cuidadosamente planejada.
+
+14
+00:01:01.000 --> 00:01:06.000
+Esta tabela estrutural mostra como lidamos com operações contínuas além da montagem inicial.
+
+15
+00:01:06.000 --> 00:01:13.000
+Se a camada JS precisar requisitar dados de forma síncrona ou assíncrona, ela chama módulos nativos ou TurboModules.
+
+16
+00:01:13.000 --> 00:01:19.000
+Esse é o canal 2. Se o lado nativo precisa enviar alertas do sistema, como uma mudança no status da rede,
+
+17
+00:01:19.000 --> 00:01:24.000
+sem esperar por uma requisição do JS, ele usa event emitters. Esse é o canal 3.
+
+18
+00:01:24.000 --> 00:01:31.000
+Se o código nativo precisa atualizar uma interface de usuário já montada, ele usa a surface API, que é o canal 4.
+
+19
+00:01:31.000 --> 00:01:34.000
+O código nativo não pode chamar diretamente um react set state.
+
+20
+00:01:34.000 --> 00:01:42.000
+Em vez disso, as mudanças de configuração fluem através da surface API e chegam ao lado do JS como um re-render comum com propriedades atualizadas.
+
+21
+00:01:42.000 --> 00:01:47.000
+Então, considere este cenário. Sua camada nativa precisa disparar uma ação no JS,
+
+22
+00:01:47.000 --> 00:01:50.000
+como limpar os campos de texto de um formulário React Native.
+
+23
+00:01:50.000 --> 00:01:56.000
+Qual canal você usa? Você poderia usar uma chamada imperativa de nativo para JS, que é o canal 5.
+
+24
+00:01:56.000 --> 00:02:00.000
+Mas o padrão arquiteturalmente mais limpo envolve inverter a direção.
+
+25
+00:02:00.000 --> 00:02:04.000
+No momento da montagem, a camada JS registra um callback em um módulo nativo.
+
+26
+00:02:04.000 --> 00:02:08.000
+Quando o nativo precisa limpar o formulário posteriormente, ele simplesmente aciona esse callback.
+
+27
+00:02:08.000 --> 00:02:13.000
+Ao combinar estritamente a tarefa arquitetural específica com o canal de comunicação correto,
+
+28
+00:02:13.000 --> 00:02:19.000
+você garante um fluxo de dados previsível através da bridge e evita que sua base de código se torne um código espaguete.
+
+29
+00:02:19.000 --> 00:02:26.000
+Os canais de comunicação lidam com mensagens discretas, mas não resolvem o problema mais perigoso no desenvolvimento brownfield,
+
+30
+00:02:26.000 --> 00:02:30.000
+manter estados complexos sincronizados ao longo do tempo sem memória global compartilhada.
+
+31
+00:02:30.000 --> 00:02:34.000
+Neste diagrama, observe o que acontece quando permitimos direitos bidirecionais.
+
+32
+00:02:34.000 --> 00:02:41.000
+Se tanto os componentes nativos quanto os componentes JS tentarem atualizar o mesmo dado compartilhado simultaneamente, eles criam uma condição de corrida.
+
+33
+00:02:42.000 --> 00:02:44.000
+As escritas colidem e o estado é corrompido.
+
+34
+00:02:44.000 --> 00:02:49.000
+A solução definitiva é designar uma única fonte de verdade estrita.
+
+35
+00:02:49.000 --> 00:02:57.000
+Você implementa um armazenamento de chave-valor seguro entre processos, como o MMKV, e mantém o banco de dados principal exclusivamente no lado nativo.
+
+36
+00:02:57.000 --> 00:03:04.000
+O ambiente nativo possui os dados e envia atualizações limpas e somente leitura através da barreira para o lado do JS.
+
+37
+00:03:04.000 --> 00:03:11.000
+Evitar a corrupção de dados exige decidir exatamente qual camada detém a verdade antes de escrever uma única linha de código.
+
+38
+00:03:11.000 --> 00:03:15.000
+Gerenciar o estado está intimamente ligado ao gerenciamento de telas.
+
+39
+00:03:15.000 --> 00:03:22.000
+Desenvolvedores acostumados com React Native puro frequentemente tentam colocar um navigation container baseado em JS na raiz de um app brownfield.
+
+40
+00:03:22.000 --> 00:03:25.000
+Em um ambiente verdadeiramente híbrido, essa abordagem falha.
+
+41
+00:03:25.000 --> 00:03:31.000
+Observe esta hierarquia visual. Este é o modelo nativo em primeiro lugar, e é a abordagem arquitetural correta.
+
+42
+00:03:32.000 --> 00:03:37.000
+Aqui, uma tela React Native é tratada exatamente como qualquer outro fragment ou view controller.
+
+43
+00:03:37.000 --> 00:03:43.000
+O controlador nativo central a empurra para a pilha nativa principal, lado a lado com itens de UI nativos padrão.
+
+44
+00:03:43.000 --> 00:03:48.000
+Isso garante que o sistema operacional nativo mantenha controle absoluto.
+
+45
+00:03:48.000 --> 00:03:56.000
+Quando um usuário executa um gesto de voltar do sistema, ou pressiona um botão físico de voltar, o controlador nativo descarta suavemente a camada React Native do topo.
+
+46
+00:03:56.000 --> 00:04:00.000
+O lado do JS não intercepta nem interfere com o gesto.
+
+47
+00:04:01.000 --> 00:04:10.000
+Para construir uma experiência que pareça um único aplicativo coeso para o usuário, a camada nativa deve ser a gestora indiscutível de todas as transições de navegação.
+
+48
+00:04:10.000 --> 00:04:19.000
+Vamos reunir esses conceitos com um cenário prático de conclusão, gerenciando com segurança a sessão de login de um usuário em ambas as camadas nativa e JS.
+
+49
+00:04:19.000 --> 00:04:22.000
+Este fluxograma estrutural descreve a fase de inicialização.
+
+50
+00:04:22.000 --> 00:04:26.000
+O sistema de raiz nativa mantém o token de autenticação principal.
+
+51
+00:04:26.000 --> 00:04:34.000
+Durante a sequência de inicialização, ele usa o canal 1, props iniciais, para injetar de forma segura uma cópia exata desse token diretamente no ambiente JS.
+
+52
+00:04:34.000 --> 00:04:36.000
+Em seguida, vem a fase de manutenção.
+
+53
+00:04:36.000 --> 00:04:44.000
+Se o token nativo for atualizado, o sistema usa o canal 3, event emitters, para enviar proativamente essa atualização para a camada JS.
+
+54
+00:04:44.000 --> 00:04:48.000
+A cópia permanece atualizada, preservando perfeitamente a fonte única de verdade.
+
+55
+00:04:48.000 --> 00:04:53.000
+Isso nos leva às três regras inflexíveis da arquitetura brownfield representadas aqui.
+
+56
+00:04:53.000 --> 00:04:57.000
+Um, roteie seus dados estritamente pelos cinco canais de comunicação definidos.
+
+57
+00:04:57.000 --> 00:05:01.000
+Dois, imponha uma única fonte de verdade para todo estado compartilhado.
+
+58
+00:05:01.000 --> 00:05:05.000
+E três, sempre utilize por padrão uma navigation stack nativa.
+
+59
+00:05:05.000 --> 00:05:11.000
+Desenvolver com sucesso uma aplicação híbrida significa parar de tentar forçar o JavaScript a se comportar como código nativo.
+
+60
+00:05:11.000 --> 00:05:18.000
+Você projeta limites precisos e disciplinados que permitem que ambos os ambientes façam seu trabalho sem interferir um no outro.
+

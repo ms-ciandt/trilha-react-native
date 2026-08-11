@@ -1,0 +1,298 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:06.240
+Quando você começa a construir um aplicativo React Native, colocar tudo em uma grande pasta de componentes funciona bem.
+
+2
+00:00:06.240 --> 00:00:12.560
+Mas conforme seu projeto cresce, essa estrutura plana rapidamente se torna uma bagunça emaranhada de dependências sobrepostas.
+
+3
+00:00:12.560 --> 00:00:15.520
+Pense na última vez que um novo desenvolvedor entrou na sua equipe.
+
+4
+00:00:15.520 --> 00:00:20.800
+Se ele precisou passar suas primeiras três horas apenas tentando localizar o código básico da tela de login,
+
+5
+00:00:20.800 --> 00:00:23.920
+sua arquitetura subjacente está simplesmente te atrasando.
+
+6
+00:00:23.920 --> 00:00:26.640
+Vamos corrigir isso usando um aplicativo de exemplo padrão.
+
+7
+00:00:26.720 --> 00:00:30.080
+Como você pode ver, este aplicativo tem três áreas distintas,
+
+8
+00:00:30.080 --> 00:00:33.920
+um fluxo de login, um feed de rolagem principal e um perfil de usuário.
+
+9
+00:00:33.920 --> 00:00:38.240
+Nosso objetivo é reorganizar este aplicativo específico em uma arquitetura baseada em funcionalidades.
+
+10
+00:00:38.240 --> 00:00:44.320
+Ao final, vamos mapear esses limites exatos e fixá-los com um documento architecture.md.
+
+11
+00:00:44.320 --> 00:00:47.520
+Passo 1. Abra sua IDE e inicie seu projeto.
+
+12
+00:00:47.520 --> 00:00:51.120
+Mantenha seu simulador iOS ou Android rodando ao lado do seu código,
+
+13
+00:00:51.120 --> 00:00:54.640
+para que possamos verificar que o app permanece estável enquanto movemos as coisas.
+
+14
+00:00:54.640 --> 00:01:02.000
+Migrar de uma lista plana de arquivos para uma arquitetura estruturada significa que os desenvolvedores sabem exatamente onde procurar um bug.
+
+15
+00:01:02.000 --> 00:01:06.240
+Significa que novos contratados podem contribuir no primeiro dia em vez do quinto dia.
+
+16
+00:01:06.240 --> 00:01:08.400
+Vamos construir o novo esqueleto.
+
+17
+00:01:08.400 --> 00:01:12.560
+Crie três pastas raiz, app, features e shared.
+
+18
+00:01:12.560 --> 00:01:14.640
+Pense nelas como partes de uma casa.
+
+19
+00:01:14.640 --> 00:01:18.080
+App é a sala de máquinas, alimentando os sistemas principais.
+
+20
+00:01:18.080 --> 00:01:20.880
+Features contém cômodos individuais e isolados,
+
+21
+00:01:20.880 --> 00:01:24.640
+e shared contém os blocos de construção base usados em todo lugar.
+
+22
+00:01:24.640 --> 00:01:26.960
+Agora, abra a pasta features.
+
+23
+00:01:26.960 --> 00:01:31.280
+Dentro dela, crie três subpastas separadas correspondendo aos domínios da nossa aplicação,
+
+24
+00:01:31.280 --> 00:01:33.840
+auth, feed e profile.
+
+25
+00:01:33.840 --> 00:01:36.720
+Percorra sua base de código e comece a mover os arquivos.
+
+26
+00:01:36.720 --> 00:01:41.040
+Pegue a tela de login, seus hooks específicos e as chamadas de API de autenticação,
+
+27
+00:01:41.040 --> 00:01:44.080
+e coloque tudo isso dentro da pasta auth.
+
+28
+00:01:44.080 --> 00:01:47.600
+Faça exatamente a mesma coisa para os domínios de feed e perfil.
+
+29
+00:01:47.600 --> 00:01:52.880
+Ao fazer isso, seu terminal vai aparecer cheio de mensagens de erro em vermelho sobre imports quebrados.
+
+30
+00:01:52.880 --> 00:01:59.040
+Use o recurso de atualização automática de caminhos da sua IDE para corrigir esses links quebrados automaticamente.
+
+31
+00:01:59.040 --> 00:02:01.040
+Olhe para o seu simulador em execução.
+
+32
+00:02:01.040 --> 00:02:06.240
+Force um recarregamento e verifique se a tela de login ainda redireciona corretamente para o feed principal.
+
+33
+00:02:06.240 --> 00:02:10.160
+Ao bloquear arquivos específicos de domínio dentro de suas próprias pastas de funcionalidade,
+
+34
+00:02:10.160 --> 00:02:16.640
+você garante que um desenvolvedor trabalhando no perfil do usuário não escreverá acidentalmente um código que quebre o feed principal.
+
+35
+00:02:16.640 --> 00:02:20.320
+Suas configurações principais de navegação, como stack ou tab navigators,
+
+36
+00:02:20.320 --> 00:02:24.720
+ficam diretamente dentro da pasta app, direcionando usuários para blocos de funcionalidades.
+
+37
+00:02:24.720 --> 00:02:26.720
+O mesmo se aplica ao estado global.
+
+38
+00:02:26.720 --> 00:02:30.400
+Stores como Zustand ou Redux armazenam dados de toda a aplicação,
+
+39
+00:02:30.400 --> 00:02:32.960
+então elas também ficam no diretório app.
+
+40
+00:02:32.960 --> 00:02:35.520
+Agora, mude a atenção para o diretório shared.
+
+41
+00:02:35.520 --> 00:02:40.240
+É aqui que você extrai elementos de UI genéricos que não pertencem a nenhum domínio específico,
+
+42
+00:02:40.240 --> 00:02:42.800
+como seus botões padrão ou tipografia.
+
+43
+00:02:42.800 --> 00:02:46.720
+A regra geral para saber se um asset pertence aqui é simples.
+
+44
+00:02:46.720 --> 00:02:50.320
+Se você pode soltar um arquivo em um app React Native completamente diferente,
+
+45
+00:02:50.320 --> 00:02:53.760
+e ele ainda funciona sem alterações, ele é verdadeiramente compartilhado.
+
+46
+00:02:53.760 --> 00:02:56.320
+Um botão de envio genérico passa facilmente,
+
+47
+00:02:56.320 --> 00:03:00.160
+mas um feed card especializado falha, permanecendo bloqueado dentro da pasta feed.
+
+48
+00:03:00.720 --> 00:03:05.680
+Aplicar rigorosamente a separação impede que a pasta shared se transforme em uma gaveta de bagunça.
+
+49
+00:03:05.680 --> 00:03:09.280
+Isso força sua lógica específica de domínio a permanecer bem isolada.
+
+50
+00:03:09.760 --> 00:03:13.280
+Para finalizar a estrutura, vá até a raiz do diretório do seu projeto
+
+51
+00:03:13.280 --> 00:03:16.320
+e crie um novo arquivo chamado architecture.md.
+
+52
+00:03:16.880 --> 00:03:20.080
+Comece escrevendo exatamente onde as screens pertencem.
+
+53
+00:03:20.080 --> 00:03:25.680
+Especifique que uma screen view deve sempre residir dentro do subdiretório screen de sua respectiva pasta de feature.
+
+54
+00:03:26.400 --> 00:03:29.040
+Em seguida, defina regras claras para hooks.
+
+55
+00:03:29.040 --> 00:03:31.760
+Hooks utilitários genéricos vão no diretório shared,
+
+56
+00:03:31.760 --> 00:03:35.040
+enquanto hooks específicos de domínio permanecem locais em sua pasta de funcionalidade.
+
+57
+00:03:35.040 --> 00:03:38.320
+Adicione uma seção definindo onde os serviços de API ficam
+
+58
+00:03:38.320 --> 00:03:42.640
+e declare explicitamente que todos os módulos nativos iOS ou Android personalizados
+
+59
+00:03:42.640 --> 00:03:45.520
+devem ser mantidos isolados na pasta native raiz.
+
+60
+00:03:46.080 --> 00:03:51.440
+Registrar essas decisões transforma uma estrutura implícita em um mapa explícito.
+
+61
+00:03:52.000 --> 00:03:56.240
+Cada pull request que for revisado a partir de agora pode ser verificado em relação ao padrão.
+
+62
+00:03:56.800 --> 00:04:00.640
+Saímos de uma lista enorme e desorganizada de arquivos à esquerda
+
+63
+00:04:00.640 --> 00:04:04.000
+para uma estrutura de diretórios altamente organizada e lógica à direita.
+
+64
+00:04:04.640 --> 00:04:06.400
+Verifique seu simulador uma última vez.
+
+65
+00:04:06.880 --> 00:04:09.840
+Apesar de mover quase todos os arquivos do projeto,
+
+66
+00:04:09.840 --> 00:04:13.200
+a interface do usuário funciona exatamente como quando começamos.
+
+67
+00:04:13.760 --> 00:04:19.200
+Confirme sua nova arquitetura e distribua o arquivo architecture.md para sua equipe de desenvolvimento
+
+68
+00:04:19.200 --> 00:04:22.240
+para que todos comecem a trabalhar a partir do mesmo blueprint imediatamente.
+
+69
+00:04:22.800 --> 00:04:26.080
+Se você quiser se aprofundar na teoria por trás dessa organização,
+
+70
+00:04:26.080 --> 00:04:30.080
+pesquise pelo guia intitulado Feature Based folder structure in React Native
+
+71
+00:04:30.080 --> 00:04:32.480
+para ver como grandes equipes implementam esses padrões.
+
+72
+00:04:33.120 --> 00:04:36.160
+Sua base de código agora está estruturalmente preparada.
+
+73
+00:04:36.240 --> 00:04:39.600
+Você pode adicionar 20 novos recursos e 10 novos desenvolvedores,
+
+74
+00:04:39.600 --> 00:04:43.760
+e o projeto permanecerá previsível e fácil de manter.
+

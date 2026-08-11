@@ -1,0 +1,166 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:06.320
+Se você está integrando um projeto React Native em um pipeline de CICD web padrão, vai encontrar obstáculos rapidamente.
+
+2
+00:00:06.320 --> 00:00:12.400
+Migrar um projeto para mobile exige uma mudança em relação ao processo de build single-threaded comum no desenvolvimento web.
+
+3
+00:00:12.400 --> 00:00:17.520
+Na web, seu pipeline de build geralmente termina aqui, montando um bundle JavaScript.
+
+4
+00:00:17.520 --> 00:00:20.320
+Uma vez gerado, a compilação está praticamente concluída.
+
+5
+00:00:20.320 --> 00:00:26.560
+O React Native requer exatamente esse bundle, mas o direciona para uma trilha paralela secundária de compilação nativa.
+
+6
+00:00:26.640 --> 00:00:31.280
+Essa segunda etapa pega o código empacotado e o transforma em um executável nativo independente,
+
+7
+00:00:31.280 --> 00:00:36.240
+um pacote Android. Para configurar isso, você precisará de um projeto React Native hospedado no GitHub,
+
+8
+00:00:36.240 --> 00:00:40.080
+um entendimento básico de configuração YAML, e scripts pré-configurados para
+
+9
+00:00:40.080 --> 00:00:44.640
+lint e teste do seu código. Nosso objetivo é configurar um workflow que automaticamente
+
+10
+00:00:44.640 --> 00:00:50.240
+entregue um APK Android tangível e instalável toda vez que você enviar código ao repositório.
+
+11
+00:00:50.240 --> 00:00:53.600
+Começaremos inicializando um arquivo YAML padrão do GitHub Actions.
+
+12
+00:00:54.240 --> 00:01:01.280
+Primeiro, fazemos o checkout do código. Em seguida, configuramos o node. Depois instalamos as dependências.
+
+13
+00:01:01.280 --> 00:01:05.280
+Executamos nosso linter de código e rodamos nossos testes automatizados.
+
+14
+00:01:06.000 --> 00:01:11.680
+Essas etapas cuidam da parte web da equação. Agora precisamos atender ao requisito mobile.
+
+15
+00:01:12.240 --> 00:01:18.160
+Para compilar o aplicativo em si, invocamos o Gradle, a ferramenta de build essencial para Android.
+
+16
+00:01:18.160 --> 00:01:23.440
+ambientes. Um erro comum aqui é tentar executar a ferramenta de build a partir do diretório raiz.
+
+17
+00:01:23.840 --> 00:01:28.080
+Você deve instruir o runner a mudar de diretório para a pasta Android primeiro.
+
+18
+00:01:28.720 --> 00:01:34.800
+Uma vez dentro, você executa barra barra Gradle, assemble release para compilar o build de produção.
+
+19
+00:01:35.360 --> 00:01:40.560
+Ao contrário das etapas web anteriores que geram arquivos estáticos, executar com sucesso este comando
+
+20
+00:01:40.560 --> 00:01:46.720
+Gradle compila um executável standalone do sistema operacional. Neste ponto, o build está completo,
+
+21
+00:01:46.720 --> 00:01:52.800
+mas todo esse processo aconteceu dentro de uma máquina virtual efêmera na nuvem. Sem uma etapa de
+
+22
+00:01:52.800 --> 00:01:58.000
+upload de artefato, no momento em que o workflow termina, essa máquina virtual é desligada, e seu
+
+23
+00:01:58.000 --> 00:02:05.200
+APK recém-compilado é instantaneamente destruído. Para resolver isso, adicionamos a etapa actions slash upload artifact.
+
+24
+00:02:05.840 --> 00:02:11.920
+Apontamos para o diretório exato onde o Gradle deixou o arquivo, direcionando qualquer arquivo terminado em .apk.
+
+25
+00:02:12.720 --> 00:02:17.520
+Essa etapa acessa a máquina virtual antes que ela seja desligada, pega o APK,
+
+26
+00:02:17.520 --> 00:02:23.360
+e o roteia diretamente para o seu painel do GitHub. Automatizar essa captura garante que cada execução
+
+27
+00:02:23.360 --> 00:02:27.920
+bem-sucedida produza um arquivo testável que persiste além da vida temporária do runner.
+
+28
+00:02:28.560 --> 00:02:32.800
+Eventualmente, um build vai falhar, e você será recebido pelo log de erros do GitHub Actions.
+
+29
+00:02:33.440 --> 00:02:38.560
+À primeira vista, esse log é intimidador. Ele está cheio de ruídos irrelevantes do bundle JavaScript
+
+30
+00:02:38.560 --> 00:02:44.960
+e avisos genéricos do Java que obscurecem o problema real. Para navegar por isso, ignore todas as etapas do JS
+
+31
+00:02:44.960 --> 00:02:50.480
+completamente e localize a seção específica onde a execução do Gradle falhou. Você está procurando por uma
+
+32
+00:02:50.480 --> 00:02:59.280
+string de palavra-chave específica, task, dois pontos, app, dois pontos, assemble, release, failed. Assim que você localizar essa linha exata,
+
+33
+00:02:59.280 --> 00:03:05.520
+olhe diretamente para as três a cinco linhas imediatamente anteriores a ela. É aí que você vai encontrar
+
+34
+00:03:05.520 --> 00:03:11.360
+o erro legível por humanos. Aprender a filtrar esse ruído foca sua solução de problemas na
+
+35
+00:03:11.360 --> 00:03:17.520
+linha específica de código ou configuração que realmente quebrou o build. Agora, vamos analisar um pipeline
+
+36
+00:03:17.520 --> 00:03:23.360
+a execução foi concluída com sucesso em todo o processo. Se você rolar até o final do resumo da execução,
+
+37
+00:03:23.360 --> 00:03:29.120
+você encontrará o artefato para download. A geração automática de artefatos capacita imediatamente as
+
+38
+00:03:29.120 --> 00:03:35.040
+equipes de garantia de qualidade com software testável, sem exigir compilação manual em máquinas locais.
+
+39
+00:03:35.680 --> 00:03:40.880
+Você pode baixar esse arquivo agora mesmo e arrastá-lo diretamente para um emulador Android para verificar
+
+40
+00:03:40.880 --> 00:03:47.440
+as mudanças. A transição da web para o CI do React Native requer domínio das ferramentas de build nativas,
+
+41
+00:03:47.440 --> 00:03:57.920
+transformando simples envios de código em aplicações mobile imediatamente testáveis.
+

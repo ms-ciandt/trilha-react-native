@@ -1,0 +1,178 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:06.000
+O ambiente web oferece velocidade e flexibilidade incríveis, mas eventualmente você bate em uma parede.
+
+2
+00:00:06.000 --> 00:00:13.000
+Você precisa de acesso a um recurso específico do dispositivo ou a um SDK proprietário, e o JavaScript padrão simplesmente não resolve.
+
+3
+00:00:13.000 --> 00:00:18.000
+É quando a sandbox se rompe e você precisa cruzar para o território nativo.
+
+4
+00:00:18.000 --> 00:00:25.000
+A boa notícia é que fazer essa travessia não exige que você abandone seu fluxo de trabalho atual e aprenda Swift ou Kotlin.
+
+5
+00:00:25.000 --> 00:00:30.000
+O React Native fornece uma bridge que permite que seu JavaScript se comunique diretamente com o código nativo.
+
+6
+00:00:30.000 --> 00:00:40.000
+Hoje, vamos construir um hook personalizado que obtém dados do ambiente do dispositivo, como o número do build e a flag de ambiente ativo, diretamente de um módulo nativo existente.
+
+7
+00:00:40.000 --> 00:00:46.000
+Ao aprender a consumir esses módulos com segurança, você expande suas capacidades além das restrições padrão da web.
+
+8
+00:00:46.000 --> 00:00:53.000
+Você se prepara para integrar funções profundas do sistema junto com seus colegas de engenharia de iOS e Android.
+
+9
+00:00:53.000 --> 00:01:02.000
+Vamos começar com este layout. Temos uma arquitetura paralela mostrando conceitos padrão da web de um lado e React Native do outro.
+
+10
+00:01:02.000 --> 00:01:06.000
+Mapear esses conceitos é o primeiro passo para navegar pelo desenvolvimento mobile.
+
+11
+00:01:06.000 --> 00:01:11.000
+Na web, você interage com APIs nativas do navegador, como o local storage.
+
+12
+00:01:11.000 --> 00:01:16.000
+No mobile, você acessa as APIs da plataforma subjacente no Android e no iOS.
+
+13
+00:01:16.000 --> 00:01:21.000
+Uma ponte de dados conecta seu payload JavaScript diretamente a essas funções nativas.
+
+14
+00:01:21.000 --> 00:01:25.000
+Componentes padrão do React são mapeados diretamente para componentes de UI nativos.
+
+15
+00:01:25.000 --> 00:01:34.000
+Você escreve props e eventos familiares do React em JavaScript, enviando instruções pela ponte, enquanto a renderização real acontece inteiramente na engine nativa.
+
+16
+00:01:34.000 --> 00:01:40.000
+O mecanismo específico que gerencia toda essa lógica de negócios é um objeto JavaScript chamado native modules.
+
+17
+00:01:40.000 --> 00:01:47.000
+Esse objeto expõe os métodos escritos pelas equipes mobile, para que você possa chamá-los como qualquer outra função JavaScript.
+
+18
+00:01:47.000 --> 00:01:59.000
+Ter essa separação em mente é fundamental. Quando um problema de layout ou um crash ocorre, saber se ele se originou no seu JavaScript ou do outro lado da bridge no código nativo aponta você para a correção correta.
+
+19
+00:01:59.000 --> 00:02:10.000
+Vamos colocar isso em prática. Começaremos criando um arquivo dedicado chamado AppNVService.js. No topo, importamos o objeto native modules do React Native.
+
+20
+00:02:10.000 --> 00:02:22.000
+Em seguida, atribuímos native modules.appNV a uma constante. É uma boa prática verificar se esse objeto realmente existe antes de tentarmos interagir com ele, então estabelecemos uma validação rápida imediatamente.
+
+21
+00:02:22.000 --> 00:02:36.000
+Desse módulo, precisamos extrair duas informações específicas: get environment para nos dizer se estamos em dev, staging ou prod, e get build number para retornar o identificador exato em string do build da aplicação.
+
+22
+00:02:36.000 --> 00:02:42.000
+Como estamos enviando mensagens pela bridge do React Native, essas chamadas de função são estritamente baseadas em promises.
+
+23
+00:02:42.000 --> 00:02:50.000
+Usamos a sintaxe padrão de async await para enviar a requisição, aguardar o processamento pelo lado nativo e, em seguida, receber os dados de volta no JavaScript.
+
+24
+00:02:50.000 --> 00:03:04.000
+Você deve envolver essas chamadas de bridge em blocos try catch rigorosos. Se o módulo nativo falhar ao responder ou não estiver vinculado corretamente, o erro vai contornar os limites padrão do JS. Você precisa desse bloco de código para capturar a falha explicitamente.
+
+25
+00:03:04.000 --> 00:03:16.000
+Ao isolar as requisições nativas específicas dentro de uma camada de serviço dedicada, mantemos o restante da nossa aplicação React protegido. Se o código nativo se comportar de forma imprevisível, o impacto fica contido longe da nossa UI principal.
+
+26
+00:03:16.000 --> 00:03:33.000
+Agora saímos da camada de serviço e entramos no React em si. Vamos construir um hook personalizado chamado useAppNV para gerenciar os dados recebidos. Dentro do hook, definimos três variáveis de estado padrão: uma para a string de ambiente, uma para o número de build, e uma variável de estado crítica para capturar quaisquer erros em tempo de execução.
+
+27
+00:03:33.000 --> 00:03:45.000
+Em seguida, usamos um hook useEffect para acionar nosso serviço nativo assíncrono. Encapsular a chamada aqui garante que a requisição seja disparada exatamente uma vez, imediatamente quando o componente é montado na tela.
+
+28
+00:03:45.000 --> 00:03:56.000
+Para verificar se tudo está conectado corretamente, adicione um console log simples para os dados retornados. Ver esses valores sendo populados no seu terminal prova que seu JavaScript está se comunicando ativamente com o dispositivo.
+
+29
+00:03:56.000 --> 00:04:09.000
+Gerenciar dados nativos externos através de um hook personalizado mantém seus componentes puros. Sua interface de usuário não precisa saber nada sobre a bridge do React Native. Ela simplesmente consome o estado React previsível fornecido pelo seu novo hook.
+
+30
+00:04:09.000 --> 00:04:17.000
+Vamos conectar esses dados ao componente principal do app. Importamos nosso hook useAppNV e desestruturamos os estados de ambiente, número de build e erro.
+
+31
+00:04:17.000 --> 00:04:29.000
+Em seguida, adicionamos nossa lógica condicional. Se o valor do ambiente retornar como dev, instruímos o React a renderizar um banner distinto no topo da tela para lembrar os testadores de que estão visualizando um build de desenvolvimento.
+
+32
+00:04:29.000 --> 00:04:41.000
+Mas precisamos considerar o estado de erro. Se você executar este código em um navegador web puro, ou se um membro da equipe esquecer de vincular a biblioteca nativa durante a configuração, o native modules.appNV estará completamente ausente.
+
+33
+00:04:41.000 --> 00:04:53.000
+Este mockup visual mostra nossa proteção em ação. Avaliamos o estado de erro primeiro. Se ele retornar true, exibimos um banner padrão com uma mensagem de fallback, indicando claramente que o módulo nativo está atualmente offline.
+
+34
+00:04:53.000 --> 00:05:05.000
+Antecipar a ausência de um módulo nativo é um requisito no React Native. Este padrão de fallback evita que a aplicação gere uma tela vermelha de erro catastrófica quando os desenvolvedores testam na web ou em simuladores incompletos.
+
+35
+00:05:05.000 --> 00:05:15.000
+Mesmo com proteções rígidas implementadas, trabalhar com módulos personalizados e SDKs proprietários significa que você eventualmente encontrará um crash severo originado no lado nativo.
+
+36
+00:05:15.000 --> 00:05:25.000
+Quando o app falhar, observe atentamente o stack trace. Um erro JavaScript padrão do React Native apontará claramente para caminhos de arquivos .js ou .tsx dentro do diretório do seu projeto.
+
+37
+00:05:25.000 --> 00:05:37.000
+Essa visualização de log mostra a distinção exata. Se o crash ocorreu na camada Android, o trace muda para sintaxe JavaScript. Procure por linhas de erro começando com Java .lang, como uma null point exception.
+
+38
+00:05:37.000 --> 00:05:50.000
+No iOS, o formato muda para padrões de Objective C ou Swift. Você verá chamadas de método formatadas com colchetes, como dash uivu.dot, ou referências diretas de memória específicas dos frameworks da Apple.
+
+39
+00:05:50.000 --> 00:06:04.000
+Como desenvolvedor web, sua responsabilidade exata aqui é a triagem. Você identifica que o crash não é um problema puramente JavaScript, isola as etapas precisas de reprodução e extrai o stack trace nativo completo e bruto do Android logcat ou do Xcode.
+
+40
+00:06:04.000 --> 00:06:14.000
+Fornecer logs nativos precisos transforma você em um parceiro de depuração essencial para as equipes mobile. Você elimina as suposições e aponta os engenheiros de iOS e Android diretamente para o ponto de falha.
+
+41
+00:06:14.000 --> 00:06:24.000
+Você implementou com sucesso um gerenciador de estado nativo assíncrono. Você extrai dados profundos do dispositivo para sua aplicação React sem escrever uma única linha de código nativo.
+
+42
+00:06:24.000 --> 00:06:35.000
+A real vantagem que você obteve hoje é vocabulário. Você sabe como a bridge opera, como ler os logs e quais informações estruturais seus colegas de desenvolvimento nativo precisam para construir os endpoints corretos.
+
+43
+00:06:35.000 --> 00:06:47.000
+O Passo 1 foi extrair a lógica. O Passo 2 é a integração visual. Em nossa próxima sessão, vamos passar de módulos nativos orientados a dados para a implementação de componentes de UI nativos totalmente renderizados na tela.
+
+44
+00:06:47.000 --> 00:06:57.000
+Conectar essa lacuna de integração combina a iteração rápida do desenvolvimento web com o poder de processamento bruto de uma aplicação nativa. Você agora tem o blueprint para conectar os dois.
+
