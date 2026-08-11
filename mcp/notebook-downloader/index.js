@@ -6,16 +6,42 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-const EDGE_EXECUTABLE = 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe';
-
-// Dedicated automation profile — NOT the default Edge User Data dir.
-// Edge 151+ blocks CDP on the default dir (App-Bound Encryption + security policy).
-// This dir is created once; the user logs in on first run and the session is reused.
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
-const AUTOMATION_PROFILE = path.join(SCRIPT_DIR, 'edge-automation-profile');
+
+// Executable paths per browser per OS.
+// Chromium-based browsers (Edge, Chrome, Brave) all use the same CDP protocol,
+// so the automation logic is identical — only the executable path differs.
+// Each browser gets an isolated profile so sessions don't interfere with each
+// other or with the user's real browser profile. Profiles are created on first
+// run; the user logs in once and the session is reused across invocations.
+const EXECUTABLES = {
+  edge: {
+    win32:  'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
+    darwin: '/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge',
+    linux:  '/usr/bin/microsoft-edge',
+  },
+  chrome: {
+    win32:  'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+    darwin: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+    linux:  '/usr/bin/google-chrome',
+  },
+  brave: {
+    win32:  'C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe',
+    darwin: '/Applications/Brave Browser.app/Contents/MacOS/Brave Browser',
+    linux:  '/usr/bin/brave-browser',
+  },
+};
+
+function getExecutablePath(browser) {
+  const paths = EXECUTABLES[browser];
+  if (!paths) {
+    throw new Error(`Unknown browser "${browser}". Valid options: ${Object.keys(EXECUTABLES).join(', ')}`);
+  }
+  return paths[process.platform] ?? paths.linux;
+}
 
 const server = new Server(
-  { name: 'notebook-downloader', version: '1.0.0' },
+  { name: 'notebook-downloader', version: '1.1.0' },
   { capabilities: { tools: {} } }
 );
 
@@ -23,7 +49,13 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
   tools: [
     {
       name: 'download_notebook_videos',
-      description: 'Downloads all audio/video files from a Google NotebookLM notebook. Edge must be closed before running. After a successful download, automatically invoke the /integrar-videos skill passing the output_dir so the files are renamed, moved to the correct assets folder, and embedded in the EN and PT-BR docs.',
+      description:
+        'Downloads all audio/video files from a Google NotebookLM notebook. ' +
+        'The chosen browser must be fully closed before running. ' +
+        'Supports Edge, Chrome and Brave on Windows, macOS and Linux. ' +
+        'After a successful download, automatically invoke the /integrar-videos skill ' +
+        'passing the output_dir so the files are renamed, moved to the correct assets ' +
+        'folder, and embedded in the EN and PT-BR docs.',
       inputSchema: {
         type: 'object',
         properties: {
@@ -34,6 +66,11 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
           output_dir: {
             type: 'string',
             description: 'Absolute path to the folder where videos will be saved',
+          },
+          browser: {
+            type: 'string',
+            enum: ['edge', 'chrome', 'brave'],
+            description: 'Browser to use for automation. Defaults to "edge".',
           },
         },
         required: ['url', 'output_dir'],
@@ -47,7 +84,11 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     throw new Error(`Unknown tool: ${request.params.name}`);
   }
 
-  const { url, output_dir } = request.params.arguments;
+  const { url, output_dir, browser = 'edge' } = request.params.arguments;
+
+  const executablePath = getExecutablePath(browser);
+  // Each browser gets its own isolated profile so sessions don't interfere.
+  const automationProfile = path.join(SCRIPT_DIR, `${browser}-automation-profile`);
 
   if (!fs.existsSync(output_dir)) {
     fs.mkdirSync(output_dir, { recursive: true });
@@ -58,10 +99,10 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     fs.readdirSync(output_dir).map(f => f.toLowerCase())
   );
 
-  const firstRun = !fs.existsSync(AUTOMATION_PROFILE);
+  const firstRun = !fs.existsSync(automationProfile);
 
-  const context = await chromium.launchPersistentContext(AUTOMATION_PROFILE, {
-    executablePath: EDGE_EXECUTABLE,
+  const context = await chromium.launchPersistentContext(automationProfile, {
+    executablePath,
     headless: false,
     acceptDownloads: true,
     downloadsPath: output_dir,
@@ -176,6 +217,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   }
 
   const result = {
+    browser,
     downloaded_count: downloaded.length,
     skipped_count: skipped.length,
     files: downloaded,
