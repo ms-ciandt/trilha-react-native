@@ -4,6 +4,13 @@ title: Error Handling and Monitoring
 
 # Tratamento de Erros e Monitoramento
 
+## Visão Geral em Vídeo
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_ios/arq_04_error-handling-monitoring.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 O Swift oferece garantias fortes em tempo de compilacao sobre propagacao de erros: `throws`, `Result<T, E>` e erros tipados capturam problemas antes que eles cheguem a producao. O React Native move boa parte dessa disciplina para o tempo de execucao, mas os padroes se correspondem bem assim que voce entende os equivalentes. Este arquivo cobre toda a pilha — do modelamento tipado de erros em TypeScript ate a simbolizacao de crashes em producao.
 
 ## Swift Result<T, E> para TypeScript
