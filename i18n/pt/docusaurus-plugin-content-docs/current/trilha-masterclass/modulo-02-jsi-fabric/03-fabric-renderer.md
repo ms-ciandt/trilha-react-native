@@ -4,7 +4,7 @@ title: "Fabric — Renderer & Shadow Tree"
 
 # Fabric — Novo Renderer
 
-<video width="100%" controls>
+<video width="100%" controls controlsList="nodownload">
   <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc03_03_fabric-renderer.mp4" type="video/mp4">
   <track kind="captions" src="/trilha-react-native/assets/captions/trilha_masterclass/mc03_03_fabric-renderer.vtt" srclang="pt" label="Português" default>
   Your browser does not support the video tag.

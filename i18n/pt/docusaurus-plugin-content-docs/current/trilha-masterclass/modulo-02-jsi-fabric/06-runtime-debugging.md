@@ -2,7 +2,7 @@
 title: "Runtime — Debugging & E2E"
 ---
 
-<video width="100%" controls>
+<video width="100%" controls controlsList="nodownload">
   <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc03_06_runtime-debugging.mp4" type="video/mp4">
   <track kind="captions" src="/trilha-react-native/assets/captions/trilha_masterclass/mc03_06_runtime-debugging.vtt" srclang="pt" label="Português" default>
   Your browser does not support the video tag.
@@ -341,6 +341,8 @@ export function useSecureStorage(key: string) {
 
 Este snack demonstra a chamada sincrona a um TurboModule (DeviceInfo) e a ausencia de estado de carregamento:
 
+https://snack.expo.dev/@react-native-community/device-info-example
+
 No Snack, observe a aba Network — nao ha nenhuma requisicao HTTP para os valores de informacoes do dispositivo. Eles chegam diretamente via JSI.
 
 ---
@@ -391,7 +393,7 @@ No Snack, observe a aba Network — nao ha nenhuma requisicao HTTP para os valor
 
 | Recurso | O que fazer |
 |---|---|
-| [React Native DevTools — Profiler](https://reactnative.dev/docs/react-native-devtools) | Abra a aba Profiler, grave uma renderização e inspecione os tempos de componentes |
+| [React Native New Architecture playground](https://snack.expo.dev/) | Crie um Snack, abra o React DevTools Profiler, grave uma renderizacao |
 | [Hermes playground](https://playground.hermesengine.dev/) | Cole JS, inspecione a saida de bytecode, veja as atribuicoes de registradores |
 | [Yoga playground](https://yogalayout.dev/playground) | Teste regras de Flexbox, veja os numeros de layout calculados |
 | [reactwg/react-native-new-architecture](https://github.com/reactwg/react-native-new-architecture/discussions) | Discussoes do grupo de trabalho — fonte da verdade para decisoes de migracao |

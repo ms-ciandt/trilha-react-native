@@ -1,0 +1,150 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:05.000
+Este fluxograma de painel duplo mostra duas falhas de aplicativo muito diferentes.
+
+2
+00:00:05.000 --> 00:00:10.000
+À esquerda, um aplicativo carrega com sucesso, embora esteja faltando um componente de UI secundário.
+
+3
+00:00:10.000 --> 00:00:16.000
+À direita, todo o processo de carregamento é interrompido imediatamente em uma tela de crash fatal antes que qualquer coisa seja renderizada.
+
+4
+00:00:16.000 --> 00:00:23.000
+O mecanismo responsável por determinar se seu aplicativo falha graciosamente ou trava completamente é o turbo-module registry.
+
+5
+00:00:23.000 --> 00:00:28.000
+Ele acessa a bridge crítica, trazendo o código nativo para o seu ambiente JavaScript.
+
+6
+00:00:28.000 --> 00:00:33.000
+Digamos que você está desenvolvendo um aplicativo que depende de um módulo de armazenamento nativo obrigatório.
+
+7
+00:00:33.000 --> 00:00:39.000
+Quando você vai importá-lo, o registro oferece dois caminhos de carregamento distintos, get e get enforcing.
+
+8
+00:00:39.000 --> 00:00:44.000
+Fazer a escolha correta da API aqui determina como sua aplicação se comporta sob pressão.
+
+9
+00:00:44.000 --> 00:00:51.000
+Isso determina se seu app vai sobreviver a uma dependência nativa não detectada ou falhar fatalmente no momento em que um usuário o iniciar.
+
+10
+00:00:51.000 --> 00:00:58.000
+Usando turbo-module registry.get enforcing, um módulo ausente lança um erro de violação de invariante.
+
+11
+00:00:58.000 --> 00:01:03.000
+Esta avaliação ocorre no momento do carregamento do módulo, exatamente quando o arquivo é importado.
+
+12
+00:01:03.000 --> 00:01:06.000
+Isso interrompe o app completamente antes da renderização.
+
+13
+00:01:06.000 --> 00:01:13.000
+Esse timing precoce causa stack traces confusos apontando para um import de nível superior em vez da função de UI.
+
+14
+00:01:13.000 --> 00:01:19.000
+Ao falhar imediata e explicitamente, o get enforcing serve como uma ferramenta de diagnóstico agressiva.
+
+15
+00:01:19.000 --> 00:01:27.000
+Ele classifica um módulo nativo ausente como um erro grave de programação que deve ser corrigido antes do lançamento, em vez de um problema em tempo de execução.
+
+16
+00:01:27.000 --> 00:01:33.000
+Alternativamente, o método get fornece um caminho seguro, retornando null quando um módulo não é detectado.
+
+17
+00:01:33.000 --> 00:01:37.000
+Use isso para módulos opcionais, como analytics ou ambientes web.
+
+18
+00:01:37.000 --> 00:01:44.000
+No entanto, você deve escrever manualmente uma verificação condicional de segurança antes da execução para evitar um erro de referência nula em tempo de execução.
+
+19
+00:01:45.000 --> 00:01:53.000
+Utilizar o método get transfere a responsabilidade de lidar com dependências ausentes para fora do framework React Native e diretamente para a lógica da sua própria aplicação.
+
+20
+00:01:53.000 --> 00:01:56.000
+Considere um caso extremo específico de plataforma.
+
+21
+00:01:56.000 --> 00:02:01.000
+Um módulo ativo do health kit roda no iOS enquanto o Android tem um slot vazio.
+
+22
+00:02:01.000 --> 00:02:06.000
+Aplicar get enforcing universalmente faz o Android travar na inicialização.
+
+23
+00:02:06.000 --> 00:02:12.000
+Mas depender inteiramente do get sacrifica as garantias estritas de proteção contra travamentos no iOS.
+
+24
+00:02:12.000 --> 00:02:19.000
+Como você aplica estritamente o módulo no iOS enquanto simultaneamente o ignora com segurança no Android?
+
+25
+00:02:19.000 --> 00:02:21.000
+Este bloco de código revela a solução.
+
+26
+00:02:21.000 --> 00:02:32.000
+Ao envolver a chamada em platform.select, você aplica condicionalmente o método de obtenção estrita especificamente para a chave do iOS e mapeia um fallback nulo seguro para a chave do Android.
+
+27
+00:02:32.000 --> 00:02:41.000
+O carregamento condicional com reconhecimento de plataforma permite que você aplique dependências estritas exatamente onde elas pertencem, sem introduzir falhas de inicialização entre plataformas.
+
+28
+00:02:41.000 --> 00:02:50.000
+Se você encontrar uma violação de invariante em um módulo que sabe ser obrigatório, o registro está informando que o binário não corresponde às suas expectativas de JavaScript.
+
+29
+00:02:50.000 --> 00:02:52.000
+Você precisa começar a solucionar o problema.
+
+30
+00:02:52.000 --> 00:02:58.000
+Este fluxograma de diagnóstico descreve o checklist físico exato necessário para corrigir o erro.
+
+31
+00:02:58.000 --> 00:03:03.000
+Primeiro, verifique se o nome da string na sua spec JS corresponde à implementação nativa.
+
+32
+00:03:03.000 --> 00:03:07.000
+Segundo, verifique se o pacote está registrado no código nativo da sua aplicação.
+
+33
+00:03:07.000 --> 00:03:10.000
+E terceiro, recompile o binário nativo completamente.
+
+34
+00:03:10.000 --> 00:03:15.000
+Esta tabela de matriz de decisão consolida todo o processo de seleção de API.
+
+35
+00:03:15.000 --> 00:03:22.000
+Ela mapeia seus três principais cenários, obrigatório, opcional e específico de plataforma diretamente para suas soluções correspondentes.
+
+36
+00:03:22.000 --> 00:03:26.000
+Obtenha enforcing, get, e a abordagem combinada de platform select.
+
+37
+00:03:26.000 --> 00:03:34.000
+Dominar essa decisão de API em tempo de carregamento elimina o risco de falhas silenciosas e garante estabilidade robusta em toda a ponte JavaScript-to-native.
+

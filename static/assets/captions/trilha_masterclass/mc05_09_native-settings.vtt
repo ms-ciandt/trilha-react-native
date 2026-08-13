@@ -1,0 +1,218 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:08.500
+Você atualiza um projeto React Native, executa o build em um dispositivo Android 15, e os elementos de UI se sobrepõem e transbordam.
+
+2
+00:00:08.500 --> 00:00:14.000
+O cabeçalho superior invade os ícones do sistema, e o menu de navegação inferior some da área visível.
+
+3
+00:00:14.000 --> 00:00:18.000
+Essa quebra surge com o React Native 0.76.
+
+4
+00:00:18.000 --> 00:00:24.000
+O template do upgrade helper para esta versão eleva o target SDK padrão do Android para a versão 35.
+
+5
+00:00:24.000 --> 00:00:27.000
+Os sintomas visuais são consistentes entre os projetos.
+
+6
+00:00:27.000 --> 00:00:33.000
+Qualquer conteúdo que antes ficava seguramente abaixo do painel superior agora se sobrepõe à barra de status do sistema,
+
+7
+00:00:33.000 --> 00:00:38.000
+e qualquer coisa fixada na parte inferior da tela fica obscurecida pela barra de navegação por gestos.
+
+8
+00:00:38.000 --> 00:00:43.000
+O Google tornou esse comportamento obrigatório no nível do sistema operacional para todos os apps direcionados ao SDK 35.
+
+9
+00:00:43.000 --> 00:00:47.000
+Qualquer app que atingir esse alvo agora é forçado a renderizar de borda a borda.
+
+10
+00:00:47.000 --> 00:00:51.000
+O Android não fornece mais uma área de desenho segura e delimitada por padrão.
+
+11
+00:00:51.000 --> 00:00:56.000
+Para corrigir o problema, precisamos observar a diferença geométrica entre o Android 14 e o Android 15.
+
+12
+00:00:56.000 --> 00:01:01.000
+Este diagrama isométrico compara os limites físicos de renderização entre as duas versões.
+
+13
+00:01:01.000 --> 00:01:10.000
+À esquerda, o Android 14 aprisiona a interface do aplicativo em uma caixa delimitadora rígida, entre uma barra de status superior sólida e uma barra de navegação inferior.
+
+14
+00:01:10.000 --> 00:01:17.000
+Observe o lado direito. O Android 15 força o aplicativo a preencher toda a tela disponível.
+
+15
+00:01:17.000 --> 00:01:19.000
+Esta é uma mudança no eixo Z.
+
+16
+00:01:19.000 --> 00:01:25.000
+A área de conteúdo do aplicativo agora é renderizada em um plano contínuo diretamente atrás da camada do Chrome do sistema.
+
+17
+00:01:25.000 --> 00:01:31.000
+O sistema operacional não garante mais uma área sem renderização no topo e na parte inferior do viewport.
+
+18
+00:01:31.000 --> 00:01:35.000
+As barras do sistema ainda existem, mas ficam flutuando sobre o seu conteúdo.
+
+19
+00:01:35.000 --> 00:01:42.000
+Os desenvolvedores são responsáveis por gerenciar a relação espacial entre o aplicativo, os biseis do hardware e o Chrome do SO.
+
+20
+00:01:42.000 --> 00:01:50.000
+Como a geometria mudou, podemos identificar quais padrões específicos de componentes React Native causam falhas nesses layouts.
+
+21
+00:01:50.000 --> 00:01:57.000
+Esta tela dividida mostra a API dot set background color da status bar falhando silenciosamente na API 35.
+
+22
+00:01:57.000 --> 00:02:01.000
+O código é executado, mas a status bar permanece como uma sobreposição transparente.
+
+23
+00:02:01.000 --> 00:02:12.000
+Paddings fixos no código, como padding top 24, também falham, pois inteiros estáticos não conseguem considerar as variações de altura das sobreposições do sistema entre dispositivos Android.
+
+24
+00:02:12.000 --> 00:02:20.000
+Da mesma forma, passar uma prop translucent para o componente de status bar agora é ignorado. A translucidez é o padrão imposto.
+
+25
+00:02:20.000 --> 00:02:23.000
+Essa oclusão se repete na parte inferior.
+
+26
+00:02:23.000 --> 00:02:29.000
+Paddings fixos no código destinados a limpar a barra de gestos deixam elementos interativos presos atrás da interface do sistema.
+
+27
+00:02:29.000 --> 00:02:37.000
+Aplicações modernas devem reagir aos insets dinâmicos do sistema operacional em vez de tentar ditar regras ao Chrome de hardware.
+
+28
+00:02:37.000 --> 00:02:44.000
+O time principal e o Expo recomendam uma solução arquitetural específica, a biblioteca react native edge-to-edge.
+
+29
+00:02:44.000 --> 00:02:52.000
+Aplicar insets dinâmicos tira a aplicação do seu estado quebrado, encaixando suas views em um alinhamento perfeito e consciente dos insets.
+
+30
+00:02:52.000 --> 00:02:55.000
+Este fluxograma de três etapas descreve a migração.
+
+31
+00:02:55.000 --> 00:02:59.000
+Primeiro, ative o flag edge-to-edge nas propriedades do Android Gradle.
+
+32
+00:02:59.000 --> 00:03:05.000
+Segundo, substitua os componentes legados de status bar pelo novo componente de barras do sistema compatível com a API 35.
+
+33
+00:03:05.000 --> 00:03:15.000
+Terceiro, troque os paddings fixos por variáveis dinâmicas usando o hook de safe area insets, migrando completamente para o reconhecimento dinâmico de espaço.
+
+34
+00:03:15.000 --> 00:03:18.000
+Migrar a root view é apenas o primeiro passo.
+
+35
+00:03:18.000 --> 00:03:25.000
+Elementos flutuantes e bibliotecas de UI de terceiros ainda serão renderizados incorretamente e precisarão de correções específicas.
+
+36
+00:03:25.000 --> 00:03:28.000
+Esta matriz mapeia as correções necessárias nas bibliotecas.
+
+37
+00:03:28.000 --> 00:03:32.000
+Envolva modais em uma safe area view para evitar as barras do sistema.
+
+38
+00:03:32.000 --> 00:03:37.000
+Passe uma prop explícita de inset inferior para bottom sheets para liberar a barra de gestos.
+
+39
+00:03:37.000 --> 00:03:41.000
+Injete variáveis CSS em web views para evitar oclusão.
+
+40
+00:03:41.000 --> 00:03:45.000
+Uma migração completa requer a auditoria de cada componente flutuante.
+
+41
+00:03:45.000 --> 00:03:50.000
+Migrar um conjunto completo de UI em uma única sprint geralmente é inviável para equipes de desenvolvimento ativas.
+
+42
+00:03:50.000 --> 00:03:53.000
+Existe uma saída temporária.
+
+43
+00:03:53.000 --> 00:04:00.000
+Você pode forçar o build do React Native 0.76 a ter como alvo o SDK34, optando por não usar o padrão do Android 15.
+
+44
+00:04:00.000 --> 00:04:08.000
+Esse downgrade compra tempo, permitindo que sua equipe conclua a atualização para o React Native 0.76 enquanto adia a auditoria de UI.
+
+45
+00:04:08.000 --> 00:04:11.000
+As políticas do Google Play limitam essa janela.
+
+46
+00:04:11.000 --> 00:04:16.000
+Novos lançamentos de aplicativos devem ter como alvo o SDK mais recente dentro de um ano após seu lançamento.
+
+47
+00:04:16.000 --> 00:04:20.000
+Usar o SDK34 como alvo é uma estratégia de tempo emprestado.
+
+48
+00:04:20.000 --> 00:04:23.000
+A auditoria estrutural é inevitável.
+
+49
+00:04:23.000 --> 00:04:32.000
+Antes de implantar sua atualização, há dois requisitos de build não relacionados à UI introduzidos pelo React Native 0.76 que você deve verificar.
+
+50
+00:04:32.000 --> 00:04:37.000
+Esta visualização lado a lado destaca os novos requisitos de build de C++ e namespace.
+
+51
+00:04:37.000 --> 00:04:44.000
+Aplicações Brownfield sem um arquivo C make lists.text falharão ao compilar módulos da nova arquitetura.
+
+52
+00:04:45.000 --> 00:04:52.000
+A ausência de uma definição de namespace no arquivo build.gradle causará crashes imediatos durante builds com Gradle 8.x.
+
+53
+00:04:52.000 --> 00:05:01.000
+Uma vez que as configurações de build são corrigidas e os insets dinâmicos são aplicados, a aplicação renderiza o conteúdo de forma contínua abaixo do chrome do sistema translúcido.
+
+54
+00:05:01.000 --> 00:05:11.000
+Embora a transição para a API 35 cause impactos em projetos existentes, ela garante que a UI da aplicação seja dinamicamente resiliente a futuros fatores de forma de hardware e atualizações de SO.
+

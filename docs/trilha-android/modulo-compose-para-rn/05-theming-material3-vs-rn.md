@@ -6,11 +6,15 @@ sidebar_position: 5
 
 ## Video Overview
 
-<video width="100%" controls>
+<video width="100%" controls controlsList="nodownload">
   <source src="/trilha-react-native/assets/videos/trilha_android/compose_05_theming_material3_vs_rn.mp4" type="video/mp4">
   <track kind="captions" src="/trilha-react-native/assets/captions/trilha_android/compose_05_theming_material3_vs_rn_en.vtt" srclang="en" label="English" default>
   Your browser does not support the video tag.
 </video>
+
+## Video Overview
+
+> Video for this topic coming soon.
 
 ## The Problem Both Solve
 
@@ -390,6 +394,8 @@ function App() {
 ---
 
 ## Interactive Example
+
+[![Open in Expo Snack](https://img.shields.io/badge/Open%20in-Expo%20Snack-000020?logo=expo)](https://snack.expo.dev/@callstack/react-native-paper-example)
 
 ---
 

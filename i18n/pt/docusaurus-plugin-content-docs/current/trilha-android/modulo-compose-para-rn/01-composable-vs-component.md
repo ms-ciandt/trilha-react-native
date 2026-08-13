@@ -6,7 +6,7 @@ sidebar_position: 1
 
 ## Video Overview
 
-<video width="100%" controls>
+<video width="100%" controls controlsList="nodownload">
   <source src="/trilha-react-native/assets/videos/trilha_android/compose_01_composable_vs_component.mp4" type="video/mp4">
   <track kind="captions" src="/trilha-react-native/assets/captions/trilha_android/compose_01_composable_vs_component.vtt" srclang="pt" label="Português" default>
   Your browser does not support the video tag.
@@ -269,6 +269,8 @@ Ambos virtualizam por padrão — apenas os itens próximos à viewport são mon
 
 ## Exemplo Interativo
 
+[![Abrir no Expo Snack](https://img.shields.io/badge/Abrir%20no-Expo%20Snack-000020?logo=expo)](https://snack.expo.dev/@react-native-community/components-and-props)
+
 ---
 
 ## Materiais de Estudo
@@ -283,7 +285,7 @@ Ambos virtualizam por padrão — apenas os itens próximos à viewport são mon
 ### Interativo
 
 - [Tutorial React — Jogo da Velha](https://react.dev/learn/tutorial-tic-tac-toe)
-- [React Native — Core Components](https://reactnative.dev/docs/components-and-apis) — referência oficial de componentes
+- [Expo Snack — Componentes & Props](https://snack.expo.dev/@react-native-community/components-and-props)
 
 ### Vídeos
 

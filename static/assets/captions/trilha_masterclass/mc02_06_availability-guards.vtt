@@ -1,0 +1,166 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:05.600
+Chamar um turbo module que não foi registrado no seu app vai causar um crash fatal no sistema.
+
+2
+00:00:05.600 --> 00:00:09.920
+Evitar isso é complicado por uma lacuna contra-intuitiva no framework.
+
+3
+00:00:09.920 --> 00:00:14.720
+O registro de turbo modules não inclui um método is available nativo.
+
+4
+00:00:14.720 --> 00:00:19.520
+Para validar um module com segurança, verificamos se a tentativa de recuperá-lo retorna um valor nulo.
+
+5
+00:00:19.520 --> 00:00:24.400
+Para evitar avaliar isso a cada renderização, colocamos essa verificação no escopo do module.
+
+6
+00:00:24.400 --> 00:00:28.400
+Atribuído a uma constante, o resultado é armazenado em cache uma vez durante a importação do arquivo.
+
+7
+00:00:28.400 --> 00:00:33.600
+Armazenar essa verificação em cache antecipadamente é a única maneira confiável de garantir proteção básica contra falhas
+
+8
+00:00:33.600 --> 00:00:36.800
+sem sobrecarregar constantemente o ciclo de renderização da UI.
+
+9
+00:00:36.800 --> 00:00:39.840
+Este diagrama de tela dividida ilustra a co-localização.
+
+10
+00:00:39.840 --> 00:00:44.080
+À esquerda, o arquivo de especificação avalia a constante de disponibilidade,
+
+11
+00:00:44.080 --> 00:00:45.920
+exportando o Boolean para fora.
+
+12
+00:00:45.920 --> 00:00:49.120
+À direita, um componente React consumidor o importa.
+
+13
+00:00:49.120 --> 00:00:53.440
+Se ausente, uma instrução condicional direciona com segurança a interface para um estado de fallback.
+
+14
+00:00:53.440 --> 00:00:55.840
+Estabelecer essa co-localização estrutural
+
+15
+00:00:55.840 --> 00:01:00.480
+impede que a lógica do módulo subjacente polua os componentes de UI consumidores.
+
+16
+00:01:00.480 --> 00:01:05.840
+Uma complicação surge quando um turbo module é desenvolvido estritamente para um único sistema operacional,
+
+17
+00:01:05.840 --> 00:01:07.920
+como um recurso exclusivo para Android.
+
+18
+00:01:07.920 --> 00:01:10.960
+Colocar verificações específicas de SO dentro de um componente consumidor
+
+19
+00:01:10.960 --> 00:01:13.680
+sobrecarrega o ciclo de renderização com lógica de plataforma.
+
+20
+00:01:13.680 --> 00:01:19.360
+Corrigimos isso absorvendo a validação de SO inteiramente na exportação de disponibilidade dos arquivos de spec.
+
+21
+00:01:19.360 --> 00:01:24.240
+A spec absorbe a complexidade, retornando o Boolean simples e limpo de volta para a interface.
+
+22
+00:01:24.560 --> 00:01:28.480
+Um componente de UI só precisa saber se um módulo está pronto para executar.
+
+23
+00:01:28.480 --> 00:01:32.880
+Mantê-lo completamente alheio às razões técnicas pelas quais um módulo pode estar desativado torna o código
+
+24
+00:01:32.880 --> 00:01:37.120
+base previsível. Considere um módulo dependente de hardware, como uma lanterna,
+
+25
+00:01:37.120 --> 00:01:41.840
+existindo no código do app enquanto é executado em um tablet que não possui o hardware físico real.
+
+26
+00:01:41.840 --> 00:01:45.360
+Este diagrama ilustra a validação em dois estágios necessária.
+
+27
+00:01:45.360 --> 00:01:51.040
+O Gate 1 representa a verificação do registro, confirmando que o módulo existe no software.
+
+28
+00:01:51.120 --> 00:01:54.720
+O Gate 2 é a verificação de capacidade para o hardware físico.
+
+29
+00:01:54.720 --> 00:02:00.320
+O app verifica a disponibilidade do software primeiro, antes de consultar o status assíncrono do hardware.
+
+30
+00:02:00.960 --> 00:02:05.920
+Depender apenas das verificações de registro de software para módulos de hardware deixa a aplicação
+
+31
+00:02:05.920 --> 00:02:10.960
+vulnerável às limitações do dispositivo físico. Isso gerencia a verificação imediata do software
+
+32
+00:02:10.960 --> 00:02:16.800
+e a resposta tardia do hardware simultaneamente. Ambos os blocos de lógica estão encapsulados dentro de um custom
+
+33
+00:02:16.800 --> 00:02:23.040
+react hook. Essa estrutura consolida as validações de múltiplas etapas em um único pipeline de saída,
+
+34
+00:02:23.040 --> 00:02:29.120
+passando um estado de pronto unificado para o componente de UI. Esse nível de encapsulamento fornece máxima
+
+35
+00:02:29.120 --> 00:02:34.400
+segurança para a aplicação. Ele oculta a sequência complexa de validação dos componentes front-end,
+
+36
+00:02:34.400 --> 00:02:36.960
+permitindo que os desenvolvedores interajam com segurança com recursos nativos.
+
+37
+00:02:37.760 --> 00:02:42.400
+Este checklist estruturado mapeia as quatro regras principais para implementar guardas de disponibilidade.
+
+38
+00:02:42.960 --> 00:02:50.400
+Primeiro, execute a verificação de nulo. Segundo, faça o cache no escopo do módulo. Terceiro, oculte a lógica de plataforma dentro do
+
+39
+00:02:50.400 --> 00:02:56.880
+arquivo spec e, quarto, utilize verificações de dois níveis para recursos de hardware, aplicando esses padrões precisos
+
+40
+00:02:56.880 --> 00:03:02.240
+de disponibilidade garante proteção universal contra crashes e limpeza arquitetural em todo o
+
+41
+00:03:02.240 --> 00:03:04.240
+qualquer dispositivo.
+

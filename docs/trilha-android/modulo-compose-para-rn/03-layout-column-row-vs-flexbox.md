@@ -6,11 +6,15 @@ sidebar_position: 3
 
 ## Video Overview
 
-<video width="100%" controls>
+<video width="100%" controls controlsList="nodownload">
   <source src="/trilha-react-native/assets/videos/trilha_android/compose_03_layout_column_row_vs_flexbox.mp4" type="video/mp4">
   <track kind="captions" src="/trilha-react-native/assets/captions/trilha_android/compose_03_layout_column_row_vs_flexbox_en.vtt" srclang="en" label="English" default>
   Your browser does not support the video tag.
 </video>
+
+## Video Overview
+
+> Video for this topic coming soon.
 
 ## Layout Systems Side by Side
 
@@ -332,6 +336,8 @@ Learn Flexbox visually with the Flexbox Froggy game — the axes, `justify-conte
 [https://flexboxfroggy.com/](https://flexboxfroggy.com/)
 
 Try this Expo Snack that lets you tweak Flexbox properties live:
+
+[![Open in Expo Snack](https://img.shields.io/badge/Open%20in-Expo%20Snack-000020?logo=expo)](https://snack.expo.dev/@react-native-community/layout-flexbox)
 
 ---
 

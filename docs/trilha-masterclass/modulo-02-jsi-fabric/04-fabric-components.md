@@ -4,7 +4,7 @@ title: "Fabric — Native Components"
 
 # Fabric — Native Components
 
-<video width="100%" controls>
+<video width="100%" controls controlsList="nodownload">
   <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc03_04_fabric-components.mp4" type="video/mp4">
   <track kind="captions" src="/trilha-react-native/assets/captions/trilha_masterclass/mc03_04_fabric-components_en.vtt" srclang="en" label="English" default>
   Your browser does not support the video tag.
@@ -251,6 +251,8 @@ export function MySlider({
 ### Expo Snack — observe Fabric events
 
 This snack demonstrates the event flow from a Fabric component to JS. On Expo Go, native components run through the Fabric bridge:
+
+https://snack.expo.dev/@react-native-community/slider-example
 
 Open React DevTools (shake device → "Open Debugger") and watch props arrive on the Shadow Node.
 

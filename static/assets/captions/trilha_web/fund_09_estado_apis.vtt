@@ -1,0 +1,422 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:04.480
+Você escreve um componente, chama um hook, dispara uma renderização.
+
+2
+00:00:04.480 --> 00:00:08.480
+Seja construindo para um navegador web ou um aplicativo mobile React Native,
+
+3
+00:00:08.480 --> 00:00:12.240
+a sintaxe principal do React permanece completamente idêntica,
+
+4
+00:00:12.240 --> 00:00:15.360
+mas o ambiente que hospeda esse código muda completamente.
+
+5
+00:00:16.160 --> 00:00:19.520
+Navegadores web fornecem uma camada invisível de redes de segurança.
+
+6
+00:00:19.520 --> 00:00:23.760
+Eles gerenciam memória, armazenam dados em cache e gerenciam conexões de rede automaticamente.
+
+7
+00:00:24.320 --> 00:00:27.520
+Um sistema operacional móvel remove tudo isso.
+
+8
+00:00:27.520 --> 00:00:30.720
+No mobile, não há objeto window para se basear.
+
+9
+00:00:30.720 --> 00:00:34.800
+Você perde o armazenamento local, perde os eventos automáticos de foco de aba,
+
+10
+00:00:34.800 --> 00:00:38.240
+e não pode mais presumir que seu usuário tem uma conexão de internet estável.
+
+11
+00:00:38.880 --> 00:00:43.520
+O sucesso no mobile requer substituir manualmente a infraestrutura implícita do navegador
+
+12
+00:00:43.520 --> 00:00:45.280
+por equivalentes móveis explícitos.
+
+13
+00:00:46.000 --> 00:00:49.360
+Este diagrama mostra as três camadas de estado que precisamos gerenciar,
+
+14
+00:00:49.360 --> 00:00:51.120
+local, global e de rede.
+
+15
+00:00:51.760 --> 00:00:57.120
+Para fazer nosso código React prosperar em um celular, precisamos preencher esses espaços em branco no lado mobile,
+
+16
+00:00:57.120 --> 00:01:01.280
+mapeando arquiteturas web para princípios mobile first, camada por camada.
+
+17
+00:01:01.280 --> 00:01:05.680
+Essas arquiteturas de estado web altamente otimizadas continuam sendo nossa fundação.
+
+18
+00:01:05.680 --> 00:01:08.160
+Estamos adaptando-as para um novo host.
+
+19
+00:01:08.160 --> 00:01:09.840
+Quando terminarmos de preencher esse mapa,
+
+20
+00:01:09.840 --> 00:01:13.840
+teremos construído um robusto sistema de estado mobile offline first.
+
+21
+00:01:14.400 --> 00:01:18.880
+Pule esta etapa, e até os componentes React mais elegantemente escritos irão se degradar
+
+22
+00:01:18.880 --> 00:01:22.400
+em uma bagunça frágil, dessincronizada e lenta em dispositivos físicos.
+
+23
+00:01:23.120 --> 00:01:25.280
+Olhando para a primeira linha da nossa matriz,
+
+24
+00:01:25.280 --> 00:01:28.960
+as ferramentas de estado local sobrevivem à transição sem nenhuma modificação.
+
+25
+00:01:28.960 --> 00:01:33.520
+Tanto o useState quanto o useReducer rodam diretamente dentro do espaço de memória do React.
+
+26
+00:01:33.520 --> 00:01:36.160
+Eles não exigem nenhuma adaptação do desenvolvedor web.
+
+27
+00:01:36.720 --> 00:01:38.960
+A API de contexto também é transferida,
+
+28
+00:01:38.960 --> 00:01:41.120
+funcionando de forma idêntica em ambas as plataformas.
+
+29
+00:01:41.600 --> 00:01:45.360
+No entanto, os motores de renderização mobile são muito menos tolerantes a
+
+30
+00:01:45.360 --> 00:01:47.840
+re-renderizações desnecessárias do que motores web como o V8.
+
+31
+00:01:47.840 --> 00:01:51.840
+Se uma atualização de estado no topo de uma árvore de contexto disparar re-renders aninhados,
+
+32
+00:01:51.840 --> 00:01:53.760
+um navegador web pode aguentar firme.
+
+33
+00:01:53.840 --> 00:01:56.480
+Um dispositivo móvel vai travar e perder frames.
+
+34
+00:01:56.480 --> 00:01:59.760
+Portanto, o uso de contexto no mobile exige disciplina rigorosa.
+
+35
+00:01:59.760 --> 00:02:03.920
+Ele deve ser isolado para estados de leitura intensiva e baixa frequência de atualização.
+
+36
+00:02:03.920 --> 00:02:09.040
+Em um app React Native, reserve o contexto exclusivamente para constantes estruturais,
+
+37
+00:02:09.040 --> 00:02:13.200
+alternar um tema de modo escuro, definir uma preferência de i18n e idioma,
+
+38
+00:02:13.200 --> 00:02:15.520
+ou manter uma sessão de autenticação.
+
+39
+00:02:15.520 --> 00:02:18.880
+As ferramentas nessa primeira camada permanecem exatamente as mesmas,
+
+40
+00:02:18.880 --> 00:02:22.400
+mas o hardware que as executa impõe uma margem de erro muito menor.
+
+41
+00:02:23.040 --> 00:02:24.560
+Passando para o estado global,
+
+42
+00:02:24.560 --> 00:02:28.400
+portar uma implementação padrão de zoo-stand para mobile falha imediatamente.
+
+43
+00:02:28.880 --> 00:02:34.160
+A hidratação do estado global falha porque o local storage simplesmente não existe em um sistema operacional mobile.
+
+44
+00:02:34.720 --> 00:02:37.440
+Precisamos de uma nova conexão de banco de dados para persistir nosso estado.
+
+45
+00:02:38.000 --> 00:02:42.640
+Por anos, os desenvolvedores usaram uma ferramenta chamada Async Storage como solução alternativa histórica.
+
+46
+00:02:43.200 --> 00:02:48.320
+Comparando soluções de armazenamento, o Async Storage depende de uma bridge assíncrona lenta.
+
+47
+00:02:48.320 --> 00:02:50.640
+Quando um aplicativo é iniciado e hidrata seu estado,
+
+48
+00:02:50.640 --> 00:02:53.600
+ele aguarda uma promise, bloqueando a UI com mudanças de layout.
+
+49
+00:02:54.240 --> 00:02:58.160
+Arquiteturas mobile modernas substituem isso completamente pelo MMKV.
+
+50
+00:02:58.160 --> 00:03:04.640
+O MMKV armazena dados usando arquivos mapeados em memória e se comunica por meio de uma interface JavaScript em C++.
+
+51
+00:03:04.640 --> 00:03:08.080
+Isso ignora completamente a bridge assíncrona tradicional.
+
+52
+00:03:08.080 --> 00:03:10.640
+O resultado mensurável é uma velocidade extrema.
+
+53
+00:03:10.640 --> 00:03:14.240
+MMKV é até 30 vezes mais rápido que o assíncrono.
+
+54
+00:03:14.240 --> 00:03:17.360
+Essa velocidade de execução permite que ele opere de forma síncrona,
+
+55
+00:03:17.360 --> 00:03:20.640
+tornando-o um substituto verdadeiro e direto para o web storage.
+
+56
+00:03:20.640 --> 00:03:23.680
+Para implementar isso, você mantém seu código zoo-stand existente,
+
+57
+00:03:23.680 --> 00:03:28.320
+e simplesmente substitui o armazenamento local pelo MMKV como back end para seu middleware de persistência.
+
+58
+00:03:28.800 --> 00:03:32.400
+Ignorar a bridge assíncrona é obrigatório para alcançar uma experiência semelhante à web,
+
+59
+00:03:32.400 --> 00:03:36.160
+hidratação de estado instantânea, no momento em que o usuário inicia sua aplicação.
+
+60
+00:03:36.160 --> 00:03:40.160
+A linha final da matriz é o estado de rede, gerenciado pelo TANstack Query.
+
+61
+00:03:40.160 --> 00:03:42.480
+Sem cache HTTP automático,
+
+62
+00:03:42.480 --> 00:03:45.760
+o mobile exige que o desenvolvedor gerencie a revalidação da API,
+
+63
+00:03:45.760 --> 00:03:48.960
+ao contrário dos navegadores que transitam entre abas horizontais planas,
+
+64
+00:03:48.960 --> 00:03:52.320
+apps mobile empurram novas telas para uma pilha vertical no eixo Z,
+
+65
+00:03:52.320 --> 00:03:54.160
+obscurecendo as telas subjacentes.
+
+66
+00:03:54.160 --> 00:03:58.000
+A estratégia padrão de refetch ao focar na janela do TANstack
+
+67
+00:03:58.000 --> 00:04:01.600
+falha completamente em um celular porque abas não existem.
+
+68
+00:04:01.600 --> 00:04:05.680
+Substituímos isso usando o hook use focus effect do React Navigation.
+
+69
+00:04:05.680 --> 00:04:08.320
+Você mapeia explicitamente o gerenciador de foco do TANstack
+
+70
+00:04:08.320 --> 00:04:11.120
+para esses eventos de ciclo de vida de tela mobile nativos.
+
+71
+00:04:11.120 --> 00:04:14.720
+Sempre que um usuário navega para trás e remove uma tela da pilha,
+
+72
+00:04:14.720 --> 00:04:18.080
+a tela recém-revelada revalida instantaneamente quaisquer dados obsoletos.
+
+73
+00:04:18.640 --> 00:04:22.240
+A revalidação de API mobile deve estar vinculada à profundidade espacial da tela,
+
+74
+00:04:22.240 --> 00:04:24.320
+em vez da visibilidade plana da janela.
+
+75
+00:04:24.320 --> 00:04:28.880
+Também precisamos abordar a premissa fundamental da web de uma conexão sempre ativa.
+
+76
+00:04:28.880 --> 00:04:31.760
+A API padrão navigator.online do navegador
+
+77
+00:04:31.760 --> 00:04:34.720
+não consegue detectar com precisão quando um dispositivo entra em um túnel de metrô
+
+78
+00:04:34.720 --> 00:04:36.560
+ou perde o sinal celular.
+
+79
+00:04:36.560 --> 00:04:41.680
+Nos adaptamos integrando a biblioteca nativa at-react native community slash net info.
+
+80
+00:04:41.680 --> 00:04:44.240
+Ao injetar o net info no TANstack Query,
+
+81
+00:04:44.240 --> 00:04:46.800
+o mecanismo de estado monitora ativamente a conectividade,
+
+82
+00:04:46.800 --> 00:04:51.600
+pausando e retomando automaticamente as mutações de dados com base nos verdadeiros estados físicos do hardware.
+
+83
+00:04:51.600 --> 00:04:56.000
+Ao combinar TANstack, MMKV e net info,
+
+84
+00:04:56.000 --> 00:04:59.360
+construímos um cache offline first seguro.
+
+85
+00:04:59.360 --> 00:05:04.080
+O app serve e enfileira dados com segurança mesmo quando o dispositivo está no modo avião.
+
+86
+00:05:04.720 --> 00:05:10.880
+Aplicativos móveis devem tratar o status offline como uma condição operacional padrão esperada,
+
+87
+00:05:10.880 --> 00:05:12.800
+em vez de um estado de erro.
+
+88
+00:05:12.800 --> 00:05:17.680
+Com todas as três camadas traduzidas, nosso mapa arquitetural está completamente preenchido.
+
+89
+00:05:17.680 --> 00:05:20.080
+Este diagrama mostra o fluxo final.
+
+90
+00:05:20.080 --> 00:05:25.280
+TANstack Query e ZooStant roteiam seus dados para um núcleo central MMKV,
+
+91
+00:05:25.280 --> 00:05:28.240
+orquestrado por um listener nativo de informações de rede.
+
+92
+00:05:28.240 --> 00:05:32.960
+Concluímos essa transição simplesmente substituindo a infraestrutura do ambiente,
+
+93
+00:05:32.960 --> 00:05:35.200
+não alterando o React em si.
+
+94
+00:05:35.200 --> 00:05:38.160
+Não inventamos novos paradigmas de gerenciamento de estado.
+
+95
+00:05:38.160 --> 00:05:41.280
+Apenas construímos adaptadores de ambiente rigorosos.
+
+96
+00:05:41.280 --> 00:05:46.960
+O domínio do desenvolvimento cross-platform é definido pelo nosso controle sobre as restrições do ambiente,
+
+97
+00:05:46.960 --> 00:05:50.560
+muito além da memorização inicial de componentes e sintaxe.
+
+98
+00:05:50.560 --> 00:05:56.240
+Substituímos o armazenamento legado assíncrono por execução síncrona com suporte em C++.
+
+99
+00:05:56.240 --> 00:06:01.600
+Vinculamos manualmente a invalidação de cache da API aos ciclos de vida físicos da tela
+
+100
+00:06:01.600 --> 00:06:02.960
+e aos estados reais de rede.
+
+101
+00:06:03.600 --> 00:06:07.280
+O resultado é um sistema que usa padrões familiares do React
+
+102
+00:06:07.280 --> 00:06:11.520
+para entregar performance mobile nativa e confiabilidade offline absoluta.
+
+103
+00:06:12.240 --> 00:06:15.280
+Se você já sabe como construir arquiteturas na web,
+
+104
+00:06:15.280 --> 00:06:18.880
+você possui o conhecimento necessário para construir aplicações mobile de elite.
+
+105
+00:06:19.440 --> 00:06:23.840
+Você só precisa assumir o controle explícito do novo ambiente.
+

@@ -1,0 +1,510 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:07.760
+Veja o que acontece quando uma engrenagem de vidro padronizada e impecável é forçada em um motor de metal complexo e personalizado.
+
+2
+00:00:07.760 --> 00:00:09.600
+Ela se parte instantaneamente.
+
+3
+00:00:09.600 --> 00:00:13.720
+Esse atrito é a realidade exata do desenvolvimento React Native.
+
+4
+00:00:13.720 --> 00:00:16.880
+As atualizações de versões principais são notoriamente frágeis,
+
+5
+00:00:16.880 --> 00:00:21.400
+frequentemente resultando em falhas de build crípticas que paralisam o desenvolvimento.
+
+6
+00:00:21.400 --> 00:00:24.720
+Desenvolvedores passam dias lutando contra dependências faltando,
+
+7
+00:00:24.720 --> 00:00:28.720
+erros de build do iOS impossíveis de rastrear e configurações quebradas,
+
+8
+00:00:28.800 --> 00:00:33.040
+mesmo quando seguem o react native upgrade helper à risca.
+
+9
+00:00:33.040 --> 00:00:37.600
+A causa raiz dessa frustração vem de um equívoco generalizado na indústria
+
+10
+00:00:37.600 --> 00:00:40.560
+sobre o que o upgrade helper realmente oferece.
+
+11
+00:00:40.560 --> 00:00:45.120
+Engenheiros frequentemente tratam a saída das ferramentas como um patch literal linha por linha
+
+12
+00:00:45.120 --> 00:00:48.720
+projetado para ser copiado diretamente em sua base de código específica.
+
+13
+00:00:48.720 --> 00:00:53.440
+Copiar essa sintaxe cegamente age exatamente como nossa engrenagem de vidro incompatível.
+
+14
+00:00:53.440 --> 00:00:56.880
+Isso força um código padronizado em um ambiente personalizado,
+
+15
+00:00:56.880 --> 00:00:59.600
+destruindo imediatamente a infraestrutura customizada.
+
+16
+00:00:59.600 --> 00:01:03.680
+O upgrade helper exibe apenas o delta entre dois projetos
+
+17
+00:01:03.680 --> 00:01:06.080
+completamente vazios e sem modificações.
+
+18
+00:01:06.080 --> 00:01:10.720
+Não há absolutamente nenhum contexto de aplicação real dentro do seu mecanismo.
+
+19
+00:01:10.720 --> 00:01:13.600
+Os nomes dos arquivos que precisam de atualização são os mesmos,
+
+20
+00:01:13.600 --> 00:01:18.400
+mas os arquivos de uma aplicação em produção possuem hierarquias estruturais completamente diferentes,
+
+21
+00:01:18.400 --> 00:01:21.280
+configurações personalizadas e lógica sob medida.
+
+22
+00:01:21.280 --> 00:01:26.560
+Para sobreviver a uma atualização, os engenheiros devem parar de tentar mapear a sintaxe linha por linha,
+
+23
+00:01:26.560 --> 00:01:31.680
+em vez disso, o processo requer traduzir o diff fornecido em intenção semântica.
+
+24
+00:01:31.680 --> 00:01:35.280
+A diferença entre uma atualização tranquila e três dias de inatividade
+
+25
+00:01:35.280 --> 00:01:39.360
+está inteiramente em compreender o que o upgrade helper não mostra.
+
+26
+00:01:39.360 --> 00:01:43.200
+Para entender essas limitações, precisamos observar a arquitetura subjacente
+
+27
+00:01:43.200 --> 00:01:45.280
+que alimenta a interface do upgrade helper,
+
+28
+00:01:45.280 --> 00:01:49.520
+um repositório automatizado chamado rn-diff-perch.
+
+29
+00:01:49.520 --> 00:01:53.200
+Ao observar como esse repositório gera dados a cada novo lançamento,
+
+30
+00:01:53.200 --> 00:01:55.360
+estabelecemos um protocolo seguro.
+
+31
+00:01:55.440 --> 00:01:58.480
+O script de automação executa seu primeiro passo.
+
+32
+00:01:58.480 --> 00:02:01.760
+Ele aciona um comando padrão react native init,
+
+33
+00:02:01.760 --> 00:02:05.280
+gerando um projeto completamente em branco fixado na versão mais antiga.
+
+34
+00:02:05.920 --> 00:02:10.320
+Para o segundo passo, o script executa o mesmo comando de inicialização,
+
+35
+00:02:10.320 --> 00:02:12.720
+mas tem como alvo o novo release do react native.
+
+36
+00:02:13.520 --> 00:02:18.080
+Por fim, o sistema executa uma comparação direta entre esses templates intocados
+
+37
+00:02:18.080 --> 00:02:19.200
+para criar um arquivo de patch.
+
+38
+00:02:19.840 --> 00:02:21.920
+Em nenhum momento nesse pipeline automatizado,
+
+39
+00:02:21.920 --> 00:02:24.480
+o sistema analisa deep links personalizados,
+
+40
+00:02:24.480 --> 00:02:27.760
+handlers de push notification, ou arquiteturas de gerenciamento de estado?
+
+41
+00:02:28.480 --> 00:02:33.040
+Contraste essa saída limpa e vazia com uma aplicação brownfield real,
+
+42
+00:02:33.040 --> 00:02:37.840
+que contém anos de substituições nativas complexas e integrações personalizadas de terceiros.
+
+43
+00:02:38.480 --> 00:02:41.520
+Como o diff gerado é puramente baseado em templates,
+
+44
+00:02:41.520 --> 00:02:44.400
+um número de linha específico destacado no upgrade helper
+
+45
+00:02:44.400 --> 00:02:47.360
+quase nunca corresponderá ao número de linha dentro de um projeto real.
+
+46
+00:02:47.920 --> 00:02:51.440
+Este é um limite intencional da capacidade da ferramenta, não uma falha.
+
+47
+00:02:51.920 --> 00:02:55.280
+O assistente fornece os ingredientes brutos para uma atualização,
+
+48
+00:02:55.280 --> 00:02:56.560
+não a receita final.
+
+49
+00:02:57.200 --> 00:03:00.480
+Como o diff mostra exclusivamente o que o template mudou,
+
+50
+00:03:00.480 --> 00:03:05.200
+o desenvolvedor é o único responsável por projetar essas mudanças na realidade com segurança.
+
+51
+00:03:06.000 --> 00:03:09.440
+Como os desenvolvedores têm a responsabilidade por essa projeção,
+
+52
+00:03:09.440 --> 00:03:13.120
+eles devem classificar os arquivos do diff em categorias distintas de risco
+
+53
+00:03:13.120 --> 00:03:15.120
+antes de escrever uma única linha de código.
+
+54
+00:03:15.760 --> 00:03:18.000
+A primeira coluna é a categoria um.
+
+55
+00:03:18.000 --> 00:03:18.880
+Sempre aplicar.
+
+56
+00:03:19.520 --> 00:03:21.600
+Esses são arquivos puramente mecânicos,
+
+57
+00:03:21.600 --> 00:03:24.240
+como Gradle Properties e o Package JSON,
+
+58
+00:03:24.240 --> 00:03:25.680
+que controlam o ambiente de build.
+
+59
+00:03:26.320 --> 00:03:28.720
+Eles devem ser replicados exatamente como mostrado.
+
+60
+00:03:29.440 --> 00:03:33.120
+Deixar de aplicar esses mecanicamente traz consequências graves.
+
+61
+00:03:33.120 --> 00:03:37.040
+Sobrescrever esses arquivos diretamente com o template do upgrade helper
+
+62
+00:03:37.040 --> 00:03:40.720
+vai silenciosamente apagar as flags de activity personalizadas do projeto,
+
+63
+00:03:40.720 --> 00:03:44.160
+permissões específicas e deployment targets cuidadosamente ajustados.
+
+64
+00:03:44.880 --> 00:03:46.320
+Para a categoria dois,
+
+65
+00:03:46.320 --> 00:03:49.920
+os desenvolvedores abrem seus arquivos locais lado a lado com o diff
+
+66
+00:03:49.920 --> 00:03:52.400
+e mesclar cirurgicamente a intenção da mudança.
+
+67
+00:03:53.040 --> 00:03:57.200
+O grupo final é a categoria três, revisar e ignorar.
+
+68
+00:03:57.200 --> 00:04:02.480
+Esses são arquivos de ferramentas onde sua configuração existente substitui completamente o template padrão.
+
+69
+00:04:02.480 --> 00:04:06.720
+Templates de teste padrão ou regras de linting geradas devem ser ignorados completamente
+
+70
+00:04:06.720 --> 00:04:08.720
+se conflitarem com seu pipeline estabelecido.
+
+71
+00:04:09.280 --> 00:04:13.840
+Arquivos como o Metro config exigirão atualizações estruturais específicas do diff,
+
+72
+00:04:13.840 --> 00:04:18.320
+mas você deve absolutamente preservar seus plugins personalizados e aliases de caminho existentes.
+
+73
+00:04:18.880 --> 00:04:20.880
+Para resumir o sprint de triagem,
+
+74
+00:04:20.880 --> 00:04:23.440
+arquivos mecânicos quebram builds se ignorados.
+
+75
+00:04:23.760 --> 00:04:26.240
+Arquivos semânticos quebram funcionalidades se sobrescritos.
+
+76
+00:04:26.800 --> 00:04:29.440
+Arquivos de tooling quebram a experiência se aceitos.
+
+77
+00:04:30.000 --> 00:04:32.320
+A navegação bem-sucedida pelo upgrade helper
+
+78
+00:04:32.320 --> 00:04:36.880
+requer categorizar com precisão cada arquivo antes de tentar qualquer alteração.
+
+79
+00:04:36.880 --> 00:04:39.840
+Tratar um arquivo de configuração nativa altamente semântico
+
+80
+00:04:39.840 --> 00:04:41.920
+como um simples bump de versão mecânico
+
+81
+00:04:42.000 --> 00:04:44.160
+é a principal causa de regressões de atualização.
+
+82
+00:04:44.720 --> 00:04:47.040
+Podemos passar da teoria para a execução
+
+83
+00:04:47.040 --> 00:04:53.280
+aplicando essa metodologia de triagem diretamente na atualização do React Native 0.75 para o 0.76.
+
+84
+00:04:53.280 --> 00:04:57.040
+Começamos focando em um arquivo Android da categoria dois,
+
+85
+00:04:57.040 --> 00:04:59.040
+o build.gradle do nível do app.
+
+86
+00:04:59.680 --> 00:05:03.440
+Olhando neste gráfico comparando as distribuições de API do Android,
+
+87
+00:05:03.440 --> 00:05:09.680
+o diff do template 0.76 mostra um aumento necessário para a versão alvo do SDK 35
+
+88
+00:05:09.680 --> 00:05:11.840
+e versão mínima do SDK 24.
+
+89
+00:05:12.400 --> 00:05:15.200
+O impacto semântico desses números é significativo.
+
+90
+00:05:15.760 --> 00:05:21.520
+Migrar para o SDK 35 ativa obrigatoriamente a UI edge-to-edge do Android 15,
+
+91
+00:05:21.520 --> 00:05:24.800
+o que imediatamente quebra as cores de fundo padrão da status bar.
+
+92
+00:05:25.440 --> 00:05:31.920
+Aumentar o SDK mínimo para 24 remove permanentemente o suporte para todos os dispositivos Android 7.0.
+
+93
+00:05:31.920 --> 00:05:35.760
+Você deve verificar seus próprios dados de analytics de usuários antes de aplicar essa mudança.
+
+94
+00:05:36.560 --> 00:05:42.000
+Mudando o foco para iOS, abordamos o arquivo de categoria dois mais crítico do projeto,
+
+95
+00:05:42.000 --> 00:05:43.360
+appdelegate.swift.
+
+96
+00:05:44.000 --> 00:05:47.040
+Este diagrama ilustra o fluxo de trabalho semântico perfeitamente.
+
+97
+00:05:47.520 --> 00:05:50.800
+Temos que identificar o que o diff está fazendo operacionalmente,
+
+98
+00:05:50.800 --> 00:05:52.800
+em vez de olhar para o que ele diz literalmente.
+
+99
+00:05:53.440 --> 00:05:58.480
+No 0.76, RCT app delegate se torna a nova classe base.
+
+100
+00:05:58.480 --> 00:06:02.880
+Ele assume completamente a inicialização do RCT host,
+
+101
+00:06:02.880 --> 00:06:06.160
+gerencia a montagem de superfícies e lida com o ciclo de vida da aplicação.
+
+102
+00:06:06.720 --> 00:06:11.120
+O diff literal simplesmente mostra a exclusão do código de configuração manual da janela.
+
+103
+00:06:11.120 --> 00:06:14.560
+A intenção semântica é que a classe base agora gerencia a janela.
+
+104
+00:06:15.040 --> 00:06:18.480
+Portanto, a configuração manual deve ser removida da sua base de código,
+
+105
+00:06:18.480 --> 00:06:21.520
+mesmo que sua sintaxe existente não se pareça em nada com o template.
+
+106
+00:06:22.000 --> 00:06:25.440
+A regra para aplicações personalizadas daqui para frente é específica.
+
+107
+00:06:25.440 --> 00:06:29.120
+Se o app requer lógica de janela personalizada ou root view controllers,
+
+108
+00:06:29.120 --> 00:06:34.320
+os engenheiros agora devem sobrescrever o método create root view controller em vez de escrevê-lo do zero.
+
+109
+00:06:34.880 --> 00:06:37.680
+Ao mesclar essas novas classes base do React Native,
+
+110
+00:06:37.680 --> 00:06:41.280
+o desenvolvedor deve preservar rigorosamente seu próprio tratamento de deep link personalizado
+
+111
+00:06:41.280 --> 00:06:43.120
+e configurações de notificações push.
+
+112
+00:06:43.680 --> 00:06:48.640
+A tradução semântica garante que essas enormes atualizações arquiteturais sejam absorvidas com segurança
+
+113
+00:06:48.640 --> 00:06:51.280
+sem romper a infraestrutura personalizada do aplicativo.
+
+114
+00:06:51.280 --> 00:06:57.680
+Ambientes corporativos e pipelines de CI frequentemente exigem a aplicação desses diffs complexos offline
+
+115
+00:06:57.680 --> 00:07:00.240
+sem depender do upgrade helper baseado na web.
+
+116
+00:07:00.800 --> 00:07:08.240
+A capacidade CLI do RN-diff purge resolve isso gerando arquivos de patch locais para inspeção offline,
+
+117
+00:07:08.240 --> 00:07:10.960
+permitindo uma aplicação git padrão de três vias.
+
+118
+00:07:11.680 --> 00:07:15.520
+Uma vez que todos os merges manuais e patches automatizados estejam concluídos,
+
+119
+00:07:15.520 --> 00:07:19.040
+um protocolo rigoroso de verificação de sanidade é obrigatório antes da compilação.
+
+120
+00:07:19.600 --> 00:07:25.520
+Os desenvolvedores devem executar uma sequência específica para limpar artefatos antigos, executar um Gradle clean,
+
+121
+00:07:25.520 --> 00:07:30.960
+execute um novo pod install e inicie um novo metro bundler com o cache completamente resetado.
+
+122
+00:07:31.680 --> 00:07:36.720
+Tentar compilar a aplicação no Xcode ou Android Studio antes de limpar esses caches
+
+123
+00:07:36.720 --> 00:07:41.040
+resultará em falsos positivos que mascaram completamente um upgrade bem-sucedido.
+
+124
+00:07:41.760 --> 00:07:46.080
+Essa progressão clara e contínua é o resultado de uma metodologia adequada.
+
+125
+00:07:46.080 --> 00:07:50.880
+Ao abandonar o patching literal e aplicar uma tradução semântica estrita,
+
+126
+00:07:50.880 --> 00:07:55.200
+desenvolvedores pegam um processo notoriamente frágil e o transformam em um
+
+127
+00:07:55.200 --> 00:07:56.800
+fluxo de trabalho previsível e estruturado.
+

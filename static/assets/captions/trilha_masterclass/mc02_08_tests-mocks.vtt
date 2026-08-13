@@ -1,0 +1,202 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:04.200
+Este terminal mostra um problema comum no desenvolvimento React Native,
+
+2
+00:00:04.200 --> 00:00:08.500
+o conjunto de testes quebrando com um erro de tipo no Get Enforcing
+
+3
+00:00:08.500 --> 00:00:10.700
+antes de uma única asserção ser executada.
+
+4
+00:00:10.700 --> 00:00:14.500
+Simplesmente roda no node, sem o runtime nativo do dispositivo.
+
+5
+00:00:14.500 --> 00:00:17.000
+Por causa disso, a conexão quebra.
+
+6
+00:00:17.000 --> 00:00:22.000
+Este crash no tempo de carregamento ocorre no momento em que o arquivo importa e chama o registro.
+
+7
+00:00:22.000 --> 00:00:25.700
+Se falhar, o conjunto de testes para antes de chegar aos seus testes.
+
+8
+00:00:25.700 --> 00:00:29.900
+Para corrigir isso, precisamos interceptar essas importações usando Mox.
+
+9
+00:00:30.100 --> 00:00:34.600
+Isso nos permite contornar o runtime ausente e chegar a um estado de sucesso.
+
+10
+00:00:34.600 --> 00:00:39.400
+Abra seu projeto no seu editor de código para que você possa implementar essas estratégias conforme avançamos.
+
+11
+00:00:39.400 --> 00:00:42.400
+Sem fazer a ponte sobre essa lacuna de runtime no ponto de importação,
+
+12
+00:00:42.400 --> 00:00:46.600
+o conjunto de testes permanece incapaz de carregar os componentes que você precisa testar.
+
+13
+00:00:46.600 --> 00:00:49.100
+A Estratégia 1 é o mock manual.
+
+14
+00:00:49.100 --> 00:00:54.400
+Esta é a abordagem direta quando você quer isolar um único módulo e suas dependências específicas.
+
+15
+00:00:54.400 --> 00:00:58.500
+No seu editor, encontre o diretório que contém a spec do seu turbo module.
+
+16
+00:00:58.500 --> 00:01:02.900
+Crie uma pasta chamada underscore underscore mox underscore underscore.
+
+17
+00:01:02.900 --> 00:01:07.000
+Dentro dessa pasta, crie um arquivo espelhando o nome do seu spec.
+
+18
+00:01:07.000 --> 00:01:11.500
+Desse arquivo, exporte um objeto fictício para atuar como substituto.
+
+19
+00:01:11.500 --> 00:01:16.100
+O sistema de módulos agora verá esse arquivo e o usará para satisfazer o import.
+
+20
+00:01:16.100 --> 00:01:20.200
+Isso evita que o registro nativo real seja chamado durante o teste.
+
+21
+00:01:20.200 --> 00:01:25.300
+Se você executar seus testes agora, o erro Get Enforcing para este módulo deve ser resolvido.
+
+22
+00:01:25.400 --> 00:01:30.200
+O mocking localizado é uma forma precisa de neutralizar dependências nativas isoladas
+
+23
+00:01:30.200 --> 00:01:33.200
+sem alterar como o restante da aplicação é testada.
+
+24
+00:01:33.200 --> 00:01:38.800
+Embora o mock manual funcione para arquivos únicos, projetos com dezenas de módulos nativos enfrentam um peso de manutenção
+
+25
+00:01:38.800 --> 00:01:41.200
+se cada spec exigir sua própria pasta.
+
+26
+00:01:41.200 --> 00:01:45.100
+A Estratégia 2 usa um mock de registro global para automatizar isso.
+
+27
+00:01:45.100 --> 00:01:49.600
+Comece criando um arquivo just.setup.ts na raiz do seu projeto.
+
+28
+00:01:49.600 --> 00:01:53.100
+Neste arquivo, faça o mock do turbo module registry diretamente.
+
+29
+00:01:53.200 --> 00:01:59.800
+Isso garante que qualquer chamada ao Get Enforcing em todo o aplicativo receba um objeto mock de fallback automaticamente.
+
+30
+00:01:59.800 --> 00:02:04.600
+Dentro deste mock, inclua uma mensagem de erro como module is not registered.
+
+31
+00:02:04.600 --> 00:02:09.800
+Isso alerta você imediatamente se um novo módulo for adicionado sem sua implementação específica.
+
+32
+00:02:09.800 --> 00:02:17.500
+Para finalizar a configuração, vincule este arquivo ao seu just.config.js adicionando seu caminho ao array de arquivos de configuração.
+
+33
+00:02:17.500 --> 00:02:21.500
+Usar um arquivo de configuração global garante que, conforme seu projeto cresce,
+
+34
+00:02:21.500 --> 00:02:25.800
+cada módulo nativo seja contabilizado em um único local central.
+
+35
+00:02:25.800 --> 00:02:28.500
+Também devemos considerar os testes de snapshot.
+
+36
+00:02:28.500 --> 00:02:33.600
+Módulos nativos retornam dados específicos do dispositivo, como dimensões de tela ou fusos horários.
+
+37
+00:02:33.600 --> 00:02:39.800
+Esses valores dinâmicos fazem os testes de snapshot falharem sempre que são executados em uma máquina com configurações locais diferentes.
+
+38
+00:02:39.800 --> 00:02:43.600
+Para evitar isso, defina valores estáticos fixos no seu mock.
+
+39
+00:02:43.600 --> 00:02:51.400
+Definir uma propriedade como largura de tela para um número fixo como 1080 garante que o snapshot permaneça idêntico em todos os ambientes.
+
+40
+00:02:51.500 --> 00:02:54.300
+Esta matriz de framework ajuda a escolher sua estratégia.
+
+41
+00:02:54.300 --> 00:02:57.500
+Use a estratégia 1 ou 2 para mocks básicos.
+
+42
+00:02:57.500 --> 00:03:01.300
+Para chamadas de registro de nível superior, use o mock de factory da estratégia 3.
+
+43
+00:03:01.300 --> 00:03:06.700
+Para lógica de negócios, a abstração de serviço da estratégia 4 encapsula completamente o módulo nativo.
+
+44
+00:03:06.700 --> 00:03:13.700
+Lidar com testes de TurboModules é uma questão de escolher a camada de abstração que corresponde à escala e aos requisitos de lógica da sua base de código.
+
+45
+00:03:13.700 --> 00:03:17.200
+Agora execute seu comando de teste no terminal para verificar as alterações.
+
+46
+00:03:17.200 --> 00:03:19.300
+O terminal agora mostra uma execução limpa.
+
+47
+00:03:19.400 --> 00:03:23.100
+As falhas de tempo de carregamento desapareceram, substituídas por indicadores de aprovação.
+
+48
+00:03:23.100 --> 00:03:30.600
+Ao interceptar essas importações nativas, você criou um ambiente de teste confiável que funciona dentro das limitações do runtime do Node.
+
+49
+00:03:30.600 --> 00:03:33.900
+Para saber mais, consulte o JestGuide oficial para React Native
+
+50
+00:03:33.900 --> 00:03:38.400
+ou examine os testes de TurboModules do mundo real no repositório do Async Storage.
+

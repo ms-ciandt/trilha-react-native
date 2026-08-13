@@ -6,11 +6,15 @@ sidebar_position: 3
 
 ## Video Overview
 
-<video width="100%" controls>
+<video width="100%" controls controlsList="nodownload">
   <source src="/trilha-react-native/assets/videos/trilha_android/fund_03_rn_core_components.mp4" type="video/mp4">
   <track kind="captions" src="/trilha-react-native/assets/captions/trilha_android/fund_03_rn_core_components_en.vtt" srclang="en" label="English" default>
   Your browser does not support the video tag.
 </video>
+
+## Video Overview
+
+> Video for this topic coming soon.
 
 ## There Is No XML Here
 
@@ -379,6 +383,8 @@ function Screen() {
 ---
 
 ## Interactive Example
+
+[![Open in Expo Snack](https://img.shields.io/badge/Open%20in-Expo%20Snack-000020?logo=expo)](https://snack.expo.dev/@react-native-community/core-components-and-apis)
 
 ---
 

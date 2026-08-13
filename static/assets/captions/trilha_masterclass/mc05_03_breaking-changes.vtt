@@ -1,0 +1,246 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:12.000
+Você atualiza a versão para 0.76, executa o comando de build na sua base de código legada do React Native e imediatamente bate em uma parede de falhas catastróficas de compilação.
+
+2
+00:00:12.000 --> 00:00:18.000
+O instinto padrão é tratar esses erros como um único conflito de código facilmente rastreável.
+
+3
+00:00:18.000 --> 00:00:22.000
+Você assume que um pacote está desatualizado ou que uma função foi depreciada.
+
+4
+00:00:22.000 --> 00:00:33.000
+Então você vasculha o log da cadeia JavaScript, mas os crashes no nível de arquitetura que estão inundando seu terminal não serão resolvidos corrigindo um erro de sintaxe na sua camada JavaScript.
+
+5
+00:00:33.000 --> 00:00:42.000
+Para que um build do React Native 0.76 compile, você deve abandonar a ideia de que está trabalhando dentro de um único framework monolítico.
+
+6
+00:00:42.000 --> 00:00:52.000
+Essas falhas se originam de vetores completamente separados e ocultos. Um bundle de aplicação React Native opera em três planos de execução independentes.
+
+7
+00:00:52.000 --> 00:01:01.000
+O framework se divide em três camadas distintas: a superfície da API JavaScript, o sistema de build do Android e o sistema de build do iOS.
+
+8
+00:01:01.000 --> 00:01:10.000
+Por causa dessa isolação estrutural, uma única atualização pode destruir o plano do iOS enquanto as camadas do Android e JavaScript permanecem perfeitamente estáveis.
+
+9
+00:01:10.000 --> 00:01:21.000
+Para entender por que as atualizações falham, trabalharemos de forma retroativa a partir da versão 0.76, desconstruindo as mudanças específicas de alto impacto em cada uma dessas três camadas.
+
+10
+00:01:21.000 --> 00:01:28.000
+Adotar essa perspectiva de três camadas permite isolar falhas e tratá-las como tarefas de engenharia distintas.
+
+11
+00:01:28.000 --> 00:01:36.000
+Começaremos pela camada superior, a camada de API JavaScript, e isolaremos uma quebra específica introduzida na versão 0.74.
+
+12
+00:01:37.000 --> 00:01:45.000
+Este fluxograma ilustra o novo comportamento do Metro Bundler. O roteador respeita estritamente o campo exports no package.json de uma biblioteca.
+
+13
+00:01:45.000 --> 00:01:55.000
+Quando bibliotecas de terceiros configuram exports diferentes para node versus react native, o tráfego é direcionado por um caminho incorreto, resultando em um erro fatal de módulo não encontrado.
+
+14
+00:01:55.000 --> 00:02:03.000
+Bibliotecas anteriormente estáveis passarão a lançar erros de arquivo ausente abruptamente logo após uma atualização, por causa dessa mudança invisível na resolução de módulos.
+
+15
+00:02:03.000 --> 00:02:12.000
+Resolver quebras nesse nível exige ir além da sua própria sintaxe para realizar uma auditoria estrutural do roteamento interno dentro das suas dependências de terceiros.
+
+16
+00:02:12.000 --> 00:02:20.000
+Descendo para a camada de build nativa do Android, encontramos uma imposição estrutural que começou na versão 0.73.
+
+17
+00:02:20.000 --> 00:02:23.000
+O JavaScript Core não é mais empacotado com o React Native.
+
+18
+00:02:23.000 --> 00:02:27.000
+O Hermes agora é o único motor obrigatório para o framework.
+
+19
+00:02:27.000 --> 00:02:34.000
+Se sua configuração de build legada define explicitamente enable Hermes como false, seu build falhará instantaneamente.
+
+20
+00:02:34.000 --> 00:02:37.000
+Simplesmente não há mais nenhum motor alternativo para processar o bundle.
+
+21
+00:02:37.000 --> 00:02:44.000
+Avançando para a versão 0.76, o framework exige como alvo o Android API35.
+
+22
+00:02:44.000 --> 00:02:53.000
+O API35 introduz layouts edge-to-edge obrigatórios, as barras do sistema se expandem, fazendo com que elementos de UI legados se sobreponham à área de conteúdo segura.
+
+23
+00:02:53.000 --> 00:03:00.000
+Definir cores de fundo explícitas via comando ou depender de paddings fixos no código agora falhará silenciosamente ou causará recortes visuais.
+
+24
+00:03:00.000 --> 00:03:09.000
+A versão 0.76 também introduz uma mudança arquitetural específica para Android. A React activity agora expõe o React host como um método público.
+
+25
+00:03:09.000 --> 00:03:18.000
+Se o seu código acessa o host via reflexão ou depende de delegates legados, você deve reescrever explicitamente essas integrações para usar essa nova API pública.
+
+26
+00:03:19.000 --> 00:03:28.000
+Corrigir a camada Android requer modificações profundas na renderização de UI no nível do sistema operacional e nos scripts de build, operações completamente desconectadas da sua lógica JavaScript.
+
+27
+00:03:28.000 --> 00:03:36.000
+Nos voltamos agora para o plano arquitetural final, o sistema de build nativo do iOS, especificamente as atualizações lançadas na versão 0.75.
+
+28
+00:03:36.000 --> 00:03:39.000
+O template do projeto mudou sua base.
+
+29
+00:03:39.000 --> 00:03:45.000
+O framework agora usa Swift como padrão em vez de Objective-C como linguagem principal para o app delegate.
+
+30
+00:03:45.000 --> 00:03:47.000
+Há uma nuance importante aqui.
+
+31
+00:03:47.000 --> 00:03:56.000
+Configurações legadas em Objective-C usando arquivos .MM ainda compilarão durante a atualização inicial, evitando quebras imediatas, mas isso cria uma fratura adiada.
+
+32
+00:03:56.000 --> 00:04:08.000
+Como vemos com essas peças de quebra-cabeça se conectando, tentar misturar Swift e Objective-C++ em futuras adições de código nativo exige atualizações manuais precisas no bridging header.
+
+33
+00:04:08.000 --> 00:04:17.000
+Embora sua camada iOS possa sobreviver à compilação no primeiro dia, ignorar essa mudança de template planta uma bomba-relógio para quaisquer integrações nativas futuras.
+
+34
+00:04:17.000 --> 00:04:24.000
+A versão 0.76 substitui a base central que conecta seu código JavaScript aos sistemas nativos.
+
+35
+00:04:24.000 --> 00:04:27.000
+A nova arquitetura agora está ativada por padrão.
+
+36
+00:04:27.000 --> 00:04:32.000
+Este diagrama mostra a eliminação completa da RCT bridge legada.
+
+37
+00:04:32.000 --> 00:04:39.000
+O nó antigo é substituído por caminhos diretos, react host para Android e RCT host para iOS.
+
+38
+00:04:39.000 --> 00:04:41.000
+Isso introduz um risco imediato.
+
+39
+00:04:41.000 --> 00:04:47.000
+Dependências não migradas para turbo modules são forçadas a passar por uma camada de interoperabilidade temporária mais lenta.
+
+40
+00:04:47.000 --> 00:04:52.000
+Bibliotecas que dependem de integrações nativas profundas não podem usar essa camada de interoperabilidade.
+
+41
+00:04:52.000 --> 00:04:57.000
+Executá-los através da arquitetura antiga vai provocar crashes catastróficos na aplicação.
+
+42
+00:04:57.000 --> 00:05:02.000
+A versão 0.76 impõe uma realidade severa na sua árvore de dependências.
+
+43
+00:05:02.000 --> 00:05:09.000
+Uma biblioteca precisa ser modernizada para turbo modules, ou ela se torna uma responsabilidade estrutural ativa para toda a aplicação.
+
+44
+00:05:09.000 --> 00:05:17.000
+Saber que as quebras ocorrem em três camadas isoladas é praticamente inútil, a menos que você saiba exatamente onde encontrar a documentação para corrigi-las.
+
+45
+00:05:17.000 --> 00:05:22.000
+Dados cruciais de atualização estão espalhados por quatro fontes distintas e desvinculadas.
+
+46
+00:05:22.000 --> 00:05:25.000
+Este fluxograma mapeia a hierarquia de diagnóstico adequada.
+
+47
+00:05:25.000 --> 00:05:30.000
+O change log oficial é a principal fonte primária absoluta para breaking changes estritas,
+
+48
+00:05:30.000 --> 00:05:34.000
+seguido imediatamente pelas discussões do working group para identificar bugs do release candidate.
+
+49
+00:05:34.000 --> 00:05:38.000
+A partir daí, utilize as tags de release específicas do GitHub para uma verificação rápida de impacto
+
+50
+00:05:38.000 --> 00:05:44.000
+e reserve o meta-engineering blog especificamente para entender a intenção arquitetural por trás das mudanças.
+
+51
+00:05:44.000 --> 00:05:52.000
+Uma atualização bem-sucedida requer consultar a fonte correta de verdade com base em qual camada arquitetural está falhando, eliminando buscas cegas nos seus stack traces.
+
+52
+00:05:52.000 --> 00:05:59.000
+Antes de escrever uma única linha de código, você deve avaliar sua base de código em relação a uma matriz de impacto de breaking changes.
+
+53
+00:05:59.000 --> 00:06:03.000
+Essa matriz permite calcular o esforço de migração antecipadamente.
+
+54
+00:06:03.000 --> 00:06:12.000
+Contrastando correções simples de uma linha, como deletar um toggle legado do Hermes, com reformulações de alto esforço, como migrar código personalizado para TurboModules.
+
+55
+00:06:12.000 --> 00:06:16.000
+O gargalo final de execução são as dependências dos seus pacotes.
+
+56
+00:06:16.000 --> 00:06:25.000
+Resolver manualmente conflitos de dependências puras em toda essa arquitetura de camadas é matematicamente ineficiente e altamente propenso a erros humanos.
+
+57
+00:06:25.000 --> 00:06:27.000
+Para resolver isso, você precisa de automação.
+
+58
+00:06:27.000 --> 00:06:32.000
+Especificamente, a ferramenta de linha de comando at-rnxkit-slash-align-debs da Microsoft.
+
+59
+00:06:32.000 --> 00:06:36.000
+O alinhador escaneia programaticamente toda a sua árvore de dependências.
+
+60
+00:06:36.000 --> 00:06:44.000
+Ele identifica versões de pacotes incompatíveis e as corrige automaticamente, alinhando seu projeto com os requisitos corretos para a versão 0.76.
+
+61
+00:06:44.000 --> 00:06:56.000
+Ao combinar o modelo mental de camada de teste com alinhamento automatizado rigoroso, as equipes de engenharia podem navegar pela atualização do React Native 0.76 como uma operação controlada e previsível.
+

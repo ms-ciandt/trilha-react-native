@@ -1,0 +1,426 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:04.000
+No desenvolvimento Android tradicional, você constrói interfaces de usuário
+
+2
+00:00:04.000 --> 00:00:09.000
+escrevendo XML de layout e dando vida a ele usando um layout inflator.
+
+3
+00:00:09.000 --> 00:00:13.000
+Esse processo de compilação gera as classes R.layout,
+
+4
+00:00:13.000 --> 00:00:16.000
+incorporando sua estrutura de UI diretamente no build nativo.
+
+5
+00:00:16.000 --> 00:00:20.000
+O React Native não utiliza esse pipeline de inflação XML.
+
+6
+00:00:20.000 --> 00:00:24.000
+Não há inflator de layout nem geração de R.layout.
+
+7
+00:00:24.000 --> 00:00:29.000
+Para muitos desenvolvedores nativos, essa ausência de XML gera uma suposição.
+
+8
+00:00:29.000 --> 00:00:35.000
+Se o framework não está inflando layouts, ele deve estar pintando elementos web em um canvas oculto.
+
+9
+00:00:35.000 --> 00:00:40.000
+Essa suposição está incorreta. O React Native não renderiza em uma web view.
+
+10
+00:00:40.000 --> 00:00:43.000
+Ele produz widgets Android nativos reais na tela.
+
+11
+00:00:43.000 --> 00:00:47.000
+Desenvolver para React Native significa remover o intermediário XML
+
+12
+00:00:47.000 --> 00:00:50.000
+e interagir com pixels nativos através do código.
+
+13
+00:00:50.000 --> 00:00:53.000
+Historicamente, o React Native se comunicava com a camada nativa
+
+14
+00:00:53.000 --> 00:00:55.000
+através de uma ponte JSON assíncrona,
+
+15
+00:00:55.000 --> 00:00:58.000
+serializando e desserializando cada comando de layout,
+
+16
+00:00:58.000 --> 00:01:01.000
+o que criava um gargalo de desempenho.
+
+17
+00:01:01.000 --> 00:01:05.000
+Essa bridge foi substituída por comunicação síncrona direta.
+
+18
+00:01:05.000 --> 00:01:08.000
+Isso é impulsionado pelo Fabric, o novo renderizador C++,
+
+19
+00:01:08.000 --> 00:01:11.000
+e o JavaScript interface, ou JSI,
+
+20
+00:01:11.000 --> 00:01:15.000
+que atua como o tecido conectivo entre os dois ambientes.
+
+21
+00:01:15.000 --> 00:01:18.000
+Agora, quando você escreve uma tag JSX/view,
+
+22
+00:01:18.000 --> 00:01:21.000
+ela percorre esse canal JSI síncrono
+
+23
+00:01:21.000 --> 00:01:26.000
+e o Fabric aloca um Android.view.view real na memória.
+
+24
+00:01:26.000 --> 00:01:29.000
+Enquanto o modelo de programação muda de imperativo para declarativo,
+
+25
+00:01:29.000 --> 00:01:31.000
+o alvo permanece o mesmo.
+
+26
+00:01:31.000 --> 00:01:34.000
+Você ainda está manipulando uma árvore de views do Android,
+
+27
+00:01:34.000 --> 00:01:38.000
+tornando seu conhecimento existente de widgets um mapa direto para a nova sintaxe.
+
+28
+00:01:38.000 --> 00:01:41.000
+Para mapear isso, começamos no container raiz da sua aplicação,
+
+29
+00:01:41.000 --> 00:01:44.000
+o nível base que contém todos os outros elementos.
+
+30
+00:01:44.000 --> 00:01:47.000
+No Android, você escolhe entre containers estruturais específicos,
+
+31
+00:01:47.000 --> 00:01:50.000
+como linear layout para empilhamento sequencial,
+
+32
+00:01:50.000 --> 00:01:53.000
+ou constraint layout para posicionamento relativo.
+
+33
+00:01:53.000 --> 00:01:56.000
+O React Native substitui esses diversos grupos de views
+
+34
+00:01:56.000 --> 00:01:58.000
+por um componente genérico, a view.
+
+35
+00:01:58.000 --> 00:02:00.000
+Funcionando como um frame layout,
+
+36
+00:02:00.000 --> 00:02:03.000
+este componente tem como padrão a direção de coluna vertical,
+
+37
+00:02:03.000 --> 00:02:06.000
+desempenhando o mesmo papel que um LinearLayout vertical.
+
+38
+00:02:06.000 --> 00:02:09.000
+Em vez de definir coordenadas relacionais por widget,
+
+39
+00:02:09.000 --> 00:02:13.000
+toda a lógica espacial é tratada pelo motor centralizado de flexbox,
+
+40
+00:02:13.000 --> 00:02:15.000
+que calcula o espaçamento interno e o posicionamento.
+
+41
+00:02:15.000 --> 00:02:17.000
+Existe uma restrição estrutural.
+
+42
+00:02:18.000 --> 00:02:20.000
+Uma view não pode conter dados de string brutos.
+
+43
+00:02:20.000 --> 00:02:24.000
+Passar texto bruto diretamente em uma view lançará uma exceção em tempo de execução.
+
+44
+00:02:24.000 --> 00:02:27.000
+Ao reduzir o modelo de container a um único componente,
+
+45
+00:02:27.000 --> 00:02:31.000
+a complexidade estrutural é removida do tipo view e transferida para o mecanismo de layout.
+
+46
+00:02:31.000 --> 00:02:35.000
+Para renderizar strings na tela, os dados devem ser envolvidos dentro de um componente de texto,
+
+47
+00:02:35.000 --> 00:02:37.000
+que é o substituto para o text view do Android.
+
+48
+00:02:37.000 --> 00:02:41.000
+Em vez de atributos XML, você aplica props para controlar o comportamento,
+
+49
+00:02:41.000 --> 00:02:43.000
+como número de linhas para truncamento,
+
+50
+00:02:43.000 --> 00:02:47.000
+ou ajustar o tamanho da fonte para adaptar a tipografia ao seu contêiner.
+
+51
+00:02:47.000 --> 00:02:51.000
+Para entrada de dados do usuário, o edit text do Android é mapeado para o componente text input.
+
+52
+00:02:51.000 --> 00:02:55.000
+Os inputs do React Native operam como componentes controlados.
+
+53
+00:02:55.000 --> 00:02:59.000
+O campo de input não mantém seu próprio estado interno de texto.
+
+54
+00:02:59.000 --> 00:03:02.000
+É um reflexo do estado da aplicação mantido na memória.
+
+55
+00:03:02.000 --> 00:03:04.000
+Como um Android text watcher,
+
+56
+00:03:04.000 --> 00:03:07.000
+digitar aciona o evento on-change text.
+
+57
+00:03:07.000 --> 00:03:10.000
+Este evento atualiza o estado, que então retroalimenta
+
+58
+00:03:10.000 --> 00:03:12.000
+para controlar o valor exibido na caixa de texto.
+
+59
+00:03:12.000 --> 00:03:16.000
+A renderização de input requer tratar o componente como uma saída visual
+
+60
+00:03:16.000 --> 00:03:19.000
+dos seus dados de memória atuais, não um detentor independente de dados.
+
+61
+00:03:19.000 --> 00:03:23.000
+Os antigos manipuladores de toque do React Native, como touchable opacity,
+
+62
+00:03:23.000 --> 00:03:26.000
+foram substituídos por uma API unificada.
+
+63
+00:03:26.000 --> 00:03:30.000
+O componente Pressable é agora o substituto para widgets padrão do Android
+
+64
+00:03:30.000 --> 00:03:32.000
+como button ou image button.
+
+65
+00:03:32.000 --> 00:03:37.000
+O Pressable utiliza hitslop, que serve como equivalente funcional ao touch delegate do Android.
+
+66
+00:03:37.000 --> 00:03:41.000
+Hitslop expande a área de toque interativa para acessibilidade,
+
+67
+00:03:41.000 --> 00:03:45.000
+sem alterar os cálculos visuais do motor de layout.
+
+68
+00:03:45.000 --> 00:03:49.000
+React Native consolida a matemática de eventos de toque em um único componente wrapper,
+
+69
+00:03:49.000 --> 00:03:52.000
+simplificando como as camadas interativas são aplicadas.
+
+70
+00:03:52.000 --> 00:03:55.000
+Renderizar views estáticas requer um overhead mínimo,
+
+71
+00:03:55.000 --> 00:03:59.000
+mas listas de dados infinitas e dinâmicas exigem gerenciamento ativo de memória.
+
+72
+00:03:59.000 --> 00:04:02.000
+O componente scroll view é uma ferramenta não virtualizada.
+
+73
+00:04:02.000 --> 00:04:04.000
+Ele monta todos os seus filhos de uma vez,
+
+74
+00:04:04.000 --> 00:04:07.000
+portanto, é projetado para conteúdo curto e finito.
+
+75
+00:04:07.000 --> 00:04:09.000
+Alimentar grandes conjuntos de dados dinâmicos em um scroll view
+
+76
+00:04:09.000 --> 00:04:12.000
+causará alto uso de memória e possíveis travamentos.
+
+77
+00:04:12.000 --> 00:04:15.000
+Para listas longas, você deve usar o componente flat list,
+
+78
+00:04:15.000 --> 00:04:18.000
+o equivalente estrutural ao recycler view do Android.
+
+79
+00:04:18.000 --> 00:04:20.000
+Flat list depende da reciclagem de views.
+
+80
+00:04:20.000 --> 00:04:23.000
+Itens que rolam para fora do viewport são desmontados,
+
+81
+00:04:23.000 --> 00:04:26.000
+e seus recursos são reutilizados para novos itens que entram na tela.
+
+82
+00:04:26.000 --> 00:04:31.000
+Esta tabela mostra como o padrão de adapter nativo do Android mapeia para as props do React Native.
+
+83
+00:04:31.000 --> 00:04:35.000
+A função de dimensionamento do adapter.get item count se traduz em passar um array
+
+84
+00:04:35.000 --> 00:04:37.000
+para a prop data e ler seu comprimento.
+
+85
+00:04:37.000 --> 00:04:42.000
+A construção de UI tratada pelo adapter.on bind view holder
+
+86
+00:04:42.000 --> 00:04:46.000
+é mapeado para uma função de renderização de item que retorna seu JSX.
+
+87
+00:04:46.000 --> 00:04:51.000
+A lógica de diferenciação de lista do callback diffutil.item é tratada pela prop key extractor,
+
+88
+00:04:51.000 --> 00:04:55.000
+permitindo que o motor de reconciliação do React identifique as mudanças.
+
+89
+00:04:55.000 --> 00:05:00.000
+A virtualização de listas complexas depende dos mesmos mecanismos de reciclagem de memória do Android nativo,
+
+90
+00:05:00.000 --> 00:05:05.000
+executada por meio de sintaxe declarativa em vez de adaptadores Java ou Kotlin.
+
+91
+00:05:05.000 --> 00:05:10.000
+Além da árvore de componentes, você deve levar em conta as restrições físicas do hardware móvel moderno.
+
+92
+00:05:10.000 --> 00:05:15.000
+As telas dos dispositivos são interrompidas por barras de status do sistema, sobreposições de navegação,
+
+93
+00:05:15.000 --> 00:05:17.000
+e furos físicos de câmera.
+
+94
+00:05:17.000 --> 00:05:21.000
+Por padrão, o React Native renderiza elementos de UI diretamente nessas zonas físicas,
+
+95
+00:05:21.000 --> 00:05:23.000
+fazendo com que os dados fiquem obscurecidos.
+
+96
+00:05:23.000 --> 00:05:26.000
+Para corrigir isso, use safe area view.
+
+97
+00:05:26.000 --> 00:05:30.000
+Ele calcula os insets do sistema e encaixa suas views nas zonas legíveis.
+
+98
+00:05:30.000 --> 00:05:34.000
+Um design de interface confiável antecipa a topografia física do hardware do dispositivo,
+
+99
+00:05:34.000 --> 00:05:37.000
+não apenas a grade de pixels lógicos.
+
+100
+00:05:37.000 --> 00:05:43.000
+Os blocos de construção estruturais de uma interface React Native mapeiam para os widgets nativos do Android que você já conhece.
+
+101
+00:05:43.000 --> 00:05:50.000
+Fazer a transição para este framework é um exercício de remapeamento do seu vocabulário para um conjunto diferente de detalhes de implementação.
+
+102
+00:05:50.000 --> 00:05:55.000
+Embora os componentes estruturais e a mecânica de memória subjacente compartilhem uma tradução,
+
+103
+00:05:55.000 --> 00:05:59.000
+a metodologia para estilizar esses elementos diverge do XML tradicional.
+
+104
+00:05:59.000 --> 00:06:04.000
+Os atributos de estilo XML do Android são substituídos pela API de style sheet do React Native
+
+105
+00:06:04.000 --> 00:06:07.000
+e parâmetros de estilização específicos de cada plataforma.
+
+106
+00:06:07.000 --> 00:06:15.000
+Dominar esse mapeamento arquitetural fornece a base necessária antes que você possa estilizar e polir com sucesso uma aplicação pronta para produção.
+

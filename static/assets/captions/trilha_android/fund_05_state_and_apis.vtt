@@ -1,0 +1,182 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:06.740
+A lógica do Android flui de uma fonte retrofit através de um repositório para um view model e para a UI do Compose.
+
+2
+00:00:06.740 --> 00:00:13.300
+Embora o React Native frequentemente pareça desorganizado, as bibliotecas modernas se alinham exatamente com essa mesma grade estrutural.
+
+3
+00:00:13.300 --> 00:00:17.000
+Os rótulos mudam, mas o fluxo direcional de dados permanece o mesmo.
+
+4
+00:00:17.000 --> 00:00:21.700
+Desenvolver em React Native não exige adotar um modelo mental completamente estranho.
+
+5
+00:00:21.700 --> 00:00:28.900
+Em vez disso, o sucesso depende de identificar como os princípios estruturais que você já usa em Kotlin se manifestam nessa sintaxe diferente.
+
+6
+00:00:28.900 --> 00:00:31.900
+A primeira regra deste mapeamento é uma bifurcação estrita.
+
+7
+00:00:31.900 --> 00:00:35.900
+Você deve tratar o estado que você possui localmente de forma diferente do estado pertencente a um servidor remoto.
+
+8
+00:00:35.900 --> 00:00:44.900
+Embora o desenvolvimento inicial com React Native frequentemente misturasse essas preocupações em uma única store, as bibliotecas modernas fornecem ferramentas dedicadas que espelham a separação encontrada no desenvolvimento nativo.
+
+9
+00:00:44.900 --> 00:00:52.900
+Vamos mapear a stack padrão do Android, view models, repositórios e shared preferences diretamente para seus equivalentes em JavaScript altamente otimizados.
+
+10
+00:00:52.900 --> 00:01:04.900
+Ao aplicar o rigor arquitetural nativo, você garante que, mesmo ao navegar pelas nuances de uma nova linguagem, o sistema subjacente permaneça tão previsível e escalável quanto uma base de código nativa.
+
+11
+00:01:04.900 --> 00:01:14.900
+No nível mais simples, o estado no nível de componente que não é compartilhado entre telas, como um estado mutável em um composable, mapeia diretamente para o hook use state do React.
+
+12
+00:01:14.900 --> 00:01:25.900
+Para máquinas de estado mais complexas, onde você pode usar uma sealed class de estado de UI no Android, o React Native usa uma union discriminada em TypeScript, gerenciada pelo hook use reducer.
+
+13
+00:01:25.900 --> 00:01:34.900
+O desafio surge com o estado global de UI, dados que precisam persistir entre telas, que normalmente são gerenciados por um view model e expostos via state flow.
+
+14
+00:01:34.900 --> 00:01:39.900
+É aqui que o Zustand se encaixa, o equivalente direto ao view model do Android.
+
+15
+00:01:39.900 --> 00:01:49.900
+Observe como uma atualização de estado percorre os dois pipelines. O Zustand mantém o estado fora da árvore de componentes, permitindo que a UI reaja sem precisar ter a lógica de mutação.
+
+16
+00:01:49.900 --> 00:01:56.900
+Ao contrário de outras opções JavaScript, o Zustand não requer código boilerplate, nem reducers complexos ou encapsulamento com providers.
+
+17
+00:01:56.900 --> 00:02:02.900
+É um store de objeto simples ao qual qualquer componente pode se inscrever. Ele usa um padrão de selector.
+
+18
+00:02:02.900 --> 00:02:09.900
+Ao chamar useAuthStore e selecionar apenas o objeto user, o componente só é re-renderizado quando aquele campo específico muda.
+
+19
+00:02:09.900 --> 00:02:21.900
+Este é o equivalente funcional de usar stateFlow.map e collect de um estado no Compose. Ambos os mecanismos existem para evitar atualizações desnecessárias na UI causadas por mudanças de estado irrelevantes.
+
+20
+00:02:21.900 --> 00:02:29.900
+O Zustand fornece o mesmo encapsulamento e reatividade que você espera de um ViewModel, garantindo que a UI permaneça um reflexo puro do estado subjacente.
+
+21
+00:02:30.900 --> 00:02:38.900
+O estado da UI é apenas metade da história. A outra metade é o estado do servidor, dados de propriedade de uma API que existe fora do controle imediato do aplicativo.
+
+22
+00:02:38.900 --> 00:02:45.900
+Esses dados têm um ciclo de vida distinto. Eles exigem cache, refetching em segundo plano para se manterem atualizados, e lógica para lidar com paginação.
+
+23
+00:02:45.900 --> 00:02:54.900
+No Android, você gerencia isso manualmente dentro de uma classe repository, orquestrando co-rotinas, interfaces do Retrofit e o Room.
+
+24
+00:02:54.900 --> 00:03:02.900
+O TANstack Query consolida toda essa infraestrutura manual em um único sistema baseado em hooks, atuando como uma camada de repository automatizada.
+
+25
+00:03:02.900 --> 00:03:10.900
+As operações de leitura, suas chamadas suspend fun, são mapeadas para o hook use query, que gerencia o fetch e a entrada de cache automaticamente.
+
+26
+00:03:10.900 --> 00:03:18.900
+Operações de escrita, post, put e delete, são mapeadas para o hook use mutation, oferecendo rastreamento integrado para estados de carregamento e erro.
+
+27
+00:03:19.900 --> 00:03:27.900
+Para a camada de transporte em si, você pode usar a biblioteca padrão Axios, ou a API nativa fetch. Ambas servem ao mesmo propósito que o retrofit ou k-tor.
+
+28
+00:03:27.900 --> 00:03:35.900
+E a lógica assíncrona é uma tradução direta. As co-rotinas do Kotlin se traduzem de forma limpa para o async await e promises do JavaScript.
+
+29
+00:03:35.900 --> 00:03:40.900
+Um erro comum é tentar gerenciar esses dados remotos dentro de um store local como o Zustand.
+
+30
+00:03:40.900 --> 00:03:47.900
+Sem a lógica especializada do TANstack Query, você perde a capacidade de lidar com dados obsoletos e sincronização em segundo plano.
+
+31
+00:03:47.900 --> 00:03:57.900
+TANstack Query garante que os dados de rede sejam gerenciados como uma entidade separada, mantendo sua máquina de estado de UI local focada nas interações do lado do cliente.
+
+32
+00:03:57.900 --> 00:04:07.900
+Por fim, temos a persistência local para pequenos fragmentos de dados, como tokens de autenticação ou preferências do usuário. No Android, este é o domínio do shared preferences ou data store.
+
+33
+00:04:07.900 --> 00:04:15.900
+Historicamente, o React Native dependia do async storage, que costuma ser lento e requer chamadas assíncronas para cada leitura e escrita.
+
+34
+00:04:15.900 --> 00:04:23.900
+Este gráfico mostra a diferença de desempenho. A barra inferior representa o async storage. O MMKV é a alternativa de alta velocidade.
+
+35
+00:04:23.900 --> 00:04:29.900
+Por ser um armazenamento síncrono baseado em C++, ele pode ser de 10 a 100 vezes mais rápido.
+
+36
+00:04:29.900 --> 00:04:39.900
+Assim como as shared preferences, o MMKV é para pares simples de chave-valor. Se o seu app requer dados relacionais, o equivalente ao room, você usaria o Expo SQL.
+
+37
+00:04:39.900 --> 00:04:49.900
+Ao utilizar o MMKV, você elimina os gargalos de IO frequentemente encontrados em apps cross-platform, trazendo o desempenho de armazenamento de volta ao nível das expectativas nativas.
+
+38
+00:04:49.900 --> 00:04:59.900
+Com cada camada definida, podemos ver como essas ferramentas se alinham em uma única stack coesa. Esse mapeamento fornece um espelho estrutural para suas habilidades nativas.
+
+39
+00:04:59.900 --> 00:05:05.900
+À esquerda, os padrões Android que você conhece. À direita, as bibliotecas React Native que os substituem.
+
+40
+00:05:05.900 --> 00:05:10.900
+O ZooStan gerencia o estado local da UI e as transições de tela, substituindo o V-model.
+
+41
+00:05:10.900 --> 00:05:21.900
+TanStack Query gerencia o ciclo de vida da rede como uma camada de repositório automatizada. MMKV fornece a persistência síncrona rápida que você espera do shared preferences.
+
+42
+00:05:21.900 --> 00:05:28.900
+Quando você utiliza essa stack específica, a aplicação resultante se sente estruturalmente idêntica a uma build nativa de alta qualidade.
+
+43
+00:05:28.900 --> 00:05:38.900
+Embora essas abstrações sejam poderosas, dominar verdadeiramente a plataforma exige compreender a ponte entre o ambiente JavaScript e o código nativo subjacente.
+
+44
+00:05:38.900 --> 00:05:50.900
+No próximo módulo, exploraremos a nova arquitetura, mergulhando no Hermes, no JSI e em como escrever turbo modules em Kotlin. React Native não é um abandono dos seus princípios de engenharia.
+
+45
+00:05:50.900 --> 00:05:56.900
+É um ambiente paralelo onde o seu rigor arquitetural existente é o seu ativo mais valioso.
+

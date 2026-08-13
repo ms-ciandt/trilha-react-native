@@ -4,7 +4,7 @@ title: "Bundle — Packaging & Distribution"
 
 ## Video Overview
 
-<video width="100%" controls>
+<video width="100%" controls controlsList="nodownload">
   <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc04_04_packaging-and-distribution.mp4" type="video/mp4">
   <track kind="captions" src="/trilha-react-native/assets/captions/trilha_masterclass/mc04_04_packaging-and-distribution.vtt" srclang="pt" label="Português" default>
   Your browser does not support the video tag.

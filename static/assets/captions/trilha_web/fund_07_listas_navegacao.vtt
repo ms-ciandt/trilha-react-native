@@ -1,0 +1,382 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:03.300
+Se você está vindo para o React Native a partir do desenvolvimento web,
+
+2
+00:00:03.300 --> 00:00:08.600
+seu instinto natural ao construir uma lista é usar o método de array .map padrão.
+
+3
+00:00:08.600 --> 00:00:11.700
+Em um navegador de desktop, isso funciona sem pensar duas vezes.
+
+4
+00:00:11.700 --> 00:00:15.900
+Mas dispositivos móveis operam com orçamentos de memória rígidos e implacáveis
+
+5
+00:00:15.900 --> 00:00:19.600
+e simplesmente não têm o poder de processamento bruto de um laptop.
+
+6
+00:00:19.600 --> 00:00:24.400
+Esta comparação em tela dividida mostra por que o mapeamento web padrão falha no mobile.
+
+7
+00:00:24.400 --> 00:00:29.100
+À esquerda, um navegador web renderiza facilmente todos os itens simultaneamente.
+
+8
+00:00:29.300 --> 00:00:32.300
+À direita, o app congela e perde frames
+
+9
+00:00:32.300 --> 00:00:37.100
+porque forçar uma lista massiva na memória de uma só vez sobrecarrega o dispositivo.
+
+10
+00:00:37.100 --> 00:00:43.100
+Para evitar essas falhas, precisamos mapear exatamente qual API de lista do React Native você precisa usar
+
+11
+00:00:43.100 --> 00:00:47.400
+baseado inteiramente no tamanho dos seus dados e no layout específico da sua UI.
+
+12
+00:00:47.400 --> 00:00:50.200
+Escolher a API correta é um ato de equilíbrio.
+
+13
+00:00:50.200 --> 00:00:53.700
+Você quer evitar o excesso de engenharia em uma tela estática simples
+
+14
+00:00:53.700 --> 00:00:58.500
+enquanto garante que suas telas complexas e repletas de dados realmente se mantenham estáveis sob pressão.
+
+15
+00:00:58.500 --> 00:01:04.500
+Dominar listas mobile é respeitar as limitações físicas do hardware no bolso do seu usuário.
+
+16
+00:01:04.500 --> 00:01:08.000
+Este fluxograma representa a árvore de decisão para listas mobile.
+
+17
+00:01:08.000 --> 00:01:11.400
+As escolhas se ramificam com base na experiência do usuário que você está entregando.
+
+18
+00:01:11.400 --> 00:01:15.900
+O primeiro ramo lida com listas curtas, com menos de 20 itens e dados estáticos.
+
+19
+00:01:15.900 --> 00:01:19.600
+Aqui, você usa scroll view, combinado com a função .map.
+
+20
+00:01:19.600 --> 00:01:22.000
+Esta rota oferece o menor tempo de desenvolvimento.
+
+21
+00:01:22.000 --> 00:01:24.400
+porque você não precisa aprender nenhuma API nova.
+
+22
+00:01:24.400 --> 00:01:26.900
+Você simplesmente escreve React da forma que sempre fez.
+
+23
+00:01:26.900 --> 00:01:30.000
+Mas funciona por causa de um mecanismo muito específico.
+
+24
+00:01:30.000 --> 00:01:35.900
+O Scroll View carrega imediatamente todos os seus dados diretamente na RAM do dispositivo, no momento em que é renderizado.
+
+25
+00:01:35.900 --> 00:01:38.600
+Esse carregamento imediato é uma troca estrita.
+
+26
+00:01:38.600 --> 00:01:44.500
+Isso significa que essa abordagem é segura apenas para componentes curtos e previsíveis, como em um menu de configurações do app.
+
+27
+00:01:44.500 --> 00:01:49.300
+Se você ultrapassar o limite de 20 itens em um scroll view, você garante um vazamento de memória.
+
+28
+00:01:49.300 --> 00:01:52.600
+Ele não tem nenhuma capacidade de gerenciamento dinâmico de memória,
+
+29
+00:01:52.600 --> 00:01:56.500
+então cada item que você adiciona consome continuamente os recursos do celular.
+
+30
+00:01:56.500 --> 00:02:02.100
+Quando seus dados crescem, seguimos o segundo caminho, lidando com conjuntos de dados dinâmicos ou longos.
+
+31
+00:02:02.100 --> 00:02:04.500
+Isso nos leva diretamente ao flat list.
+
+32
+00:02:04.500 --> 00:02:09.200
+Flat list é o principal componente robusto para renderizar dados no React Native.
+
+33
+00:02:09.200 --> 00:02:13.200
+Ele lida com escala através de uma vantagem mecânica chamada virtualização.
+
+34
+00:02:13.200 --> 00:02:15.500
+A virtualização resolve os limites de memória.
+
+35
+00:02:15.500 --> 00:02:18.700
+Apenas os blocos visíveis dentro da tela física são renderizados.
+
+36
+00:02:18.700 --> 00:02:20.700
+Tudo fora está acinzentado.
+
+37
+00:02:20.700 --> 00:02:24.200
+Conforme o usuário rola, o engine descarrega os itens ocultos no topo
+
+38
+00:02:24.200 --> 00:02:27.600
+e recicla essa memória para novos itens que entram pela parte inferior.
+
+39
+00:02:27.600 --> 00:02:30.900
+A desvantagem é que você precisa abandonar seu mapeamento web padrão.
+
+40
+00:02:30.900 --> 00:02:34.400
+O Flat list exige que você aprenda seu boilerplate de API específico,
+
+41
+00:02:34.400 --> 00:02:38.400
+mapeando seus dados através de propriedades como render item e key extractor.
+
+42
+00:02:38.400 --> 00:02:41.300
+Escrever esse código boilerplate extra é o imposto obrigatório que você paga
+
+43
+00:02:41.300 --> 00:02:44.500
+para alcançar uma rolagem fluida e profissional em hardware móvel.
+
+44
+00:02:44.500 --> 00:02:49.800
+Chegamos ao terceiro ramo quando seu design requer dados categorizados ou agrupados.
+
+45
+00:02:49.800 --> 00:02:53.300
+Pense no layout alfabético em um livro de contatos do iOS.
+
+46
+00:02:53.300 --> 00:02:55.600
+Para isso, usamos section list.
+
+47
+00:02:55.600 --> 00:02:59.000
+Section list é construída para fornecer cabeçalhos fixos com sensação nativa
+
+48
+00:02:59.000 --> 00:03:02.200
+e seções distintamente categorizadas prontas para uso.
+
+49
+00:03:02.200 --> 00:03:04.400
+Mas ela vem com uma restrição rigorosa.
+
+50
+00:03:04.400 --> 00:03:08.600
+Ela exige uma estrutura de dados de array aninhado altamente específica para funcionar.
+
+51
+00:03:08.600 --> 00:03:12.800
+Se os dados do seu backend chegam de forma simples e não estão pré-formatados para uma lista de seções,
+
+52
+00:03:12.800 --> 00:03:17.500
+seu aplicativo consumirá poder de processamento excessivo tentando remodelar esses arrays no lado do cliente
+
+53
+00:03:17.500 --> 00:03:19.400
+antes mesmo de conseguir renderizar a tela.
+
+54
+00:03:19.500 --> 00:03:23.500
+O quarto e último tópico aborda a transformação de uma lista vertical padrão
+
+55
+00:03:23.500 --> 00:03:25.600
+em um layout de grade com múltiplas colunas.
+
+56
+00:03:25.600 --> 00:03:29.000
+Ao aplicar a propriedade num columns em uma flat list padrão,
+
+57
+00:03:29.000 --> 00:03:32.400
+você converte instantaneamente suas linhas verticais em uma grade rígida.
+
+58
+00:03:32.400 --> 00:03:34.900
+A principal limitação aqui é a flexibilidade.
+
+59
+00:03:34.900 --> 00:03:37.800
+Você não pode alterar a contagem de colunas dinamicamente
+
+60
+00:03:37.800 --> 00:03:40.700
+se o dispositivo rotacionar ou o estado do layout mudar.
+
+61
+00:03:40.700 --> 00:03:44.700
+Alterar a contagem de colunas requer que você force uma re-renderização completa
+
+62
+00:03:44.700 --> 00:03:46.700
+de todo o componente de lista.
+
+63
+00:03:46.700 --> 00:03:49.900
+Implementar layouts especializados como grids e seções
+
+64
+00:03:49.900 --> 00:03:52.000
+requer uma visão arquitetural prévia.
+
+65
+00:03:52.000 --> 00:03:54.200
+Você precisa formatar rigorosamente o estado dos seus dados
+
+66
+00:03:54.200 --> 00:03:56.700
+muito antes de chegar à camada de UI.
+
+67
+00:03:56.700 --> 00:04:00.000
+Se você veio do desenvolvimento web, depender dos métodos padrão .map
+
+68
+00:04:00.000 --> 00:04:02.300
+para cada lista resultará em travamentos visíveis
+
+69
+00:04:02.300 --> 00:04:04.500
+assim que seu conteúdo ultrapassar o viewport.
+
+70
+00:04:04.500 --> 00:04:06.700
+Para iniciantes, a melhor decisão que você pode tomar hoje
+
+71
+00:04:06.700 --> 00:04:09.700
+é aceitar a curva de aprendizado inicial do flat list.
+
+72
+00:04:09.700 --> 00:04:12.200
+Fazer isso agora evita uma enorme dor de cabeça de refatoração
+
+73
+00:04:12.200 --> 00:04:14.900
+um mês depois, quando seus dados de usuário crescerem.
+
+74
+00:04:14.900 --> 00:04:17.300
+Se você está focado em otimização de performance,
+
+75
+00:04:17.300 --> 00:04:20.400
+lembre-se que a velocidade real vem da auditoria dos seus designs de UI
+
+76
+00:04:20.400 --> 00:04:22.700
+antes de você escrever uma única linha de código.
+
+77
+00:04:22.700 --> 00:04:25.600
+Decidir proativamente que uma tela precisa de uma section list
+
+78
+00:04:25.600 --> 00:04:28.000
+ou um grid de num columns dita exatamente
+
+79
+00:04:28.000 --> 00:04:30.300
+como você deve estruturar suas consultas de dados no backend.
+
+80
+00:04:30.300 --> 00:04:33.000
+Esta matriz define seu plano de ação.
+
+81
+00:04:33.000 --> 00:04:36.000
+Menos de 20 itens estáticos significa scroll view.
+
+82
+00:04:36.000 --> 00:04:38.100
+Dados dinâmicos usam flat list.
+
+83
+00:04:38.100 --> 00:04:40.500
+Dados agrupados requerem section list.
+
+84
+00:04:40.500 --> 00:04:42.500
+Grades precisam de num columns.
+
+85
+00:04:42.500 --> 00:04:45.100
+Para praticar, consulte a documentação oficial do React Native.
+
+86
+00:04:45.100 --> 00:04:47.700
+para flat list, section list e text.
+
+87
+00:04:47.700 --> 00:04:50.500
+Se você prefere um passo a passo prático,
+
+88
+00:04:50.500 --> 00:04:52.500
+recomendamos fortemente o abrangente
+
+89
+00:04:52.500 --> 00:04:55.500
+masterclass de oito horas do notjust.dev.
+
+90
+00:04:55.500 --> 00:04:58.100
+Você pode encontrar os links para ambos os recursos técnicos
+
+91
+00:04:58.100 --> 00:05:00.000
+na descrição do vídeo abaixo.
+
+92
+00:05:00.000 --> 00:05:02.400
+Combinar o componente de lista correto com seus dados
+
+93
+00:05:02.400 --> 00:05:05.200
+garante que a aplicação gerencie a memória de forma eficiente,
+
+94
+00:05:05.200 --> 00:05:07.300
+seja renderizando um menu de configurações curto
+
+95
+00:05:07.300 --> 00:05:10.000
+ou um feed de rolagem com milhares de itens.
+

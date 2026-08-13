@@ -1,0 +1,178 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:07.500
+Todo aplicativo móvel traduz a lógica abstrata do código em uma realidade visual com a qual o usuário interage em seu dispositivo.
+
+2
+00:00:07.500 --> 00:00:15.700
+No React Native, essa ponte é uma surface. É um mapeamento um-para-um, onde um único ponto de entrada renderiza em uma view nativa específica.
+
+3
+00:00:15.700 --> 00:00:21.800
+Os aplicativos podem escalar isso, renderizando múltiplas surfaces simultaneamente a partir de um único bundle JavaScript.
+
+4
+00:00:21.800 --> 00:00:26.000
+Cada uma mantém sua própria árvore de nós, props e estado do React.
+
+5
+00:00:26.200 --> 00:00:32.200
+Essas surfaces aparecem como elementos separados na tela, mas compartilham a mesma arquitetura subjacente.
+
+6
+00:00:32.200 --> 00:00:41.400
+Assumir que essas superfícies são completamente isoladas é um erro que leva a comportamentos inesperados quando as diferentes árvores de componentes tentam acessar recursos compartilhados.
+
+7
+00:00:41.400 --> 00:00:50.000
+Gerenciar uma arquitetura multi-surface requer ir além da independência visual da UI para entender como elas estão conectadas no nível do sistema.
+
+8
+00:00:50.000 --> 00:00:55.600
+Para entender essas conexões, precisamos analisar como o app lida com múltiplas superfícies durante a execução.
+
+9
+00:00:55.600 --> 00:01:02.400
+A regra arquitetural é que múltiplas superfícies originadas do mesmo bundle nunca são runtimes isolados.
+
+10
+00:01:02.400 --> 00:01:08.000
+Mesmo superfícies ativas visualmente separadas roteiam operações por meio de uma única thread e engine JavaScript.
+
+11
+00:01:08.000 --> 00:01:12.700
+Eles compartilham um registro de módulos, tornando as dependências comuns em todas as surfaces.
+
+12
+00:01:12.700 --> 00:01:21.800
+No Android, cada surface é um fragmento sustentado por uma React surface. No iOS, elas são montadas dentro de um view controller de UI conectado ao RCT host.
+
+13
+00:01:21.800 --> 00:01:29.200
+O sistema operacional nativo fornece contêineres separados para a UI, mas esses contêineres ainda estão vinculados ao mesmo runtime compartilhado.
+
+14
+00:01:29.200 --> 00:01:35.100
+Isso cria um ambiente onde uma surface pode interferir em outra, apesar de parecerem completamente separadas.
+
+15
+00:01:35.100 --> 00:01:41.100
+Esse modelo de thread compartilhado atinge seu limite em ecossistemas de super apps que exigem fronteiras rígidas entre funcionalidades.
+
+16
+00:01:41.100 --> 00:01:48.900
+Por exemplo, uma superfície que lida com processamento sensível de pagamentos não deve ter acesso à mesma memória ou módulos que o código de publicidade de terceiros.
+
+17
+00:01:48.900 --> 00:01:55.000
+Diferentes equipes de engenharia podem precisar lançar bundles que dependem de versões conflitantes da mesma dependência.
+
+18
+00:01:55.000 --> 00:01:59.300
+Para resolver isso, esses cenários exigem o sandbox do React Native.
+
+19
+00:01:59.300 --> 00:02:04.700
+O sandboxing muda a arquitetura criando registros de módulos separados para diferentes superfícies.
+
+20
+00:02:04.700 --> 00:02:11.500
+Isso força a criação de engines JavaScript independentes, garantindo que as superfícies não compartilhem estado ou memória.
+
+21
+00:02:11.500 --> 00:02:16.400
+Como os registros não são mais compartilhados, a transferência síncrona de dados é impossível.
+
+22
+00:02:16.500 --> 00:02:22.000
+Toda comunicação entre sandboxes deve usar, em vez disso, uma API assíncrona de post message.
+
+23
+00:02:22.000 --> 00:02:30.400
+A verdadeira segurança e autonomia das equipes exigem abandonar o modelo padrão de thread compartilhada e adotar as restrições de um ambiente isolado.
+
+24
+00:02:30.400 --> 00:02:38.600
+Além da arquitetura de memória, precisamos gerenciar o tempo do ciclo de vida da surface, especificamente os momentos antes de uma surface estar pronta para renderizar.
+
+25
+00:02:38.600 --> 00:02:46.300
+Este é o custo de inicialização. Antes que a UI apareça, o engine Hermes precisa carregar e fazer o parse do bundle JavaScript completo.
+
+26
+00:02:46.300 --> 00:02:51.700
+Em dispositivos de baixo desempenho, essa sequência de análise pode levar até dois segundos, deixando o usuário esperando.
+
+27
+00:02:51.700 --> 00:02:55.400
+Engenheiros usam estratégias de warm start para mitigar esse atraso.
+
+28
+00:02:55.400 --> 00:03:00.400
+A primeira estratégia, eager host start, inicializa o host quando o aplicativo é iniciado.
+
+29
+00:03:00.400 --> 00:03:06.700
+Isso elimina o atraso, mas consome 10 megabytes de RAM, mesmo que o usuário nunca abra uma superfície React Native.
+
+30
+00:03:06.700 --> 00:03:11.300
+Um warm start condicional aguarda um gatilho, como fazer login antes de iniciar.
+
+31
+00:03:11.300 --> 00:03:16.300
+Isso economiza memória para usuários inativos, mas introduz um leve atraso durante a ativação.
+
+32
+00:03:16.300 --> 00:03:20.700
+Uma surface pré-construída aciona o comando de início logo antes da transição do usuário.
+
+33
+00:03:20.700 --> 00:03:25.300
+Ela renderiza invisivelmente em segundo plano, pronta para ser exibida no momento em que a transição ocorre.
+
+34
+00:03:25.300 --> 00:03:30.500
+Por fim, um RAM bundle com inline requires muda a forma como o bundler empacota o código.
+
+35
+00:03:30.500 --> 00:03:35.200
+Em vez de fazer o parsing antecipadamente, a engine carrega os módulos de forma lazy apenas quando necessário.
+
+36
+00:03:35.200 --> 00:03:41.100
+Gerenciar o host requer equilibrar a necessidade de resposta imediata da UI com os limites de memória do dispositivo.
+
+37
+00:03:41.100 --> 00:03:48.400
+Quando a arquitetura e o ciclo de vida são gerenciados corretamente, eles criam uma experiência final fluida para o usuário.
+
+38
+00:03:48.400 --> 00:03:53.500
+Uma surface serve como ponte entre uma view nativa e o motor JavaScript.
+
+39
+00:03:53.500 --> 00:03:58.000
+Por padrão, essas surfaces são conectadas por uma thread e um registro compartilhados.
+
+40
+00:03:58.000 --> 00:04:04.900
+Quando o app requer segurança rigorosa ou dependências independentes, o sandboxing é usado para criar limites rígidos.
+
+41
+00:04:04.900 --> 00:04:08.900
+E para garantir que a UI pareça responsiva, usamos estratégias de warm start
+
+42
+00:04:08.900 --> 00:04:12.100
+para compensar o tempo de inicialização do engine.
+
+43
+00:04:12.100 --> 00:04:17.600
+Construir aplicações complexas de múltiplas superfícies requer ir além das suposições padrão
+
+44
+00:04:17.600 --> 00:04:22.100
+para engenheirar ativamente os limites de memória e o ciclo de vida de inicialização.
+

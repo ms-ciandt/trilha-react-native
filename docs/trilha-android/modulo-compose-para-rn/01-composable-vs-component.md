@@ -6,11 +6,15 @@ sidebar_position: 1
 
 ## Video Overview
 
-<video width="100%" controls>
+<video width="100%" controls controlsList="nodownload">
   <source src="/trilha-react-native/assets/videos/trilha_android/compose_01_composable_vs_component.mp4" type="video/mp4">
   <track kind="captions" src="/trilha-react-native/assets/captions/trilha_android/compose_01_composable_vs_component_en.vtt" srclang="en" label="English" default>
   Your browser does not support the video tag.
 </video>
+
+## Video Overview
+
+> Video for this topic coming soon.
 
 ## The Paradigm You Already Know
 
@@ -308,6 +312,8 @@ Both virtualise by default — only items near the viewport are mounted. The `ke
 
 Try editing the composable-to-component mental model in this live Expo Snack:
 
+[![Open in Expo Snack](https://img.shields.io/badge/Open%20in-Expo%20Snack-000020?logo=expo)](https://snack.expo.dev/@react-native-community/components-and-props)
+
 ---
 
 ## Study Materials
@@ -322,7 +328,7 @@ Try editing the composable-to-component mental model in this live Expo Snack:
 ### Interactive Tutorials
 
 - [React Tutorial — Tic Tac Toe](https://react.dev/learn/tutorial-tic-tac-toe) — hands-on component + state introduction
-- [React Native — Core Components](https://reactnative.dev/docs/components-and-apis) — official component reference
+- [Expo Snack — Components & Props](https://snack.expo.dev/@react-native-community/components-and-props) — interactive RN playground
 
 ### Videos
 

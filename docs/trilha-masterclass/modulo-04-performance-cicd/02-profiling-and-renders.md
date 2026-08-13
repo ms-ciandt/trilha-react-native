@@ -2,7 +2,7 @@
 title: "Performance — Profiling & Renders"
 ---
 
-<video width="100%" controls>
+<video width="100%" controls controlsList="nodownload">
   <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc04_02_profiling-and-renders.mp4" type="video/mp4">
   <track kind="captions" src="/trilha-react-native/assets/captions/trilha_masterclass/mc04_02_profiling-and-renders_en.vtt" srclang="en" label="English" default>
   Your browser does not support the video tag.
@@ -379,7 +379,7 @@ With proper `staleTime` configuration, navigating back to a screen that has alre
 | Resource | What to do |
 |---|---|
 | [Perfetto UI](https://ui.perfetto.dev/) | Load a Systrace HTML file — explore flame charts online |
-| [Reanimated — Worklets documentation](https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/worklets) | Worklet concept, thread model and examples |
+| [Expo Snack — Reanimated worklet](https://snack.expo.dev/@reanimated/worklet-demo) | Run a worklet animation and observe 60 fps even with JS blocked |
 | [Yoga playground](https://yogalayout.dev/playground) | Debug layout performance — see which flexbox properties trigger re-layout |
 | [TanStack Query DevTools](https://tanstack.com/query/latest/docs/framework/react/devtools) | Inspect query cache, stale times, background refetch |
 

@@ -4,7 +4,7 @@ title: "JSI — Advanced Patterns"
 
 # JSI — Advanced Patterns
 
-<video width="100%" controls>
+<video width="100%" controls controlsList="nodownload">
   <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc03_02_jsi-advanced.mp4" type="video/mp4">
   <track kind="captions" src="/trilha-react-native/assets/captions/trilha_masterclass/mc03_02_jsi-advanced_en.vtt" srclang="en" label="English" default>
   Your browser does not support the video tag.
@@ -342,7 +342,7 @@ Each `HostFunction` call appears as a `JSI::HostFunction::<name>` slice. If you 
 
 | Resource | What to do |
 |---|---|
-| [MMKV — GitHub](https://github.com/mrousavy/react-native-mmkv) | Source, benchmarks and integration guide |
+| [Expo Snack — JSI via MMKV](https://snack.expo.dev/@mrousavy/react-native-mmkv) | Run MMKV in the browser — observe synchronous reads in action |
 | [react-native-jsi-example](https://github.com/ospfranco/react-native-jsi-template) | Minimal template: one HostObject, CMakeLists, iOS + Android — fork and build |
 
 ---

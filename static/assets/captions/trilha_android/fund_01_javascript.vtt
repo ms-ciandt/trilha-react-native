@@ -1,0 +1,430 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:06.000
+Migrar do Android e Kotlin para o React Native e JavaScript não
+
+2
+00:00:06.000 --> 00:00:08.840
+significa que você precisa reaprender a escrever software.
+
+3
+00:00:08.840 --> 00:00:15.000
+Você já sabe como arquitetar estado, lidar com dados assíncronos e construir interfaces de usuário.
+
+4
+00:00:15.000 --> 00:00:19.680
+Quando o JavaScript parece estranho, geralmente é porque a linguagem quebra premissas estruturais
+
+5
+00:00:19.680 --> 00:00:23.640
+que você construiu ao longo de anos trabalhando em um ambiente com tipagem estática.
+
+6
+00:00:23.640 --> 00:00:27.960
+Podemos eliminar esse atrito usando um método de tradução comparativa.
+
+7
+00:00:27.960 --> 00:00:32.800
+Usaremos sua arquitetura Kotlin existente como base para mapear os alvos dinâmicos
+
+8
+00:00:32.800 --> 00:00:34.520
+do JavaScript.
+
+9
+00:00:34.520 --> 00:00:39.040
+Em vez de adivinhar como um componente vai se comportar, vamos rastrear como suas regras rígidas
+
+10
+00:00:39.040 --> 00:00:42.920
+de tempo de compilação são avaliadas em tempo de execução em um motor JavaScript.
+
+11
+00:00:42.920 --> 00:00:47.400
+Entender esse mapeamento permite que você pule a fase de "o que isso faz mesmo", e imediatamente
+
+12
+00:00:47.400 --> 00:00:51.520
+aplique sua experiência de engenharia para construir apps React Native.
+
+13
+00:00:51.520 --> 00:00:53.800
+Começamos com alocação de memória.
+
+14
+00:00:53.800 --> 00:01:00.560
+Na arquitetura JavaScript moderna, há uma regra absoluta: nunca use a palavra-chave var.
+
+15
+00:01:00.560 --> 00:01:05.800
+Var usa escopo de função em vez de escopo de bloco, e seu comportamento de hoisting cria bugs de lógica
+
+16
+00:01:05.800 --> 00:01:08.600
+que simplesmente não existem em Kotlin.
+
+17
+00:01:08.600 --> 00:01:11.400
+A tradução moderna é direta.
+
+18
+00:01:11.400 --> 00:01:17.000
+O VAL do Kotlin corresponde ao const do JavaScript, e o var do Kotlin corresponde ao let.
+
+19
+00:01:17.000 --> 00:01:21.800
+Mas o const garante a imutabilidade do vínculo de memória, não a imutabilidade profunda
+
+20
+00:01:21.800 --> 00:01:23.780
+das propriedades do objeto.
+
+21
+00:01:23.780 --> 00:01:28.060
+Isso se comporta como um VAL Kotlin que contém uma instância de classe de dados mutável.
+
+22
+00:01:28.060 --> 00:01:32.300
+A referência não pode ser sobrescrita, mas você ainda pode mutar as propriedades dentro do
+
+23
+00:01:32.300 --> 00:01:33.780
+payload.
+
+24
+00:01:33.780 --> 00:01:38.420
+Estado previsível em JavaScript requer lembrar que const protege a referência, deixando
+
+25
+00:01:38.420 --> 00:01:41.300
+o payload de dados aberto à mutação.
+
+26
+00:01:41.300 --> 00:01:45.460
+Kotlin garante segurança resolvendo tipos em tempo de compilação.
+
+27
+00:01:45.460 --> 00:01:48.700
+JavaScript avalia tipos dinamicamente em tempo de execução.
+
+28
+00:01:48.700 --> 00:01:50.820
+JavaScript opera com oito tipos primitivos.
+
+29
+00:01:50.820 --> 00:01:55.660
+A diferença arquitetural mais notável aqui é que não existem classes distintas de inteiro ou
+
+30
+00:01:55.660 --> 00:01:57.300
+float.
+
+31
+00:01:57.300 --> 00:02:01.500
+Todo número em JavaScript é avaliado como um float de 64 bits.
+
+32
+00:02:01.500 --> 00:02:06.660
+A diferença estrutural mais significativa, no entanto, é como a linguagem lida com nulabilidade.
+
+33
+00:02:06.660 --> 00:02:10.820
+Kotlin representa a ausência de um valor inteiramente com null.
+
+34
+00:02:10.820 --> 00:02:13.740
+JavaScript usa dois estados distintos de ausência de valor.
+
+35
+00:02:13.740 --> 00:02:15.620
+O primeiro é undefined.
+
+36
+00:02:15.620 --> 00:02:17.220
+Este é um estado do sistema.
+
+37
+00:02:17.220 --> 00:02:21.020
+Significa que uma variável foi declarada, mas nunca recebeu um valor.
+
+38
+00:02:21.020 --> 00:02:22.660
+O segundo é null.
+
+39
+00:02:22.660 --> 00:02:27.980
+Este é um valor de ausência explicitamente atribuído pelo desenvolvedor, usado para limpar dados intencionalmente
+
+40
+00:02:27.980 --> 00:02:30.220
+ou definir um estado vazio.
+
+41
+00:02:30.220 --> 00:02:36.140
+Para construir uma lógica JavaScript robusta, trate null como dado válido e intencional, e undefined como
+
+42
+00:02:36.140 --> 00:02:39.540
+um sinal de que algo no sistema deu errado.
+
+43
+00:02:39.540 --> 00:02:43.820
+JavaScript oferece três sintaxes diferentes para declarar funções, mas a arrow function
+
+44
+00:02:43.820 --> 00:02:46.660
+é o padrão para o desenvolvimento em React Native.
+
+45
+00:02:46.660 --> 00:02:50.700
+Para entender o motivo, observe uma declaração de função JavaScript padrão.
+
+46
+00:02:50.700 --> 00:02:57.260
+Quando chamada, uma função padrão herda dinamicamente seu contexto de execução, a palavra-chave this,
+
+47
+00:02:57.260 --> 00:02:59.260
+do objeto que a chamou.
+
+48
+00:02:59.260 --> 00:03:01.540
+Uma arrow function opera de forma diferente.
+
+49
+00:03:01.540 --> 00:03:07.020
+Ela bloqueia seu contexto this ao escopo léxico ao redor, exatamente onde foi escrita,
+
+50
+00:03:07.020 --> 00:03:10.060
+ignorando como ou onde é chamada posteriormente.
+
+51
+00:03:10.060 --> 00:03:14.820
+Se isso parece familiar, é porque esse comportamento léxico corresponde ao modo como as Kotlin Ramda's
+
+52
+00:03:14.820 --> 00:03:17.500
+se comportam quando você as passa como callbacks.
+
+53
+00:03:17.500 --> 00:03:23.220
+O React Native depende muito da passagem de callbacks como props em árvores de componentes profundamente aninhadas.
+
+54
+00:03:23.220 --> 00:03:27.660
+O uso de arrow functions evita perda de contexto inesperada e falhas quando esses callbacks
+
+55
+00:03:27.660 --> 00:03:29.460
+são eventualmente acionados.
+
+56
+00:03:29.460 --> 00:03:32.940
+Depois que seus dados são passados pela árvore, você precisa desempacotá-los.
+
+57
+00:03:32.940 --> 00:03:38.140
+A desestruturação é o padrão principal no React Native para extrair dados de objetos e arrays
+
+58
+00:03:38.140 --> 00:03:40.300
+em variáveis utilizáveis.
+
+59
+00:03:40.300 --> 00:03:45.460
+Kotlin lida com isso usando component n, que extrai variáveis baseando-se puramente em sua
+
+60
+00:03:45.460 --> 00:03:46.460
+posição.
+
+61
+00:03:46.460 --> 00:03:49.980
+A desestruturação de objetos em JavaScript é estritamente baseada em nomes.
+
+62
+00:03:49.980 --> 00:03:54.820
+Ela extrai variáveis correspondendo às suas chaves de propriedade exatas, independentemente da ordem em que
+
+63
+00:03:54.820 --> 00:03:55.820
+aparecem.
+
+64
+00:03:55.820 --> 00:04:02.220
+No entanto, arrays em JavaScript não possuem chaves de propriedade, então quando você desestrutura um array em JavaScript,
+
+65
+00:04:02.220 --> 00:04:05.380
+a extração volta a depender da posição.
+
+66
+00:04:05.380 --> 00:04:09.660
+Essa extração posicional é o mecanismo por trás do hook de estado do React.
+
+67
+00:04:09.660 --> 00:04:14.220
+O hook retorna um array, onde a primeira variável armazena o estado, e a segunda armazena
+
+68
+00:04:14.220 --> 00:04:15.780
+a função setter.
+
+69
+00:04:15.780 --> 00:04:20.620
+Para atualizar esses objetos de estado complexos sem mutar a referência original, você usa o
+
+70
+00:04:20.620 --> 00:04:21.940
+operador spread.
+
+71
+00:04:21.940 --> 00:04:27.140
+Ele expande as propriedades de um objeto para que possam ser mescladas em uma nova alocação de memória.
+
+72
+00:04:27.140 --> 00:04:31.900
+Combinar a desestruturação nomeada para ler dados e operadores spread para escrever dados fornece a
+
+73
+00:04:31.900 --> 00:04:37.060
+mecânica específica necessária para gerenciar datas de forma limpa sem mutações acidentais.
+
+74
+00:04:37.060 --> 00:04:41.140
+Para iterar sobre esses dados, a transição funcional é transparente.
+
+75
+00:04:41.140 --> 00:04:46.100
+As operações de coleção do Kotlin, como map, filter e reduce, correspondem aos métodos de array do JavaScript
+
+76
+00:04:46.100 --> 00:04:49.060
+métodos usando lógica quase idêntica.
+
+77
+00:04:49.060 --> 00:04:52.380
+Uma grande divergência acontece no controle de execução.
+
+78
+00:04:52.380 --> 00:04:55.580
+JavaScript não requer booleanos estritos para avaliar condições.
+
+79
+00:04:55.580 --> 00:05:00.740
+Em vez disso, ele converte variáveis através de um conceito chamado avaliação truthy e falsy.
+
+80
+00:05:00.740 --> 00:05:05.500
+Em Kotlin, passar uma string ou um objeto em uma instrução if falhará na compilação.
+
+81
+00:05:05.500 --> 00:05:08.180
+O compilador exige um booleano concreto.
+
+82
+00:05:08.180 --> 00:05:12.100
+O JavaScript vai aceitar a string e avaliar sua veracidade em tempo de execução.
+
+83
+00:05:12.100 --> 00:05:15.460
+Apenas cinco valores específicos são avaliados como falsy em JavaScript.
+
+84
+00:05:15.460 --> 00:05:20.620
+O número zero, strings vazias, null, undefined e not a number.
+
+85
+00:05:20.620 --> 00:05:23.380
+Todo outro valor na linguagem é avaliado como true.
+
+86
+00:05:23.380 --> 00:05:27.740
+Isso inclui especificamente arrays vazios e objetos vazios.
+
+87
+00:05:27.740 --> 00:05:30.620
+Dominar essa lógica de coerção é obrigatório.
+
+88
+00:05:30.620 --> 00:05:35.480
+React Native depende muito da renderização condicional com JSX, e prever como um componente
+
+89
+00:05:35.480 --> 00:05:40.400
+será avaliado requer saber exatamente quais variáveis serão convertidas para verdadeiro.
+
+90
+00:05:40.400 --> 00:05:45.480
+Um closure é simplesmente uma função que fecha e bloqueia com sucesso as variáveis de
+
+91
+00:05:45.480 --> 00:05:48.680
+seu escopo envolvente no momento em que foi criado.
+
+92
+00:05:48.680 --> 00:05:52.640
+Esses closures são o mecanismo subjacente que impulsiona os hooks do React.
+
+93
+00:05:52.640 --> 00:05:58.120
+Quando você escreve um use effect, a função de callback fecha sobre o estado atual das suas variáveis.
+
+94
+00:05:58.120 --> 00:06:00.760
+Isso cria o problema de closure desatualizado.
+
+95
+00:06:00.760 --> 00:06:05.240
+Se o estado é atualizado, o componente externo rastreia o novo valor, mas o closure isolado
+
+96
+00:06:05.240 --> 00:06:07.480
+permanece preso com os dados antigos.
+
+97
+00:06:07.480 --> 00:06:12.960
+Esse dessincronismo ocorre quando o hook não é explicitamente redeclarado com um array de dependências atualizado.
+
+98
+00:06:12.960 --> 00:06:17.320
+Sem esse gatilho, o callback continua operando com valores obsoletos.
+
+99
+00:06:17.320 --> 00:06:23.040
+Gerenciar as dependências de hooks do React é simplesmente gerenciar o ciclo de vida dos closures do JavaScript.
+
+100
+00:06:23.040 --> 00:06:28.680
+Mantenha os closures atualizados e você evita que a UI fique fora de sincronia com seus dados.
+
+101
+00:06:28.680 --> 00:06:33.360
+O comportamento do JavaScript é altamente previsível quando você aplica suas regras específicas de execução
+
+102
+00:06:33.360 --> 00:06:37.000
+de contexto, coerção e isolamento de closure.
+
+103
+00:06:37.000 --> 00:06:41.560
+Ao aplicar o rigor arquitetural que você já pratica em Kotlin, e mapeando-o para essas
+
+104
+00:06:41.560 --> 00:06:47.360
+mecânicas de runtime, você pode imediatamente construir componentes React Native estáveis e performáticos.
+
+105
+00:06:47.360 --> 00:06:51.800
+A lógica é mapeada diretamente, desde que você considere essas regras de runtime.
+
+106
+00:06:51.800 --> 00:06:57.080
+O próximo passo de engenharia é trazer a segurança em tempo de compilação para este ambiente introduzindo
+
+107
+00:06:57.080 --> 00:06:58.080
+typescript.
+
