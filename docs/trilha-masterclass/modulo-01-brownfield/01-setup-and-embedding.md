@@ -3,7 +3,7 @@ title: Setup & Embedding
 ---
 
 <video width="100%" controls controlsList="nodownload">
-  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc01_01_setup-and-embedding.mp4" type="video/mp4">
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/mc01_01_setup-and-embedding.mp4" type="video/mp4">
   <track kind="captions" src="/trilha-react-native/assets/captions/trilha_masterclass/mc01_01_setup-and-embedding_en.vtt" srclang="en" label="English" default>
   Your browser does not support the video tag.
 </video>

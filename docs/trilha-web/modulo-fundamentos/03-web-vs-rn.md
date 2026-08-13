@@ -5,7 +5,7 @@ title: Web vs React Native — Key Differences
 # Web vs React Native — Key Differences
 
 <video width="100%" controls controlsList="nodownload">
-  <source src="/trilha-react-native/assets/videos/trilha_web/fund_03_web_vs_rn.mp4" type="video/mp4">
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/fund_03_web_vs_rn.mp4" type="video/mp4">
   <track kind="captions" src="/trilha-react-native/assets/captions/trilha_web/fund_03_web_vs_rn_en.vtt" srclang="en" label="English" default>
   Your browser does not support the video tag.
 </video>

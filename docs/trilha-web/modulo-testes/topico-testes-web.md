@@ -5,7 +5,7 @@ title: Testing
 # Testing
 
 <video width="100%" controls style="border-radius: 8px; margin: 16px 0;">
-  <source src="/trilha-react-native/assets/videos/trilha_web/test_01_testes.mp4" type="video/mp4">
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/test_01_testes.mp4" type="video/mp4">
   <track kind="captions" src="/trilha-react-native/assets/captions/trilha_web/test_01_testes_en.vtt" srclang="en" label="English" default>
   Your browser does not support the video tag.
 </video>

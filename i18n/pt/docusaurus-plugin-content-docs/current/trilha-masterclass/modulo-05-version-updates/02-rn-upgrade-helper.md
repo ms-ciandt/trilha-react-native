@@ -5,7 +5,7 @@ title: RN Upgrade Helper e Diffs Nativos
 # RN Upgrade Helper e Diffs Nativos
 
 <video width="100%" controls controlsList="nodownload">
-  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc05_02_rn-upgrade-helper.mp4" type="video/mp4">
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/mc05_02_rn-upgrade-helper.mp4" type="video/mp4">
   <track kind="captions" src="/trilha-react-native/assets/captions/trilha_masterclass/mc05_02_rn-upgrade-helper.vtt" srclang="pt" label="Português" default>
   Your browser does not support the video tag.
 </video>

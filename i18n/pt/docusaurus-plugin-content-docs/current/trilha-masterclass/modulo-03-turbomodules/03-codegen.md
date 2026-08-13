@@ -5,7 +5,7 @@ title: "Codegen: Interfaces Nativas Tipadas"
 # Codegen: Interfaces Nativas Tipadas
 
 <video width="100%" controls controlsList="nodownload">
-  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc02_03_codegen.mp4" type="video/mp4">
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/mc02_03_codegen.mp4" type="video/mp4">
   <track kind="captions" src="/trilha-react-native/assets/captions/trilha_masterclass/mc02_03_codegen.vtt" srclang="pt" label="Português" default>
   Your browser does not support the video tag.
 </video>

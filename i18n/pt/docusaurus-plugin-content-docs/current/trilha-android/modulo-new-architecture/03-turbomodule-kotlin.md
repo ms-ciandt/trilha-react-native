@@ -7,7 +7,7 @@ sidebar_position: 3
 ## Visão Geral em Vídeo
 
 <video width="100%" controls>
-  <source src="/trilha-react-native/assets/videos/trilha_android/na_03_turbomodule.mp4" type="video/mp4">
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/na_03_turbomodule.mp4" type="video/mp4">
   Seu navegador não suporta o elemento de vídeo.
 </video>
 

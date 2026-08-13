@@ -7,7 +7,7 @@ sidebar_position: 4
 ## Visão Geral em Vídeo
 
 <video width="100%" controls>
-  <source src="/trilha-react-native/assets/videos/trilha_android/cicd_04_code-signing-keystore.mp4" type="video/mp4">
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/cicd_04_code-signing-keystore.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
 

@@ -7,7 +7,7 @@ sidebar_position: 4
 ## Visão Geral em Vídeo
 
 <video width="100%" controls>
-  <source src="/trilha-react-native/assets/videos/trilha_android/arq_04_error-handling-monitoring.mp4" type="video/mp4">
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/arq_04_error-handling-monitoring.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
 

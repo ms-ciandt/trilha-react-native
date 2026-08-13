@@ -7,7 +7,7 @@ sidebar_position: 2
 ## Video Overview
 
 <video width="100%" controls>
-  <source src="/trilha-react-native/assets/videos/trilha_android/na_02_jsi.mp4" type="video/mp4">
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/na_02_jsi.mp4" type="video/mp4">
   Seu navegador não suporta o elemento de vídeo.
 </video>
 

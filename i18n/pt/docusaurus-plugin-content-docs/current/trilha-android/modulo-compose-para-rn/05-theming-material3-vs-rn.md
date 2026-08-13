@@ -7,7 +7,7 @@ sidebar_position: 5
 ## Video Overview
 
 <video width="100%" controls controlsList="nodownload">
-  <source src="/trilha-react-native/assets/videos/trilha_android/compose_05_theming_material3_vs_rn.mp4" type="video/mp4">
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/compose_05_theming_material3_vs_rn.mp4" type="video/mp4">
   <track kind="captions" src="/trilha-react-native/assets/captions/trilha_android/compose_05_theming_material3_vs_rn.vtt" srclang="pt" label="Português" default>
   Your browser does not support the video tag.
 </video>

@@ -10,7 +10,7 @@ sidebar_position: 8
 ---
 
 <video width="100%" controls controlsList="nodownload">
-  <source src="/trilha-react-native/assets/videos/trilha_web/fund_08_navegacao.mp4" type="video/mp4">
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/fund_08_navegacao.mp4" type="video/mp4">
   <track kind="captions" src="/trilha-react-native/assets/captions/trilha_web/fund_08_navegacao_en.vtt" srclang="en" label="English" default>
   Your browser does not support the video tag.
 </video>

@@ -5,7 +5,7 @@ title: Native Components for Web Developers
 # Native Components for Web Developers
 
 <video width="100%" controls controlsList="nodownload">
-  <source src="/trilha-react-native/assets/videos/trilha_web/fund_05_componentes_nativos.mp4" type="video/mp4">
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/fund_05_componentes_nativos.mp4" type="video/mp4">
   <track kind="captions" src="/trilha-react-native/assets/captions/trilha_web/fund_05_componentes_nativos_en.vtt" srclang="en" label="English" default>
   Your browser does not support the video tag.
 </video>

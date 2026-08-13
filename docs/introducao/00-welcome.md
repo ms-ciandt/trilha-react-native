@@ -6,7 +6,7 @@ title: Welcome to React Native Trail
 # Welcome to React Native Trail 
 
 <video width="100%" controls style="border-radius: 8px; margin: 16px 0;">
-  <source src="/trilha-react-native/assets/videos/introducao/00_welcome.mp4" type="video/mp4">
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/00_welcome.mp4" type="video/mp4">
   <track kind="captions" src="/trilha-react-native/assets/captions/introducao/00_welcome_en.vtt" srclang="en" label="English" default>
   Your browser does not support the video tag.
 </video>
