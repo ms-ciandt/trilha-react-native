@@ -149,7 +149,7 @@ npm test -- --watch   # modo watch durante desenvolvimento
 - Configuração: `docusaurus.config.js` na raiz
 - Sidebars: `sidebars.js` na raiz — **toda nova página deve ser registrada aqui**
 - Conteúdo: pasta `docs/`
-- Assets estáticos (vídeos): pasta `static/assets/videos/`
+- Vídeos: hospedados no GitHub Release `v0-videos` — **não** em `static/` (gitignored)
 - Deploy: GitHub Actions (`.github/workflows/deploy.yml`) — push para `main` publica automaticamente
 - Testar local: `npm run build && npm run serve` → `http://localhost:3000/trilha-react-native`
 - `markdown.format: 'detect'` habilitado — suporta `.md` e `.mdx` lado a lado
@@ -173,17 +173,9 @@ trilhaNativo: [
 
 ## Vídeos
 
-Vídeos ficam em `static/assets/videos/`, organizados por trilha:
+Vídeos são hospedados no **GitHub Release `v0-videos`** — **não** ficam dentro do repositório git (`.gitignore` bloqueia `.mp4`/`.webm`/`.mov` em `static/assets/videos/`).
 
-```
-static/assets/videos/
-  introducao/          ← vídeos dos arquivos em docs/introducao/
-  trilha_nativo/       ← vídeos da trilha nativo (fund_, rec_, perf_, test_, cicd_, arq_)
-  trilha_web/          ← vídeos da trilha web (mesmo prefixo)
-  trilha_masterclass/  ← reservado
-```
-
-Convenção de nomes: `<prefixo-modulo>_<NN>_<slug>.mp4`
+Convenção de nomes: `<prefixo-modulo>_<NN>_<slug>.<ext>`
 - `fund_` = modulo-fundamentos
 - `rec_`  = modulo-recursos-nativos
 - `perf_` = modulo-performance
@@ -191,18 +183,20 @@ Convenção de nomes: `<prefixo-modulo>_<NN>_<slug>.mp4`
 - `cicd_` = modulo-cicd
 - `arq_`  = modulo-arquitetura
 
-Se existir um `.mp4` para o tópico, adicionar logo após o `# Título` do arquivo `.md`:
+Para adicionar um novo vídeo, use o `/integrar-videos` — ele faz o upload via `gh release upload` e atualiza os docs automaticamente. O `gh` CLI precisa estar instalado e autenticado (`gh auth login`).
+
+Se existir um vídeo para o tópico, adicionar logo após o `# Título` do arquivo `.md`:
 
 ```html
 ## Video Overview
 
 <video width="100%" controls>
-  <source src="/trilha-react-native/assets/videos/trilha_nativo/fund_01_javascript.mp4" type="video/mp4">
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/fund_01_javascript.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
 ```
 
-A URL usa sempre `/trilha-react-native/assets/videos/<subpasta>/nome.mp4` — funciona local (`npm run serve`) e em produção.
+A URL usa sempre `https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/<nome-do-arquivo>`.
 
 ## Tecnologia de referência
 
