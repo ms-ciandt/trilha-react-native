@@ -5,7 +5,7 @@ title: Analise de Breaking Changes
 # Analise de Breaking Changes
 
 <video width="100%" controls controlsList="nodownload">
-  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc05_03_breaking-changes.mp4" type="video/mp4">
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/mc05_03_breaking-changes.mp4" type="video/mp4">
   <track kind="captions" src="/trilha-react-native/assets/captions/trilha_masterclass/mc05_03_breaking-changes.vtt" srclang="pt" label="Português" default>
   Your browser does not support the video tag.
 </video>

@@ -5,7 +5,7 @@ title: Native Dependencies — JS-only vs Native Code
 # Native Dependencies — JS-only vs Native Code
 
 <video width="100%" controls controlsList="nodownload">
-  <source src="/trilha-react-native/assets/videos/trilha_web/rec_02_dependencias_nativas.mp4" type="video/mp4">
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/rec_02_dependencias_nativas.mp4" type="video/mp4">
   <track kind="captions" src="/trilha-react-native/assets/captions/trilha_web/rec_02_dependencias_nativas_en.vtt" srclang="en" label="English" default>
   Your browser does not support the video tag.
 </video>

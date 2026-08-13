@@ -5,7 +5,7 @@ title: "Reanimated 3 — Worklets & Shared Values"
 ## Video Overview
 
 <video width="100%" controls>
-  <source src="/trilha-react-native/assets/videos/trilha_masterclass/anim_03_reanimated_worklets.mp4" type="video/mp4">
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/anim_03_reanimated_worklets.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
 

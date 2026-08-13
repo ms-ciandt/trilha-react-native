@@ -5,7 +5,7 @@ title: "Fabric — Native Components"
 ## 5. Componentes Nativos (Fabric Components)
 
 <video width="100%" controls controlsList="nodownload">
-  <source src="/trilha-react-native/assets/videos/trilha_masterclass/mc03_04_fabric-components.mp4" type="video/mp4">
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/mc03_04_fabric-components.mp4" type="video/mp4">
   <track kind="captions" src="/trilha-react-native/assets/captions/trilha_masterclass/mc03_04_fabric-components.vtt" srclang="pt" label="Português" default>
   Your browser does not support the video tag.
 </video>

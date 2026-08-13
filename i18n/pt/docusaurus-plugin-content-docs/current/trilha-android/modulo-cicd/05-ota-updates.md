@@ -7,7 +7,7 @@ sidebar_position: 5
 ## Visão Geral em Vídeo
 
 <video width="100%" controls>
-  <source src="/trilha-react-native/assets/videos/trilha_android/cicd_05_ota-updates.mp4" type="video/mp4">
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/cicd_05_ota-updates.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
 

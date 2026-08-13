@@ -5,7 +5,7 @@ title: Xcode and CocoaPods Setup for React Native
 # Xcode and CocoaPods Setup for React Native
 
 <video width="100%" controls style="border-radius: 8px; margin: 16px 0;">
-  <source src="/trilha-react-native/assets/videos/trilha_ios/cicd_01_xcode_cocoapods_setup.mp4" type="video/mp4">
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/cicd_01_xcode_cocoapods_setup.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
 

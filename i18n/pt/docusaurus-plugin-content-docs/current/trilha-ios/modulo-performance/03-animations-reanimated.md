@@ -7,7 +7,7 @@ title: Animations with Reanimated v3
 ## Visão Geral em Vídeo
 
 <video width="100%" controls>
-  <source src="/trilha-react-native/assets/videos/trilha_ios/perf_03_animations-reanimated.mp4" type="video/mp4">
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/perf_03_animations-reanimated.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
 

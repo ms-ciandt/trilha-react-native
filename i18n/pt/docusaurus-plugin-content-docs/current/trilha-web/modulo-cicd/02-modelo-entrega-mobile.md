@@ -5,7 +5,7 @@ title: Modelo de Entrega Mobile — Lojas, Rollout e Atualizações
 # Modelo de Entrega Mobile — Lojas, Rollout e Atualizações
 
 <video width="100%" controls controlsList="nodownload">
-  <source src="/trilha-react-native/assets/videos/trilha_web/cicd_02_modelo_entrega_mobile.mp4" type="video/mp4">
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/cicd_02_modelo_entrega_mobile.mp4" type="video/mp4">
   <track kind="captions" src="/trilha-react-native/assets/captions/trilha_web/cicd_02_modelo_entrega_mobile.vtt" srclang="pt" label="Português" default>
   Your browser does not support the video tag.
 </video>

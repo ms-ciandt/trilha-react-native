@@ -5,7 +5,7 @@ title: História & Arquitetura do React Native
 # História & Arquitetura do React Native
 
 <video width="100%" controls style="border-radius: 8px; margin: 16px 0;">
-  <source src="/trilha-react-native/assets/videos/introducao/01_history_architecture.mp4" type="video/mp4">
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/01_history_architecture.mp4" type="video/mp4">
   <track kind="captions" src="/trilha-react-native/assets/captions/introducao/01_history_architecture.vtt" srclang="pt" label="Português" default>
   Seu navegador não suporta o elemento de vídeo.
 </video>

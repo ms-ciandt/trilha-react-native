@@ -7,7 +7,7 @@ sidebar_position: 5
 ## Video Overview
 
 <video width="100%" controls>
-  <source src="/trilha-react-native/assets/videos/trilha_android/rec_05_notifications.mp4" type="video/mp4">
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/rec_05_notifications.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
 
