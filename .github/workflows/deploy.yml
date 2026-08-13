@@ -52,6 +52,9 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Remove video files from build artifact
+        run: find build -type f \( -name "*.mp4" -o -name "*.webm" -o -name "*.mov" \) -delete
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
