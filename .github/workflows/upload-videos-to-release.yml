@@ -1,0 +1,45 @@
+name: Upload Videos to GitHub Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag (e.g. v0-videos)'
+        default: 'v0-videos'
+        required: true
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create release (skip if already exists)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${{ github.event.inputs.tag }}" \
+            --title "Video Assets — ${{ github.event.inputs.tag }}" \
+            --notes "Vídeos do curso trilha-react-native. Não é uma release de código." \
+            --prerelease \
+            2>/dev/null || echo "Release já existe, continuando upload..."
+
+      - name: Upload all video files
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          find static/assets/videos -type f \( -name "*.mp4" -o -name "*.webm" -o -name "*.mov" \) | sort | \
+          while read -r file; do
+            echo "Uploading: $file"
+            gh release upload "${{ github.event.inputs.tag }}" "$file" --clobber
+          done
+
+      - name: Summary
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          count=$(gh release view "${{ github.event.inputs.tag }}" --json assets --jq '.assets | length')
+          echo "Upload concluído: $count assets na release ${{ github.event.inputs.tag }}"
