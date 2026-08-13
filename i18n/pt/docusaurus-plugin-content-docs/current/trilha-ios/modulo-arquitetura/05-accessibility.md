@@ -4,6 +4,13 @@ title: Accessibility
 
 # Acessibilidade
 
+## Visão Geral em Vídeo
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_ios/arq_05_accessibility.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 Desenvolvedores iOS já estão familiarizados com UIAccessibility — o framework que alimenta VoiceOver, Dynamic Type e Reduce Motion nas plataformas Apple. O React Native expõe conceitos equivalentes por meio de sua própria API de acessibilidade, mapeando de forma próxima o que você conhece do UIKit. Este documento percorre cada conceito lado a lado para que você possa transferir seu modelo mental existente sem precisar redescobrir os fundamentos.
 
 ## UIAccessibility traits → accessibilityRole

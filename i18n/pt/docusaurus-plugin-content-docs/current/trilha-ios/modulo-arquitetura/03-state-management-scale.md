@@ -4,6 +4,13 @@ title: State Management at Scale
 
 # Gerenciamento de Estado em Escala
 
+## Visão Geral em Vídeo
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_ios/arq_03_state-management-scale.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 Conforme seu aplicativo React Native cresce além de algumas telas, as decisões que você toma sobre gerenciamento de estado começam a definir toda a arquitetura. Desenvolvedores iOS enfrentam um ponto de inflexão análogo quando uma única `ViewController` começa a acumular estado mutável demais, ou quando múltiplas stores `ObservableObject` começam a compartilhar dados de maneiras que criam acoplamento forte. Este documento percorre o cenário completo de gerenciamento de estado em aplicativos React Native de grande porte, com analogias concretas aos padrões Swift e UIKit/SwiftUI que você já conhece.
 
 ## Quando o useState se Torna Insuficiente
