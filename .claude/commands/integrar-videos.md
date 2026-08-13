@@ -1,9 +1,23 @@
 Integra vídeos baixados do NotebookLM nas trilhas do projeto trilha-react-native.
 
+## Pré-requisito: gh CLI
+
+Os vídeos são hospedados no GitHub Releases (tag `v0-videos`), **não** no repositório git.  
+O `gh` CLI precisa estar instalado e autenticado para fazer o upload.
+
+Verificar antes de continuar:
+```bash
+gh auth status
+```
+
+Se não estiver instalado: `winget install --id GitHub.cli` e depois `gh auth login`.
+
+---
+
 ## Argumentos
 
 `$ARGUMENTS` = caminho absoluto da pasta com os vídeos baixados  
-Exemplo: `C:\Users\gbonin\Desktop\trilha-android-testing`
+Exemplo: `C:\Users\you\Desktop\trilha-android-testing`
 
 Se não for informado, liste as pastas no Desktop que começam com `trilha-` e pergunte qual usar.
 
@@ -15,7 +29,7 @@ Quebre o nome da pasta em palavras separadas por `-`. Aplique as tabelas abaixo:
 
 ### Trilha (docs e assets)
 
-| Palavra no nome | Pasta docs          | Pasta assets          |
+| Palavra no nome | Pasta docs          | Subpasta release      |
 |-----------------|---------------------|-----------------------|
 | `android`       | `trilha-android`    | `trilha_android`      |
 | `ios`           | `trilha-ios`        | `trilha_ios`          |
@@ -82,22 +96,37 @@ Exemplos:
 - `test_03_mocking-native-modules.wav`
 - `perf_01_thread-model.mp4`
 
-### 4d. Copiar o arquivo para assets
+### 4d. Fazer upload para o GitHub Release
 
-Destino: `static/assets/videos/{trail_assets}/{nome_final}`
+**Não copiar para `static/assets/videos/` — os vídeos vivem apenas no GitHub Release.**
 
-Use PowerShell para copiar (não mover — deixe o original na pasta do Desktop):
-```powershell
-Copy-Item -Path "origem\arquivo.wav" -Destination "static\assets\videos\trilha_android\test_01_jest-unit-tests.wav"
+Use `gh release upload` para enviar o arquivo diretamente da pasta do Desktop:
+
+```bash
+gh release upload v0-videos "C:\Users\you\Desktop\{pasta_input}\{arquivo_original}" \
+  --clobber \
+  --repo ms-ciandt/trilha-react-native
 ```
 
-Verifique se o arquivo de destino já existe. Se existir, pergunte ao usuário se deve sobrescrever.
+O `--clobber` sobrescreve se o arquivo já existir com o mesmo nome. Se o nome final (`{prefix}{NN}_{slug}{ext}`) for diferente do nome original, renomeie o arquivo localmente antes do upload:
+
+```bash
+# Renomear primeiro (PowerShell)
+Copy-Item "C:\Users\you\Desktop\{pasta}\{original}.mp4" `
+          "C:\Users\you\Desktop\{pasta}\{nome_final}.mp4"
+
+# Depois fazer upload com o nome final
+gh release upload v0-videos "C:\Users\you\Desktop\{pasta}\{nome_final}.mp4" `
+  --clobber --repo ms-ciandt/trilha-react-native
+```
+
+Verifique que o upload foi bem-sucedido antes de continuar.
 
 ### 4e. Montar o bloco de embed
 
-URL do asset:
+URL do asset (usando GitHub Release, não caminho local):
 ```
-/trilha-react-native/assets/videos/{trail_assets}/{nome_final}
+https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/{nome_final}
 ```
 
 Para extensões de **vídeo** (`.mp4`, `.webm`, `.mov`):
@@ -105,7 +134,7 @@ Para extensões de **vídeo** (`.mp4`, `.webm`, `.mov`):
 ## Video Overview
 
 <video width="100%" controls>
-  <source src="/trilha-react-native/assets/videos/{trail_assets}/{nome_final}" type="video/mp4">
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/{nome_final}" type="video/mp4">
   Your browser does not support the video tag.
 </video>
 ```
@@ -116,7 +145,7 @@ Para extensões de **áudio** (`.wav`, `.mp3`, `.ogg`):
 ## Video Overview
 
 <audio controls style="width:100%">
-  <source src="/trilha-react-native/assets/videos/{trail_assets}/{nome_final}" type="audio/wav">
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/{nome_final}" type="audio/wav">
   Your browser does not support the audio tag.
 </audio>
 ```
@@ -179,17 +208,18 @@ Sempre a partir da main remota, independentemente da branch atual — isso garan
 git checkout -b content/android-testing-videos origin/main
 ```
 
-### 5c. Adicionar apenas os arquivos desta integração
+### 5c. Adicionar apenas os docs modificados
 
-Não usar `git add .` — adicionar somente os arquivos criados ou modificados nesta execução:
+**Não adicionar arquivos de vídeo ao git** — eles estão no GitHub Release e são ignorados pelo `.gitignore`.
+
+Adicionar somente os docs atualizados:
 
 ```bash
-git add static/assets/videos/{trail_assets}/{prefix}*
 git add docs/{trail_docs}/{module}/
 git add i18n/pt/docusaurus-plugin-content-docs/current/{trail_docs}/{module}/
 ```
 
-Verificar com `git status` antes de commitar para confirmar que só os arquivos corretos estão staged.
+Verificar com `git status` antes de commitar para confirmar que **nenhum `.mp4`/`.webm`/`.mov` está staged**.
 
 ### 5d. Commit
 
@@ -214,11 +244,11 @@ Ao final, apresente um resumo:
 ```
 Trilha detectada : trilha-android
 Módulo detectado : modulo-testes
-Assets destino   : static/assets/videos/trilha_android/
+Release tag      : v0-videos
 
 Processados:
-  ✓ test_01_jest-unit-tests.mp4  →  docs EN + PT-BR atualizados
-  ✓ test_02_react-native-testing-library.mp4  →  docs EN + PT-BR atualizados
+  ✓ test_01_jest-unit-tests.mp4  →  upload ok · docs EN + PT-BR atualizados
+  ✓ test_02_react-native-testing-library.mp4  →  upload ok · docs EN + PT-BR atualizados
   ✗ test_03_mocking-n.mp4  →  sem doc correspondente (03-*.md não encontrado)
 
 Branch criada    : content/android-testing-videos
