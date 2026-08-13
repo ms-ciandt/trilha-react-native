@@ -3,3 +3,9 @@ node_modules
 build
 .docusaurus
 .cache-loader
+
+# Video files are hosted on GitHub Releases, not committed to the repo.
+# Run: node scripts/migrate-video-urls.mjs to update <source src> URLs.
+static/assets/videos/**/*.mp4
+static/assets/videos/**/*.webm
+static/assets/videos/**/*.mov

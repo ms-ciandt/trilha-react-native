@@ -52,6 +52,8 @@ jobs:
       - name: Build
         run: npm run build
 
+      # Videos are hosted on GitHub Releases (v0-videos tag), not in the Pages artifact.
+      # Removing them here keeps the artifact under the 1 GB Pages limit.
       - name: Remove video files from build artifact
         run: find build -type f \( -name "*.mp4" -o -name "*.webm" -o -name "*.mov" \) -delete
 
