@@ -4,6 +4,13 @@ title: Thread Model — iOS Perspective
 
 # Thread Model — Perspectiva iOS
 
+## Visão Geral em Vídeo
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_ios/perf_01_thread-model-ios.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 Se você já publicou aplicativos UIKit ou SwiftUI, carrega consigo um modelo mental sólido sobre threads: a thread principal é dona da UI, o Grand Central Dispatch move trabalho para fora dela, e violar esse contrato causa queda de frames ou crashes em tempo de execução. O modelo de threads do React Native se mapeia diretamente sobre essas mesmas primitivas. Entender esse mapeamento permite diagnosticar problemas de performance com ferramentas que você já conhece e aplicar soluções que parecem familiares.
 
 ## Como as Threads do iOS se Mapeiam nas Threads do React Native

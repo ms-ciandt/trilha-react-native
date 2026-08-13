@@ -4,6 +4,13 @@ title: Animations with Reanimated v3
 
 # Animations with Reanimated v3
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_ios/perf_03_animations-reanimated.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 ## The iOS Animation Model You Already Know
 
 On iOS, you have two primary animation systems. `UIView.animate` handles simple property transitions on the main thread, while `Core Animation` (CAAnimation, CABasicAnimation, CASpringAnimation) runs directly on the render server — a separate process that animates layer properties independently of the main thread. This means even if your main thread is busy processing data, Core Animation keeps animating smoothly.

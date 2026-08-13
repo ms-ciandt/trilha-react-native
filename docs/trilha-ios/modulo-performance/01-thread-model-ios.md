@@ -4,6 +4,13 @@ title: Thread Model — iOS Perspective
 
 # Thread Model — iOS Perspective
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_ios/perf_01_thread-model-ios.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 If you have shipped UIKit or SwiftUI applications, you already carry a strong mental model of threading: the main thread owns the UI, Grand Central Dispatch moves work off it, and violating that contract causes either dropped frames or runtime crashes. React Native's threading model maps directly onto these same primitives. Understanding the mapping lets you diagnose performance problems with tools you already know and apply solutions that feel familiar.
 
 ## How iOS Threads Map to React Native Threads

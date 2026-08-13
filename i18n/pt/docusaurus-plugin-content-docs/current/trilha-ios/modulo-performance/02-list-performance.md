@@ -4,6 +4,13 @@ title: List Performance — iOS
 
 # List Performance — Trilha iOS Developer
 
+## Visão Geral em Vídeo
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_ios/perf_02_list-performance.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 Como desenvolvedor iOS, você já entendeu por que `dequeueReusableCell(withReuseIdentifier:for:)` existe. A resposta é simples: alocar e calcular o layout de uma nova célula para cada linha em um conjunto de dados grande destrói a taxa de quadros. UITableView resolve isso mantendo um pool de células fora da tela e reutilizando-as. O FlatList do React Native aplica o mesmo princípio por meio de virtualização controlada pelo JavaScript, e o FlashList leva essa ideia adiante implementando-a nativamente via Fabric.
 
 Entender o paralelo entre as duas abordagens permite tomar decisões informadas sobre qual API utilizar e como configurá-la corretamente.
