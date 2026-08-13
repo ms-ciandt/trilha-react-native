@@ -4,6 +4,13 @@ title: Brownfield Integration — Embedding React Native in an Existing iOS App
 
 # Brownfield Integration — Integrando React Native em um App iOS Existente
 
+## Visão Geral em Vídeo
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_ios/arq_02_brownfield-integration.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 Integração brownfield significa que você já possui um aplicativo iOS funcionando e deseja adicionar telas React Native sem descartar o código existente. Esse é um caminho comum para equipes que querem adotar o RN de forma incremental, lançar uma nova funcionalidade rapidamente em JS multiplataforma, ou migrar uma tela por vez mantendo Swift e UIKit intactos.
 
 ## Quando o Brownfield Faz Sentido

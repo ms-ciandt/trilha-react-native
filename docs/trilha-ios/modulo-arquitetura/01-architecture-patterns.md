@@ -4,6 +4,13 @@ title: Architecture Patterns — iOS to React Native
 
 # Architecture Patterns — iOS to React Native
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="/trilha-react-native/assets/videos/trilha_ios/arq_01_architecture-patterns.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 As a Swift developer you already think in well-defined layers: ViewModels own presentation logic, Repositories abstract data sources, and dependency injection keeps modules testable. React Native respects every one of those instincts. The vocabulary is different, but the separation of concerns is identical.
 
 ---
