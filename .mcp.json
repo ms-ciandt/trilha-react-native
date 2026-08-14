@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "notebook-downloader": {
+      "command": "node",
+      "args": ["mcp/notebook-downloader/index.js"],
+      "type": "stdio"
+    }
+  }
+}
