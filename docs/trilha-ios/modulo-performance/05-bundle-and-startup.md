@@ -4,6 +4,13 @@ title: Bundle Size and Startup Optimization
 
 # Bundle Size and Startup Optimization
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/perf_05_bundle-and-startup.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 React Native apps on iOS face a unique startup challenge: before any Swift or Objective-C code runs your business logic, the runtime must initialize the JavaScript engine, load the JS bundle from disk, evaluate it, and drive the first render. For iOS developers accustomed to AOT-compiled Swift, this pipeline feels unfamiliar. This article explains every stage, shows where time is spent, and provides concrete techniques to reduce startup time and bundle weight.
 
 ## Cold Start Breakdown
