@@ -4,6 +4,13 @@ title: E2E Tests with Detox
 
 # E2E Tests with Detox
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/test_05_detox-e2e.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 If you come from native iOS development, you already know XCUITest: a framework that automates real UI interactions, simulating what a user would do on an iPhone or iPad. Detox occupies exactly that space in the React Native ecosystem. It controls a real iOS Simulator, taps elements, types text, scrolls lists, and verifies the visual state of the interface — all from tests written in JavaScript or TypeScript.
 
 The major difference from XCUITest is that Detox runs the same tests on Android too, without rewriting anything. Additionally, since the tests are written in JS, they live alongside the application code and run in the same CI pipeline as the rest of the suite.

@@ -4,6 +4,13 @@ title: Jest Unit Tests for iOS Developers
 
 # Jest Unit Tests for iOS Developers
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/test_01_jest-unit-tests.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 If you have been writing Swift tests with Swift Testing, you already understand the mental model behind unit testing: isolate a piece of behavior, assert it produces the expected result, and repeat. Jest works the same way. The vocabulary is different, the tooling is JavaScript-native, and a few patterns require a small adjustment in thinking — but nothing here is conceptually new.
 
 Swift Testing (introduced in Xcode 16 / Swift 6) is the modern replacement for XCTest. Its macro-based API — `@Suite`, `@Test`, `#expect` — is structurally closer to Jest than XCTest ever was, which makes the mapping especially direct.

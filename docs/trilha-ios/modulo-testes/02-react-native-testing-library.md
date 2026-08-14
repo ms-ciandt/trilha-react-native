@@ -4,6 +4,13 @@ title: React Native Testing Library
 
 # React Native Testing Library
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/test_02_react-native-testing-library.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 If you have written UI tests with XCUITest, you already understand the core philosophy: interact with your app the way a user would, and verify what the user sees. React Native Testing Library (RNTL) applies the same philosophy to component tests. It renders a component tree in a lightweight environment and gives you queries that mirror how a user — or VoiceOver — would find elements on screen.
 
 ## The Mental Model Shift
