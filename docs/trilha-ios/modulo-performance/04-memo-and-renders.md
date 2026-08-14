@@ -4,6 +4,13 @@ title: Memo and Render Optimization
 
 # Memo and Render Optimization
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/perf_04_memo-and-renders.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 React renders a component whenever its state or props change. Most of the time this is fast enough not to matter. But in long lists, animations, or screens with many nested components, unnecessary re-renders accumulate and the frame rate drops visibly.
 
 This module translates the optimization patterns you already use in SwiftUI and Swift to their React equivalents — and, more importantly, teaches you when to apply none of them.
