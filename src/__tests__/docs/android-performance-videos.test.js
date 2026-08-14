@@ -4,6 +4,8 @@ import path from 'path';
 
 const ROOT = path.resolve(import.meta.dirname, '../../..');
 
+const RELEASE_BASE = 'https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos';
+
 const VIDEOS = [
   { file: 'perf_01_thread.mp4',     slug: 'perf_01_thread' },
   { file: 'perf_02_flatlist.mp4',   slug: 'perf_02_flatlist' },
@@ -23,27 +25,18 @@ const DOCS_EN = [
 const DOCS_PT = DOCS_EN;
 
 describe('Android Performance module videos', () => {
-  describe('video files exist in static assets', () => {
-    VIDEOS.forEach(({ file }) => {
-      it(`static/assets/videos/trilha_android/${file}`, () => {
-        const filePath = path.join(ROOT, 'static', 'assets', 'videos', 'trilha_android', file);
-        expect(fs.existsSync(filePath), `Missing: ${filePath}`).toBe(true);
-      });
-    });
-  });
-
-  describe('EN docs contain video blocks (no "coming soon" label)', () => {
+  describe('EN docs contain GitHub Release video URLs (no "coming soon" label)', () => {
     DOCS_EN.forEach((doc, i) => {
       it(`docs/trilha-android/modulo-performance/${doc}`, () => {
         const filePath = path.join(ROOT, 'docs', 'trilha-android', 'modulo-performance', doc);
         const content = fs.readFileSync(filePath, 'utf-8');
-        expect(content).toContain(`/trilha-react-native/assets/videos/trilha_android/${VIDEOS[i].slug}.mp4`);
+        expect(content).toContain(`${RELEASE_BASE}/${VIDEOS[i].slug}.mp4`);
         expect(content).not.toContain('coming soon');
       });
     });
   });
 
-  describe('PT-BR docs contain video blocks (no "em breve" label)', () => {
+  describe('PT-BR docs contain GitHub Release video URLs (no "em breve" label)', () => {
     DOCS_PT.forEach((doc, i) => {
       it(`i18n/pt/.../trilha-android/modulo-performance/${doc}`, () => {
         const filePath = path.join(
@@ -52,7 +45,7 @@ describe('Android Performance module videos', () => {
           'trilha-android', 'modulo-performance', doc,
         );
         const content = fs.readFileSync(filePath, 'utf-8');
-        expect(content).toContain(`/trilha-react-native/assets/videos/trilha_android/${VIDEOS[i].slug}.mp4`);
+        expect(content).toContain(`${RELEASE_BASE}/${VIDEOS[i].slug}.mp4`);
         expect(content).not.toContain('em breve');
       });
     });
