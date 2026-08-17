@@ -6,6 +6,11 @@ title: GitHub Actions para Builds iOS
 
 # GitHub Actions para Builds iOS
 
+<video width="100%" controls style="border-radius: 8px; margin: 16px 0;">
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/cicd_03_github_actions_ios.mp4" type="video/mp4">
+  Seu navegador não suporta o elemento de vídeo.
+</video>
+
 Configurar um pipeline de CI/CD para iOS no GitHub Actions exige atenção a alguns pontos que diferem do Android: o Xcode só existe em runners macOS, o code signing é feito por certificados provisionados pela Apple e o CocoaPods adiciona uma camada de dependências nativas que precisa de cache dedicado.
 
 ## Por que macOS é obrigatório

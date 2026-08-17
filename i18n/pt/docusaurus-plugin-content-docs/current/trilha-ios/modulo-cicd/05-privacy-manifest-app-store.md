@@ -4,6 +4,11 @@ title: Privacy Manifest and App Store Submission
 
 # Privacy Manifest e Submissão na App Store
 
+<video width="100%" controls style="border-radius: 8px; margin: 16px 0;">
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/cicd_05_privacy_manifest_app_store.mp4" type="video/mp4">
+  Seu navegador não suporta o elemento de vídeo.
+</video>
+
 A Apple introduziu o requisito de privacy manifest com o iOS 17 e o tornou obrigatório para todas as submissões na App Store a partir da primavera de 2024. Para desenvolvedores React Native, esse requisito traz complexidade adicional porque o próprio framework acessa internamente diversas APIs sensíveis à privacidade, o que significa que seu app precisa declarar razões para o uso de APIs que o seu próprio código pode nunca chamar diretamente.
 
 Este documento explica cada parte do privacy manifest para apps React Native, como criá-lo e validá-lo, e o que esperar durante a revisão da App Store.
