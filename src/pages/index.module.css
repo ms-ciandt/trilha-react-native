@@ -402,6 +402,58 @@
   box-shadow: 0 4px 14px rgba(250, 185, 255, 0.4);
 }
 
+/* ─── Trail progress bar (home page cards) ──────────────────── */
+.trailProgressBar {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.trailProgressInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.trailProgressText {
+  font-size: 0.72rem;
+  color: var(--ifm-color-emphasis-500);
+}
+
+.trailProgressPct {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #059669;
+}
+
+[data-theme='dark'] .trailProgressPct {
+  color: #34d399;
+}
+
+.trailProgressTrack {
+  height: 4px;
+  background: var(--ifm-color-emphasis-200);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.trailProgressFill {
+  height: 100%;
+  border-radius: 999px;
+  background: #059669;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme='dark'] .trailProgressFill {
+  background: #34d399;
+}
+
+.trackCardWeb .trailProgressFill { background: #FA5A50; }
+.trackCardAndroid .trailProgressFill { background: #2db370; }
+.trackCardIos .trailProgressFill { background: #C785CC; }
+[data-theme='dark'] .trackCardIos .trailProgressFill { background: #FAB9FF; }
+
 /* ─── RN note inside track cards ───────────────────────────── */
 .cardRnNote {
   display: flex;
