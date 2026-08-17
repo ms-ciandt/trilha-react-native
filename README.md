@@ -96,6 +96,40 @@ The embed URL pattern is:
 https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/<filename>
 ```
 
+### How the hosting model works
+
+Git is not designed for large binaries — a 50 MB `.mp4` on every commit would bloat the repository quickly. Video files never enter the git history. The `.gitignore` blocks `.mp4`, `.webm`, and `.mov` under `static/assets/videos/`.
+
+Instead, **GitHub Releases** acts as an external file store. The `v0-videos` release tag holds all video and audio assets as release attachments. Each file gets a stable public URL:
+
+```
+https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/<filename>
+```
+
+**What goes into a PR** is only the updated `.md` file containing an HTML `<video>` tag that points to that URL:
+
+```html
+## Video Overview
+
+<video width="100%" controls>
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/test_01_jest-unit-tests.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+```
+
+The video file itself is uploaded to the release *before* the PR is created — via `gh release upload` from the contributor's local machine. The PR is only the "pointer": a markdown change that tells the doc page where the already-hosted file lives.
+
+**End-to-end flow:**
+
+```
+1. Generate / download the video locally
+2. gh release upload → file goes directly to GitHub Release (never touches git)
+3. /integrar-videos updates the .md with the <video> tag + URL
+4. git add / commit / push → only the .md changes go into the branch
+5. PR approved + merged → Docusaurus rebuilds with the embed
+6. User loads the page → browser streams the video from GitHub Release
+```
+
 ---
 
 ## Built AI-First
