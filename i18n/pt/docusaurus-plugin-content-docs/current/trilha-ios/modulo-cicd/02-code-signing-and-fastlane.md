@@ -4,6 +4,11 @@ title: Code Signing and Fastlane for React Native iOS
 
 # Code Signing e Fastlane para React Native iOS
 
+<video width="100%" controls style="border-radius: 8px; margin: 16px 0;">
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/cicd_02_code_signing_and_fastlane.mp4" type="video/mp4">
+  Seu navegador não suporta o elemento de vídeo.
+</video>
+
 Como desenvolvedor iOS, você ja entende code signing em nivel conceitual. Certificados, provisioning profiles e o Apple Developer Portal nao sao novidade. O que e novo e fazer tudo isso de forma repetivel em um time e em uma maquina de CI sem que uma pessoa precise clicar pelo Xcode a cada vez. Este documento mapeia seu conhecimento existente para o contexto do React Native e mostra como o Fastlane resolve o problema de automacao.
 
 ## Conceitos de Code Signing — O Que Voce Ja Conhece

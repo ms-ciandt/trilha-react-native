@@ -4,6 +4,11 @@ title: EAS Build for iOS
 
 # EAS Build para iOS
 
+<video width="100%" controls style="border-radius: 8px; margin: 16px 0;">
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/cicd_04_eas_build_ios.mp4" type="video/mp4">
+  Seu navegador não suporta o elemento de vídeo.
+</video>
+
 O EAS Build é o serviço de build hospedado da Expo. Em vez de manter uma máquina macOS ou um runner macOS auto-hospedado no GitHub Actions, você envia seu código-fonte para a infraestrutura da Expo, e o build é executado em uma máquina macOS gerenciada pela Expo com o Xcode pré-instalado. O IPA resultante é armazenado na CDN da Expo e pode ser baixado ou encaminhado diretamente para o App Store Connect.
 
 Para um desenvolvedor iOS, o modelo mental é direto: tudo o que você faria localmente com `xcodebuild archive && xcodebuild -exportArchive` mais o gerenciamento de certificados é automatizado pelo EAS. Você mantém seu projeto React Native no GitHub, configura o `eas.json` e deixa o serviço cuidar do lado macOS.
