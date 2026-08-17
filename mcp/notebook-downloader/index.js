@@ -99,22 +99,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     fs.readdirSync(output_dir).map(f => f.toLowerCase())
   );
 
-  const firstRun = !fs.existsSync(automationProfile);
-
   const context = await chromium.launchPersistentContext(automationProfile, {
     executablePath,
     headless: false,
     acceptDownloads: true,
     downloadsPath: output_dir,
   });
-
-  // On first run, wait for the user to log in manually before proceeding
-  if (firstRun) {
-    const loginPage = await context.newPage();
-    await loginPage.goto('https://accounts.google.com', { waitUntil: 'domcontentloaded', timeout: 60000 });
-    await loginPage.waitForURL(u => !u.includes('accounts.google.com'), { timeout: 120000 });
-    await loginPage.close();
-  }
 
   const downloaded = [];
   const skipped = [];
@@ -126,6 +116,13 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     // NotebookLM keeps long-polling connections open — networkidle never fires.
     // Use domcontentloaded + explicit wait for a known element instead.
     await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
+
+    // If the session is missing or expired, Google redirects to accounts.google.com.
+    // Wait up to 2 minutes for the user to complete login, then navigate back.
+    if (page.url().includes('accounts.google.com')) {
+      await page.waitForURL(u => !u.toString().includes('accounts.google.com'), { timeout: 120000 });
+      await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
+    }
 
     // Wait for the notebook Studio panel (where audio overviews live)
     await page.waitForSelector('body', { timeout: 10000 });
