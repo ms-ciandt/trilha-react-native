@@ -4,6 +4,13 @@ title: JSI e Interop ObjC++
 
 # JSI e Interop ObjC++
 
+## Visão Geral em Vídeo
+
+<video width="100%" controls>
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/na_02_jsi-objcpp.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 React Native 0.76 eliminou a Bridge legada como caminho padrão. No lugar dela, toda comunicação entre JavaScript e código nativo acontece via **JSI** — JavaScript Interface. Para um desenvolvedor Swift, entender JSI significa entender por que existe uma camada C++ no meio, e por que `.mm` (ObjC++) é o elo necessário entre Swift e esse mundo C++.
 
 ---
