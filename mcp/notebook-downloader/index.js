@@ -118,9 +118,37 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
 
     // If the session is missing or expired, Google redirects to accounts.google.com.
-    // Wait up to 2 minutes for the user to complete login, then navigate back.
+    // The sign-in flow may open popup windows (account chooser) or navigate through
+    // multiple Google domains before landing on NotebookLM. waitForURL is fragile here
+    // because any popup or redirect can throw "Navigation was aborted", which propagates
+    // to the finally block and closes Chrome. Poll instead: safe under all navigation patterns.
     if (page.url().includes('accounts.google.com')) {
-      await page.waitForURL(u => !u.toString().includes('accounts.google.com'), { timeout: 120000 });
+      const isGoogleAuth = (href) =>
+        href.includes('accounts.google.com') || href === 'about:blank' || href === '';
+
+      // When a popup page appears (e.g. account chooser), keep it alive — don't let
+      // Playwright auto-close it. We track it but don't block on it.
+      context.on('page', () => {});
+
+      // Poll every 2 s for up to 3 minutes until the main page leaves Google auth.
+      let loggedIn = false;
+      for (let attempt = 0; attempt < 90; attempt++) {
+        await page.waitForTimeout(2000);
+        try {
+          const currentUrl = page.url();
+          if (!isGoogleAuth(currentUrl)) {
+            loggedIn = true;
+            break;
+          }
+        } catch {
+          // Page is mid-navigation — try again next tick.
+        }
+      }
+
+      if (!loggedIn) {
+        throw new Error('Google login timed out after 3 minutes. Please try again.');
+      }
+
       await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
     }
 
