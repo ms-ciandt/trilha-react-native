@@ -4,6 +4,13 @@ title: Mocking Native Modules and Platform APIs
 
 # Mocking de Módulos Nativos e APIs de Plataforma
 
+## Visão Geral em Vídeo
+
+<video width="100%" controls>
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/test_03_mocking-native-modules.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 Quando você escreve testes unitários no iOS, o simulador fornece um runtime completo de UIKit e Foundation. O XCTest roda dentro de um processo Apple real, portanto chamar `CLLocationManager` ou `AVCaptureSession` em um teste ao menos compila e linka, mesmo que você implemente os delegates manualmente.
 
 O Jest roda em Node.js. Não há UIKit, nem CoreLocation, nem runtime Objective-C, nem Java bridge. Qualquer módulo nativo que seu código React Native importar vai falhar no momento em que tentar chamar sua contraparte nativa, porque essa contraparte simplesmente não existe. O lado JavaScript do módulo pode fazer `import` normalmente, mas a primeira chamada ao objeto host do TurboModule vai lançar um `TypeError` ou `ReferenceError` durante os testes.
