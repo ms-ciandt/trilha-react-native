@@ -4,6 +4,13 @@ title: TurboModule Deep Dive — iOS
 
 # TurboModule Deep Dive — iOS
 
+## Visão Geral em Vídeo
+
+<video width="100%" controls>
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/na_04_turbomodule-deep-dive.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 TurboModules são a substituição da Nova Arquitetura para a bridge legada `NativeModules`. No iOS, a implementação abrange quatro camadas: uma spec TypeScript que funciona como contrato, o Codegen que traduz esse contrato em interfaces nativas em tempo de build, um arquivo Objective-C++ que faz a ponte entre JSI e seu código, e uma classe Swift que contém a lógica de negócio real. Este documento cobre cada camada em profundidade, depois explica como `RCTTurboModuleManager` e seu delegate se encaixam, como o carregamento é controlado, e como testar e migrar de forma incremental.
 
 ## 1. Arquitetura: da Spec TypeScript ao Swift

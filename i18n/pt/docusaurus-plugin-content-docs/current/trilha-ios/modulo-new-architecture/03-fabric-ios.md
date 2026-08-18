@@ -4,6 +4,13 @@ title: Fabric no iOS — Shadow Tree, CALayer e Componentes Customizados
 
 # Fabric no iOS — Shadow Tree, CALayer e Componentes Customizados
 
+## Visão Geral em Vídeo
+
+<video width="100%" controls>
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/na_03_fabric-ios.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 Como desenvolvedor Swift/UIKit, você já sabe que toda view no iOS é respaldada por uma `CALayer`. O Fabric, renderer do React Native na New Architecture, foi projetado com esse modelo em mente: ele gerencia uma shadow tree em C++ que se traduz diretamente para a hierarquia de `UIView`/`CALayer` que você conhece, sem os saltos assíncronos do renderer antigo.
 
 ---

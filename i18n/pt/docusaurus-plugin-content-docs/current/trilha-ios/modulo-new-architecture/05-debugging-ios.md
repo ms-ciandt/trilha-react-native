@@ -4,6 +4,13 @@ title: Debugging React Native on iOS
 
 # Debugging React Native no iOS
 
+## Visão Geral em Vídeo
+
+<video width="100%" controls>
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/na_05_debugging-ios.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 Depurar um aplicativo React Native como desenvolvedor Swift exige transitar entre dois mundos: o runtime do JavaScript e a camada nativa do iOS. Você já sabe usar Xcode, lldb e Instruments. Este módulo mapeia essas habilidades para a stack de debugging do React Native e adiciona as ferramentas do lado JS que você precisa para rastrear problemas em ambas as camadas.
 
 ## React Native DevTools

@@ -4,6 +4,13 @@ title: Hermes on iOS
 
 # Hermes no iOS
 
+## Visão Geral em Vídeo
+
+<video width="100%" controls>
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/na_01_hermes-on-ios.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 Por anos, o React Native no iOS executava JavaScript usando o mesmo mecanismo que alimenta o Safari: o JavaScriptCore (JSC). Isso mudou no React Native 0.70, quando a Meta introduziu o Hermes como mecanismo opcional para iOS, e ele se tornou o padrão no React Native 0.74. Se voce ja construiu aplicativos iOS com WKWebView ou usou JSContext no seu codigo Swift, ja trabalhou com o JSC indiretamente — o Hermes e um runtime completamente diferente, criado especificamente para o React Native.
 
 ## JavaScriptCore: A Conexao com o Safari

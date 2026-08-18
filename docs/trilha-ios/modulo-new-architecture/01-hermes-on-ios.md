@@ -4,6 +4,13 @@ title: Hermes on iOS
 
 # Hermes on iOS
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/na_01_hermes-on-ios.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 For years, React Native on iOS ran JavaScript through the same engine that powers Safari: JavaScriptCore (JSC). That changed in React Native 0.70, when Meta introduced Hermes as an optional engine for iOS, and it became the default in React Native 0.74. If you have built iOS apps with WKWebView or used JSContext in your Swift code, you have already worked with JSC indirectly — Hermes is a completely different runtime, purpose-built for React Native.
 
 ## JavaScriptCore: The Safari Connection
