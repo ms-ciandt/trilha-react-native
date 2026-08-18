@@ -6,6 +6,8 @@ import styles from './index.module.css';
 import { useProgress } from '../context/ProgressContext';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import sidebars from '@site/sidebars.js';
+import { CourseStats } from '../components/TimeBadges';
+import contentTimesData from '../data/content-times.json';
 
 function flattenItems(items) {
   const out = [];
@@ -31,6 +33,8 @@ for (const cats of Object.values(sidebars)) {
     }
   }
 }
+
+const _courseTotals = contentTimesData?.total ?? { readMin: 0, videoMin: 0 };
 
 function GridBackground() {
   return <div className={styles.grid} aria-hidden="true" />;
@@ -177,6 +181,9 @@ export default function Home() {
           <p className={styles.heroSubtitle}>
             The next wave: one codebase, two platforms
           </p>
+          {(_courseTotals.readMin > 0 || _courseTotals.videoMin > 0) && (
+            <CourseStats readMin={_courseTotals.readMin} videoMin={_courseTotals.videoMin} />
+          )}
         </header>
 
         <div className={styles.introWrapper}>

@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "docusaurus start",
-    "build": "docusaurus build && ./node_modules/.bin/pagefind --site build && node -e \"require('fs').cpSync('build/pagefind','build/pt/pagefind',{recursive:true})\"",
+    "build": "node scripts/compute-times.mjs && docusaurus build && ./node_modules/.bin/pagefind --site build && node -e \"require('fs').cpSync('build/pagefind','build/pt/pagefind',{recursive:true})\"",
     "serve": "docusaurus serve",
     "test:content": "node scripts/check-content.mjs",
     "test:unit": "vitest run",
