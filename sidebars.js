@@ -331,6 +331,7 @@ const sidebars = {
         'trilha-web/modulo-fundamentos/listas-navegacao',
         'trilha-web/modulo-fundamentos/navegacao-web',
         'trilha-web/modulo-fundamentos/estado-e-apis-web',
+        'trilha-web/modulo-fundamentos/quiz',
       ],
     },
     {
