@@ -19,14 +19,10 @@ Teste seus conhecimentos sobre os 9 tópicos deste módulo:
 
 ---
 
-<div style="text-align: center; margin: 2rem 0;">
-  <a
-    href="https://notebook.google.com/notebook/d34be5e1-7ba1-462d-b324-793389773c7a"
-    target="_blank"
-    rel="noopener noreferrer"
-    style="display: inline-block; padding: 0.875rem 2rem; background: #0070f3; color: #fff; border-radius: 8px; font-weight: 600; font-size: 1rem; text-decoration: none;">
-    Abrir Quiz →
-  </a>
-</div>
-
-> O quiz abre no Google NotebookLM em uma nova aba.
+<iframe
+  src="https://notebook.google.com/notebook/d34be5e1-7ba1-462d-b324-793389773c7a"
+  width="100%"
+  height="700"
+  style="border: none; border-radius: 8px; margin-top: 1rem;"
+  title="Quiz — Fundamentos">
+</iframe>
