@@ -1384,3 +1384,62 @@ video {
     padding: 0.75rem 1rem;
   }
 }
+
+/* ─── Progress: lesson-complete toast ────────────────────────── */
+.progress-toast {
+  position: fixed;
+  bottom: 5.5rem;
+  right: 1.5rem;
+  z-index: 9998;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  background: #059669;
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(5, 150, 105, 0.35);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: none;
+}
+
+.progress-toast--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ─── Progress: sidebar checkmarks ───────────────────────────── */
+.sidebar-link-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.sidebar-link-wrap > *:last-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.sidebar-check {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: color-mix(in srgb, #059669 15%, transparent);
+  color: #059669;
+  margin-right: 4px;
+  margin-left: 8px;
+}
+
+[data-theme='dark'] .sidebar-check {
+  background: color-mix(in srgb, #34d399 15%, transparent);
+  color: #34d399;
+}
+

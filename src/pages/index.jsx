@@ -3,6 +3,34 @@ import Link from '@docusaurus/Link';
 import Layout from '@theme/Layout';
 import { useColorMode } from '@docusaurus/theme-common';
 import styles from './index.module.css';
+import { useProgress } from '../context/ProgressContext';
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
+import sidebars from '@site/sidebars.js';
+
+function flattenItems(items) {
+  const out = [];
+  for (const item of items) {
+    if (typeof item === 'string') out.push(item);
+    else if (item.type === 'category' && item.items) out.push(...flattenItems(item.items));
+  }
+  return out;
+}
+
+const TRAIL_TOTALS = {};
+const TRAIL_DOCS = {};
+for (const cats of Object.values(sidebars)) {
+  if (!Array.isArray(cats)) continue;
+  for (const cat of cats) {
+    if (cat.type !== 'category' || !cat.items) continue;
+    for (const docId of flattenItems(cat.items)) {
+      const key = docId.split('/')[0];
+      if (!key) continue;
+      TRAIL_TOTALS[key] = (TRAIL_TOTALS[key] || 0) + 1;
+      if (!TRAIL_DOCS[key]) TRAIL_DOCS[key] = [];
+      TRAIL_DOCS[key].push(docId);
+    }
+  }
+}
 
 function GridBackground() {
   return <div className={styles.grid} aria-hidden="true" />;
@@ -52,6 +80,42 @@ function DotConnector() {
         <span className={styles.dot} style={{ animationDelay: '0.6s' }} />
       </div>
     </div>
+  );
+}
+
+function TrailCta({ trailKey, defaultPath, className, startLabel, continueLabel }) {
+  const { getTrailCount, progress } = useProgress();
+  const { siteConfig: { baseUrl } } = useDocusaurusContext();
+
+  const completed = getTrailCount(trailKey);
+  const total = TRAIL_TOTALS[trailKey] || 0;
+  const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+  const to = (() => {
+    if (!completed) return defaultPath;
+    const base = baseUrl.replace(/\/$/, '');
+    const docs = TRAIL_DOCS[trailKey] || [];
+    const next = docs.find(docId => !progress[`${base}/${docId}`]);
+    return next ? `/${next}` : defaultPath;
+  })();
+
+  return (
+    <>
+      <Link className={className} to={to}>
+        {completed > 0 ? continueLabel : startLabel}
+      </Link>
+      {total > 0 && (
+        <div className={styles.trailProgressBar}>
+          <div className={styles.trailProgressInfo}>
+            <span className={styles.trailProgressText}>{completed}/{total} lessons</span>
+            {completed > 0 && <span className={styles.trailProgressPct}>{pct}%</span>}
+          </div>
+          <div className={styles.trailProgressTrack} role="progressbar" aria-valuenow={completed} aria-valuemin={0} aria-valuemax={total}>
+            <div className={styles.trailProgressFill} style={{ width: `${pct}%` }} />
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 
@@ -130,12 +194,13 @@ export default function Home() {
             <p className={styles.trackDesc}>
               History, architecture and New Architecture: essential context before choosing your trail.
             </p>
-            <Link
+            <TrailCta
+              trailKey="introducao"
+              defaultPath="/introducao/intro"
               className={`${styles.trackBtn} ${styles.introBtnStyle}`}
-              to="/introducao/intro"
-            >
-              Start here
-            </Link>
+              startLabel="Start here"
+              continueLabel="Continue"
+            />
           </div>
         </div>
 
@@ -152,12 +217,13 @@ export default function Home() {
             <p className={styles.trackDesc}>
               You come from React, HTML/CSS and JavaScript. Learn the differences of the mobile environment.
             </p>
-            <Link
+            <TrailCta
+              trailKey="trilha-web"
+              defaultPath="/trilha-web/modulo-fundamentos/adaptando-js-ts"
               className={`${styles.trackBtn} ${styles.trackBtnWeb}`}
-              to="/trilha-web/modulo-fundamentos/adaptando-js-ts"
-            >
-              Start
-            </Link>
+              startLabel="Start"
+              continueLabel="Continue"
+            />
             <div className={styles.cardRnNote}>
               <img src="/trilha-react-native/img/react-native-logo.svg" alt="" width="14" height="14" />
               One codebase: native apps on iOS &amp; Android
@@ -180,12 +246,13 @@ export default function Home() {
             <p className={styles.trackDesc}>
               You come from Kotlin and Jetpack Compose. Map your concepts to the React Native ecosystem.
             </p>
-            <Link
+            <TrailCta
+              trailKey="trilha-android"
+              defaultPath="/trilha-android/modulo-compose-para-rn/composable-vs-component"
               className={`${styles.trackBtn} ${styles.trackBtnAndroid}`}
-              to="/trilha-android/modulo-compose-para-rn/composable-vs-component"
-            >
-              Start
-            </Link>
+              startLabel="Start"
+              continueLabel="Continue"
+            />
             <div className={styles.cardRnNote}>
               <img src="/trilha-react-native/img/react-native-logo.svg" alt="" width="14" height="14" />
               One codebase: native apps on iOS &amp; Android
@@ -202,12 +269,13 @@ export default function Home() {
             <p className={styles.trackDesc}>
               You come from Swift and SwiftUI. Map your concepts to the React Native ecosystem.
             </p>
-            <Link
+            <TrailCta
+              trailKey="trilha-ios"
+              defaultPath="/trilha-ios/modulo-fundamentos/ios-project-setup"
               className={`${styles.trackBtn} ${styles.trackBtnIos}`}
-              to="/trilha-ios/modulo-fundamentos/ios-project-setup"
-            >
-              Start
-            </Link>
+              startLabel="Start"
+              continueLabel="Continue"
+            />
             <div className={styles.cardRnNote}>
               <img src="/trilha-react-native/img/react-native-logo.svg" alt="" width="14" height="14" />
               One codebase: native apps on iOS &amp; Android
@@ -232,12 +300,13 @@ export default function Home() {
                 Brownfield App · TurboModules · Fabric · Performance · CI/CD and more
               </p>
               <div className={styles.masterclassLevelBadge}>Advanced</div>
-              <Link
+              <TrailCta
+                trailKey="trilha-masterclass"
+                defaultPath="/trilha-masterclass/modulo-00-overview/course-overview"
                 className={styles.masterclassBtn}
-                to="/trilha-masterclass/modulo-00-overview/course-overview"
-              >
-                Access Masterclass
-              </Link>
+                startLabel="Access Masterclass"
+                continueLabel="Continue Masterclass"
+              />
             </div>
           </div>
         </section>
