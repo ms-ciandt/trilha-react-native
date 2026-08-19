@@ -1,0 +1,35 @@
+---
+id: quiz
+title: Fundamentals Quiz
+---
+
+import Quiz from '@site/src/components/Quiz';
+
+# Fundamentals Quiz
+
+Test your knowledge of this module's topics.
+
+<Quiz lang="en" questions={[
+  {
+    "question": "When building a screen with React Navigation, a developer notices that a 'useEffect' hook with an empty dependency array does not run when returning to the screen via the back button. What explains this behavior?",
+    "options": [
+      {
+        "text": "React Navigation uses a shadow DOM that prevents standard React hooks from detecting focus changes.",
+        "rationale": "React Native does not use a shadow DOM; the issue stems from the fact that navigation transitions do not always equate to component mounting/unmounting."
+      },
+      {
+        "text": "The hardware back button on Android bypasses the standard React lifecycle events to improve performance.",
+        "rationale": "The hardware back button triggers standard navigation actions that follow the defined React Navigation logic and lifecycle."
+      },
+      {
+        "text": "Previous screens in a Stack Navigator remain mounted and 'alive' in memory even when they are not visible.",
+        "rationale": "Because the previous screen is already mounted in the stack, it is not recreated when the top screen is popped, so mount-based hooks like useEffect do not re-trigger."
+      },
+      {
+        "text": "React Navigation unmounts screens and caches their state in a background worker process.",
+        "rationale": "Screens are not unmounted or moved to a background worker; they stay in the active component tree of the stack."
+      }
+    ],
+    "correctIndex": 2
+  }
+]} />
