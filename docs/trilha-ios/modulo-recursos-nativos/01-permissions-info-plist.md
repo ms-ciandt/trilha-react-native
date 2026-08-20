@@ -4,6 +4,13 @@ title: Permissions and Info.plist
 
 # Permissions and Info.plist
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/rec_01_permissions-info-plist.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 If you come from native iOS development with Swift, you know that permissions are managed in two places: `Info.plist` (a static declaration of intent) and runtime APIs like `AVCaptureDevice.requestAccess` or `CLLocationManager.requestWhenInUseAuthorization`. In React Native, the model is identical — you still need the `Info.plist` and you still call runtime APIs — but the JavaScript layer abstracts part of the process. This document covers everything you need to know.
 
 ---

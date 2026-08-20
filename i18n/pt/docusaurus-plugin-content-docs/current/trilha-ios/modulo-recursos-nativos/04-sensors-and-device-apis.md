@@ -4,6 +4,13 @@ title: Sensors and Device APIs in React Native
 
 # Sensores e APIs de Dispositivo no React Native
 
+## Visão Geral em Vídeo
+
+<video width="100%" controls>
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/rec_04_sensors-and-device-apis.mp4" type="video/mp4">
+  Seu navegador não suporta a tag de vídeo.
+</video>
+
 O iOS oferece um conjunto rico de APIs de hardware do dispositivo por meio de frameworks como `CoreLocation`, `CoreMotion`, `CoreBluetooth`, `LocalAuthentication`, `MapKit` e `UIKit`. Cada um deles possui um equivalente direto em React Native que encapsula o mesmo framework de plataforma, o que significa que o modelo mental que você já tem se transfere diretamente para a camada JavaScript.
 
 ---

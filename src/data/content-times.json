@@ -452,33 +452,33 @@
     },
     "trilha-ios/modulo-recursos-nativos/01-permissions-info-plist.md": {
       "readMin": 7,
-      "videoMin": null,
-      "hasVideo": false,
-      "videoFile": null
+      "videoMin": 7,
+      "hasVideo": true,
+      "videoFile": "rec_01_permissions-info-plist.mp4"
     },
     "trilha-ios/modulo-recursos-nativos/02-camera-and-media.md": {
       "readMin": 4,
-      "videoMin": null,
-      "hasVideo": false,
-      "videoFile": null
+      "videoMin": 7,
+      "hasVideo": true,
+      "videoFile": "rec_02_camera-and-media.mp4"
     },
     "trilha-ios/modulo-recursos-nativos/03-storage-and-keychain.md": {
-      "readMin": 4,
-      "videoMin": null,
-      "hasVideo": false,
-      "videoFile": null
+      "readMin": 5,
+      "videoMin": 7,
+      "hasVideo": true,
+      "videoFile": "rec_03_storage-and-keychain.mp4"
     },
     "trilha-ios/modulo-recursos-nativos/04-sensors-and-device-apis.md": {
       "readMin": 3,
-      "videoMin": null,
-      "hasVideo": false,
-      "videoFile": null
+      "videoMin": 7,
+      "hasVideo": true,
+      "videoFile": "rec_04_sensors-and-device-apis.mp4"
     },
     "trilha-ios/modulo-recursos-nativos/05-turbomodule-swift.md": {
       "readMin": 6,
-      "videoMin": null,
-      "hasVideo": false,
-      "videoFile": null
+      "videoMin": 7,
+      "hasVideo": true,
+      "videoFile": "rec_05_turbomodule-swift.mp4"
     },
     "trilha-ios/modulo-recursos-nativos/06-xcassets-ios.md": {
       "readMin": 4,
@@ -488,9 +488,9 @@
     },
     "trilha-ios/modulo-recursos-nativos/07-push-notifications.md": {
       "readMin": 2,
-      "videoMin": null,
-      "hasVideo": false,
-      "videoFile": null
+      "videoMin": 7,
+      "hasVideo": true,
+      "videoFile": "rec_07_push-notifications.mp4"
     },
     "trilha-ios/modulo-testes/01-jest-unit-tests.md": {
       "readMin": 7,
@@ -940,8 +940,8 @@
       "docCount": 5
     },
     "trilha-ios/modulo-recursos-nativos": {
-      "readMin": 30,
-      "videoMin": 6.7,
+      "readMin": 31,
+      "videoMin": 48.7,
       "docCount": 7
     },
     "trilha-ios/modulo-testes": {
@@ -1027,8 +1027,8 @@
       "docCount": 40
     },
     "trilha-ios": {
-      "readMin": 203,
-      "videoMin": 246.2,
+      "readMin": 204,
+      "videoMin": 288.2,
       "docCount": 43
     },
     "trilha-masterclass": {
@@ -1043,8 +1043,8 @@
     }
   },
   "total": {
-    "readMin": 446,
-    "videoMin": 825.6,
+    "readMin": 447,
+    "videoMin": 867.6000000000001,
     "docCount": 142
   }
 }

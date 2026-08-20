@@ -4,6 +4,13 @@ title: TurboModules with Swift
 
 # TurboModules with Swift
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/rec_05_turbomodule-swift.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 The New Architecture's TurboModule system exposes a synchronous C++ interface via JSI (JavaScript Interface). This creates an immediate constraint for Swift developers: Swift cannot be called directly from C++. Understanding that limit — and how Objective-C++ bridges it — is essential before writing any implementation code.
 
 ## Why Swift Cannot Implement TurboModules Directly
