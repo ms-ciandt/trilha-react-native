@@ -78,4 +78,9 @@ describe('Home page (EN)', () => {
     render(<Home />);
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('React Native Academy');
   });
+
+  it('does not contain the old "React Native Trail" branding', () => {
+    render(<Home />);
+    expect(screen.queryByText(/React Native Trail/i)).not.toBeInTheDocument();
+  });
 });
