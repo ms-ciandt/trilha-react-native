@@ -1,4 +1,4 @@
-# React Native Trail
+# React Native Academy
 
 A free, open-source course for developers who already know how to build software — either on Android (Kotlin/Compose), iOS (Swift/SwiftUI), or on the web (React) — and want to master React Native with the New Architecture.
 

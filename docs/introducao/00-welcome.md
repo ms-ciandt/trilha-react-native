@@ -1,9 +1,9 @@
 ---
 id: intro
-title: Welcome to React Native Trail
+title: Welcome to React Native Academy
 ---
 
-# Welcome to React Native Trail 
+# Welcome to React Native Academy
 
 <video width="100%" controls style="border-radius: 8px; margin: 16px 0;">
   <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/00_welcome.mp4" type="video/mp4">
@@ -11,7 +11,7 @@ title: Welcome to React Native Trail
   Your browser does not support the video tag.
 </video>
 
-**React Native Trail** is a structured course for developers who already know how to build software and want to master React Native with the New Architecture.
+**React Native Academy** is a structured course for developers who already know how to build software and want to master React Native with the New Architecture.
 
 ## Four Trails, One Destination
 

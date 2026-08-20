@@ -1,9 +1,9 @@
 ---
 id: intro
-title: Bem-vindo à Trilha React Native
+title: Bem-vindo ao React Native Academy
 ---
 
-# Bem-vindo à Trilha React Native
+# Bem-vindo ao React Native Academy
 
 <video width="100%" controls style="border-radius: 8px; margin: 16px 0;">
   <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/00_welcome.mp4" type="video/mp4">
@@ -11,7 +11,7 @@ title: Bem-vindo à Trilha React Native
   Seu navegador não suporta o elemento de vídeo.
 </video>
 
-**Trilha React Native** é um curso estruturado para desenvolvedores que já sabem construir software e querem dominar o React Native com a Nova Arquitetura.
+**React Native Academy** é um curso estruturado para desenvolvedores que já sabem construir software e querem dominar o React Native com a Nova Arquitetura.
 
 ## Quatro Trilhas, Um Destino
 
