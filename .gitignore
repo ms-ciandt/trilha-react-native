@@ -4,6 +4,9 @@ build
 .docusaurus
 .cache-loader
 
+# Browser automation profiles — created on first MCP run, never committed.
+mcp/notebook-downloader/*-automation-profile/
+
 # Video files are hosted on GitHub Releases, not committed to the repo.
 # Run: node scripts/migrate-video-urls.mjs to update <source src> URLs.
 static/assets/videos/**/*.mp4
