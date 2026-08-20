@@ -1412,7 +1412,7 @@ video {
   transform: translateY(0);
 }
 
-/* ─── Progress: sidebar checkmarks ───────────────────────────── */
+/* ─── Progress: sidebar checkboxes ───────────────────────────── */
 .sidebar-link-wrap {
   position: relative;
   display: flex;
@@ -1424,22 +1424,47 @@ video {
   min-width: 0;
 }
 
-.sidebar-check {
+.sidebar-checkbox {
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: color-mix(in srgb, #059669 15%, transparent);
-  color: #059669;
-  margin-right: 4px;
+  width: 15px;
+  height: 15px;
+  border-radius: 3px;
+  border: 1.5px solid var(--ifm-color-emphasis-400);
+  background: transparent;
+  color: transparent;
+  margin-right: 6px;
   margin-left: 8px;
+  cursor: pointer;
+  padding: 0;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
 }
 
-[data-theme='dark'] .sidebar-check {
-  background: color-mix(in srgb, #34d399 15%, transparent);
-  color: #34d399;
+.sidebar-checkbox--checked {
+  border-color: #059669;
+  background: #059669;
+  color: #fff;
+}
+
+.sidebar-checkbox:hover:not(.sidebar-checkbox--checked) {
+  border-color: #059669;
+  background: color-mix(in srgb, #059669 12%, transparent);
+}
+
+[data-theme='dark'] .sidebar-checkbox {
+  border-color: var(--ifm-color-emphasis-500);
+}
+
+[data-theme='dark'] .sidebar-checkbox--checked {
+  border-color: #34d399;
+  background: #34d399;
+  color: #000;
+}
+
+[data-theme='dark'] .sidebar-checkbox:hover:not(.sidebar-checkbox--checked) {
+  border-color: #34d399;
+  background: color-mix(in srgb, #34d399 12%, transparent);
 }
 
