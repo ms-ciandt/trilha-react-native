@@ -1,12 +1,18 @@
 import React from 'react';
-import OriginalContent from '@theme-original/DocItem/Content';
+import Content from '@theme-original/DocItem/Content';
 import { useDoc } from '@docusaurus/plugin-content-docs/client';
-import TimeBadges from '@site/src/components/TimeBadges';
-import contentTimes from '@site/src/data/content-times.json';
+import { TimeBadges } from '@site/src/components/TimeBadges';
+import contentTimesData from '@site/src/data/content-times.json';
+
+const contentTimes = contentTimesData?.byDoc ?? {};
 
 export default function DocItemContent(props) {
   const { metadata } = useDoc();
-  const times = contentTimes.byDoc?.[metadata.id];
+
+  // metadata.source looks like "@site/docs/trilha-android/modulo-fundamentos/01-javascript.md"
+  const relPath = metadata?.source?.replace('@site/docs/', '');
+  const times = relPath ? contentTimes[relPath] : null;
+
   return (
     <>
       {times && (
@@ -16,7 +22,7 @@ export default function DocItemContent(props) {
           hasVideo={times.hasVideo}
         />
       )}
-      <OriginalContent {...props} />
+      <Content {...props} />
     </>
   );
 }

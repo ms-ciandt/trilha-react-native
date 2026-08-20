@@ -1,36 +1,96 @@
 import React from 'react';
 import styles from './TimeBadges.module.css';
 
-function fmt(min) {
-  if (min < 60) return `${min} min`;
+function formatMinutes(min) {
+  if (!min || min <= 0) return null;
+  if (min < 60) return `${Math.round(min)} min`;
   const h = Math.floor(min / 60);
-  const m = min % 60;
-  return m === 0 ? `${h} h` : `${h} h ${m} min`;
+  const m = Math.round(min % 60);
+  return m > 0 ? `${h} h ${m} min` : `${h} h`;
 }
 
-const ReadIcon = () => (
-  <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" aria-hidden="true">
-    <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
-  </svg>
-);
+function GlassesIcon() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <circle cx="6" cy="15" r="4" />
+      <circle cx="18" cy="15" r="4" />
+      <path d="M2 15h4m12 0h4" />
+      <path d="M10 15a2 2 0 0 1 4 0" />
+    </svg>
+  );
+}
 
-const PlayIcon = () => (
-  <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" aria-hidden="true">
-    <path d="M8 5v14l11-7z" />
-  </svg>
-);
+function EyeIcon() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+      <circle cx="12" cy="12" r="3" />
+    </svg>
+  );
+}
 
-export default function TimeBadges({ readMin, videoMin, hasVideo }) {
+export function TimeBadges({ readMin, videoMin, hasVideo }) {
+  const readLabel  = formatMinutes(readMin);
+  const videoLabel = hasVideo ? formatMinutes(videoMin) : null;
+
+  if (!readLabel && !videoLabel) return null;
+
   return (
     <div className={styles.badges}>
-      <span className={styles.badge}>
-        <ReadIcon />
-        {fmt(readMin)} read
-      </span>
-      {hasVideo && videoMin > 0 && (
+      {readLabel && (
         <span className={styles.badge}>
-          <PlayIcon />
-          {fmt(videoMin)} watch
+          <GlassesIcon />
+          {readLabel} read
+        </span>
+      )}
+      {videoLabel && (
+        <span className={`${styles.badge} ${styles.badgeVideo}`}>
+          <EyeIcon />
+          {videoLabel} watch
+        </span>
+      )}
+    </div>
+  );
+}
+
+export function CourseStats({ readMin, videoMin }) {
+  const readLabel  = formatMinutes(readMin);
+  const videoLabel = formatMinutes(videoMin);
+
+  return (
+    <div className={styles.courseStats}>
+      {readLabel && (
+        <span className={styles.statItem}>
+          <GlassesIcon />
+          <span>{readLabel} reading</span>
+        </span>
+      )}
+      {videoLabel && (
+        <span className={styles.statItem}>
+          <EyeIcon />
+          <span>{videoLabel} watching</span>
         </span>
       )}
     </div>

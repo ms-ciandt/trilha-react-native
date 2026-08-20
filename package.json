@@ -4,7 +4,6 @@
   "private": true,
   "scripts": {
     "start": "docusaurus start",
-    "compute-times": "node scripts/compute-times.mjs",
     "build": "node scripts/compute-times.mjs && docusaurus build && ./node_modules/.bin/pagefind --site build && node -e \"require('fs').cpSync('build/pagefind','build/pt/pagefind',{recursive:true})\"",
     "serve": "docusaurus serve",
     "test:content": "node scripts/check-content.mjs",

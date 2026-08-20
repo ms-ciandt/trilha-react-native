@@ -145,7 +145,7 @@ O projeto usa **Vitest + React Testing Library** para testar as páginas JSX em 
 
 Os testes verificam strings literais presentes no JSX. Alterar qualquer um dos itens abaixo **sem atualizar o teste correspondente quebra a pipeline**:
 
-- Headings H1 (`React Native Trail`, `Trilha React Native`, `About This Course`, `Sobre Este Curso`)
+- Headings H1 (`React Native Academy`, `React Native Academy`, `About This Course`, `Sobre Este Curso`)
 - Nomes dos cards de trilha (`Web dev trail`, `Android native trail`, `iOS native trail`, `React Native Masterclass Trail`, `Trilha Web`, `Trilha Android`, `Trilha iOS`, `Trilha React Native MasterClass`)
 - Hrefs dos botões Start/Começar e links de masterclass
 - Nomes e `alt` text dos contribuidores e revisores
