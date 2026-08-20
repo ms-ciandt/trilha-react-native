@@ -6,6 +6,7 @@ import styles from './index.module.css';
 import { useProgress } from '../context/ProgressContext';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import sidebars from '@site/sidebars.js';
+import contentTimes from '@site/src/data/content-times.json';
 
 function flattenItems(items) {
   const out = [];
@@ -30,6 +31,42 @@ for (const cats of Object.values(sidebars)) {
       TRAIL_DOCS[key].push(docId);
     }
   }
+}
+
+function fmtTime(min) {
+  if (min < 60) return `~${min} min`;
+  const h = Math.floor(min / 60);
+  const m = min % 60;
+  return m === 0 ? `~${h} h` : `~${h} h ${m} min`;
+}
+
+const ReadIcon = () => (
+  <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" aria-hidden="true">
+    <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
+  </svg>
+);
+
+const PlayIcon = () => (
+  <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" aria-hidden="true">
+    <path d="M8 5v14l11-7z" />
+  </svg>
+);
+
+function CourseStats() {
+  const { total } = contentTimes;
+  return (
+    <div className={styles.courseStats}>
+      <span className={styles.courseStat}>
+        <ReadIcon />
+        {fmtTime(total.readMin)} reading
+      </span>
+      <span className={styles.courseStatSep}>·</span>
+      <span className={styles.courseStat}>
+        <PlayIcon />
+        {fmtTime(total.videoMin)} watching
+      </span>
+    </div>
+  );
 }
 
 function GridBackground() {
@@ -177,6 +214,7 @@ export default function Home() {
           <p className={styles.heroSubtitle}>
             The next wave: one codebase, two platforms
           </p>
+          <CourseStats />
         </header>
 
         <div className={styles.introWrapper}>

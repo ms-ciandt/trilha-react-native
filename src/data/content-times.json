@@ -1,0 +1,902 @@
+{
+  "byDoc": {
+    "introducao/00-welcome": {
+      "readMin": 2,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "introducao/01-history-and-architecture": {
+      "readMin": 5,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "introducao/02-new-architecture": {
+      "readMin": 3,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "introducao/03-choose-your-track": {
+      "readMin": 1,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-android/modulo-arquitetura/01-architecture-patterns": {
+      "readMin": 1,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-android/modulo-arquitetura/02-monorepo": {
+      "readMin": 1,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-android/modulo-arquitetura/03-state-management-at-scale": {
+      "readMin": 1,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-android/modulo-arquitetura/04-error-handling-monitoring": {
+      "readMin": 1,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-android/modulo-arquitetura/05-accessibility": {
+      "readMin": 1,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-android/modulo-cicd/01-fastlane": {
+      "readMin": 1,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-android/modulo-cicd/02-github-actions": {
+      "readMin": 1,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-android/modulo-cicd/03-eas-build": {
+      "readMin": 1,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-android/modulo-cicd/04-code-signing-keystore": {
+      "readMin": 3,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-android/modulo-cicd/05-ota-updates": {
+      "readMin": 1,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-android/modulo-compose-para-rn/01-composable-vs-component": {
+      "readMin": 4,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-android/modulo-compose-para-rn/02-remember-vs-usestate": {
+      "readMin": 3,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-android/modulo-compose-para-rn/03-layout-column-row-vs-flexbox": {
+      "readMin": 4,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-android/modulo-compose-para-rn/04-navigation-navhost-vs-react-navigation": {
+      "readMin": 2,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-android/modulo-compose-para-rn/05-theming-material3-vs-rn": {
+      "readMin": 3,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-android/modulo-fundamentos/01-javascript-for-android-devs": {
+      "readMin": 5,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-android/modulo-fundamentos/02-typescript-for-kotlin-devs": {
+      "readMin": 3,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-android/modulo-fundamentos/03-rn-core-components": {
+      "readMin": 4,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-android/modulo-fundamentos/04-styling-stylesheet": {
+      "readMin": 2,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-android/modulo-fundamentos/05-state-and-apis": {
+      "readMin": 3,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-android/modulo-new-architecture/01-hermes-engine": {
+      "readMin": 5,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-android/modulo-new-architecture/02-jsi-javascript-interface": {
+      "readMin": 4,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-android/modulo-new-architecture/03-turbomodule-kotlin": {
+      "readMin": 5,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-android/modulo-new-architecture/04-fabric-component-compose": {
+      "readMin": 3,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-android/modulo-new-architecture/05-debugging-new-architecture": {
+      "readMin": 6,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-android/modulo-performance/01-thread-model": {
+      "readMin": 4,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-android/modulo-performance/02-flatlist-optimisation": {
+      "readMin": 2,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-android/modulo-performance/03-reanimated": {
+      "readMin": 2,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-android/modulo-performance/04-memo-usememo-usecallback": {
+      "readMin": 2,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-android/modulo-performance/05-bundle-startup": {
+      "readMin": 3,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-android/modulo-recursos-nativos/01-permissions": {
+      "readMin": 2,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-android/modulo-recursos-nativos/02-camera": {
+      "readMin": 2,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-android/modulo-recursos-nativos/03-storage": {
+      "readMin": 2,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-android/modulo-recursos-nativos/04-sensors-device-apis": {
+      "readMin": 2,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-android/modulo-recursos-nativos/05-notifications": {
+      "readMin": 2,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-android/modulo-testes/01-jest-unit-tests": {
+      "readMin": 1,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-android/modulo-testes/02-react-native-testing-library": {
+      "readMin": 1,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-android/modulo-testes/03-mocking-native-modules": {
+      "readMin": 1,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-android/modulo-testes/04-integration-tests": {
+      "readMin": 1,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-android/modulo-testes/05-detox-e2e": {
+      "readMin": 1,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-ios/modulo-arquitetura/01-architecture-patterns": {
+      "readMin": 1,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-ios/modulo-arquitetura/02-brownfield-integration": {
+      "readMin": 6,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-ios/modulo-arquitetura/03-state-management-scale": {
+      "readMin": 9,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-ios/modulo-arquitetura/04-error-handling-monitoring": {
+      "readMin": 4,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-ios/modulo-arquitetura/05-accessibility": {
+      "readMin": 6,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-ios/modulo-cicd/01-xcode-cocoapods-setup": {
+      "readMin": 10,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-ios/modulo-cicd/02-code-signing-and-fastlane": {
+      "readMin": 9,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-ios/modulo-cicd/03-github-actions-ios": {
+      "readMin": 4,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-ios/modulo-cicd/04-eas-build-ios": {
+      "readMin": 9,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-ios/modulo-cicd/05-privacy-manifest-app-store": {
+      "readMin": 12,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-ios/modulo-fundamentos/00-ios-project-setup": {
+      "readMin": 6,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-ios/modulo-fundamentos/01-swift-to-javascript": {
+      "readMin": 7,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-ios/modulo-fundamentos/02-typescript-for-swift-devs": {
+      "readMin": 5,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-ios/modulo-fundamentos/03-swiftui-to-react": {
+      "readMin": 5,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-ios/modulo-fundamentos/04-components-and-props": {
+      "readMin": 5,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-ios/modulo-fundamentos/05-state-and-hooks": {
+      "readMin": 6,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-ios/modulo-fundamentos/06-rn-core-components": {
+      "readMin": 6,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-ios/modulo-fundamentos/07-layout-and-flexbox": {
+      "readMin": 8,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-ios/modulo-fundamentos/08-styling": {
+      "readMin": 4,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-ios/modulo-fundamentos/09-navigation": {
+      "readMin": 4,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-ios/modulo-fundamentos/10-state-and-apis": {
+      "readMin": 5,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-ios/modulo-new-architecture/01-hermes-on-ios": {
+      "readMin": 11,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-ios/modulo-new-architecture/02-jsi-objcpp": {
+      "readMin": 5,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-ios/modulo-new-architecture/03-fabric-ios": {
+      "readMin": 6,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-ios/modulo-new-architecture/04-turbomodule-deep-dive": {
+      "readMin": 7,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-ios/modulo-new-architecture/05-debugging-ios": {
+      "readMin": 11,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-ios/modulo-performance/01-thread-model-ios": {
+      "readMin": 11,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-ios/modulo-performance/02-list-performance": {
+      "readMin": 8,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-ios/modulo-performance/03-animations-reanimated": {
+      "readMin": 6,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-ios/modulo-performance/04-memo-and-renders": {
+      "readMin": 7,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-ios/modulo-performance/05-bundle-and-startup": {
+      "readMin": 9,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-ios/modulo-recursos-nativos/01-permissions-info-plist": {
+      "readMin": 8,
+      "videoMin": 0,
+      "hasVideo": false
+    },
+    "trilha-ios/modulo-recursos-nativos/02-camera-and-media": {
+      "readMin": 6,
+      "videoMin": 0,
+      "hasVideo": false
+    },
+    "trilha-ios/modulo-recursos-nativos/03-storage-and-keychain": {
+      "readMin": 5,
+      "videoMin": 0,
+      "hasVideo": false
+    },
+    "trilha-ios/modulo-recursos-nativos/04-sensors-and-device-apis": {
+      "readMin": 3,
+      "videoMin": 0,
+      "hasVideo": false
+    },
+    "trilha-ios/modulo-recursos-nativos/05-turbomodule-swift": {
+      "readMin": 6,
+      "videoMin": 0,
+      "hasVideo": false
+    },
+    "trilha-ios/modulo-recursos-nativos/06-xcassets-ios": {
+      "readMin": 4,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-ios/modulo-recursos-nativos/07-push-notifications": {
+      "readMin": 2,
+      "videoMin": 0,
+      "hasVideo": false
+    },
+    "trilha-ios/modulo-testes/01-jest-unit-tests": {
+      "readMin": 8,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-ios/modulo-testes/02-react-native-testing-library": {
+      "readMin": 7,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-ios/modulo-testes/03-mocking-native-modules": {
+      "readMin": 5,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-ios/modulo-testes/04-integration-tests": {
+      "readMin": 5,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-ios/modulo-testes/05-detox-e2e": {
+      "readMin": 5,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-masterclass/modulo-00-overview/00-course-overview": {
+      "readMin": 1,
+      "videoMin": 0,
+      "hasVideo": false
+    },
+    "trilha-masterclass/modulo-01-brownfield/01-setup-and-embedding": {
+      "readMin": 4,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-masterclass/modulo-01-brownfield/02-surfaces-and-lifecycle": {
+      "readMin": 2,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-masterclass/modulo-01-brownfield/03-communication-and-navigation": {
+      "readMin": 4,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-masterclass/modulo-02-jsi-fabric/01-jsi-javascript-interface": {
+      "readMin": 3,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-masterclass/modulo-02-jsi-fabric/02-jsi-advanced": {
+      "readMin": 5,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-masterclass/modulo-02-jsi-fabric/03-fabric-renderer": {
+      "readMin": 5,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-masterclass/modulo-02-jsi-fabric/04-fabric-components": {
+      "readMin": 2,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-masterclass/modulo-02-jsi-fabric/05-runtime-new-architecture": {
+      "readMin": 3,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-masterclass/modulo-02-jsi-fabric/06-runtime-debugging": {
+      "readMin": 4,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-masterclass/modulo-03-turbomodules/01-what-is-turbomodules": {
+      "readMin": 3,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-masterclass/modulo-03-turbomodules/02-specs-typescript": {
+      "readMin": 3,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-masterclass/modulo-03-turbomodules/03-codegen": {
+      "readMin": 1,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-masterclass/modulo-03-turbomodules/04-defensive-loading": {
+      "readMin": 2,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-masterclass/modulo-03-turbomodules/05-get-vs-getenforcing": {
+      "readMin": 2,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-masterclass/modulo-03-turbomodules/06-availability-guards": {
+      "readMin": 1,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-masterclass/modulo-03-turbomodules/07-supported-types": {
+      "readMin": 4,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-masterclass/modulo-03-turbomodules/08-tests-mocks": {
+      "readMin": 2,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-masterclass/modulo-04-performance-cicd/01-performance": {
+      "readMin": 4,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-masterclass/modulo-04-performance-cicd/02-profiling-and-renders": {
+      "readMin": 4,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-masterclass/modulo-04-performance-cicd/03-bundle-distribution": {
+      "readMin": 2,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-masterclass/modulo-04-performance-cicd/04-packaging-and-distribution": {
+      "readMin": 3,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-masterclass/modulo-04-performance-cicd/05-cicd-pipeline": {
+      "readMin": 4,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-masterclass/modulo-05-version-updates/01-upgrade-strategy": {
+      "readMin": 4,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-masterclass/modulo-05-version-updates/02-rn-upgrade-helper": {
+      "readMin": 4,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-masterclass/modulo-05-version-updates/03-breaking-changes": {
+      "readMin": 5,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-masterclass/modulo-05-version-updates/04-upgrade-roadmap": {
+      "readMin": 5,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-masterclass/modulo-05-version-updates/05-build-validation": {
+      "readMin": 4,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-masterclass/modulo-05-version-updates/06-patches-recreation": {
+      "readMin": 3,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-masterclass/modulo-05-version-updates/07-library-compatibility": {
+      "readMin": 4,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-masterclass/modulo-05-version-updates/08-environment-requirements": {
+      "readMin": 3,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-masterclass/modulo-05-version-updates/09-native-settings": {
+      "readMin": 3,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-masterclass/modulo-05-version-updates/10-rn-doctor": {
+      "readMin": 2,
+      "videoMin": 0,
+      "hasVideo": false
+    },
+    "trilha-masterclass/modulo-06-animations/01-threading-model": {
+      "readMin": 4,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-masterclass/modulo-06-animations/02-animated-api": {
+      "readMin": 4,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-masterclass/modulo-06-animations/03-reanimated-worklets": {
+      "readMin": 4,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-masterclass/modulo-06-animations/04-gesture-and-layout": {
+      "readMin": 4,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-masterclass/modulo-06-animations/05-animation-performance": {
+      "readMin": 7,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-web/modulo-arquitetura/topico-arquitetura-web": {
+      "readMin": 2,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-web/modulo-cicd/02-modelo-entrega-mobile": {
+      "readMin": 4,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-web/modulo-cicd/topico-ci-cd-web": {
+      "readMin": 3,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-web/modulo-fundamentos/01-adaptando-js-ts": {
+      "readMin": 2,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-web/modulo-fundamentos/02-typescript": {
+      "readMin": 1,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-web/modulo-fundamentos/03-web-vs-rn": {
+      "readMin": 2,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-web/modulo-fundamentos/04-sem-dom-sem-css": {
+      "readMin": 4,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-web/modulo-fundamentos/05-componentes-nativos": {
+      "readMin": 2,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-web/modulo-fundamentos/06-estilos-flexbox": {
+      "readMin": 3,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-web/modulo-fundamentos/07-listas-navegacao": {
+      "readMin": 1,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-web/modulo-fundamentos/08-navegacao": {
+      "readMin": 6,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-web/modulo-fundamentos/09-estado-e-apis": {
+      "readMin": 5,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-web/modulo-performance/topico-performance-mobile-web": {
+      "readMin": 4,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-web/modulo-recursos-nativos/01-utilizando-recursos-nativos": {
+      "readMin": 7,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-web/modulo-recursos-nativos/02-dependencias-nativas": {
+      "readMin": 2,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-web/modulo-recursos-nativos/topico-integracao-nativa-web": {
+      "readMin": 3,
+      "videoMin": 7,
+      "hasVideo": true
+    },
+    "trilha-web/modulo-testes/topico-testes-web": {
+      "readMin": 2,
+      "videoMin": 7,
+      "hasVideo": true
+    }
+  },
+  "byModule": {
+    "introducao/00-welcome": {
+      "readMin": 2,
+      "videoMin": 7,
+      "docCount": 1
+    },
+    "introducao/01-history-and-architecture": {
+      "readMin": 5,
+      "videoMin": 7,
+      "docCount": 1
+    },
+    "introducao/02-new-architecture": {
+      "readMin": 3,
+      "videoMin": 7,
+      "docCount": 1
+    },
+    "introducao/03-choose-your-track": {
+      "readMin": 1,
+      "videoMin": 7,
+      "docCount": 1
+    },
+    "trilha-android/modulo-arquitetura": {
+      "readMin": 5,
+      "videoMin": 35,
+      "docCount": 5
+    },
+    "trilha-android/modulo-cicd": {
+      "readMin": 7,
+      "videoMin": 35,
+      "docCount": 5
+    },
+    "trilha-android/modulo-compose-para-rn": {
+      "readMin": 16,
+      "videoMin": 35,
+      "docCount": 5
+    },
+    "trilha-android/modulo-fundamentos": {
+      "readMin": 17,
+      "videoMin": 35,
+      "docCount": 5
+    },
+    "trilha-android/modulo-new-architecture": {
+      "readMin": 23,
+      "videoMin": 35,
+      "docCount": 5
+    },
+    "trilha-android/modulo-performance": {
+      "readMin": 13,
+      "videoMin": 35,
+      "docCount": 5
+    },
+    "trilha-android/modulo-recursos-nativos": {
+      "readMin": 10,
+      "videoMin": 35,
+      "docCount": 5
+    },
+    "trilha-android/modulo-testes": {
+      "readMin": 5,
+      "videoMin": 35,
+      "docCount": 5
+    },
+    "trilha-ios/modulo-arquitetura": {
+      "readMin": 26,
+      "videoMin": 35,
+      "docCount": 5
+    },
+    "trilha-ios/modulo-cicd": {
+      "readMin": 44,
+      "videoMin": 35,
+      "docCount": 5
+    },
+    "trilha-ios/modulo-fundamentos": {
+      "readMin": 61,
+      "videoMin": 77,
+      "docCount": 11
+    },
+    "trilha-ios/modulo-new-architecture": {
+      "readMin": 40,
+      "videoMin": 35,
+      "docCount": 5
+    },
+    "trilha-ios/modulo-performance": {
+      "readMin": 41,
+      "videoMin": 35,
+      "docCount": 5
+    },
+    "trilha-ios/modulo-recursos-nativos": {
+      "readMin": 34,
+      "videoMin": 7,
+      "docCount": 7
+    },
+    "trilha-ios/modulo-testes": {
+      "readMin": 30,
+      "videoMin": 35,
+      "docCount": 5
+    },
+    "trilha-masterclass/modulo-00-overview": {
+      "readMin": 1,
+      "videoMin": 0,
+      "docCount": 1
+    },
+    "trilha-masterclass/modulo-01-brownfield": {
+      "readMin": 10,
+      "videoMin": 21,
+      "docCount": 3
+    },
+    "trilha-masterclass/modulo-02-jsi-fabric": {
+      "readMin": 22,
+      "videoMin": 42,
+      "docCount": 6
+    },
+    "trilha-masterclass/modulo-03-turbomodules": {
+      "readMin": 18,
+      "videoMin": 56,
+      "docCount": 8
+    },
+    "trilha-masterclass/modulo-04-performance-cicd": {
+      "readMin": 17,
+      "videoMin": 35,
+      "docCount": 5
+    },
+    "trilha-masterclass/modulo-05-version-updates": {
+      "readMin": 37,
+      "videoMin": 63,
+      "docCount": 10
+    },
+    "trilha-masterclass/modulo-06-animations": {
+      "readMin": 23,
+      "videoMin": 35,
+      "docCount": 5
+    },
+    "trilha-web/modulo-arquitetura": {
+      "readMin": 2,
+      "videoMin": 7,
+      "docCount": 1
+    },
+    "trilha-web/modulo-cicd": {
+      "readMin": 7,
+      "videoMin": 14,
+      "docCount": 2
+    },
+    "trilha-web/modulo-fundamentos": {
+      "readMin": 26,
+      "videoMin": 63,
+      "docCount": 9
+    },
+    "trilha-web/modulo-performance": {
+      "readMin": 4,
+      "videoMin": 7,
+      "docCount": 1
+    },
+    "trilha-web/modulo-recursos-nativos": {
+      "readMin": 12,
+      "videoMin": 21,
+      "docCount": 3
+    },
+    "trilha-web/modulo-testes": {
+      "readMin": 2,
+      "videoMin": 7,
+      "docCount": 1
+    }
+  },
+  "byTrail": {
+    "introducao": {
+      "readMin": 11,
+      "videoMin": 28
+    },
+    "trilha-android": {
+      "readMin": 96,
+      "videoMin": 280
+    },
+    "trilha-ios": {
+      "readMin": 276,
+      "videoMin": 259
+    },
+    "trilha-masterclass": {
+      "readMin": 128,
+      "videoMin": 252
+    },
+    "trilha-web": {
+      "readMin": 53,
+      "videoMin": 119
+    }
+  },
+  "total": {
+    "readMin": 564,
+    "videoMin": 938
+  }
+}

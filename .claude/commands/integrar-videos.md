@@ -122,6 +122,23 @@ gh release upload v0-videos "C:\Users\you\Desktop\{pasta}\{nome_final}.mp4" `
 
 Verifique que o upload foi bem-sucedido antes de continuar.
 
+### 4d-bis. Atualizar video-durations.json e regenerar content-times.json
+
+Após o upload de cada vídeo, registre o filename e sua duração (em minutos) em `src/data/video-durations.json`. Use 7 como default se a duração real não for conhecida.
+
+```json
+// src/data/video-durations.json — adicionar entrada:
+"{nome_final}": 7
+```
+
+Após processar **todos** os vídeos do lote, rodar:
+
+```bash
+npm run compute-times
+```
+
+Isso regera `src/data/content-times.json` com os totais atualizados (leitura + vídeo por doc, módulo, trilha e curso). Os dois arquivos devem ser commitados juntos com os docs.
+
 ### 4e. Montar o bloco de embed
 
 URL do asset (usando GitHub Release, não caminho local):
@@ -212,11 +229,12 @@ git checkout -b content/android-testing-videos origin/main
 
 **Não adicionar arquivos de vídeo ao git** — eles estão no GitHub Release e são ignorados pelo `.gitignore`.
 
-Adicionar somente os docs atualizados:
+Adicionar somente os docs atualizados **mais os arquivos de tempo**:
 
 ```bash
 git add docs/{trail_docs}/{module}/
 git add i18n/pt/docusaurus-plugin-content-docs/current/{trail_docs}/{module}/
+git add src/data/video-durations.json src/data/content-times.json
 ```
 
 Verificar com `git status` antes de commitar para confirmar que **nenhum `.mp4`/`.webm`/`.mov` está staged**.
