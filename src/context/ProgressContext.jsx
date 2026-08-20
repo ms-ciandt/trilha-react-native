@@ -5,6 +5,7 @@ const STORAGE_KEY = 'rn-trail-progress';
 const defaultCtx = {
   progress: {},
   markComplete: () => {},
+  toggleComplete: () => {},
   isComplete: () => false,
   getTrailCount: () => 0,
 };
@@ -36,6 +37,20 @@ export function ProgressProvider({ children }) {
     });
   }, []);
 
+  const toggleComplete = useCallback((path) => {
+    const normalized = (path ?? '').replace(/\/$/, '');
+    setProgress(prev => {
+      const next = { ...prev };
+      if (next[normalized]) {
+        delete next[normalized];
+      } else {
+        next[normalized] = true;
+      }
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(next)); } catch {}
+      return next;
+    });
+  }, []);
+
   const isComplete = useCallback((path) => {
     const normalized = (path ?? '').replace(/\/$/, '');
     return !!progress[normalized];
@@ -47,8 +62,8 @@ export function ProgressProvider({ children }) {
   );
 
   const value = useMemo(
-    () => ({ progress, markComplete, isComplete, getTrailCount }),
-    [progress, markComplete, isComplete, getTrailCount]
+    () => ({ progress, markComplete, toggleComplete, isComplete, getTrailCount }),
+    [progress, markComplete, toggleComplete, isComplete, getTrailCount]
   );
 
   return <CTX.Provider value={value}>{children}</CTX.Provider>;
