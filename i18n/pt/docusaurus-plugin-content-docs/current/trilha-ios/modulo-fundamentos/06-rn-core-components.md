@@ -6,6 +6,13 @@ title: RN Core Components — Mapeamento UIKit e SwiftUI
 
 # RN Core Components — Mapeamento UIKit e SwiftUI
 
+## Visão Geral em Vídeo
+
+<video width="100%" controls>
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/fund_06_rn-core-components.mp4" type="video/mp4">
+  Seu navegador não suporta o elemento de vídeo.
+</video>
+
 > O React Native vem com um conjunto de componentes nativos que mapeiam diretamente para views nativas da plataforma. Nao existe HTML aqui — cada componente renderiza UI nativa de verdade.
 
 ## Mapeamento Completo de Componentes

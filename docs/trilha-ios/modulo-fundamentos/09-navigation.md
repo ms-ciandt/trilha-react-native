@@ -4,6 +4,13 @@ title: Navigation
 
 # Navigation
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/fund_09_navigation.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 SwiftUI's `NavigationStack` and React Navigation share the same declarative philosophy: you describe the structure of your navigation tree, and the framework manages the transitions. This is a fundamental difference from UIKit's imperative `pushViewController` model — and it means the mental model transfers almost directly from SwiftUI to React Navigation.
 
 ## NavigationStack → Stack Navigator

@@ -4,6 +4,13 @@ title: Styling — StyleSheet, Platform and Shadows
 
 # Styling — StyleSheet, Platform and Shadows
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/fund_08_styling.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 React Native's styling system has a different philosophy from traditional CSS and SwiftUI. There is no cascading style inheritance, no class selectors, and all layout uses Flexbox by default. For a Swift developer, the closest analogy is creating a `ViewModifier` for each component — isolated, explicit, and with no side effects on other components.
 
 ---

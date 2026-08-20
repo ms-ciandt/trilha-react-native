@@ -4,6 +4,13 @@ title: Swift to JavaScript — Core Language Concepts
 
 # Swift to JavaScript — Conceitos Fundamentais da Linguagem
 
+## Visão Geral em Vídeo
+
+<video width="100%" controls>
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/fund_01_swift-to-javascript.mp4" type="video/mp4">
+  Seu navegador não suporta o elemento de vídeo.
+</video>
+
 Se você escreve Swift para iOS, já pensa em termos de segurança de tipos, semântica de valor e tratamento estruturado de erros. JavaScript compartilha muitos desses mesmos conceitos, mas os expressa de forma diferente — e o TypeScript traz de volta as garantias de tipo nas quais você confia no Swift. Este módulo mapeia diretamente o seu conhecimento de Swift para JavaScript, para que você possa ler e escrever código React Native com confiança desde o primeiro dia.
 
 ---

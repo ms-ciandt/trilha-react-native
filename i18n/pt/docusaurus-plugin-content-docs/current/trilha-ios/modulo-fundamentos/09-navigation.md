@@ -4,6 +4,13 @@ title: Navigation
 
 # Navigation
 
+## Visão Geral em Vídeo
+
+<video width="100%" controls>
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/fund_09_navigation.mp4" type="video/mp4">
+  Seu navegador não suporta o elemento de vídeo.
+</video>
+
 O `NavigationStack` do SwiftUI e o React Navigation compartilham a mesma filosofia declarativa: você descreve a estrutura da sua árvore de navegação e o framework gerencia as transições. Essa é uma diferença fundamental em relação ao modelo imperativo do UIKit — e significa que o modelo mental transfere quase diretamente do SwiftUI para o React Navigation.
 
 ## NavigationStack → Stack Navigator

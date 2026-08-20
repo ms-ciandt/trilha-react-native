@@ -4,6 +4,13 @@ title: Layout and Flexbox — SwiftUI and Auto Layout Mapping
 
 # Layout and Flexbox — SwiftUI and Auto Layout Mapping
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/fund_07_layout-and-flexbox.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 iOS gives you two layout systems: Auto Layout, which expresses constraints between views, and SwiftUI's declarative stacks and modifiers. React Native replaces both with a single system called Yoga, a cross-platform implementation of Flexbox. Once you understand the mapping between the two mental models, you will find React Native layout familiar — SwiftUI stacks and Flexbox are closer than they appear.
 
 ---

@@ -4,6 +4,13 @@ title: State Management and API Calls
 
 # Gerenciamento de Estado e Chamadas de API
 
+## Visão Geral em Vídeo
+
+<video width="100%" controls>
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/fund_10_state-and-apis.mp4" type="video/mp4">
+  Seu navegador não suporta o elemento de vídeo.
+</video>
+
 O Swift oferece uma pilha bem definida: URLSession ou Alamofire para networking, Combine para estado reativo, CoreData ou SwiftData para persistência, UserDefaults para armazenamento leve de chave-valor e Keychain para segredos. O React Native não inclui uma pilha equivalente — em vez disso, o ecossistema converge em um conjunto de bibliotecas que se mapeiam quase um a um com o que você já conhece.
 
 Este módulo percorre cada camada da pilha Swift e apresenta seu equivalente em React Native com exemplos completos em TypeScript.

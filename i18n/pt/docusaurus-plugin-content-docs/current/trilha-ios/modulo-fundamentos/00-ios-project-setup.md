@@ -4,6 +4,13 @@ title: Configuração do Projeto iOS — CocoaPods, Xcode Workspace e SPM
 
 # Configuração do Projeto iOS — CocoaPods, Xcode Workspace e SPM
 
+## Visão Geral em Vídeo
+
+<video width="100%" controls>
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/fund_00_ios-project-setup.mp4" type="video/mp4">
+  Seu navegador não suporta o elemento de vídeo.
+</video>
+
 Leia este arquivo antes de rodar o app pela primeira vez. A camada iOS do React Native é um projeto Xcode completo gerenciado pelo CocoaPods — o mesmo ferramental que você já conhece, mas com convenções que diferem de um app Swift puro. Acertar isso no primeiro dia evita uma categoria de erros de build fáceis de cometer e confusos de diagnosticar.
 
 ## Por Que o React Native Ainda Usa CocoaPods
