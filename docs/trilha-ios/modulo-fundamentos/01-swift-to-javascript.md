@@ -4,6 +4,13 @@ title: Swift to JavaScript — Core Language Concepts
 
 # Swift to JavaScript — Core Language Concepts
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/fund_01_swift-to-javascript.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 If you have been writing Swift for iOS, you already think in terms of type safety, value semantics, and structured error handling. JavaScript shares many of the same concepts, but expresses them differently — and TypeScript brings back the type guarantees you rely on in Swift. This module maps your existing Swift knowledge directly to JavaScript, so you can start reading and writing React Native code with confidence from day one.
 
 ---

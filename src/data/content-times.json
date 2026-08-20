@@ -326,99 +326,99 @@
     },
     "trilha-ios/modulo-fundamentos/00-ios-project-setup.md": {
       "readMin": 5,
-      "videoMin": null,
-      "hasVideo": false,
-      "videoFile": null
+      "videoMin": 7,
+      "hasVideo": true,
+      "videoFile": "fund_00_ios-project-setup.mp4"
     },
     "trilha-ios/modulo-fundamentos/01-swift-to-javascript.md": {
       "readMin": 5,
-      "videoMin": null,
-      "hasVideo": false,
-      "videoFile": null
+      "videoMin": 7,
+      "hasVideo": true,
+      "videoFile": "fund_01_swift-to-javascript.mp4"
     },
     "trilha-ios/modulo-fundamentos/02-typescript-for-swift-devs.md": {
       "readMin": 4,
-      "videoMin": null,
-      "hasVideo": false,
-      "videoFile": null
+      "videoMin": 7,
+      "hasVideo": true,
+      "videoFile": "fund_02_typescript-for-swift-devs.mp4"
     },
     "trilha-ios/modulo-fundamentos/03-swiftui-to-react.md": {
       "readMin": 5,
-      "videoMin": null,
-      "hasVideo": false,
-      "videoFile": null
+      "videoMin": 7,
+      "hasVideo": true,
+      "videoFile": "fund_03_swiftui-to-react.mp4"
     },
     "trilha-ios/modulo-fundamentos/04-components-and-props.md": {
       "readMin": 1,
-      "videoMin": null,
-      "hasVideo": false,
-      "videoFile": null
+      "videoMin": 7,
+      "hasVideo": true,
+      "videoFile": "fund_04_components-and-props.mp4"
     },
     "trilha-ios/modulo-fundamentos/05-state-and-hooks.md": {
       "readMin": 5,
-      "videoMin": null,
-      "hasVideo": false,
-      "videoFile": null
+      "videoMin": 7,
+      "hasVideo": true,
+      "videoFile": "fund_05_state-and-hooks.mp4"
     },
     "trilha-ios/modulo-fundamentos/06-rn-core-components.md": {
       "readMin": 4,
-      "videoMin": null,
-      "hasVideo": false,
-      "videoFile": null
+      "videoMin": 7,
+      "hasVideo": true,
+      "videoFile": "fund_06_rn-core-components.mp4"
     },
     "trilha-ios/modulo-fundamentos/07-layout-and-flexbox.md": {
       "readMin": 7,
-      "videoMin": null,
-      "hasVideo": false,
-      "videoFile": null
+      "videoMin": 7,
+      "hasVideo": true,
+      "videoFile": "fund_07_layout-and-flexbox.mp4"
     },
     "trilha-ios/modulo-fundamentos/08-styling.md": {
       "readMin": 3,
-      "videoMin": null,
-      "hasVideo": false,
-      "videoFile": null
+      "videoMin": 7,
+      "hasVideo": true,
+      "videoFile": "fund_08_styling.mp4"
     },
     "trilha-ios/modulo-fundamentos/09-navigation.md": {
       "readMin": 3,
-      "videoMin": null,
-      "hasVideo": false,
-      "videoFile": null
+      "videoMin": 7,
+      "hasVideo": true,
+      "videoFile": "fund_09_navigation.mp4"
     },
     "trilha-ios/modulo-fundamentos/10-state-and-apis.md": {
       "readMin": 4,
-      "videoMin": null,
-      "hasVideo": false,
-      "videoFile": null
+      "videoMin": 7,
+      "hasVideo": true,
+      "videoFile": "fund_10_state-and-apis.mp4"
     },
     "trilha-ios/modulo-new-architecture/01-hermes-on-ios.md": {
       "readMin": 8,
-      "videoMin": null,
-      "hasVideo": false,
-      "videoFile": null
+      "videoMin": 7.6,
+      "hasVideo": true,
+      "videoFile": "na_01_hermes-on-ios.mp4"
     },
     "trilha-ios/modulo-new-architecture/02-jsi-objcpp.md": {
       "readMin": 5,
-      "videoMin": null,
-      "hasVideo": false,
-      "videoFile": null
+      "videoMin": 6.6,
+      "hasVideo": true,
+      "videoFile": "na_02_jsi-objcpp.mp4"
     },
     "trilha-ios/modulo-new-architecture/03-fabric-ios.md": {
       "readMin": 6,
-      "videoMin": null,
-      "hasVideo": false,
-      "videoFile": null
+      "videoMin": 8.3,
+      "hasVideo": true,
+      "videoFile": "na_03_fabric-ios.mp4"
     },
     "trilha-ios/modulo-new-architecture/04-turbomodule-deep-dive.md": {
       "readMin": 7,
-      "videoMin": null,
-      "hasVideo": false,
-      "videoFile": null
+      "videoMin": 6.9,
+      "hasVideo": true,
+      "videoFile": "na_04_turbomodule-deep-dive.mp4"
     },
     "trilha-ios/modulo-new-architecture/05-debugging-ios.md": {
       "readMin": 1,
-      "videoMin": null,
-      "hasVideo": false,
-      "videoFile": null
+      "videoMin": 6.4,
+      "hasVideo": true,
+      "videoFile": "na_05_debugging-ios.mp4"
     },
     "trilha-ios/modulo-performance/01-thread-model-ios.md": {
       "readMin": 6,
@@ -926,12 +926,12 @@
     },
     "trilha-ios/modulo-fundamentos": {
       "readMin": 46,
-      "videoMin": 0,
+      "videoMin": 77,
       "docCount": 11
     },
     "trilha-ios/modulo-new-architecture": {
       "readMin": 27,
-      "videoMin": 0,
+      "videoMin": 35.8,
       "docCount": 5
     },
     "trilha-ios/modulo-performance": {
@@ -1028,7 +1028,7 @@
     },
     "trilha-ios": {
       "readMin": 203,
-      "videoMin": 133.4,
+      "videoMin": 246.2,
       "docCount": 43
     },
     "trilha-masterclass": {
@@ -1044,7 +1044,7 @@
   },
   "total": {
     "readMin": 446,
-    "videoMin": 712.8000000000002,
+    "videoMin": 825.6,
     "docCount": 142
   }
 }

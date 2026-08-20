@@ -4,6 +4,13 @@ title: Styling — StyleSheet, Platform e Sombras
 
 # Styling — StyleSheet, Platform e Sombras
 
+## Visão Geral em Vídeo
+
+<video width="100%" controls>
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/fund_08_styling.mp4" type="video/mp4">
+  Seu navegador não suporta o elemento de vídeo.
+</video>
+
 O sistema de estilo do React Native tem uma filosofia diferente do CSS tradicional e do SwiftUI. Nao existe heranca de estilos em cascata, nao existe seletor de classe, e todo layout usa Flexbox por padrao. Para um desenvolvedor Swift, a analogia mais proxima e criar um `ViewModifier` para cada componente — isolado, explicito e sem efeitos colaterais em outros componentes.
 
 ---

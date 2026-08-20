@@ -77,6 +77,30 @@ Toda página também precisa de versão traduzida em `i18n/pt/docusaurus-plugin-
 - Sem `{% raw %}`/`{% endraw %}` — o site usa Docusaurus, blocos de código são renderizados diretamente
 - Tamanho ideal de arquivo de conteúdo: 150–400 linhas. Acima de 500 linhas, quebrar em múltiplos arquivos
 
+### Labels de tempo de leitura e vídeo (obrigatório)
+
+Todo novo arquivo de conteúdo e todo novo vídeo integrado **devem manter os dados de tempo atualizados**. O site exibe automaticamente badges "X min read · Y min watch" em cada doc e o total do curso na home.
+
+| Arquivo | Papel |
+|---------|-------|
+| `src/data/video-durations.json` | Mapa `filename.mp4 → minutos`. Atualizar com duração real quando conhecida; default 7 min se não medido |
+| `src/data/content-times.json` | Gerado automaticamente — **não editar manualmente** |
+| `scripts/compute-times.mjs` | Script que gera o JSON acima |
+
+#### Regra ao adicionar novo doc
+
+1. Criar o arquivo `.md` normalmente (a contagem de palavras é calculada automaticamente pelo script)
+2. Rodar `npm run compute-times` antes do commit — isso regera `content-times.json`
+3. Commitar `content-times.json` junto com o novo doc
+
+#### Regra ao integrar novo vídeo (via `/integrar-videos`)
+
+1. Após o upload do vídeo, adicionar o filename em `src/data/video-durations.json` com a duração real em minutos (ou 7 se não medida)
+2. Rodar `npm run compute-times`
+3. Commitar `video-durations.json` + `content-times.json` no mesmo commit do doc
+
+O `npm run build` já roda o script automaticamente — então o CI/CD sempre publica com dados frescos.
+
 ### Bilinguismo obrigatório (EN + PT-BR)
 
 Toda implementação deve cobrir os dois idiomas. As regras de espelhamento são:

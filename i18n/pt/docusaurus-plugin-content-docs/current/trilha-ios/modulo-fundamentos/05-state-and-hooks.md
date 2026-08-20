@@ -4,6 +4,13 @@ title: State and Hooks
 
 # State e Hooks
 
+## Visão Geral em Vídeo
+
+<video width="100%" controls>
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/fund_05_state-and-hooks.mp4" type="video/mp4">
+  Seu navegador não suporta o elemento de vídeo.
+</video>
+
 No SwiftUI, o estado conduz a UI. Quando uma propriedade `@State` muda, o SwiftUI recalcula o body. O React funciona da mesma forma: o estado é a fonte da verdade e, quando ele muda, o componente é re-renderizado. Hooks são o mecanismo que o React oferece para gerenciar estado e efeitos colaterais dentro de componentes funcionais — o equivalente aos property wrappers e modificadores de ciclo de vida do SwiftUI.
 
 ---

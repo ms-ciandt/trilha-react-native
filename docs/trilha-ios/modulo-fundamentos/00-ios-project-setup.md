@@ -4,6 +4,13 @@ title: iOS Project Setup — CocoaPods, Xcode Workspace, and SPM
 
 # iOS Project Setup — CocoaPods, Xcode Workspace, and SPM
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/fund_00_ios-project-setup.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 Read this before running the app for the first time. React Native's iOS layer is a full Xcode project wired through CocoaPods — the same tooling you already know, but with conventions that differ from a pure Swift app. Getting these right on day one prevents a category of build errors that are easy to hit and confusing to diagnose.
 
 ## Why React Native Still Uses CocoaPods

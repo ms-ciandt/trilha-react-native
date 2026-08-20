@@ -4,6 +4,13 @@ title: TypeScript for Swift Developers
 
 # TypeScript para Desenvolvedores Swift
 
+## Visão Geral em Vídeo
+
+<video width="100%" controls>
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/fund_02_typescript-for-swift-devs.mp4" type="video/mp4">
+  Seu navegador não suporta o elemento de vídeo.
+</video>
+
 > Voce ja pensa em tipos. Swift te treinou para nunca confiar em um valor sem tipo, para tratar optionals de forma explicita e deixar o compilador capturar erros antes que cheguem ao usuario. JavaScript nao faz nada disso — TypeScript devolve essa seguranca.
 
 ## Por que o TypeScript Existe

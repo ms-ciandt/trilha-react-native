@@ -4,6 +4,13 @@ title: RN Core Components — UIKit and SwiftUI Mapping
 
 # RN Core Components — UIKit and SwiftUI Mapping
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/fund_06_rn-core-components.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 > React Native ships with a set of built-in components that map directly to native platform views. There is no HTML here — every component renders real native UI.
 
 ## Component Mapping at a Glance

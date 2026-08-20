@@ -4,6 +4,13 @@ title: State Management and API Calls
 
 # State Management and API Calls
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/fund_10_state-and-apis.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 Swift gives you a well-defined stack: URLSession or Alamofire for networking, Combine for reactive state, CoreData or SwiftData for persistence, UserDefaults for lightweight key-value storage, and Keychain for secrets. React Native does not ship an equivalent stack — instead, the ecosystem converges on a set of libraries that map almost one-to-one to what you already know.
 
 This module walks through each layer of the Swift stack and shows its React Native counterpart with full TypeScript examples.

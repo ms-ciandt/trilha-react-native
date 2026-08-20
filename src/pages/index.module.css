@@ -70,7 +70,34 @@
 .heroSubtitle {
   font-size: 0.875rem;
   color: var(--ifm-color-emphasis-600);
-  margin: 0;
+  margin: 0 0 1rem;
+}
+
+.courseStats {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+
+.courseStat {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.775rem;
+  font-weight: 500;
+  color: var(--ifm-color-content-secondary);
+  background: var(--ifm-color-emphasis-100);
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 999px;
+  padding: 0.2rem 0.65rem;
+}
+
+.courseStatSep {
+  font-size: 0.7rem;
+  color: var(--ifm-color-emphasis-400);
 }
 
 /* ─── Start here ────────────────────────────────────────────── */

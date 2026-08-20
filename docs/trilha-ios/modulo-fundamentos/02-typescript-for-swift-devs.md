@@ -4,6 +4,13 @@ title: TypeScript for Swift Developers
 
 # TypeScript for Swift Developers
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/fund_02_typescript-for-swift-devs.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 > You already think in types. Swift has trained you to never trust an untyped value, to handle optionals explicitly, and to let the compiler catch mistakes before they reach the user. JavaScript does none of that — TypeScript gives it back.
 
 ## Why TypeScript Exists

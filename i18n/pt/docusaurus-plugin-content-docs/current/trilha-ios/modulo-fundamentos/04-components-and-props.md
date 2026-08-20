@@ -4,6 +4,13 @@ title: Components and Props
 
 # Components and Props
 
+## Visão Geral em Vídeo
+
+<video width="100%" controls>
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/fund_04_components-and-props.mp4" type="video/mp4">
+  Seu navegador não suporta o elemento de vídeo.
+</video>
+
 No SwiftUI, você define uma struct `View` com propriedades armazenadas e um inicializador. No React Native, você define um **componente** — uma função TypeScript simples — e recebe dados através de **props**. O modelo mental é quase idêntico: os dados fluem de fora para dentro, e a view é renderizada a partir desses dados.
 
 ## Parâmetros de init do SwiftUI → Props do React

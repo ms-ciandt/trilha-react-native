@@ -2,6 +2,13 @@
 title: SwiftUI to React — Concept Mapping
 ---
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/fund_03_swiftui-to-react.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 If you already develop with SwiftUI, React's concepts will feel familiar: both are declarative, component-oriented, and react to state changes automatically. The difference lies in the language and conventions — not in the paradigm.
 
 This document maps each SwiftUI pattern to its React/React Native equivalent, with side-by-side examples.
