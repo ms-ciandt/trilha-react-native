@@ -17,8 +17,9 @@ const DOCS_DIR   = join(ROOT, 'docs');
 const DURATIONS  = join(ROOT, 'src', 'data', 'video-durations.json');
 const OUT        = join(ROOT, 'src', 'data', 'content-times.json');
 
-// Reading speed for technical content (words per minute)
-const WPM = 200;
+// Reading speed for technical content (words per minute).
+// Lowered from 200 to account for reading + reasoning time on technical material (~25% more time).
+const WPM = 148;
 
 // ─── Load scraped video durations ────────────────────────────────────────────
 const videoDurations = existsSync(DURATIONS)
