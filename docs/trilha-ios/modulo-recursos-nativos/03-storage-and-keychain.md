@@ -4,6 +4,13 @@ title: Storage and Keychain in React Native
 
 # Storage and Keychain in React Native
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/rec_03_storage-and-keychain.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 iOS gives you a well-structured storage hierarchy: `UserDefaults` for lightweight preferences, `NSFileManager` for the file system, `CoreData` or `SwiftData` for structured relational data, and the Keychain for secrets. React Native maps naturally to each layer, usually through a library that wraps the same platform API under the hood.
 
 ---

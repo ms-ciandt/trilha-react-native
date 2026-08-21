@@ -4,6 +4,13 @@ title: Camera and Media — iOS
 
 # Camera and Media
 
+## Video Overview
+
+<video width="100%" controls>
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/rec_02_camera-and-media.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 As an iOS developer you have worked directly with `AVFoundation`, `PHPhotoLibrary`, and `UIImagePickerController`. React Native wraps those same system frameworks through well-maintained libraries that expose a TypeScript API while the underlying native layer continues to call the exact same AVFoundation and PhotoKit APIs you already know.
 
 This page maps each native concept to its React Native equivalent and shows you how to use each library in a real application.

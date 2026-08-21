@@ -4,6 +4,13 @@ title: Push and Local Notifications
 
 # Push e Notificações Locais
 
+## Visão Geral em Vídeo
+
+<video width="100%" controls>
+  <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/rec_07_push-notifications.mp4" type="video/mp4">
+  Seu navegador não suporta a tag de vídeo.
+</video>
+
 As notificações iOS vivem sob o framework `UserNotifications` (`UNUserNotificationCenter`), que gerencia tanto notificações push remotas entregues via APNs quanto notificações locais agendadas no dispositivo. `expo-notifications` encapsula toda a superfície do `UNUserNotificationCenter` — solicitação de permissão, apresentação em primeiro plano, categorias, agendamento local e obtenção do device token — por meio de uma API JavaScript unificada.
 
 ```bash
