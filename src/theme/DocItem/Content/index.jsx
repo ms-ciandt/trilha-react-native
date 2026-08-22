@@ -9,8 +9,13 @@ const contentTimes = contentTimesData?.byDoc ?? {};
 export default function DocItemContent(props) {
   const { metadata } = useDoc();
 
-  // metadata.source looks like "@site/docs/trilha-android/modulo-fundamentos/01-javascript.md"
-  const relPath = metadata?.source?.replace('@site/docs/', '');
+  // EN:   "@site/docs/trilha-android/modulo-fundamentos/01-javascript.md"
+  // PT-BR: "@site/i18n/pt/docusaurus-plugin-content-docs/current/trilha-android/modulo-fundamentos/01-javascript.md"
+  const rawSource = metadata?.source ?? '';
+  const relPath =
+    rawSource.replace('@site/docs/', '') !== rawSource
+      ? rawSource.replace('@site/docs/', '')
+      : rawSource.replace(/^@site\/i18n\/[^/]+\/docusaurus-plugin-content-docs\/current\//, '');
   const times = relPath ? contentTimes[relPath] : null;
 
   return (
