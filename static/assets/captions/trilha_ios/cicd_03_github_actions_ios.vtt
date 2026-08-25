@@ -1,0 +1,562 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:03.480
+Automatizar um lançamento Android é relativamente simples,
+
+2
+00:00:03.480 --> 00:00:06.280
+mas implantar uma aplicação iOS exige
+
+3
+00:00:06.280 --> 00:00:09.080
+penetrar no ecossistema rigidamente fechado da Apple.
+
+4
+00:00:09.080 --> 00:00:12.600
+Você não pode compilar um arquivo IPA no Windows ou Linux.
+
+5
+00:00:12.600 --> 00:00:15.560
+O processo exige rigorosamente hardware Mac OS,
+
+6
+00:00:15.560 --> 00:00:18.640
+software Xcode e certificados de provisionamento da Apple.
+
+7
+00:00:18.640 --> 00:00:20.640
+Isso cria um dilema enorme para
+
+8
+00:00:20.640 --> 00:00:22.240
+equipes de engenharia que tentam automatizar
+
+9
+00:00:22.240 --> 00:00:24.880
+seus pipelines de integração e implantação contínua.
+
+10
+00:00:24.880 --> 00:00:26.360
+Você tem duas opções.
+
+11
+00:00:26.360 --> 00:00:28.720
+A opção A é lutar contra o atrito de configuração
+
+12
+00:00:28.720 --> 00:00:31.360
+do GitHub Actions para construir um pipeline unificado
+
+13
+00:00:31.360 --> 00:00:34.480
+que lida com iOS e Android lado a lado.
+
+14
+00:00:34.480 --> 00:00:37.240
+A opção B é aceitar um lock-in completo do ecossistema
+
+15
+00:00:37.240 --> 00:00:39.880
+com o Xcode Cloud, trocando independência de plataforma
+
+16
+00:00:39.880 --> 00:00:42.240
+por simplicidade de configuração zero.
+
+17
+00:00:42.240 --> 00:00:44.640
+Este fluxograma mapeia um único commit de código.
+
+18
+00:00:44.640 --> 00:00:47.240
+Ele se divide em dois caminhos: uma rota multiplataforma,
+
+19
+00:00:47.240 --> 00:00:50.200
+carregando avisos de configuração, e uma rota simplificada, exclusiva para Apple
+
+20
+00:00:50.200 --> 00:00:50.960
+rota.
+
+21
+00:00:50.960 --> 00:00:53.520
+O roteamento por meio do GitHub Actions requer
+
+22
+00:00:53.520 --> 00:00:57.720
+Runners de Mac OS hospedados na nuvem, que custam aproximadamente 10 vezes mais
+
+23
+00:00:57.720 --> 00:01:00.160
+por minuto do que runners Linux padrão.
+
+24
+00:01:00.160 --> 00:01:03.600
+Sem uma otimização precisa, um build padrão de iOS
+
+25
+00:01:03.600 --> 00:01:06.200
+baixa gigabytes de dependências nativas.
+
+26
+00:01:06.200 --> 00:01:08.160
+Os desenvolvedores rotineiramente ficam esperando
+
+27
+00:01:08.160 --> 00:01:10.840
+30 minutos para ver se o código deles compila.
+
+28
+00:01:10.840 --> 00:01:15.080
+Quando você multiplica um tempo de espera de 30 minutos por um multiplicador de custo de 10 vezes
+
+29
+00:01:15.080 --> 00:01:18.080
+para cada commit, um pipeline não gerenciado
+
+30
+00:01:18.080 --> 00:01:20.480
+vai silenciosamente drenar o seu orçamento de CI.
+
+31
+00:01:20.480 --> 00:01:23.520
+A escolha do seu pipeline funciona como um investimento financeiro
+
+32
+00:01:23.520 --> 00:01:26.360
+e operacional crítico, ditado inteiramente
+
+33
+00:01:26.400 --> 00:01:28.120
+pela forma como sua equipe está estruturada.
+
+34
+00:01:28.120 --> 00:01:30.200
+O primeiro grande obstáculo com o GitHub Actions
+
+35
+00:01:30.200 --> 00:01:32.520
+é exatamente esse requisito de hardware.
+
+36
+00:01:32.520 --> 00:01:36.280
+Você está dependendo de runners Mac OS hospedados na nuvem, que são caros.
+
+37
+00:01:36.280 --> 00:01:38.640
+Você precisa deles porque fornecem acesso imediato
+
+38
+00:01:38.640 --> 00:01:41.920
+a ferramentas de build exclusivas como Xcode Build e XC Run,
+
+39
+00:01:41.920 --> 00:01:44.640
+que são impossíveis de replicar no Linux.
+
+40
+00:01:44.640 --> 00:01:47.280
+Mas depender da tag padrão mais recente do Mac OS
+
+41
+00:01:47.280 --> 00:01:48.240
+é um risco.
+
+42
+00:01:48.240 --> 00:01:51.240
+Quando o GitHub atualiza automaticamente o ambiente do runner,
+
+43
+00:01:51.240 --> 00:01:54.520
+uma versão exclude não fixada vai quebrar seus builds repentinamente
+
+44
+00:01:54.520 --> 00:01:56.560
+devido a mudanças sutis no compilador.
+
+45
+00:01:56.560 --> 00:01:59.160
+Para se defender contra esse multiplicador de custo de 10 vezes,
+
+46
+00:01:59.160 --> 00:02:02.200
+sua principal defesa operacional é o caching agressivo
+
+47
+00:02:02.200 --> 00:02:03.040
+de dependências.
+
+48
+00:02:03.040 --> 00:02:05.680
+Você precisa fazer cache dos seus node modules e dos binários
+
+49
+00:02:05.680 --> 00:02:06.640
+Hermes pré-compilados.
+
+50
+00:02:06.640 --> 00:02:09.560
+Usando os hashes do lock file como suas chaves de invalidação,
+
+51
+00:02:09.560 --> 00:02:11.440
+você garante que o executor só baixa eles
+
+52
+00:02:11.440 --> 00:02:13.320
+quando as versões realmente mudam.
+
+53
+00:02:13.320 --> 00:02:17.000
+Esta matriz dois por dois relaciona o esforço de configuração com o custo economizado,
+
+54
+00:02:17.000 --> 00:02:19.440
+implementar o cache de spec do CocoaPods se encaixa firmemente
+
+55
+00:02:19.440 --> 00:02:21.760
+no quadrante de baixo esforço e alta recompensa.
+
+56
+00:02:21.760 --> 00:02:23.720
+A execução deve ser precisa.
+
+57
+00:02:23.720 --> 00:02:25.840
+A chave é separar o repositório de specs, que muda raramente,
+
+58
+00:02:25.840 --> 00:02:28.640
+das dependências realmente compiladas.
+
+59
+00:02:28.640 --> 00:02:30.280
+Se você juntar tudo em um único cache,
+
+60
+00:02:30.280 --> 00:02:33.640
+seu projeto vai acumular 500 megabytes ou mais de dependências,
+
+61
+00:02:33.640 --> 00:02:36.360
+levando a um inchaço severo de armazenamento e a uma restauração de cache dolorosamente lenta
+
+62
+00:02:36.360 --> 00:02:37.440
+restauração.
+
+63
+00:02:37.440 --> 00:02:40.040
+Quando executado corretamente, fixar o runner
+
+64
+00:02:40.040 --> 00:02:42.200
+e separar os caches de dependências
+
+65
+00:02:42.200 --> 00:02:46.920
+reduz uma build pesada de 30 minutos para um intervalo apertado de 8 a 12 minutos.
+
+66
+00:02:46.920 --> 00:02:49.080
+No GitHub Actions, o caching agressivo
+
+67
+00:02:49.080 --> 00:02:52.560
+serve como um requisito obrigatório para a sobrevivência financeira,
+
+68
+00:02:52.560 --> 00:02:56.200
+evitando que os custos do runner Mac OS saiam do controle.
+
+69
+00:02:56.200 --> 00:02:58.040
+Uma vez que as velocidades de build estejam sob controle,
+
+70
+00:02:58.040 --> 00:03:00.680
+você encontra o obstáculo mais complexo do pipeline,
+
+71
+00:03:00.680 --> 00:03:02.400
+Assinatura de código da Apple.
+
+72
+00:03:02.400 --> 00:03:04.280
+Você pode importar certificados manualmente
+
+73
+00:03:04.280 --> 00:03:07.520
+e provisioning profiles diretamente via GitHub secrets.
+
+74
+00:03:07.520 --> 00:03:10.280
+Funciona para um projeto individual, mas desmorona no momento em que
+
+75
+00:03:10.280 --> 00:03:13.680
+uma equipe em crescimento precisa rotacionar uma chave ou adicionar um dispositivo.
+
+76
+00:03:13.680 --> 00:03:16.000
+A alternativa escalável é o Fastlane Match.
+
+77
+00:03:16.000 --> 00:03:18.240
+Ele automatiza todo o processo de geração
+
+78
+00:03:18.240 --> 00:03:20.160
+e implantação de certificados.
+
+79
+00:03:20.160 --> 00:03:22.080
+Olhando novamente para a nossa matriz dois por dois,
+
+80
+00:03:22.080 --> 00:03:24.920
+adicionar o Fastlane Match posiciona-se alto na escala de recompensa,
+
+81
+00:03:24.920 --> 00:03:27.480
+mas isso traz um esforço inicial de configuração enorme.
+
+82
+00:03:27.480 --> 00:03:30.600
+Você precisa configurar senhas criptografadas, fornecer,
+
+83
+00:03:30.600 --> 00:03:34.880
+app store, conectar chaves de API e manter um repositório
+
+84
+00:03:34.880 --> 00:03:38.440
+Git privado dedicado só para guardar os certificados criptografados.
+
+85
+00:03:38.440 --> 00:03:41.960
+É frustrante de configurar, mas o resultado operacional
+
+86
+00:03:41.960 --> 00:03:43.960
+são certificados perfeitamente sincronizados
+
+87
+00:03:43.960 --> 00:03:47.800
+em toda a sua equipe de engenharia e no seu pipeline de CI,
+
+88
+00:03:47.800 --> 00:03:49.480
+superar o atrito do match
+
+89
+00:03:49.480 --> 00:03:52.440
+e do caching rigoroso te dá a recompensa definitiva,
+
+90
+00:03:52.440 --> 00:03:55.280
+execução paralela dentro de um mono repo.
+
+91
+00:03:55.280 --> 00:03:57.760
+Este fluxograma de tela dividida mostra um build Android
+
+92
+00:03:57.760 --> 00:04:00.400
+rodando em um node Linux e um build iOS
+
+93
+00:04:00.400 --> 00:04:02.160
+rodando em um node Mac OS.
+
+94
+00:04:02.160 --> 00:04:04.640
+Como eles compartilham um repositório central,
+
+95
+00:04:04.640 --> 00:04:07.800
+o GitHub actions os aciona exatamente ao mesmo tempo.
+
+96
+00:04:07.800 --> 00:04:10.200
+O job do iOS não espera pelo Android.
+
+97
+00:04:10.200 --> 00:04:13.000
+Os pipelines rodam de forma completamente independente um do outro,
+
+98
+00:04:13.000 --> 00:04:14.680
+maximizando a velocidade da sua implantação
+
+99
+00:04:14.680 --> 00:04:17.280
+enquanto mantém todo o código da sua plataforma unificado.
+
+100
+00:04:17.280 --> 00:04:19.460
+A execução lado a lado também expõe
+
+101
+00:04:19.460 --> 00:04:21.500
+o exato trade-off financeiro.
+
+102
+00:04:21.500 --> 00:04:23.700
+O runner Linux finaliza o build Android
+
+103
+00:04:23.700 --> 00:04:26.060
+de forma rápida e barata, enquanto o runner Mac OS
+
+104
+00:04:26.060 --> 00:04:29.060
+enfrenta o build iOS a um custo premium.
+
+105
+00:04:29.060 --> 00:04:32.260
+Suportar o atrito do Fastlane e a complexidade do caching
+
+106
+00:04:32.260 --> 00:04:33.900
+é o preço necessário para construir
+
+107
+00:04:33.900 --> 00:04:36.940
+um pipeline cross-platform perfeitamente unificado.
+
+108
+00:04:36.940 --> 00:04:39.340
+A escolha arquitetural se resume a isto,
+
+109
+00:04:39.340 --> 00:04:42.340
+exigir controle total sobre uma configuração cross-platform
+
+110
+00:04:42.340 --> 00:04:44.260
+versus aceitar simplicidade gráfica
+
+111
+00:04:44.260 --> 00:04:46.580
+e deixando a Apple cuidar dos detalhes.
+
+112
+00:04:46.580 --> 00:04:49.020
+Este placar de comparação avalia os dois pipelines
+
+113
+00:04:49.020 --> 00:04:50.940
+em três arquétipos de equipe distintos
+
+114
+00:04:50.940 --> 00:04:53.340
+para mostrar exatamente onde cada ferramenta se encaixa.
+
+115
+00:04:53.340 --> 00:04:55.380
+Primeiro é a equipe multiplataforma,
+
+116
+00:04:55.380 --> 00:04:57.460
+operando uma esteira de mono repo em frameworks
+
+117
+00:04:57.460 --> 00:04:59.260
+como React Native ou Flutter.
+
+118
+00:04:59.260 --> 00:05:02.340
+Para esse grupo, GitHub Actions é a escolha definitiva.
+
+119
+00:05:02.340 --> 00:05:04.780
+Xcode Cloud não oferece suporte a Linux,
+
+120
+00:05:04.780 --> 00:05:07.420
+tornando um build Android completamente impossível.
+
+121
+00:05:07.420 --> 00:05:10.220
+O trabalho inicial de configurar o cache de match e tuning
+
+122
+00:05:10.220 --> 00:05:12.540
+é totalmente compensado pela velocidade de longo prazo
+
+123
+00:05:12.540 --> 00:05:15.460
+de rodar um único pipeline paralelo para ambas as plataformas.
+
+124
+00:05:15.460 --> 00:05:18.820
+O segundo arquétipo é o time exclusivo Apple,
+
+125
+00:05:18.820 --> 00:05:23.100
+construindo aplicações nativas estritamente em Swift ou SwiftUI.
+
+126
+00:05:23.100 --> 00:05:25.540
+Se sua base de código é puramente nativa,
+
+127
+00:05:25.540 --> 00:05:28.980
+evite totalmente a complexidade do GitHub actions.
+
+128
+00:05:28.980 --> 00:05:31.540
+O Xcode Cloud elimina o gerenciamento de runners,
+
+129
+00:05:31.540 --> 00:05:36.140
+cuida da assinatura de código e dá 25 horas de computação grátis por mês.
+
+130
+00:05:36.140 --> 00:05:39.020
+O último arquétipo é o otimizador de orçamento.
+
+131
+00:05:39.020 --> 00:05:41.500
+Se estiver usando GitHub Actions mas sem recursos
+
+132
+00:05:41.500 --> 00:05:45.740
+para minutos ineficientes do macOS, sua configuração deve ser impecável.
+
+133
+00:05:45.740 --> 00:05:47.780
+Você deve fixar suas versões do Xcode,
+
+134
+00:05:47.780 --> 00:05:50.020
+isolar o cache de spec do CocoaPods,
+
+135
+00:05:50.020 --> 00:05:51.940
+e usar segredos de certificado manuais
+
+136
+00:05:51.940 --> 00:05:55.660
+para evitar a sobrecarga de um repositório fastlane dedicado.
+
+137
+00:05:55.660 --> 00:05:58.580
+Não existe um único melhor pipeline de CI.
+
+138
+00:05:58.580 --> 00:06:00.660
+A escolha certa é determinada inteiramente
+
+139
+00:06:00.660 --> 00:06:03.380
+por se a sua base de código vive estritamente dentro do jardim murado
+
+140
+00:06:03.380 --> 00:06:06.740
+da Apple ou se ela precisa sobreviver fora dele.
+

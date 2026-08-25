@@ -1,0 +1,470 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:06.800
+For years, running React Native on iOS meant relying on an engine that behaves like a heavy freight train.
+
+2
+00:00:06.800 --> 00:00:13.000
+It excels at maintaining speed over a long haul, but it struggles to build momentum from a complete stop.
+
+3
+00:00:13.000 --> 00:00:17.800
+That engine is JavaScript Core, Apple's proprietary JavaScript runtime.
+
+4
+00:00:17.800 --> 00:00:24.600
+It is embedded deeply within iOS and served as the default tool to parse and execute React Native bundles.
+
+5
+00:00:24.600 --> 00:00:28.600
+This timeline illustrates the workload JavaScript Core was built for.
+
+6
+00:00:28.600 --> 00:00:33.600
+Web browsers, it uses jit compilation to optimize long running sessions.
+
+7
+00:00:33.600 --> 00:00:37.200
+Compare that to mobile, short, volatile bursts of activity.
+
+8
+00:00:37.200 --> 00:00:42.600
+The user expects an immediate cold start and closes the app before the engine warms up.
+
+9
+00:00:42.600 --> 00:00:45.800
+iOS also imposes a strict security constraint.
+
+10
+00:00:45.800 --> 00:00:49.800
+Apple prohibits third-party processes from executing jit compilation.
+
+11
+00:00:49.800 --> 00:00:54.800
+This forces JavaScript Core to run entirely without its primary optimization tier.
+
+12
+00:00:54.800 --> 00:01:00.000
+It is tasked with running an agile mobile framework while stripped of the mechanisms that make it efficient.
+
+13
+00:01:00.000 --> 00:01:08.600
+Meta engineered an open source alternative named Hermes, a runtime designed specifically to resolve this mismatch for the React Native workload.
+
+14
+00:01:08.600 --> 00:01:11.800
+Hermes operates on a distinct architectural principle.
+
+15
+00:01:11.800 --> 00:01:16.800
+It moves the expensive work of compiling JavaScript completely off the user's device.
+
+16
+00:01:16.800 --> 00:01:22.200
+Relying on a web-optimized engine for a mobile framework creates a hard performance ceiling.
+
+17
+00:01:22.200 --> 00:01:28.400
+Breaking through that performance ceiling requires a runtime explicitly tuned to the exact demands of a mobile device.
+
+18
+00:01:28.400 --> 00:01:31.000
+This matrix compares execution models.
+
+19
+00:01:31.000 --> 00:01:34.200
+JavaScript Core interprets raw JS at runtime,
+
+20
+00:01:34.200 --> 00:01:39.400
+spending crucial milliseconds lexing and compiling on device before becoming interactive.
+
+21
+00:01:39.400 --> 00:01:41.800
+Hermes relies on pre-compiled bytecode.
+
+22
+00:01:41.800 --> 00:01:46.000
+Those exact steps happen during your CICD build, far from the user.
+
+23
+00:01:46.000 --> 00:01:50.800
+During this build step, the React Native Bundler transforms your standard JavaScript output
+
+24
+00:01:50.800 --> 00:01:54.400
+into a file formatted as Hermes bytecode or .hbc.
+
+25
+00:01:54.400 --> 00:02:00.400
+This .hbc file is a compact binary representation of Hermes instruction set.
+
+26
+00:02:00.400 --> 00:02:04.200
+Structured so the engine can read it immediately without translation.
+
+27
+00:02:04.200 --> 00:02:12.200
+The on-device interpretation required by JavaScript Core forces the device to load a full abstract syntax tree into active memory,
+
+28
+00:02:12.200 --> 00:02:15.400
+causing a large memory spike the moment the app launches.
+
+29
+00:02:15.400 --> 00:02:18.200
+Hermes bypasses this memory spike entirely.
+
+30
+00:02:18.400 --> 00:02:24.200
+Because the bytecode is pre-compiled, the engine never constructs an abstract syntax tree on the device.
+
+31
+00:02:24.200 --> 00:02:28.600
+For native iOS developers, this mental model is identical to Swift.
+
+32
+00:02:28.600 --> 00:02:32.000
+Swift code is compiled to machine code during the xcode build,
+
+33
+00:02:32.000 --> 00:02:35.000
+not interpreted while the user is watching the launch screen.
+
+34
+00:02:35.000 --> 00:02:37.200
+By aligning the compilation pipelines,
+
+35
+00:02:37.200 --> 00:02:41.800
+the JavaScript runtime adopts the predictable execution characteristics of native code.
+
+36
+00:02:41.800 --> 00:02:46.600
+Time to interactive improves, not because the engine executes JavaScript faster on the device,
+
+37
+00:02:46.600 --> 00:02:50.200
+but because the device no longer has to compile the code in the first place.
+
+38
+00:02:50.200 --> 00:02:57.200
+This cutaway view of the iOS.ipa archive shows the pre-compiled main.js bundle
+
+39
+00:02:57.200 --> 00:03:00.600
+next to the embedded Hermes framework binary.
+
+40
+00:03:00.600 --> 00:03:03.200
+Embedding an engine requires physical space,
+
+41
+00:03:03.200 --> 00:03:07.800
+increasing the app store download size by roughly one and a half megabytes.
+
+42
+00:03:07.800 --> 00:03:13.400
+The second cost is pipeline duration, pushing the ahead of time compilation step to the server,
+
+43
+00:03:13.400 --> 00:03:17.600
+adds between five and 15 seconds to your production builds.
+
+44
+00:03:17.600 --> 00:03:20.400
+JavaScript core avoids both of these costs.
+
+45
+00:03:20.400 --> 00:03:24.200
+It adds zero bytes to the app payload and zero seconds to the build,
+
+46
+00:03:24.200 --> 00:03:28.800
+because the framework is already pre-installed on the host operating system.
+
+47
+00:03:28.800 --> 00:03:32.600
+This bar chart displays the practical return on that investment.
+
+48
+00:03:32.600 --> 00:03:36.000
+A standard JavaScript core startup on mid-range devices
+
+49
+00:03:36.000 --> 00:03:39.400
+takes between 600 and 900 milliseconds.
+
+50
+00:03:39.400 --> 00:03:44.800
+Hermes pulls that identical workload down to the 300 to 500 millisecond range.
+
+51
+00:03:44.800 --> 00:03:49.000
+Cutting the time to interactive in half directly impacts user retention
+
+52
+00:03:49.000 --> 00:03:52.400
+during the single most critical friction point of the application.
+
+53
+00:03:52.400 --> 00:03:53.200
+Launch.
+
+54
+00:03:53.200 --> 00:03:56.600
+The React Native build system handles this automatically.
+
+55
+00:03:56.600 --> 00:04:00.800
+The use React Native CocoaPod directive resolves the dependency graph
+
+56
+00:04:00.800 --> 00:04:04.800
+and pins the exact engine artifact without manual intervention.
+
+57
+00:04:04.800 --> 00:04:08.200
+Paying a static tax of 15 seconds on a build server
+
+58
+00:04:08.200 --> 00:04:14.400
+and a single megabyte of disk space is justified when it guarantees half-second cold starts for the end user.
+
+59
+00:04:14.400 --> 00:04:16.600
+Startup time is only the first phase.
+
+60
+00:04:16.600 --> 00:04:21.000
+The runtime must also efficiently manage the continuous allocation and destruction
+
+61
+00:04:21.000 --> 00:04:23.600
+of volatile user interface state in memory.
+
+62
+00:04:23.600 --> 00:04:28.600
+In Swift, Native objects are managed by automatic reference counting or ARC.
+
+63
+00:04:28.600 --> 00:04:32.600
+Memory drops deterministically the moment the last strong reference is released,
+
+64
+00:04:32.600 --> 00:04:35.000
+requiring zero thread blocking scans.
+
+65
+00:04:35.000 --> 00:04:39.000
+This diagram shows JavaScript objects living on a cyclical Hades track,
+
+66
+00:04:39.000 --> 00:04:41.600
+separate from the linear Swift ARC track.
+
+67
+00:04:41.600 --> 00:04:44.000
+Hades operates as a generational collector,
+
+68
+00:04:44.000 --> 00:04:49.000
+dividing the short-lived UI memory into an active young generation and a slower old generation.
+
+69
+00:04:49.000 --> 00:04:54.200
+Those volatile UI objects are allocated strictly to the young generation.
+
+70
+00:04:54.200 --> 00:05:00.000
+Hades sweeps this zone aggressively, collecting memory with thread pauses under one millisecond.
+
+71
+00:05:00.000 --> 00:05:03.600
+The performance risk occurs when large, long-lived data structures
+
+72
+00:05:03.600 --> 00:05:07.400
+survive multiple sweeps and migrate to the old generation,
+
+73
+00:05:07.400 --> 00:05:10.800
+historically requiring massive thread blocking pauses.
+
+74
+00:05:10.800 --> 00:05:15.200
+Hades solves this through a concurrent collector with a snapshot right barrier.
+
+75
+00:05:15.200 --> 00:05:19.400
+This allows Hades to scan and clear the old generation in the background.
+
+76
+00:05:19.400 --> 00:05:21.800
+The primary JavaScript thread keeps running,
+
+77
+00:05:21.800 --> 00:05:24.200
+avoiding frame drops during cleanup.
+
+78
+00:05:24.200 --> 00:05:27.600
+Even during major collection events in a production environment,
+
+79
+00:05:27.600 --> 00:05:32.000
+Hermes restricts garbage collection pauses to under five milliseconds.
+
+80
+00:05:32.000 --> 00:05:34.800
+When these two separate memory systems need to interact,
+
+81
+00:05:34.800 --> 00:05:39.200
+the turbo-mossual infrastructure coordinates the boundary via JSI calls.
+
+82
+00:05:39.200 --> 00:05:42.200
+Developers must still manage memory intentionally.
+
+83
+00:05:42.200 --> 00:05:48.800
+Retaining massive data structures inside JavaScript cultures can overwhelm the throughput capacity of Hades,
+
+84
+00:05:48.800 --> 00:05:51.600
+resulting in noticeable UI stutters.
+
+85
+00:05:51.600 --> 00:05:53.400
+By separating these life cycles,
+
+86
+00:05:53.600 --> 00:05:58.200
+Hermes successfully isolates the chaotic memory demands of JavaScript state
+
+87
+00:05:58.200 --> 00:06:01.400
+from the strict execution of native interfaces.
+
+88
+00:06:01.400 --> 00:06:04.000
+As of React Native 0.74,
+
+89
+00:06:04.000 --> 00:06:08.200
+this entire architecture is the default configuration for iOS,
+
+90
+00:06:08.200 --> 00:06:11.800
+requiring no modifications to your pod file to enable.
+
+91
+00:06:11.800 --> 00:06:14.800
+Despite replacing Apple's native JavaScript engine,
+
+92
+00:06:14.800 --> 00:06:19.000
+developers retain the ability to profile the Hermes virtual machine natively
+
+93
+00:06:19.000 --> 00:06:21.000
+using Xcode instruments.
+
+94
+00:06:21.000 --> 00:06:23.800
+This is the Xcode instruments time profiler.
+
+95
+00:06:23.800 --> 00:06:25.800
+To analyze JavaScript execution,
+
+96
+00:06:25.800 --> 00:06:30.600
+developers locate the specific comm.facebook.react.javascript thread
+
+97
+00:06:30.600 --> 00:06:33.200
+or Hermes.js thread in the call tree,
+
+98
+00:06:33.200 --> 00:06:36.000
+expanding it to reveal the runtime internals.
+
+99
+00:06:36.000 --> 00:06:39.800
+But off-device compilation introduces an operational trap.
+
+100
+00:06:39.800 --> 00:06:42.400
+Because Hermes executes raw byte code,
+
+101
+00:06:42.400 --> 00:06:46.000
+an unhandled crash in production will default to printing a stack trace
+
+102
+00:06:46.000 --> 00:06:49.400
+full of unreadable hexadecimal byte code offsets.
+
+103
+00:06:49.400 --> 00:06:52.200
+Developers must explicitly configure their release builds
+
+104
+00:06:52.200 --> 00:06:55.600
+to include the dash output source map compiler flag.
+
+105
+00:06:55.600 --> 00:06:58.600
+This animation demonstrates what that flag produces,
+
+106
+00:06:58.600 --> 00:07:01.000
+a .hbc.map file.
+
+107
+00:07:01.000 --> 00:07:04.700
+When an unreadable hexadecimal crash offset is fed through this map,
+
+108
+00:07:04.700 --> 00:07:07.600
+it instantly translates the byte code location back into the
+
+109
+00:07:07.600 --> 00:07:09.700
+original JavaScript function name.
+
+110
+00:07:09.700 --> 00:07:11.900
+This source map artifact must be explicitly
+
+111
+00:07:11.900 --> 00:07:14.600
+routed to your third-party crash telemetry services,
+
+112
+00:07:14.600 --> 00:07:17.900
+like Sentry or Firebase Crashlytics during the build.
+
+113
+00:07:18.000 --> 00:07:20.700
+The engine translates a dynamic language built for the web
+
+114
+00:07:20.700 --> 00:07:23.700
+into a predictable ahead of time compiled asset.
+
+115
+00:07:23.700 --> 00:07:26.700
+Hermes resolves the architectural mismatch between react native
+
+116
+00:07:26.700 --> 00:07:29.700
+and iOS, allowing the JavaScript runtime to mirror
+
+117
+00:07:29.700 --> 00:07:32.700
+the pre-compiled predictable execution model of native Swift.
+

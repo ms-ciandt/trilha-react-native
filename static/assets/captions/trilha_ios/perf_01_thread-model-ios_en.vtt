@@ -1,0 +1,362 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:06.000
+If you have shipped UI kit or Swift UI apps, you carry a strong mental model of threading.
+
+2
+00:00:06.000 --> 00:00:09.600
+React Native's architecture is built on these same primitives,
+
+3
+00:00:09.600 --> 00:00:15.600
+meaning your existing knowledge of the iOS Run Loop is the key to diagnosing performance problems.
+
+4
+00:00:15.600 --> 00:00:20.400
+This chart shows how familiar Swift concepts map to the React Native engine.
+
+5
+00:00:20.400 --> 00:00:26.400
+Where you rely on dispatchq.main and Swift, React Native uses the UI threat.
+
+6
+00:00:26.400 --> 00:00:31.600
+Where you use a background dispatchq, React Native uses the JS thread.
+
+7
+00:00:31.600 --> 00:00:36.000
+A running React Native application maintains three primary threads.
+
+8
+00:00:36.000 --> 00:00:40.600
+The main thread is the exact same UI run loop you know from iOS.
+
+9
+00:00:40.600 --> 00:00:47.200
+All UI view mutations, gesture recognizer callbacks, and core animation updates land here.
+
+10
+00:00:47.200 --> 00:00:53.200
+The JS thread is a dedicated backgroundq managed by Hermes, the built-in JavaScript engine.
+
+11
+00:00:53.200 --> 00:00:57.200
+This is where your component render functions and business logic execute.
+
+12
+00:00:57.200 --> 00:01:01.600
+Think of the JS thread as a user interactive grand central dispatchq
+
+13
+00:01:01.600 --> 00:01:04.400
+that you cannot interact with directly from Swift.
+
+14
+00:01:04.400 --> 00:01:09.600
+The foundational contract of iOS development remains unchanged across this boundary.
+
+15
+00:01:09.600 --> 00:01:14.800
+Block any of these primary threads and you drop frames or crash the process.
+
+16
+00:01:14.800 --> 00:01:20.000
+Fabric React Native's modern rendering system manages the third architectural pillar,
+
+17
+00:01:20.000 --> 00:01:26.800
+the shadow thread. This is a dedicated C++q designed specifically to compute yoga flex box layouts
+
+18
+00:01:26.800 --> 00:01:29.200
+every time your component tree changes.
+
+19
+00:01:29.200 --> 00:01:33.800
+In UI kit terms, this operates identically to running a background GCD task
+
+20
+00:01:33.800 --> 00:01:38.600
+that calculates CRECT frames for an entire view hierarchy before touching the screen.
+
+21
+00:01:38.600 --> 00:01:41.600
+Fabric computes these layout calculations on the shadow thread
+
+22
+00:01:41.600 --> 00:01:45.400
+and delivers them to the main thread in a single atomic transaction.
+
+23
+00:01:45.400 --> 00:01:48.800
+By offloading layout computation to a background C++ thread,
+
+24
+00:01:48.800 --> 00:01:52.600
+the main thread remains entirely unburdened by heavy view measurements.
+
+25
+00:01:52.600 --> 00:01:56.400
+Historically, React Native suffered from a persistent one-frame lag.
+
+26
+00:01:56.400 --> 00:02:02.200
+Gestures felt slightly disconnected and fast scrolling could expose blank cells before the layout caught up.
+
+27
+00:02:02.200 --> 00:02:06.600
+This timeline shows the cause, the legacy bridge architecture.
+
+28
+00:02:06.600 --> 00:02:13.000
+Data passing between the JS and main threads relied on asynchronous JSON serialization,
+
+29
+00:02:13.000 --> 00:02:18.400
+guaranteeing that layout calculations were always at least one frame behind the event cycle.
+
+30
+00:02:18.600 --> 00:02:24.000
+The modern architecture replaces that bridge with the JavaScript interface or JSI.
+
+31
+00:02:24.000 --> 00:02:29.200
+JSI allows synchronous C++ calls between the JS thread and the shadow thread,
+
+32
+00:02:29.200 --> 00:02:31.400
+eliminating the serialization step.
+
+33
+00:02:31.400 --> 00:02:34.200
+Layout calculations now happen synchronously
+
+34
+00:02:34.200 --> 00:02:37.800
+and the resulting view mutations commit directly to the main thread.
+
+35
+00:02:37.800 --> 00:02:42.400
+For an iOS developer, this is the exact same latency reduction you experience
+
+36
+00:02:42.400 --> 00:02:47.000
+when migrating from cross-thread notification center broadcasts to direct method calls.
+
+37
+00:02:47.200 --> 00:02:51.200
+Eliminating the asynchronous JSON bridge is the specific technical shift
+
+38
+00:02:51.200 --> 00:02:55.600
+that allows React Native animations to hit 120 frames per second.
+
+39
+00:02:55.600 --> 00:03:00.600
+Transitioning from Swift to React Native requires a shift in how you handle thread safety.
+
+40
+00:03:00.600 --> 00:03:03.000
+We call this the concurrency inversion.
+
+41
+00:03:03.000 --> 00:03:06.200
+This diagram illustrates the Swift paradigm.
+
+42
+00:03:06.200 --> 00:03:12.600
+Swift concurrency uses at main actor to explicitly pull background work into the UI thread.
+
+43
+00:03:12.600 --> 00:03:15.200
+In React Native, the flow is reversed.
+
+44
+00:03:15.200 --> 00:03:17.800
+JavaScript is single threaded by design.
+
+45
+00:03:17.800 --> 00:03:23.400
+All components state, reducers, and render paths execute inherently on the JS thread.
+
+46
+00:03:23.400 --> 00:03:25.800
+The challenge runs in the opposite direction.
+
+47
+00:03:25.800 --> 00:03:31.000
+You must actively push heavy computation off the JS thread and on to native worker threads
+
+48
+00:03:31.000 --> 00:03:33.200
+to protect your execution budget.
+
+49
+00:03:33.200 --> 00:03:36.000
+When you need to update a view property from the background,
+
+50
+00:03:36.000 --> 00:03:43.200
+you map Swift's dispatchq.main.async to react native reanimated run on UI worklet directive.
+
+51
+00:03:43.200 --> 00:03:47.000
+For standard animations, setting use native driver to true,
+
+52
+00:03:47.000 --> 00:03:50.000
+operates exactly like CA basic animation.
+
+53
+00:03:50.000 --> 00:03:55.400
+It moves interpolation entirely to the native realm by passing the JS thread completely.
+
+54
+00:03:55.400 --> 00:03:58.600
+Swift's compiler will warn you if you misuse main actor.
+
+55
+00:03:58.600 --> 00:04:01.600
+React Native provides no such compile time safety.
+
+56
+00:04:01.600 --> 00:04:06.800
+Calling an expensive synchronous operation like sorting a massive array
+
+57
+00:04:06.800 --> 00:04:11.600
+or parsing a large JSON string silently stalls the JS thread.
+
+58
+00:04:11.800 --> 00:04:16.400
+Mastering concurrency here means treating the JS thread as a strict bottleneck
+
+59
+00:04:16.400 --> 00:04:21.000
+that requires constant offloading rather than a destination for your tasks.
+
+60
+00:04:21.000 --> 00:04:22.800
+Let's look at memory management.
+
+61
+00:04:22.800 --> 00:04:26.600
+Swift uses automatic reference counting or ARC.
+
+62
+00:04:26.600 --> 00:04:30.000
+The Hermes engine uses a generational garbage collector.
+
+63
+00:04:30.000 --> 00:04:35.600
+ARC distributes memory overhead deterministically across retain and release calls.
+
+64
+00:04:35.600 --> 00:04:39.800
+Hermes, however, relies on a compact phase that stops the world.
+
+65
+00:04:39.800 --> 00:04:43.000
+When JavaScript holds on to unbounded object graphs,
+
+66
+00:04:43.000 --> 00:04:46.800
+like massive redux doors or uncashed image descriptors,
+
+67
+00:04:46.800 --> 00:04:50.800
+the heap swells and the compact phase takes longer to execute.
+
+68
+00:04:50.800 --> 00:04:55.600
+A prolonged garbage collection compact phase pauses the JS thread entirely.
+
+69
+00:04:55.600 --> 00:04:59.200
+When the JS thread completely stops, the layout passes skip.
+
+70
+00:04:59.200 --> 00:05:04.600
+If a screen exhibits intermittent visual jank without any obvious CPU load,
+
+71
+00:05:04.600 --> 00:05:08.800
+a Hermes garbage collection pause is almost certainly the culprit.
+
+72
+00:05:08.800 --> 00:05:12.800
+Modern iOS hardware introduces a strict timing constraint.
+
+73
+00:05:12.800 --> 00:05:17.200
+At 60 frames per second, you have 16 milliseconds to render a frame.
+
+74
+00:05:17.200 --> 00:05:23.000
+On a 120 hertz promotion display, that budget shrinks to exactly 8 milliseconds.
+
+75
+00:05:23.000 --> 00:05:28.200
+A 10 millisecond task on the JS thread goes completely unnoticed on an older device.
+
+76
+00:05:28.200 --> 00:05:32.400
+However, on a modern iPhone 15 Pro, it guarantees a dropped frame
+
+77
+00:05:32.400 --> 00:05:36.000
+because the strict deadline arrives before the work completes.
+
+78
+00:05:36.000 --> 00:05:40.800
+This representation of the Xcode time profiler helps diagnose overflows.
+
+79
+00:05:40.800 --> 00:05:45.000
+Isolate the thread labeled calm.facebook.react.javascript.
+
+80
+00:05:45.000 --> 00:05:48.200
+A problematic trace reveals a massive vertical spike,
+
+81
+00:05:48.200 --> 00:05:51.200
+breaching the 8 millisecond deadline during idle time.
+
+82
+00:05:51.200 --> 00:05:54.000
+To prevent frame drops during complex transitions,
+
+83
+00:05:54.000 --> 00:05:57.400
+UI kit developers defer work with async after.
+
+84
+00:05:57.400 --> 00:06:02.200
+The react made of equivalent is interaction manager.runafter interactions.
+
+85
+00:06:02.200 --> 00:06:07.200
+By queuing non-critical data fetches until after navigation transitions
+
+86
+00:06:07.200 --> 00:06:09.600
+clear the active interaction registry,
+
+87
+00:06:09.600 --> 00:06:13.000
+you protect that tight 8 millisecond frame budget.
+
+88
+00:06:13.000 --> 00:06:19.000
+The underlying operating system enforces the exact same rules for UI kit and react meev.
+
+89
+00:06:19.000 --> 00:06:23.000
+Success relies entirely on keeping the threads unclogged
+
+90
+00:06:23.000 --> 00:06:26.000
+and measuring the results in instruments.
+

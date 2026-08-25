@@ -67,6 +67,18 @@ def parse_vtt(content: str) -> list[dict]:
     return blocks
 
 
+def _make_client() -> anthropic.Anthropic:
+    """Build an Anthropic client from either a plain API key or a proxied
+    auth token (ANTHROPIC_AUTH_TOKEN + ANTHROPIC_BASE_URL), matching however
+    the current shell is configured to reach Claude."""
+    if "ANTHROPIC_API_KEY" in os.environ:
+        return anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
+    return anthropic.Anthropic(
+        auth_token=os.environ["ANTHROPIC_AUTH_TOKEN"],
+        base_url=os.environ.get("ANTHROPIC_BASE_URL"),
+    )
+
+
 def translate_texts(texts: list[str], client: anthropic.Anthropic) -> list[str]:
     """Send a batch of text cues to Claude and return translated PT-BR lines."""
     numbered = "\n".join(f"{i + 1}. {t.strip()}" for i, t in enumerate(texts))
@@ -74,7 +86,7 @@ def translate_texts(texts: list[str], client: anthropic.Anthropic) -> list[str]:
     for attempt in range(1, MAX_RETRIES + 1):
         try:
             message = client.messages.create(
-                model="anthropic.claude-4-6-sonnet",
+                model="claude-sonnet-5",
                 max_tokens=4096,
                 messages=[
                     {
@@ -98,7 +110,8 @@ def translate_texts(texts: list[str], client: anthropic.Anthropic) -> list[str]:
             print(f"  API error (attempt {attempt}/{MAX_RETRIES}): {e}. Retrying in {RETRY_DELAY}s...")
             time.sleep(RETRY_DELAY)
 
-    raw_lines = message.content[0].text.strip().splitlines()
+    text_block = next(b for b in message.content if b.type == "text")
+    raw_lines = text_block.text.strip().splitlines()
     translated = []
     for line in raw_lines:
         # Strip leading "N. " numbering the model echoes back
@@ -128,7 +141,7 @@ def translate_vtt(input_path: str, output_path: str) -> None:
             f.write(content)
         return
 
-    client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
+    client = _make_client()
 
     # Translate in batches
     translated_texts: list[str] = []
@@ -161,8 +174,8 @@ def main() -> None:
         print(f"Error: file not found: {input_path}")
         sys.exit(1)
 
-    if "ANTHROPIC_API_KEY" not in os.environ:
-        print("Error: ANTHROPIC_API_KEY environment variable not set.")
+    if "ANTHROPIC_API_KEY" not in os.environ and "ANTHROPIC_AUTH_TOKEN" not in os.environ:
+        print("Error: neither ANTHROPIC_API_KEY nor ANTHROPIC_AUTH_TOKEN is set.")
         sys.exit(1)
 
     print(f"Translating {input_path} → {output_path}")

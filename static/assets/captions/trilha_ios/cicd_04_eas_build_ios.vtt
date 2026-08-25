@@ -1,0 +1,206 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:09.000
+Operar runners dedicados de Mac OS para integração contínua padrão do iOS acarreta um alto custo de manutenção e um pesado ônus físico.
+
+2
+00:00:09.000 --> 00:00:21.000
+Gerenciar um Mac físico local significa lidar com gigabytes de pastas de derived data inchadas, monitorar constantemente o espaço em disco e renovar manualmente certificados de distribuição expirados.
+
+3
+00:00:21.000 --> 00:00:27.000
+Quando a Apple lança uma atualização importante do Xcode, todo o pipeline de integração contínua fica em risco.
+
+4
+00:00:27.000 --> 00:00:36.000
+Uma única API depreciada ou uma configuração de build alterada exige intervenção manual imediata de um desenvolvedor para manter o processo de deployment em funcionamento.
+
+5
+00:00:36.000 --> 00:00:44.000
+A integração contínua tradicional do iOS depende de manutenção de hardware físico, independentemente das ferramentas de software usadas para gerenciar o pipeline.
+
+6
+00:00:44.000 --> 00:00:52.000
+O Expo Application Services, ou EAS, é uma solução arquitetural que remove o Mac físico do ciclo de integração contínua.
+
+7
+00:00:52.000 --> 00:01:01.000
+Em vez de manter um runner local, o EAS traduz seus comandos manuais de terminal em uma frota determinística de máquinas hospedadas na nuvem.
+
+8
+00:01:01.000 --> 00:01:08.000
+Os desenvolvedores simplesmente declaram a versão específica do Xcode que seu projeto requer dentro de um arquivo de configuração central.
+
+9
+00:01:08.000 --> 00:01:18.000
+O scheduler do EAS lê essa declaração e roteia automaticamente o build para uma máquina Mac OS pré-configurada na frota que tenha exatamente esse ambiente instalado.
+
+10
+00:01:18.000 --> 00:01:25.000
+Diferente dos sistemas legados auto-hospedados, não há hardware local para manter nem desvio de ambiente localizado para depurar.
+
+11
+00:01:25.000 --> 00:01:31.000
+O fluxo de trabalho do desenvolvedor muda de gerenciar o estado físico de um servidor para gerenciar um arquivo JSON.
+
+12
+00:01:31.000 --> 00:01:38.000
+Ao abstrair a camada física, o EAS transforma a infraestrutura iOS em pura configuração declarativa.
+
+13
+00:01:38.000 --> 00:01:48.000
+Este documento central é o EAS.json. Ele atua como o roteador central para todo o ciclo de vida de build do iOS, direcionando o código através de três perfis específicos.
+
+14
+00:01:48.000 --> 00:01:54.000
+O primeiro caminho é o perfil development, que gera um build especificamente para o iOS simulator.
+
+15
+00:01:54.000 --> 00:02:01.000
+Essa rota ignora completamente a assinatura de código e as contas de desenvolvedor Apple, gerando um pacote de aplicativo rápido e leve para testes locais imediatos.
+
+16
+00:02:01.000 --> 00:02:07.000
+O segundo caminho é o perfil preview, projetado para distribuição interna de controle de qualidade.
+
+17
+00:02:07.000 --> 00:02:20.000
+Aqui, o EAS automatiza o provisionamento ad hoc. Ele registra os UDIDs dos dispositivos de teste diretamente com a Apple, permitindo que a equipe de QA instale o app através de um simples QR code, sem passar pelo TestFlight.
+
+18
+00:02:21.000 --> 00:02:35.000
+O caminho final aborda os requisitos específicos da assinatura de código de produção da Apple. Usando uma flag de credenciais remotas, o perfil production delega autoridade ao EAS, permitindo que ele se comunique diretamente com a API de desenvolvedor da Apple.
+
+19
+00:02:35.000 --> 00:02:41.000
+O sistema cria, criptografa e rotaciona automaticamente seus certificados de distribuição necessários na nuvem.
+
+20
+00:02:41.000 --> 00:02:48.000
+Essa geração dinâmica garante que um build nunca falhe porque um certificado expirou silenciosamente ou um novo dispositivo de teste foi adicionado.
+
+21
+00:02:48.000 --> 00:02:56.000
+Ao encapsular a API do Apple developer em um serviço de backend silencioso, o EAS.json automatiza o atrito da assinatura manual de código iOS.
+
+22
+00:02:56.000 --> 00:03:05.000
+Com a infraestrutura e a assinatura abstraídas, o próximo requisito para um pipeline remoto é manter um estado previsível do projeto nativo.
+
+23
+00:03:05.000 --> 00:03:13.000
+Em um fluxo de trabalho bear tradicional, os desenvolvedores precisam editar manualmente arquivos de configuração profundamente aninhados dentro do diretório iOS subjacente.
+
+24
+00:03:13.000 --> 00:03:23.000
+Modificar manualmente property lists principais e configurações de build do Xcode inevitavelmente cria conflitos no Git e torna impossível reproduzir perfeitamente os ambientes locais na nuvem.
+
+25
+00:03:23.000 --> 00:03:35.000
+A solução arquitetural para esse problema de determinismo é um sistema chamado config plugins. Um config plugin é uma função JavaScript que altera programaticamente os arquivos nativos exatamente no momento do build.
+
+26
+00:03:35.000 --> 00:03:40.000
+Para acesso à câmera do dispositivo, o desenvolvedor evita abrir arquivos de propriedades do iOS.
+
+27
+00:03:40.000 --> 00:03:52.000
+Em vez disso, o plugin injeta automaticamente as permissões necessárias durante o build. Essa execução de script ocorre durante a fase de pre-build do EAS, finalizando suas modificações antes mesmo do Xcode inicializar.
+
+28
+00:03:52.000 --> 00:03:58.000
+Como resultado, os desenvolvedores não precisam mais commitar o diretório iOS subjacente em seu repositório.
+
+29
+00:03:58.000 --> 00:04:04.000
+O diretório nativo inteiro é tratado estritamente como um artefato efêmero e descartável, gerado do zero a cada execução.
+
+30
+00:04:05.000 --> 00:04:13.000
+Se uma biblioteca nativa customizada não fornecer seu próprio plugin, os desenvolvedores simplesmente escrevem um pequeno script JavaScript para corrigir os arquivos necessários de forma determinística.
+
+31
+00:04:13.000 --> 00:04:21.000
+Os config plugins garantem que cada build na nuvem comece a partir de um estado nativo puro e reproduzível, eliminando erros de compilação específicos do ambiente.
+
+32
+00:04:21.000 --> 00:04:27.000
+Uma vez que o app é implantado, o foco muda para a entrega contínua e atualizações de JavaScript over-the-air através do EAS update.
+
+33
+00:04:27.000 --> 00:04:32.000
+Para entender como essas atualizações funcionam, precisamos olhar para a arquitetura de um app React Native.
+
+34
+00:04:32.000 --> 00:04:40.000
+Ele é dividido em duas camadas distintas, um binário nativo compilado na base e uma camada de bytecode JavaScript por cima.
+
+35
+00:04:40.000 --> 00:04:47.000
+As regras de conformidade da Apple determinam que modificações na camada JavaScript podem ser entregues over-the-air diretamente aos usuários.
+
+36
+00:04:47.000 --> 00:04:55.000
+No entanto, qualquer mudança no código nativo exige estritamente uma nova revisão na App Store. Isso cria uma vulnerabilidade crítica.
+
+37
+00:04:55.000 --> 00:05:06.000
+Se um desenvolvedor publicar uma atualização over-the-air chamando um novo módulo nativo que não está incluído no binário existente, essa incompatibilidade exata de código causará uma falha fatal imediata em tempo de execução no dispositivo do usuário.
+
+38
+00:05:06.000 --> 00:05:15.000
+O EAS fingerprint é um mecanismo de segurança criptográfico rigoroso, criado para prevenir esses crashes. O algoritmo escaneia todos os módulos nativos e configurações.
+
+39
+00:05:15.000 --> 00:05:22.000
+O EAS calcula essa fingerprint matemática exata durante cada build, incorporando-a ao artefato binário.
+
+40
+00:05:22.000 --> 00:05:29.000
+Antes de publicar, o sistema compara a fingerprint esperada do novo bundle JavaScript com a fingerprint da produção ativa.
+
+41
+00:05:29.000 --> 00:05:40.000
+Se os hashes não corresponderem, o sistema emite um aviso estrito. Esse bloqueio explícito evita falhas, notificando o desenvolvedor de que uma compilação completa para a App Store é necessária.
+
+42
+00:05:40.000 --> 00:05:50.000
+Se uma atualização defeituosa de alguma forma contornar as verificações padrão, comandos de rollback de emergência podem reverter instantaneamente a branch de deployment, redirecionando os usuários para um binário seguro conhecido.
+
+43
+00:05:50.000 --> 00:06:00.000
+Ao impor estruturalmente a fronteira entre as camadas nativa e JavaScript, o EAS fingerprint torna a entrega contínua compatível com a App Store e criptograficamente segura.
+
+44
+00:06:00.000 --> 00:06:05.000
+Ao rastrear o ciclo de vida modernizado de deployment do iOS, revela-se um pipeline unificado.
+
+45
+00:06:05.000 --> 00:06:13.000
+O código entra no sistema, os config plugins criam uma camada nativa nova, e o EAS.json direciona o projeto para um nó de nuvem macOS.
+
+46
+00:06:13.000 --> 00:06:23.000
+Lá, o sistema negocia com a API de desenvolvedor da Apple, compila um arquivo IPA assinado, o protege com hash usando um fingerprint, e o prepara para distribuição.
+
+47
+00:06:23.000 --> 00:06:32.000
+O processo de EAS submit ignora completamente as ferramentas de transporter manuais, enviando o artefato assinado diretamente para o App Store Connect via API.
+
+48
+00:06:32.000 --> 00:06:42.000
+Semanas depois, uma atualização over-the-air ignora o pesado pipeline de compilação, valida o hash de fingerprint existente e é enviada diretamente para os dispositivos dos usuários finais.
+
+49
+00:06:42.000 --> 00:06:48.000
+Eliminar os requisitos de hardware físico acelera a velocidade operacional de uma equipe de engenharia.
+
+50
+00:06:48.000 --> 00:06:56.000
+A integração contínua no iOS não é mais um exercício frustrante de manipulação manual de certificados e constantes resets de hardware físico.
+
+51
+00:06:56.000 --> 00:07:07.000
+Ao abstrair o ecossistema rígido da Apple em uma máquina de estados determinística e gerenciada na nuvem, as equipes de engenharia podem finalmente tratar o deployment mobile nativo exatamente como a infraestrutura web moderna.
+
