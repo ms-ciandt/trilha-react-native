@@ -267,8 +267,7 @@ export default function Lab() {
           </p>
           <p className={styles.heroThemeNote}>
             All five labs are built around the same running example: CI&amp;T Championships,
-            an internal app for organizing office tournaments — soccer, pool, Mortal Kombat,
-            FIFA, and anything else a group wants to run a bracket for.
+            an internal app for organizing office tournaments.
           </p>
         </header>
 
