@@ -22,6 +22,7 @@ describe('About page (EN)', () => {
     render(<About />);
     expect(screen.getByRole('heading', { name: /who is it for/i })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /reference stack/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /rn advanced lab/i })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /built ai-first/i })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /contributors/i })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /reviewers/i })).toBeInTheDocument();
@@ -68,6 +69,12 @@ describe('About page (EN)', () => {
     const link = screen.getByRole('link', { name: /view on github/i });
     expect(link).toHaveAttribute('href', expect.stringContaining('github.com'));
     expect(link).toHaveAttribute('target', '_blank');
+  });
+
+  it('renders the RN Advanced Lab link', () => {
+    render(<About />);
+    const link = screen.getByRole('link', { name: /explore the lab/i });
+    expect(link).toHaveAttribute('href', expect.stringContaining('/lab'));
   });
 
   it('renders AI tools (NotebookLM and Claude)', () => {

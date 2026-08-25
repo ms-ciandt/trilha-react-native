@@ -93,6 +93,11 @@ const config = {
             ],
           },
           {
+            to: '/lab',
+            label: 'Labs',
+            position: 'left',
+          },
+          {
             type: 'search',
             position: 'right',
           },

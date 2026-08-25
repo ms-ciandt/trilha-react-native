@@ -318,6 +318,27 @@ export default function Home() {
           </div>
         </section>
 
+        <section className={styles.labsCallout}>
+          <div className={styles.labsGlow} />
+          <div className={styles.labsContent}>
+            <div className={styles.labsIconBox}>
+              <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor" aria-hidden="true">
+                <path d="M9 3v2h1v4.5L5.5 18c-.5.9.2 2 1.2 2h10.6c1 0 1.7-1.1 1.2-2L14 9.5V5h1V3H9zm2 2h2v5.1l3.8 6.9H7.2L11 10.1V5z"/>
+              </svg>
+            </div>
+            <div className={styles.labsText}>
+              <div className={styles.labsBadge}>RN Advanced Lab</div>
+              <div className={styles.labsLabel}>Put it into practice</div>
+              <p className={styles.labsDesc}>
+                Brownfield, native bridges, threads and more — five hands-on challenges to test your skills.
+              </p>
+              <Link className={styles.labsBtn} to="/lab">
+                Explore the Lab
+              </Link>
+            </div>
+          </div>
+        </section>
+
         <section className={styles.contributors}>
           <Link to="/about" className={styles.contributorsLabel}>Made by</Link>
           <div className={styles.contributorsList}>

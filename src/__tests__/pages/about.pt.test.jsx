@@ -22,6 +22,7 @@ describe('About page (PT-BR)', () => {
     render(<About />);
     expect(screen.getByRole('heading', { name: /para quem é/i })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /stack de referência/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /rn advanced lab/i })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /feito com ia/i })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /contribuidores/i })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /revisores/i })).toBeInTheDocument();
@@ -71,6 +72,12 @@ describe('About page (PT-BR)', () => {
     const link = screen.getByRole('link', { name: /ver no github/i });
     expect(link).toHaveAttribute('href', expect.stringContaining('github.com'));
     expect(link).toHaveAttribute('target', '_blank');
+  });
+
+  it('renders the PT-BR RN Advanced Lab link', () => {
+    render(<About />);
+    const link = screen.getByRole('link', { name: /explorar o lab/i });
+    expect(link).toHaveAttribute('href', expect.stringContaining('/lab'));
   });
 
   it('renders correctly in dark mode', () => {

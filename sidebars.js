@@ -316,6 +316,21 @@ const sidebars = {
   ],
 
 
+  rnAdvancedLab: [
+    {
+      type: 'category',
+      label: 'RN Advanced Lab',
+      collapsed: false,
+      items: [
+        'rn-advanced-lab/brownfield-bootstrap',
+        'rn-advanced-lab/brownfield-navigation',
+        'rn-advanced-lab/native-library-bridge',
+        'rn-advanced-lab/ui-thread-vs-js-thread',
+        'rn-advanced-lab/godot-integration',
+      ],
+    },
+  ],
+
   trilhaWeb: [
     {
       type: 'category',
