@@ -267,8 +267,7 @@ export default function Lab() {
           </p>
           <p className={styles.heroThemeNote}>
             Os cinco labs são construídos em cima do mesmo exemplo: CI&amp;T Championships,
-            um app interno para organizar campeonatos do escritório — futebol, sinuca,
-            Mortal Kombat, FIFA e qualquer outra modalidade que o pessoal queira disputar.
+            um app interno para organizar campeonatos do escritório.
           </p>
         </header>
 
