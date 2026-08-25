@@ -1,5 +1,6 @@
 import React from 'react';
 import Layout from '@theme/Layout';
+import Link from '@docusaurus/Link';
 import { useColorMode } from '@docusaurus/theme-common';
 import styles from '@site/src/pages/about.module.css';
 
@@ -136,6 +137,18 @@ export default function About() {
               <span key={tag} className={styles.stackTag}>{tag}</span>
             ))}
           </div>
+        </section>
+
+        <section className={styles.section}>
+          <h2>RN Advanced Lab</h2>
+          <p>
+            Além das trilhas, o curso conta com uma arena de prática com cinco desafios
+            sequenciais: Brownfield bootstrap, Brownfield navigation, uma ponte com biblioteca
+            nativa, JS thread vs UI thread performance e uma integração opcional com Godot.
+            Cada lab libera o próximo conforme é concluído, e funciona melhor depois de
+            terminar uma trilha nativa ou a Masterclass.
+          </p>
+          <Link to="/lab" className={styles.button}>Explorar o Lab</Link>
         </section>
 
         <section className={styles.section}>

@@ -1,0 +1,647 @@
+/* ─── Layout ────────────────────────────────────────────────── */
+.main {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3rem 1.5rem 7rem;
+  min-height: calc(100vh - var(--ifm-navbar-height));
+  overflow: hidden;
+}
+
+/* ─── Grid background ───────────────────────────────────────── */
+.grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, var(--ifm-color-emphasis-200) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--ifm-color-emphasis-200) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 30%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 30%, transparent 100%);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+[data-theme='dark'] .grid {
+  opacity: 0.18;
+}
+
+/* ─── Hero ──────────────────────────────────────────────────── */
+.hero {
+  text-align: center;
+  max-width: 680px;
+  margin-bottom: 2.5rem;
+  animation: fadeUp 0.6s ease both;
+}
+
+.heroBadge {
+  display: inline-block;
+  margin-bottom: 0.875rem;
+  padding: 0.25rem 0.875rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, #06b6d4 45%, transparent);
+  background: color-mix(in srgb, #06b6d4 8%, transparent);
+  color: #06b6d4;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+[data-theme='dark'] .heroBadge {
+  color: #22d3ee;
+  border-color: color-mix(in srgb, #22d3ee 35%, transparent);
+  background: color-mix(in srgb, #22d3ee 8%, transparent);
+}
+
+.heroTitle {
+  font-size: 2.75rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+  background: linear-gradient(135deg, #06b6d4 0%, #7c3aed 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.75rem;
+}
+
+[data-theme='dark'] .heroTitle {
+  background: linear-gradient(135deg, #22d3ee 0%, #a78bfa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.heroSubtitle {
+  font-size: 0.875rem;
+  color: var(--ifm-color-emphasis-600);
+  line-height: 1.7;
+  margin: 0 auto;
+  max-width: 480px;
+}
+
+.heroThemeNote {
+  font-size: 0.8125rem;
+  font-style: italic;
+  color: var(--ifm-color-emphasis-500);
+  line-height: 1.7;
+  margin: 0.75rem auto 0;
+  max-width: 520px;
+}
+
+/* ─── Recommended trails box ─────────────────────────────────── */
+.prereqBox {
+  position: relative;
+  width: 100%;
+  max-width: 860px;
+  border: 1px solid color-mix(in srgb, #06b6d4 28%, transparent);
+  border-radius: 16px;
+  padding: 1.5rem 1.75rem;
+  background: var(--ifm-background-surface-color);
+  overflow: hidden;
+  margin-bottom: 2rem;
+  animation: fadeUp 0.6s ease 0.1s both;
+}
+
+[data-theme='dark'] .prereqBox {
+  border-color: color-mix(in srgb, #22d3ee 22%, transparent);
+}
+
+.prereqGlow {
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: #06b6d4;
+  filter: blur(50px);
+  opacity: 0.07;
+  pointer-events: none;
+}
+
+[data-theme='dark'] .prereqGlow {
+  background: #22d3ee;
+  opacity: 0.05;
+}
+
+.prereqHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.prereqIcon {
+  color: #06b6d4;
+  display: flex;
+  align-items: center;
+}
+
+[data-theme='dark'] .prereqIcon {
+  color: #22d3ee;
+}
+
+.prereqTitle {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #06b6d4;
+  letter-spacing: -0.01em;
+}
+
+[data-theme='dark'] .prereqTitle {
+  color: #22d3ee;
+}
+
+.prereqDesc {
+  font-size: 0.8125rem;
+  color: var(--ifm-color-emphasis-600);
+  line-height: 1.65;
+  margin: 0 0 1rem;
+}
+
+.prereqTrails {
+  display: flex;
+  gap: 0.625rem;
+  flex-wrap: wrap;
+}
+
+.prereqChip {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.5rem 1rem;
+  border-radius: 12px;
+  border: 1px solid;
+  text-decoration: none !important;
+  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.prereqChip:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px color-mix(in srgb, currentColor 15%, transparent);
+  background: color-mix(in srgb, currentColor 6%, transparent);
+}
+
+.prereqChipLabel {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.prereqChipNote {
+  font-size: 0.65rem;
+  font-weight: 400;
+  opacity: 0.7;
+  color: var(--ifm-color-emphasis-600);
+}
+
+.templateSteps {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  color: var(--ifm-color-emphasis-600);
+  line-height: 1.6;
+}
+
+.templateSteps a {
+  color: #06b6d4;
+  font-weight: 600;
+}
+
+[data-theme='dark'] .templateSteps a {
+  color: #22d3ee;
+}
+
+.templateSteps code {
+  font-size: 0.78em;
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  background: var(--ifm-color-emphasis-100);
+}
+
+/* ─── Labs grid ──────────────────────────────────────────────── */
+.labsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  width: 100%;
+  max-width: 860px;
+  animation: fadeUp 0.6s ease 0.2s both;
+}
+
+/* ─── Lab card ───────────────────────────────────────────────── */
+.labCard {
+  position: relative;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 16px;
+  padding: 1.75rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  background: var(--ifm-background-surface-color);
+  overflow: hidden;
+  transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* Unlocked hover */
+.labCard:not(.labCardLocked):hover {
+  border-color: color-mix(in srgb, #06b6d4 60%, transparent);
+  box-shadow: 0 8px 30px color-mix(in srgb, #06b6d4 12%, transparent);
+  transform: translateY(-3px);
+}
+
+[data-theme='dark'] .labCard:not(.labCardLocked):hover {
+  border-color: color-mix(in srgb, #22d3ee 50%, transparent);
+  box-shadow: 0 8px 30px color-mix(in srgb, #22d3ee 10%, transparent);
+}
+
+/* Started state */
+.labCardStarted {
+  border-color: color-mix(in srgb, #059669 35%, transparent);
+}
+
+[data-theme='dark'] .labCardStarted {
+  border-color: color-mix(in srgb, #34d399 28%, transparent);
+}
+
+.labCardStarted:hover {
+  border-color: color-mix(in srgb, #059669 60%, transparent) !important;
+  box-shadow: 0 8px 30px color-mix(in srgb, #059669 12%, transparent) !important;
+}
+
+[data-theme='dark'] .labCardStarted:hover {
+  border-color: color-mix(in srgb, #34d399 50%, transparent) !important;
+  box-shadow: 0 8px 30px color-mix(in srgb, #34d399 10%, transparent) !important;
+}
+
+/* Locked state */
+.labCardLocked {
+  opacity: 0.45;
+  filter: grayscale(0.3);
+  cursor: default;
+}
+
+/* Optional / capstone spans both columns */
+.labCardOptional {
+  grid-column: 1 / -1;
+  border-style: dashed;
+}
+
+/* ─── Glow blob ──────────────────────────────────────────────── */
+.labGlow {
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: #06b6d4;
+  filter: blur(30px);
+  opacity: 0.08;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+[data-theme='dark'] .labGlow {
+  background: #22d3ee;
+}
+
+.labCard:not(.labCardLocked):hover .labGlow {
+  opacity: 0.22;
+}
+
+.labCardStarted .labGlow {
+  background: #059669;
+}
+
+[data-theme='dark'] .labCardStarted .labGlow {
+  background: #34d399;
+}
+
+/* ─── Card header ────────────────────────────────────────────── */
+.labCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.labNumber {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #06b6d4;
+}
+
+[data-theme='dark'] .labNumber {
+  color: #22d3ee;
+}
+
+.labCardStarted .labNumber {
+  color: #059669;
+}
+
+[data-theme='dark'] .labCardStarted .labNumber {
+  color: #34d399;
+}
+
+.labBadgeRow {
+  display: flex;
+  gap: 0.35rem;
+  align-items: center;
+}
+
+/* Optional badge */
+.optionalBadge {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, #d97706 10%, transparent);
+  color: #d97706;
+  border: 1px solid color-mix(in srgb, #d97706 25%, transparent);
+}
+
+[data-theme='dark'] .optionalBadge {
+  background: color-mix(in srgb, #fbbf24 8%, transparent);
+  color: #fbbf24;
+  border-color: color-mix(in srgb, #fbbf24 22%, transparent);
+}
+
+/* Locked badge */
+.lockedBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--ifm-color-emphasis-400) 10%, transparent);
+  color: var(--ifm-color-emphasis-500);
+  border: 1px solid color-mix(in srgb, var(--ifm-color-emphasis-400) 22%, transparent);
+}
+
+/* Started badge */
+.startedBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, #059669 10%, transparent);
+  color: #059669;
+  border: 1px solid color-mix(in srgb, #059669 25%, transparent);
+}
+
+[data-theme='dark'] .startedBadge {
+  color: #34d399;
+  background: color-mix(in srgb, #34d399 8%, transparent);
+  border-color: color-mix(in srgb, #34d399 22%, transparent);
+}
+
+/* ─── Card content ───────────────────────────────────────────── */
+.labTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ifm-color-content);
+  margin: 0;
+}
+
+.labDesc {
+  font-size: 0.875rem;
+  color: var(--ifm-color-emphasis-600);
+  line-height: 1.65;
+  margin: 0;
+  flex: 1;
+}
+
+/* ─── Concept tags ───────────────────────────────────────────── */
+.conceptsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.conceptTag {
+  font-size: 0.65rem;
+  font-weight: 500;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background: var(--ifm-color-emphasis-100);
+  border: 1px solid var(--ifm-color-emphasis-200);
+  color: var(--ifm-color-emphasis-700);
+  white-space: nowrap;
+}
+
+/* ─── Outcome box ────────────────────────────────────────────── */
+.outcomeBox {
+  padding: 0.75rem;
+  border-radius: 10px;
+  background: color-mix(in srgb, #06b6d4 5%, transparent);
+  border: 1px solid color-mix(in srgb, #06b6d4 15%, transparent);
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+[data-theme='dark'] .outcomeBox {
+  background: color-mix(in srgb, #22d3ee 4%, transparent);
+  border-color: color-mix(in srgb, #22d3ee 12%, transparent);
+}
+
+.labCardStarted .outcomeBox {
+  background: color-mix(in srgb, #059669 5%, transparent);
+  border-color: color-mix(in srgb, #059669 15%, transparent);
+}
+
+[data-theme='dark'] .labCardStarted .outcomeBox {
+  background: color-mix(in srgb, #34d399 4%, transparent);
+  border-color: color-mix(in srgb, #34d399 12%, transparent);
+}
+
+.outcomeLabel {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: #06b6d4;
+}
+
+[data-theme='dark'] .outcomeLabel {
+  color: #22d3ee;
+}
+
+.labCardStarted .outcomeLabel {
+  color: #059669;
+}
+
+[data-theme='dark'] .labCardStarted .outcomeLabel {
+  color: #34d399;
+}
+
+.outcomeText {
+  font-size: 0.8125rem;
+  color: var(--ifm-color-emphasis-700);
+  line-height: 1.55;
+}
+
+/* ─── Card action area ───────────────────────────────────────── */
+.labAction {
+  margin-top: 0.25rem;
+}
+
+.requiresText {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--ifm-color-emphasis-500);
+}
+
+.startedText {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #059669;
+}
+
+[data-theme='dark'] .startedText {
+  color: #34d399;
+}
+
+.startBtn {
+  display: inline-block;
+  padding: 0.4rem 1.125rem;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #fff;
+  background: #06b6d4;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  font-family: inherit;
+}
+
+.startBtn:hover {
+  background: #0891b2;
+  box-shadow: 0 4px 14px color-mix(in srgb, #06b6d4 40%, transparent);
+  transform: translateY(-1px);
+}
+
+[data-theme='dark'] .startBtn {
+  background: #22d3ee;
+  color: #0c1a24;
+}
+
+[data-theme='dark'] .startBtn:hover {
+  background: #06b6d4;
+  box-shadow: 0 4px 14px color-mix(in srgb, #22d3ee 35%, transparent);
+}
+
+/* ─── Reset button ───────────────────────────────────────────── */
+.resetBtn {
+  margin-top: 2rem;
+  background: none;
+  border: none;
+  font-size: 0.75rem;
+  color: var(--ifm-color-emphasis-400);
+  cursor: pointer;
+  font-family: inherit;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  transition: color 0.2s ease;
+}
+
+.resetBtn:hover {
+  color: var(--ifm-color-emphasis-600);
+}
+
+/* ─── Animations ─────────────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Responsive ─────────────────────────────────────────────── */
+
+/* Tablet — collapse to 1-col */
+@media (max-width: 860px) {
+  .labsGrid {
+    grid-template-columns: 1fr;
+    max-width: 680px;
+  }
+
+  .labCardOptional {
+    grid-column: span 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .main {
+    padding: 2rem 1.25rem 5rem;
+  }
+
+  .heroTitle {
+    font-size: 2.25rem;
+  }
+
+  .prereqBox {
+    padding: 1.25rem;
+  }
+
+  .prereqTrails {
+    flex-direction: column;
+  }
+
+  .prereqChip {
+    border-radius: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .main {
+    padding: 1.5rem 1rem 4rem;
+  }
+
+  .heroTitle {
+    font-size: 1.875rem;
+    letter-spacing: -0.03em;
+  }
+
+  .heroSubtitle {
+    font-size: 0.8125rem;
+  }
+
+  .hero {
+    margin-bottom: 2rem;
+  }
+
+  .labCard {
+    padding: 1.25rem 1rem;
+    border-radius: 12px;
+  }
+
+  .labTitle {
+    font-size: 1rem;
+  }
+}

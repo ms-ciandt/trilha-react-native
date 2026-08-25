@@ -24,6 +24,36 @@
       "hasVideo": true,
       "videoFile": "03_choose_track.mp4"
     },
+    "rn-advanced-lab/01-brownfield-bootstrap.md": {
+      "readMin": 7,
+      "videoMin": null,
+      "hasVideo": false,
+      "videoFile": null
+    },
+    "rn-advanced-lab/02-brownfield-navigation.md": {
+      "readMin": 6,
+      "videoMin": null,
+      "hasVideo": false,
+      "videoFile": null
+    },
+    "rn-advanced-lab/03-native-library-bridge.md": {
+      "readMin": 5,
+      "videoMin": null,
+      "hasVideo": false,
+      "videoFile": null
+    },
+    "rn-advanced-lab/04-ui-thread-vs-js-thread.md": {
+      "readMin": 6,
+      "videoMin": null,
+      "hasVideo": false,
+      "videoFile": null
+    },
+    "rn-advanced-lab/05-godot-integration.md": {
+      "readMin": 6,
+      "videoMin": null,
+      "hasVideo": false,
+      "videoFile": null
+    },
     "trilha-android/modulo-arquitetura/01-architecture-patterns.md": {
       "readMin": 1,
       "videoMin": 5.6,
@@ -874,6 +904,31 @@
       "videoMin": 4.7,
       "docCount": 1
     },
+    "rn-advanced-lab/01-brownfield-bootstrap.md": {
+      "readMin": 7,
+      "videoMin": 0,
+      "docCount": 1
+    },
+    "rn-advanced-lab/02-brownfield-navigation.md": {
+      "readMin": 6,
+      "videoMin": 0,
+      "docCount": 1
+    },
+    "rn-advanced-lab/03-native-library-bridge.md": {
+      "readMin": 5,
+      "videoMin": 0,
+      "docCount": 1
+    },
+    "rn-advanced-lab/04-ui-thread-vs-js-thread.md": {
+      "readMin": 6,
+      "videoMin": 0,
+      "docCount": 1
+    },
+    "rn-advanced-lab/05-godot-integration.md": {
+      "readMin": 6,
+      "videoMin": 0,
+      "docCount": 1
+    },
     "trilha-android/modulo-arquitetura": {
       "readMin": 5,
       "videoMin": 30.5,
@@ -1021,6 +1076,11 @@
       "videoMin": 21.2,
       "docCount": 4
     },
+    "rn-advanced-lab": {
+      "readMin": 30,
+      "videoMin": 0,
+      "docCount": 5
+    },
     "trilha-android": {
       "readMin": 112,
       "videoMin": 246.10000000000002,
@@ -1043,8 +1103,8 @@
     }
   },
   "total": {
-    "readMin": 596,
+    "readMin": 626,
     "videoMin": 867.6000000000001,
-    "docCount": 142
+    "docCount": 147
   }
 }
