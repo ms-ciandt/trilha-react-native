@@ -1,0 +1,646 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:03.640
+Todo desenvolvedor Android conhece a regra absoluta e rígida
+
+2
+00:00:03.640 --> 00:00:04.720
+da plataforma.
+
+3
+00:00:04.720 --> 00:00:07.200
+Nunca bloqueie a thread principal de UI.
+
+4
+00:00:07.200 --> 00:00:10.160
+Se você precisa fazer parse de um payload JSON grande ou processar
+
+5
+00:00:10.160 --> 00:00:12.240
+uma imagem, você envia esse trabalho pesado
+
+6
+00:00:12.240 --> 00:00:15.760
+para um pool de threads em background, usando ferramentas como dispatchers.io
+
+7
+00:00:15.760 --> 00:00:17.640
+ou dispatchers.default.
+
+8
+00:00:17.640 --> 00:00:21.080
+Ao migrar para o React Native, a arquitetura parece diferente.
+
+9
+00:00:21.080 --> 00:00:24.120
+Seu código JavaScript, seus componentes, atualizações de estado,
+
+10
+00:00:24.120 --> 00:00:27.600
+e lógica de negócio, são executados em sua própria thread dedicada
+
+11
+00:00:27.600 --> 00:00:30.080
+separada da thread de UI nativa do Android.
+
+12
+00:00:30.080 --> 00:00:32.640
+Essa separação cria uma armadilha lógica.
+
+13
+00:00:32.640 --> 00:00:35.040
+Como a thread de JavaScript fica em segundo plano
+
+14
+00:00:35.040 --> 00:00:37.280
+em relação à UI nativa, os desenvolvedores
+
+15
+00:00:37.280 --> 00:00:39.480
+presumem que computação pesada em JavaScript
+
+16
+00:00:39.480 --> 00:00:41.520
+não vai travar a interface do usuário.
+
+17
+00:00:41.520 --> 00:00:45.080
+Mas quando você executa trabalho pesado de CPU na thread de JavaScript,
+
+18
+00:00:45.080 --> 00:00:46.920
+o momentum para completamente.
+
+19
+00:00:46.920 --> 00:00:50.000
+Essa comparação em tela dividida mostra exatamente o que acontece
+
+20
+00:00:50.000 --> 00:00:50.960
+sob carga.
+
+21
+00:00:50.960 --> 00:00:54.480
+À esquerda, um app Android nativo envia um cálculo complexo
+
+22
+00:00:54.480 --> 00:00:56.040
+para dispatchers.default.
+
+23
+00:00:56.040 --> 00:00:58.400
+E a taxa de quadros se mantém estável em 60.
+
+24
+00:00:58.400 --> 00:01:00.920
+À direita, um React Native UF effect
+
+25
+00:01:00.920 --> 00:01:04.320
+hub executa exatamente a mesma matemática na thread do JavaScript
+
+26
+00:01:04.320 --> 00:01:06.640
+e a taxa de quadros despenca para 10.
+
+27
+00:01:06.640 --> 00:01:08.920
+O app React Native não travou.
+
+28
+00:01:08.920 --> 00:01:10.760
+Em vez disso, a camada de renderização nativa
+
+29
+00:01:10.760 --> 00:01:13.480
+está faminta por instruções, fazendo com que a rolagem
+
+30
+00:01:13.480 --> 00:01:16.080
+e as interações travem completamente.
+
+31
+00:01:16.080 --> 00:01:18.920
+Para alcançar 60 quadros por segundo no React Native,
+
+32
+00:01:18.920 --> 00:01:21.840
+você precisa descartar a suposição de thread em segundo plano.
+
+33
+00:01:21.840 --> 00:01:23.400
+Você deve tratar a thread do JavaScript
+
+34
+00:01:23.400 --> 00:01:26.000
+com a exata mesma reverência que a thread principal
+
+35
+00:01:26.040 --> 00:01:28.280
+nativa do Android e remapear seu entendimento
+
+36
+00:01:28.280 --> 00:01:30.080
+do pipeline de renderização.
+
+37
+00:01:30.080 --> 00:01:32.200
+Para mapear seu modelo mental existente do Android
+
+38
+00:01:32.200 --> 00:01:34.520
+para a arquitetura moderna do React Native,
+
+39
+00:01:34.520 --> 00:01:37.120
+começamos pela camada de apresentação base.
+
+40
+00:01:37.120 --> 00:01:40.200
+Este diagrama de arquitetura mostra a thread de UI do React Native
+
+41
+00:01:40.200 --> 00:01:43.760
+mapeando para dispatchers.main para desenhar views nativas.
+
+42
+00:01:43.760 --> 00:01:46.680
+A thread JavaScript acessa o control plane, ditando
+
+43
+00:01:46.680 --> 00:01:48.120
+a UI thread.
+
+44
+00:01:48.120 --> 00:01:50.640
+A nova arquitetura introduz a shadow thread,
+
+45
+00:01:50.640 --> 00:01:53.040
+executando yoga engines síncronas em C++
+
+46
+00:01:53.040 --> 00:01:54.840
+para calcular geometrias de layout.
+
+47
+00:01:54.840 --> 00:01:57.640
+Juntas, essas três threads interconectadas
+
+48
+00:01:57.640 --> 00:02:00.320
+substituem o modelo legado de bridge única,
+
+49
+00:02:00.320 --> 00:02:03.480
+dando ao React Native uma hierarquia de renderização estruturalmente
+
+50
+00:02:03.480 --> 00:02:05.680
+idêntica à nativa do Android.
+
+51
+00:02:05.680 --> 00:02:07.760
+Isso apresenta um paradoxo.
+
+52
+00:02:07.760 --> 00:02:09.960
+Se a thread do JavaScript e a thread da UI
+
+53
+00:02:09.960 --> 00:02:12.240
+operam em espaços de memória separados,
+
+54
+00:02:12.240 --> 00:02:15.640
+por que bloquear o JavaScript congela suas views nativas?
+
+55
+00:02:15.640 --> 00:02:18.440
+A resposta está na realidade matemática rigorosa
+
+56
+00:02:18.440 --> 00:02:21.040
+da renderização a 60 quadros por segundo.
+
+57
+00:02:21.040 --> 00:02:24.240
+O dispositivo tem aproximadamente 16.6 milissegundos
+
+58
+00:02:24.240 --> 00:02:26.960
+para processar e desenhar cada quadro.
+
+59
+00:02:26.960 --> 00:02:30.360
+Em um loop de renderização saudável, o JavaScript calcula as mudanças,
+
+60
+00:02:30.360 --> 00:02:32.280
+passando instruções para a shadow thread
+
+61
+00:02:32.280 --> 00:02:36.440
+para atualizar a UI dentro da janela de 16.6 milissegundos.
+
+62
+00:02:36.440 --> 00:02:40.280
+No entanto, cálculos pesados fazem o JavaScript ultrapassar esse limite.
+
+63
+00:02:40.280 --> 00:02:43.360
+A UI thread não recebe absolutamente nenhuma instrução de layout
+
+64
+00:02:43.360 --> 00:02:44.760
+antes do prazo.
+
+65
+00:02:44.760 --> 00:02:47.960
+Essa lacuna vazia na UI thread é um frame perdido.
+
+66
+00:02:47.960 --> 00:02:50.080
+Quando isso acontece repetidamente, o usuário
+
+67
+00:02:50.080 --> 00:02:52.160
+experimenta um travamento severo.
+
+68
+00:02:52.160 --> 00:02:54.880
+Para um desenvolvedor native, o erro equivalente
+
+69
+00:02:54.880 --> 00:02:58.240
+seria executar uma requisição de rede síncrona diretamente
+
+70
+00:02:58.240 --> 00:03:00.160
+na main thread do Android.
+
+71
+00:03:00.160 --> 00:03:02.840
+Você pode identificar exatamente esse gargalo durante o desenvolvimento
+
+72
+00:03:02.840 --> 00:03:05.400
+usando o monitor de performance integrado.
+
+73
+00:03:05.400 --> 00:03:09.880
+Se os frames de UI mostram 60, mas os frames de JS caem para 30,
+
+74
+00:03:09.880 --> 00:03:13.400
+o processamento em JavaScript está sufocando seu pipeline de renderização.
+
+75
+00:03:13.400 --> 00:03:16.000
+Isso revela a restrição temporal central.
+
+76
+00:03:16.000 --> 00:03:18.880
+Apesar de isolada pela arquitetura, a thread de JS
+
+77
+00:03:18.880 --> 00:03:20.840
+está acoplada à thread de UI.
+
+78
+00:03:20.840 --> 00:03:23.080
+Prive uma, prive a outra.
+
+79
+00:03:23.080 --> 00:03:24.960
+Em versões mais antigas do React Native,
+
+80
+00:03:24.960 --> 00:03:27.080
+manter esse pipeline rápido era difícil
+
+81
+00:03:27.080 --> 00:03:29.240
+por causa de uma falha de design histórica.
+
+82
+00:03:29.240 --> 00:03:32.800
+Cada instrução de layout tinha que ser serializada em JSON
+
+83
+00:03:32.800 --> 00:03:35.800
+e passada de forma assíncrona através da bridge.
+
+84
+00:03:35.800 --> 00:03:38.880
+Esse salto assíncrono criava um atraso mensurável
+
+85
+00:03:38.880 --> 00:03:41.880
+entre o usuário tocar na tela e a view nativa
+
+86
+00:03:41.880 --> 00:03:45.400
+atualizar, resultando em interações desconectadas.
+
+87
+00:03:45.400 --> 00:03:48.000
+O gargalo legado forçava cada instrução
+
+88
+00:03:48.000 --> 00:03:51.200
+a passar por uma bridge JSON assíncrona estreita,
+
+89
+00:03:51.200 --> 00:03:53.120
+atrasando o ciclo de renderização.
+
+90
+00:03:53.120 --> 00:03:56.160
+A nova arquitetura substitui isso pelo fabric.
+
+91
+00:03:56.160 --> 00:03:59.680
+Agora, a thread JS usa chamadas síncronas em C++
+
+92
+00:03:59.680 --> 00:04:01.560
+diretamente para a shadow thread.
+
+93
+00:04:01.560 --> 00:04:03.800
+O impacto na performance é imediato.
+
+94
+00:04:03.800 --> 00:04:07.440
+Os cálculos de layout agora rodam de forma síncrona em C++,
+
+95
+00:04:07.440 --> 00:04:11.240
+correspondendo exatamente ao pipeline de geração de views nativo do Android.
+
+96
+00:04:11.240 --> 00:04:13.360
+Para os desenvolvedores, isso viabiliza capacidades
+
+97
+00:04:13.360 --> 00:04:15.280
+que antes eram impossíveis.
+
+98
+00:04:15.280 --> 00:04:19.080
+Callbacks como on layout agora disparam no mesmo frame exato,
+
+99
+00:04:19.080 --> 00:04:22.560
+e as posições de scroll podem ser lidas sem atraso assíncrono.
+
+100
+00:04:22.560 --> 00:04:25.000
+Você finalmente pode executar chamadas síncronas de measure
+
+101
+00:04:25.000 --> 00:04:27.400
+referenciando views diretamente ao passar
+
+102
+00:04:27.400 --> 00:04:30.000
+anos de workarounds assíncronos complexos.
+
+103
+00:04:30.000 --> 00:04:32.200
+Ao executar o layout de forma síncrona,
+
+104
+00:04:32.200 --> 00:04:35.920
+o Fabric eleva o React Native a uma verdadeira paridade nativa.
+
+105
+00:04:35.920 --> 00:04:38.920
+Mas esse engine só funciona se a thread do JavaScript estiver livre
+
+106
+00:04:38.920 --> 00:04:40.360
+o suficiente para alimentá-lo.
+
+107
+00:04:40.360 --> 00:04:43.160
+Quando seu app realmente perde frames, a ferramenta principal
+
+108
+00:04:43.160 --> 00:04:45.800
+para encontrar a localização exata do gargalo
+
+109
+00:04:45.800 --> 00:04:48.120
+é a timeline do Systrace.
+
+110
+00:04:48.120 --> 00:04:50.160
+Na interface da timeline do Systrace,
+
+111
+00:04:50.160 --> 00:04:53.400
+procure pela track chamada MQTJS.
+
+112
+00:04:53.400 --> 00:04:56.480
+Um bloco massivo e ininterrupto de tempo de execução aqui,
+
+113
+00:04:56.480 --> 00:04:58.880
+combinado com uma track de UI ociosa logo abaixo,
+
+114
+00:04:58.880 --> 00:05:02.400
+é prova absoluta de um gargalo na JavaScript CTU.
+
+115
+00:05:02.400 --> 00:05:04.000
+Assim que você localizar o gargalo,
+
+116
+00:05:04.000 --> 00:05:06.800
+você tem três estratégias arquiteturais para resolvê-lo.
+
+117
+00:05:06.800 --> 00:05:10.240
+Primeiro, workloads do reanimated extraem animações de layout
+
+118
+00:05:10.240 --> 00:05:12.720
+e o estado de gestos para fora do seu código React.
+
+119
+00:05:12.720 --> 00:05:15.960
+Eles executam diretamente na UI thread via JSI,
+
+120
+00:05:15.960 --> 00:05:18.480
+contornando completamente a JavaScript thread.
+
+121
+00:05:18.480 --> 00:05:20.600
+Se o gargalo é computação pura,
+
+122
+00:05:20.600 --> 00:05:22.560
+como fazer parsing de um conjunto massivo de dados,
+
+123
+00:05:22.560 --> 00:05:25.400
+a segunda estratégia é utilizar turbo modules.
+
+124
+00:05:25.400 --> 00:05:28.440
+Turbo modules permitem que você envie operações assíncronas pesadas
+
+125
+00:05:28.440 --> 00:05:30.480
+para thread pools nativas do Kotlin.
+
+126
+00:05:30.480 --> 00:05:33.000
+Isso libera instantaneamente a thread do JavaScript
+
+127
+00:05:33.000 --> 00:05:36.200
+para retornar ao seu render loop de 16 milissegundos.
+
+128
+00:05:36.200 --> 00:05:39.920
+Por fim, se você está com gargalo devido a uma lógica pesada de estado do React,
+
+129
+00:05:39.920 --> 00:05:44.480
+você pode gerenciar a carga usando a Start Transition API do React 18.
+
+130
+00:05:44.480 --> 00:05:46.960
+Assim como o handler.post-delayed no Android,
+
+131
+00:05:46.960 --> 00:05:49.240
+O start transition rebaixa intencionalmente
+
+132
+00:05:49.240 --> 00:05:51.160
+atualizações de estado de baixa prioridade.
+
+133
+00:05:51.160 --> 00:05:53.640
+Isso libera a thread, permitindo que a UI
+
+134
+00:05:53.640 --> 00:05:56.680
+processe toques e animações urgentes primeiro.
+
+135
+00:05:56.680 --> 00:05:58.760
+Poder bruto de hardware não consegue superar
+
+136
+00:05:58.760 --> 00:06:00.560
+uma JavaScript thread bloqueada.
+
+137
+00:06:00.560 --> 00:06:04.040
+Alcançar performance de nível nativo exige profiling proativo
+
+138
+00:06:04.040 --> 00:06:06.440
+e descarregar explicitamente trabalho pesado.
+
+139
+00:06:06.440 --> 00:06:09.720
+A nova arquitetura do React Native espelha a renderização nativa,
+
+140
+00:06:09.720 --> 00:06:11.920
+mas somente se você aplicar disciplina rigorosa
+
+141
+00:06:11.920 --> 00:06:14.400
+sobre o que é executado na thread do JavaScript.
+
+142
+00:06:14.400 --> 00:06:16.520
+Voltando ao nosso diagrama de arquitetura,
+
+143
+00:06:16.520 --> 00:06:19.080
+computação pesada é desviada da JS thread
+
+144
+00:06:19.080 --> 00:06:21.040
+para um thread pool de módulo nativo,
+
+145
+00:06:21.040 --> 00:06:23.280
+deixando-a livre para se comunicar com a shadow thread.
+
+146
+00:06:23.280 --> 00:06:25.560
+Esse isolamento mantém o loop de execução
+
+147
+00:06:25.560 --> 00:06:29.320
+abaixo de 16 milissegundos, mantendo 60 quadros por segundo.
+
+148
+00:06:29.320 --> 00:06:31.680
+Dominar esse modelo de alocação de threads
+
+149
+00:06:31.680 --> 00:06:35.280
+é o pré-requisito absoluto para qualquer otimização avançada de interface de usuário
+
+150
+00:06:35.280 --> 00:06:37.280
+no React Native.
+
+151
+00:06:37.320 --> 00:06:39.080
+E você vai precisar desse modelo para enfrentar
+
+152
+00:06:39.080 --> 00:06:41.400
+o chefão final da performance mobile
+
+153
+00:06:41.400 --> 00:06:43.760
+e a causa mais comum de scroll jank,
+
+154
+00:06:43.760 --> 00:06:46.440
+a renderização de dados com rolagem infinita.
+
+155
+00:06:46.440 --> 00:06:48.840
+O próximo passo é pegar tudo o que acabamos de cobrir
+
+156
+00:06:48.840 --> 00:06:50.960
+sobre o fabric e a JavaScript thread
+
+157
+00:06:50.960 --> 00:06:53.920
+e aplicar isso ao flat list, o equivalente em React Native
+
+158
+00:06:53.920 --> 00:06:55.800
+do RecyclerView do Android.
+
+159
+00:06:55.800 --> 00:06:57.800
+Ao aproveitar o layout síncrono,
+
+160
+00:06:57.800 --> 00:07:00.280
+podemos otimizar listas enormes para alcançar
+
+161
+00:07:00.280 --> 00:07:02.120
+rolagem perfeitamente suave.
+

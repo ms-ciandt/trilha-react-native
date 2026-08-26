@@ -1,0 +1,570 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:04.000
+Quando você rola por um feed enorme em um dispositivo móvel
+
+2
+00:00:04.000 --> 00:00:08.000
+e a interface trava violentamente ou congela completamente,
+
+3
+00:00:08.000 --> 00:00:11.000
+você está vendo a thread do JavaScript ceder
+
+4
+00:00:11.000 --> 00:00:13.000
+sob o peso da alocação de memória.
+
+5
+00:00:13.000 --> 00:00:17.000
+Renderizar centenas ou milhares de elementos simultaneamente
+
+6
+00:00:17.000 --> 00:00:20.000
+é impossível para o hardware limitado de um telefone.
+
+7
+00:00:20.000 --> 00:00:23.000
+Para evitar crashes, os desenvolvedores precisam de controle
+
+8
+00:00:23.000 --> 00:00:27.000
+absoluto e determinístico sobre a UI thread e o gerenciamento de memória.
+
+9
+00:00:27.000 --> 00:00:29.000
+A solução é a virtualização.
+
+10
+00:00:29.000 --> 00:00:33.000
+O dispositivo mantém apenas os itens específicos que estão atualmente na tela
+
+11
+00:00:33.000 --> 00:00:36.000
+ou prestes a entrar no viewport, ativo e na memória.
+
+12
+00:00:36.000 --> 00:00:38.000
+Tudo o mais é descartado.
+
+13
+00:00:38.000 --> 00:00:42.000
+No desenvolvimento nativo Android, isso é gerenciado pelo RecyclerView.
+
+14
+00:00:42.000 --> 00:00:45.000
+O grande desafio para engenheiros React Native
+
+15
+00:00:45.000 --> 00:00:49.000
+é replicar essa performance nativa extremamente fluida usando o flat list.
+
+16
+00:00:49.000 --> 00:00:52.000
+O princípio de virtualização subjacente é exatamente o mesmo,
+
+17
+00:00:52.000 --> 00:00:55.000
+mas as alavancas de otimização são totalmente diferentes.
+
+18
+00:00:55.000 --> 00:00:58.000
+Em vez de definir a contagem de itens de um adapter,
+
+19
+00:00:58.000 --> 00:01:01.000
+o flat list simplesmente lê o comprimento do array de dados.
+
+20
+00:01:01.000 --> 00:01:04.000
+Em vez de vincular um view holder a uma posição,
+
+21
+00:01:04.000 --> 00:01:08.000
+você passa uma função render item para desenhar a UI.
+
+22
+00:01:08.000 --> 00:01:11.000
+Em vez de definir um tamanho específico de item view cache,
+
+23
+00:01:11.000 --> 00:01:15.000
+você ajusta o window size para armazenar em buffer os elementos fora da tela,
+
+24
+00:01:15.000 --> 00:01:17.000
+e em vez de depender de um pool de views reciclado
+
+25
+00:01:17.000 --> 00:01:19.000
+para gerenciar dimensões espaciais,
+
+26
+00:01:19.000 --> 00:01:23.000
+você usa get item layout para pular os cálculos de renderização.
+
+27
+00:01:23.000 --> 00:01:27.000
+Para construir uma engine de lista de alta performance a partir de princípios básicos,
+
+28
+00:01:27.000 --> 00:01:31.000
+temos que isolar e ajustar cada uma dessas propriedades específicas do flat list.
+
+29
+00:01:31.000 --> 00:01:34.000
+Traduzindo paradigmas reativos baseados na web
+
+30
+00:01:34.000 --> 00:01:36.000
+para essas restrições estritas de memória nativa
+
+31
+00:01:36.000 --> 00:01:40.000
+é a única forma de conseguir uma rolagem fluida no hardware mobile.
+
+32
+00:01:40.000 --> 00:01:43.000
+Vamos começar quando um novo payload de dados chega,
+
+33
+00:01:43.000 --> 00:01:46.000
+disparando um ciclo de render no React reconciler.
+
+34
+00:01:46.000 --> 00:01:48.000
+Sem identificadores estáveis,
+
+35
+00:01:48.000 --> 00:01:51.000
+o reconciler não consegue rastrear elementos alterados.
+
+36
+00:01:51.000 --> 00:01:55.000
+Sua resposta padrão é destruir todo o branch existente de nodes
+
+37
+00:01:55.000 --> 00:01:57.000
+e redesenhá-los do zero.
+
+38
+00:01:57.000 --> 00:02:02.000
+No mundo Android, isso equivale a chamar notify data set changed,
+
+39
+00:02:02.000 --> 00:02:05.000
+uma operação de força bruta altamente ineficiente
+
+40
+00:02:05.000 --> 00:02:08.000
+que força um redesenho completo da lista.
+
+41
+00:02:08.000 --> 00:02:12.000
+Para interromper esse ciclo destrutivo, você fornece a prop key extractor.
+
+42
+00:02:12.000 --> 00:02:15.000
+Ao extrair uma string única e consistente para cada item,
+
+43
+00:02:15.000 --> 00:02:18.000
+o reconciler identifica com precisão os nodes exatos.
+
+44
+00:02:18.000 --> 00:02:20.000
+Em vez de descartar o node,
+
+45
+00:02:20.000 --> 00:02:23.000
+ele atualiza os valores internos específicos no lugar.
+
+46
+00:02:23.000 --> 00:02:28.000
+Isso coloca o framework à altura do eficiente notify item changed do Android.
+
+47
+00:02:28.000 --> 00:02:30.000
+Sem essas keys estáveis,
+
+48
+00:02:30.000 --> 00:02:33.000
+a sobrecarga do garbage collection vai prejudicar o virtualization engine
+
+49
+00:02:33.000 --> 00:02:36.000
+antes mesmo de o usuário tentar rolar a tela.
+
+50
+00:02:36.000 --> 00:02:37.000
+Uma vez que as keys estejam estáveis,
+
+51
+00:02:37.000 --> 00:02:39.000
+a próxima limitação física ocorre
+
+52
+00:02:39.000 --> 00:02:42.000
+quando um usuário inicia uma rolagem rápida para baixo
+
+53
+00:02:42.000 --> 00:02:44.000
+em direção a uma seção não renderizada da lista.
+
+54
+00:02:44.000 --> 00:02:47.000
+Esta animação mostra o comportamento padrão.
+
+55
+00:02:47.000 --> 00:02:49.000
+O Flat list é forçado a renderizar fisicamente
+
+56
+00:02:49.000 --> 00:02:52.000
+e medir a altura exata em pixels de cada novo item
+
+57
+00:02:52.000 --> 00:02:54.000
+à medida que ele entra na viewport.
+
+58
+00:02:54.000 --> 00:02:57.000
+Para listas em que cada linha tem uma altura fixa,
+
+59
+00:02:57.000 --> 00:02:59.000
+essa medição dinâmica em tempo de execução
+
+60
+00:02:59.000 --> 00:03:02.000
+é um desperdício enorme e desnecessário de poder de processamento.
+
+61
+00:03:02.000 --> 00:03:06.000
+O substituto para isso é a prop get item layout.
+
+62
+00:03:06.000 --> 00:03:09.000
+Ao definir a altura e o offset exatos com antecedência,
+
+63
+00:03:09.000 --> 00:03:11.000
+você muda o sistema de uma medição reativa do DOM
+
+64
+00:03:11.000 --> 00:03:14.000
+para um cálculo matemático estrito de 01.
+
+65
+00:03:14.000 --> 00:03:17.000
+Sabendo exatamente onde estará o pixel 10.000,
+
+66
+00:03:17.000 --> 00:03:19.000
+o engine calcula os offsets instantaneamente
+
+67
+00:03:19.000 --> 00:03:21.000
+e pula para índices específicos
+
+68
+00:03:21.000 --> 00:03:23.000
+sem renderizar um único item precedente.
+
+69
+00:03:23.000 --> 00:03:26.000
+Isso também permite uma restauração significativamente mais rápida
+
+70
+00:03:26.000 --> 00:03:28.000
+da posição inicial de rolagem do usuário
+
+71
+00:03:28.000 --> 00:03:30.000
+ao navegar de volta de outra tela.
+
+72
+00:03:30.000 --> 00:03:33.000
+Removendo a ambiguidade de layout da UI thread
+
+73
+00:03:33.000 --> 00:03:36.000
+se traduz diretamente em uma rolagem sustentada de 60 quadros por segundo.
+
+74
+00:03:36.000 --> 00:03:38.000
+Mesmo com layout matemático,
+
+75
+00:03:38.000 --> 00:03:40.000
+devemos olhar além da tela física.
+
+76
+00:03:40.000 --> 00:03:44.000
+A prop window size mantém 21 telas totais de conteúdo,
+
+77
+00:03:44.000 --> 00:03:46.000
+10 telas completas acima do viewport,
+
+78
+00:03:46.000 --> 00:03:49.000
+o viewport ativo, e 10 telas abaixo.
+
+79
+00:03:49.000 --> 00:03:51.000
+Reduzir esse valor diminui o uso de memória
+
+80
+00:03:51.000 --> 00:03:54.000
+porque são flashes em branco ao rolar rápido.
+
+81
+00:03:54.000 --> 00:03:57.000
+Por outro lado, aumentar o tamanho da janela evita esses flashes,
+
+82
+00:03:57.000 --> 00:04:01.000
+mas aumenta enormemente o consumo de memória da aplicação.
+
+83
+00:04:01.000 --> 00:04:03.000
+A gravidade desse consumo de memória
+
+84
+00:04:03.000 --> 00:04:05.000
+depende, em última análise, dos componentes individuais de linha
+
+85
+00:04:05.000 --> 00:04:08.000
+retornados pela função render item.
+
+86
+00:04:08.000 --> 00:04:11.000
+Passar uma arrow function inline diretamente para o render item
+
+87
+00:04:11.000 --> 00:04:14.000
+força o react a criar uma referência de função totalmente nova
+
+88
+00:04:14.000 --> 00:04:17.000
+toda vez que a lista pai é renderizada.
+
+89
+00:04:17.000 --> 00:04:19.000
+Isso quebra instantaneamente qualquer memoization
+
+90
+00:04:19.000 --> 00:04:21.000
+que você tenha aplicado a esses componentes filhos.
+
+91
+00:04:21.000 --> 00:04:23.000
+Envolver a função de render em um use callback
+
+92
+00:04:23.000 --> 00:04:25.000
+preserva essa referência entre os renders.
+
+93
+00:04:25.000 --> 00:04:27.000
+Ela atua como o equivalente do react native
+
+94
+00:04:27.000 --> 00:04:29.000
+ao padrão nativo de view holder,
+
+95
+00:04:29.000 --> 00:04:31.000
+protegendo as linhas de atualizações redundantes.
+
+96
+00:04:31.000 --> 00:04:33.000
+Equilibrar um window size restrito
+
+97
+00:04:33.000 --> 00:04:35.000
+com uma memoização rigorosa de componentes
+
+98
+00:04:35.000 --> 00:04:37.000
+vai levar o flat list padrão
+
+99
+00:04:37.000 --> 00:04:39.000
+aos seus limites físicos absolutos.
+
+100
+00:04:39.000 --> 00:04:43.000
+Você pode ajustar perfeitamente as keys e layouts de um flat list,
+
+101
+00:04:43.000 --> 00:04:46.000
+e buffers de memória, mas uma quebra mecânica contínua
+
+102
+00:04:46.000 --> 00:04:49.000
+ainda está ocorrendo logo fora da tela.
+
+103
+00:04:49.000 --> 00:04:51.000
+Observe atentamente o fluxograma à esquerda.
+
+104
+00:04:51.000 --> 00:04:53.000
+Não importa o quão bem otimizado,
+
+105
+00:04:53.000 --> 00:04:55.000
+o React lida com a virtualização
+
+106
+00:04:55.000 --> 00:04:57.000
+desmontando ativamente os nodes
+
+107
+00:04:57.000 --> 00:04:59.000
+conforme eles saem do topo do buffer
+
+108
+00:04:59.000 --> 00:05:01.000
+e remontando nodes completamente novos
+
+109
+00:05:01.000 --> 00:05:03.000
+conforme eles entram por baixo.
+
+110
+00:05:03.000 --> 00:05:05.000
+Eles são destruídos e construídos do zero,
+
+111
+00:05:05.000 --> 00:05:07.000
+repetidamente.
+
+112
+00:05:07.000 --> 00:05:09.000
+Para escapar desse ciclo de vida destrutivo,
+
+113
+00:05:09.000 --> 00:05:11.000
+a Shopify projetou um substituto direto
+
+114
+00:05:12.000 --> 00:05:13.000
+chamado flashlist.
+
+115
+00:05:13.000 --> 00:05:16.000
+O flashlist abandona a falácia do unmount
+
+116
+00:05:16.000 --> 00:05:18.000
+em favor da verdadeira reciclagem de células.
+
+117
+00:05:18.000 --> 00:05:20.000
+Como você pode ver à direita,
+
+118
+00:05:20.000 --> 00:05:22.000
+quando um node sai do topo do viewport,
+
+119
+00:05:22.000 --> 00:05:23.000
+ele sobrevive.
+
+120
+00:05:23.000 --> 00:05:27.000
+A casca do componente vazio é fisicamente redirecionada de volta para o final.
+
+121
+00:05:27.000 --> 00:05:30.000
+Esse mesmo shell de componente é mantido inteiramente em memória,
+
+122
+00:05:30.000 --> 00:05:33.000
+repetindo infinitamente enquanto o usuário rola a tela.
+
+123
+00:05:33.000 --> 00:05:35.000
+Como o shell nunca é desmontado,
+
+124
+00:05:35.000 --> 00:05:37.000
+a UI thread só precisa trocar
+
+125
+00:05:37.000 --> 00:05:39.000
+os dados internos de texto e imagem.
+
+126
+00:05:40.000 --> 00:05:42.000
+Isso alcança uma paridade exata
+
+127
+00:05:42.000 --> 00:05:45.000
+com a forma como o recycler view nativo do Android opera.
+
+128
+00:05:45.000 --> 00:05:48.000
+O padrão para aplicações em produção é simples.
+
+129
+00:05:48.000 --> 00:05:51.000
+Se sua lista ultrapassar 100 itens
+
+130
+00:05:51.000 --> 00:05:54.000
+ou contiver linhas interativas complexas,
+
+131
+00:05:54.000 --> 00:05:56.000
+você migra diretamente para o flashlist.
+
+132
+00:05:56.000 --> 00:05:58.000
+Gastar incontáveis ciclos de desenvolvimento
+
+133
+00:05:58.000 --> 00:06:01.000
+micro-otimizando a implementação padrão do flatlist
+
+134
+00:06:01.000 --> 00:06:03.000
+além da virtualização básica
+
+135
+00:06:03.000 --> 00:06:06.000
+é um beco sem saída para dados em escala empresarial.
+
+136
+00:06:06.000 --> 00:06:08.000
+Com a arquitetura de listas resolvida,
+
+137
+00:06:08.000 --> 00:06:10.000
+as lógicas para animações e gestos
+
+138
+00:06:10.000 --> 00:06:13.000
+devem sair completamente da thread do JavaScript,
+
+139
+00:06:13.000 --> 00:06:16.000
+usando reanimated e cargas de trabalho JSI.
+
+140
+00:06:16.000 --> 00:06:18.000
+Alcançar uma sensação nativa no react native
+
+141
+00:06:18.000 --> 00:06:22.000
+requer a sobrescrita dos ciclos de vida padrão do DOM do framework
+
+142
+00:06:22.000 --> 00:06:25.000
+para respeitar os limites físicos da memória do dispositivo.
+

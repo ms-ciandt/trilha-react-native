@@ -8,6 +8,7 @@ sidebar_position: 4
 
 <video width="100%" controls>
   <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/perf_04_memo.mp4" type="video/mp4">
+  <track kind="captions" src="/trilha-react-native/assets/captions/trilha_android/perf_04_memo.vtt" srclang="pt" label="Português" default>
   Seu navegador nao suporta o elemento de video.
 </video>
 

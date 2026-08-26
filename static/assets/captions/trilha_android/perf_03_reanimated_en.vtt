@@ -1,0 +1,290 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:06.440
+React Native provides a built-in animated API for developers to construct UI motion.
+
+2
+00:00:06.440 --> 00:00:15.600
+When correctly configured, this standard tool successfully executes transform and opacity calculations directly on the native rendering layer.
+
+3
+00:00:15.600 --> 00:00:19.600
+However, the standard API has a strict technical ceiling.
+
+4
+00:00:19.600 --> 00:00:27.800
+If an animation alters structural layout properties, modifying a components width, height, padding, or absolute top positioning,
+
+5
+00:00:27.800 --> 00:00:30.100
+it cannot be processed natively.
+
+6
+00:00:30.100 --> 00:00:37.300
+As a result, layout-driven animations are forced out of the native layer and back onto the asynchronous JavaScript thread.
+
+7
+00:00:37.300 --> 00:00:41.200
+This timeline visualization illustrates the communication delay.
+
+8
+00:00:41.200 --> 00:00:47.100
+On top, the JS thread calculates a new layout value, then serializes it into a message.
+
+9
+00:00:47.100 --> 00:00:55.600
+That message crosses the asynchronous bridge down to the native UI thread, which is attempting to execute a 60 frames per second rendering cycle.
+
+10
+00:00:55.600 --> 00:01:00.500
+When heavy application logic saturates the JS thread, the layout messages back up.
+
+11
+00:01:00.500 --> 00:01:07.600
+The UI thread is starved of instructions, misses its 16 millisecond render window, and drops the frame.
+
+12
+00:01:07.600 --> 00:01:10.700
+To the user, the animation visibly stutters.
+
+13
+00:01:10.700 --> 00:01:16.900
+React Native reanimated version 3 operates as a total architectural replacement for this system,
+
+14
+00:01:16.900 --> 00:01:21.600
+built specifically to eliminate this cross-thread serialization bottleneck.
+
+15
+00:01:21.700 --> 00:01:27.700
+Reanimated achieves stable frame rates by calculating layout changes entirely on the UI thread,
+
+16
+00:01:27.700 --> 00:01:32.100
+bypassing the JavaScript thread completely during the animation lifecycle.
+
+17
+00:01:32.100 --> 00:01:39.300
+Pushing layout animations to a reliable 60 frames per second requires moving away from the asynchronous bridge architecture.
+
+18
+00:01:39.300 --> 00:01:47.800
+By mapping the exact feature differences between these two APIs, we can isolate exactly what work is being relocated down to the native layer.
+
+19
+00:01:47.800 --> 00:01:53.400
+This comparison matrix places the built-in API on the left and reanimated V3 on the right.
+
+20
+00:01:53.400 --> 00:01:59.800
+With the legacy API, achieving native performance requires developers to manually declare use native driver true.
+
+21
+00:01:59.800 --> 00:02:03.300
+Reanimated executes on the UI thread by default.
+
+22
+00:02:03.300 --> 00:02:06.900
+There is also a significant contrast in property support.
+
+23
+00:02:06.900 --> 00:02:11.600
+The standard API limits native execution to transform and opacity.
+
+24
+00:02:11.600 --> 00:02:14.800
+Reanimated handles all styling properties natively.
+
+25
+00:02:14.800 --> 00:02:20.900
+Because of that expanded support, layout animations migrate from the JS thread down to the UI thread,
+
+26
+00:02:20.900 --> 00:02:24.300
+taking advantage of React Native's fabric rendering system.
+
+27
+00:02:24.300 --> 00:02:29.200
+Reanimated also provides a deep structural integration with React Native gesture handler,
+
+28
+00:02:29.200 --> 00:02:32.500
+a capability that the built-in API does not possess.
+
+29
+00:02:32.500 --> 00:02:35.300
+This is a complete relocation of the system.
+
+30
+00:02:35.300 --> 00:02:41.800
+Animation logic and gesture processing are being extracted from the JavaScript runtime and placed directly on the native layer.
+
+31
+00:02:41.800 --> 00:02:47.900
+The mechanism that makes this relocation possible is the foundational unit of reanimated V3, the worklet.
+
+32
+00:02:47.900 --> 00:02:55.200
+The native UI thread is an environment governed by a rendering clock, like the Android choreographer, dictating exactly when frames are drawn.
+
+33
+00:02:55.200 --> 00:03:01.300
+A worklet is injected directly here, executing an exact lock step with this clock.
+
+34
+00:03:01.300 --> 00:03:08.600
+When a worklet triggers, the primary JavaScript runtime is not queried, notified, or involved in the calculation.
+
+35
+00:03:08.600 --> 00:03:12.500
+Because the worklet executes synchronously alongside the choreographer,
+
+36
+00:03:12.500 --> 00:03:18.200
+any layout math that calculates is ready the precise millisecond the device refreshes at screen.
+
+37
+00:03:18.200 --> 00:03:24.400
+Worklets allow engineers to write JavaScript that executes in synchronous lock step with the device's display refresh,
+
+38
+00:03:24.400 --> 00:03:28.100
+bypassing the typical latency of the asynchronous bridge.
+
+39
+00:03:28.100 --> 00:03:36.400
+To manage state within these isolated worklets, reanimated replaces the legacy animated.value with a new hook used shared value.
+
+40
+00:03:36.400 --> 00:03:41.800
+The defining feature of a shared value is that it does not stay confined to a single runtime environment.
+
+41
+00:03:41.800 --> 00:03:44.700
+This diagram illustrates its memory architecture.
+
+42
+00:03:44.700 --> 00:03:52.100
+The used shared value block physically spans the boundary, existing simultaneously on both the JS thread and the native UI thread.
+
+43
+00:03:52.100 --> 00:03:57.600
+When JavaScript logic updates this value, JSI synchronizes it directly in memory.
+
+44
+00:03:57.600 --> 00:04:05.200
+The UI thread reads this reference synchronously, immediately triggering a screen repaint in the same frame without asynchronous messages.
+
+45
+00:04:05.200 --> 00:04:10.100
+Rating directly from shared memory bypasses the process of stringifying and parsing data.
+
+46
+00:04:10.100 --> 00:04:12.600
+The serialization overhead is eliminated.
+
+47
+00:04:12.600 --> 00:04:18.900
+This synchronous memory access is the specific mechanism that prevents complex layout animations from dropping frames.
+
+48
+00:04:18.900 --> 00:04:21.900
+Developers do not directly overwrite these shared values.
+
+49
+00:04:21.900 --> 00:04:25.500
+Instead, they mutate them using specific animation primitives.
+
+50
+00:04:25.500 --> 00:04:33.300
+The primary primitives include with timing to execute linear or ease transitions and with spring to apply physics-based momentum.
+
+51
+00:04:33.400 --> 00:04:35.400
+This flow chart tracks the data path.
+
+52
+00:04:35.400 --> 00:04:39.600
+A developer passes a used shared value into a primitive like with spring.
+
+53
+00:04:39.600 --> 00:04:47.800
+The result feeds into use animated style, which acts as the binding agent, continuously mapping the math directly to the component style on the UI thread.
+
+54
+00:04:47.800 --> 00:04:59.400
+This isolated data path allows gesture handlers like a user dragging a card across the screen to continuously feed positional data to the component without engaging the JS thread.
+
+55
+00:04:59.400 --> 00:05:06.100
+However, there are moments when an animation finishes and the application must return to the JavaScript context.
+
+56
+00:05:06.100 --> 00:05:10.000
+For this, reanimated provides the run on JS function.
+
+57
+00:05:10.000 --> 00:05:19.200
+Developers use run on JS whenever a UI thread worklet needs to trigger a React state center or execute a callback on the main JavaScript thread.
+
+58
+00:05:19.200 --> 00:05:21.400
+This completes the pipeline design.
+
+59
+00:05:21.400 --> 00:05:25.160
+Heavy calculation and style updates remain on the native layer,
+
+60
+00:05:25.160 --> 00:05:28.860
+reserving the JS thread purely for discrete state changes.
+
+61
+00:05:28.860 --> 00:05:37.160
+By utilizing this architecture, reanimated V3 achieves native tier layout animations, components entering the screen, exiting the screen,
+
+62
+00:05:37.160 --> 00:05:41.960
+or actively morphing their structural dimensions can now be executed without stuttering.
+
+63
+00:05:41.960 --> 00:05:43.960
+This graph quantifies the result.
+
+64
+00:05:43.960 --> 00:05:51.260
+The bottom UI thread tracker holds a perfectly flat 60 frames per second line during complex layout shifts.
+
+65
+00:05:51.360 --> 00:05:57.060
+When we overlay the JavaScript thread, heavy processing causes massive calculation spikes.
+
+66
+00:05:57.060 --> 00:06:01.660
+Because they are isolated, this volatility has zero impact on the UI thread.
+
+67
+00:06:01.660 --> 00:06:10.660
+The mental model for reanimated is strict separation and encapsulate animation logic within UI workloads and keep them synchronized using shared memory.
+
+68
+00:06:10.660 --> 00:06:15.960
+Under this model, run on JS should only be used when a React state update is required.
+
+69
+00:06:15.960 --> 00:06:21.860
+With the UI thread isolated and performing predictably, we can shift our focus back to the JavaScript thread.
+
+70
+00:06:21.860 --> 00:06:28.660
+The next structural challenge is ensuring the JS thread itself isn't wasting resources executing redundant render cycles.
+
+71
+00:06:28.660 --> 00:06:35.360
+Because the animation rendering bottleneck is solved, the next stage of application performance depends on mastering memoization.
+
+72
+00:06:35.360 --> 00:06:37.360
+Use memo and use callback.
+

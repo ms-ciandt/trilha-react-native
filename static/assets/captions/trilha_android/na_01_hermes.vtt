@@ -1,0 +1,670 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:03.520
+Todos nós já tocamos no ícone de um app, ficamos olhando para uma tela em branco,
+
+2
+00:00:03.520 --> 00:00:06.960
+e sentimos aquele segundo angustiante em que o sistema inteiro
+
+3
+00:00:06.960 --> 00:00:08.320
+simplesmente trava.
+
+4
+00:00:08.320 --> 00:00:12.160
+Por anos, se essa aplicação fosse construída com React Native no Android,
+
+5
+00:00:12.160 --> 00:00:14.880
+o culpado por trás desse atraso era quase sempre
+
+6
+00:00:14.880 --> 00:00:18.240
+o legacy JavaScript core engine, ou JSC.
+
+7
+00:00:18.240 --> 00:00:21.200
+O JSC foi originalmente construído para navegadores web.
+
+8
+00:00:21.200 --> 00:00:23.120
+Quando colocado em um ambiente mobile,
+
+9
+00:00:23.120 --> 00:00:26.320
+ele forçava a CPU do dispositivo a fazer parse e compilar
+
+10
+00:00:26.320 --> 00:00:29.280
+megabytes de texto JavaScript bruto em tempo de execução,
+
+11
+00:00:29.280 --> 00:00:32.480
+bloqueando completamente a thread principal antes que um único pixel pudesse
+
+12
+00:00:32.480 --> 00:00:33.320
+renderizar.
+
+13
+00:00:33.320 --> 00:00:35.840
+A Meta desenvolveu uma forma de contornar essa falha estrutural
+
+14
+00:00:35.840 --> 00:00:37.320
+construindo o Hermes.
+
+15
+00:00:37.320 --> 00:00:40.160
+Em vez de tentar analisar o texto mais rápido na inicialização,
+
+16
+00:00:40.160 --> 00:00:43.400
+o Hermes altera a linha do tempo de quando a compilação realmente
+
+17
+00:00:43.400 --> 00:00:44.360
+acontece.
+
+18
+00:00:44.360 --> 00:00:46.520
+Este gráfico compara o tempo até o primeiro frame
+
+19
+00:00:46.520 --> 00:00:48.600
+em um dispositivo padrão de gama intermediária.
+
+20
+00:00:48.600 --> 00:00:52.160
+O antigo engine JSC levava cerca de 1.400 milissegundos
+
+21
+00:00:52.160 --> 00:00:53.000
+para renderizar.
+
+22
+00:00:53.000 --> 00:00:56.320
+O Hermes reduz isso para aproximadamente 800 milissegundos.
+
+23
+00:00:56.320 --> 00:00:59.000
+Recuperar mais de meio segundo em um cold start
+
+24
+00:00:59.000 --> 00:01:00.920
+é a margem precisa que eleva
+
+25
+00:01:00.920 --> 00:01:03.120
+um app de parecer um sluggish web wrapper
+
+26
+00:01:03.120 --> 00:01:05.360
+para uma experiência verdadeiramente native.
+
+27
+00:01:05.360 --> 00:01:07.440
+Para alcançar essa velocidade, o Hermes depende
+
+28
+00:01:07.440 --> 00:01:09.360
+de uma compilação head-of-time.
+
+29
+00:01:09.360 --> 00:01:10.800
+Se você escreve apps Android nativos,
+
+30
+00:01:10.800 --> 00:01:13.520
+você já usa essa exata otimização.
+
+31
+00:01:13.520 --> 00:01:15.200
+No pipeline nativo padrão,
+
+32
+00:01:15.200 --> 00:01:17.960
+os arquivos Kotlin são transformados durante a fase de build,
+
+33
+00:01:17.960 --> 00:01:21.640
+primeiro em .class, e finalmente em um .dex pré-compilado
+
+34
+00:01:21.640 --> 00:01:22.800
+executável.
+
+35
+00:01:22.800 --> 00:01:25.640
+O Hermes espelha intencionalmente essa arquitetura.
+
+36
+00:01:25.640 --> 00:01:28.320
+Em vez de enviar texto puro, o metro bundler
+
+37
+00:01:28.320 --> 00:01:30.720
+trabalha com o compilador Hermes para converter seus arquivos
+
+38
+00:01:30.720 --> 00:01:33.680
+de origem diretamente em bytecode Hermes, resultando
+
+39
+00:01:33.680 --> 00:01:35.600
+em um arquivo .hbc.
+
+40
+00:01:35.600 --> 00:01:38.080
+Esse bytecode compilado é então empacotado diretamente
+
+41
+00:01:38.080 --> 00:01:40.720
+no APK final do Android, completamente
+
+42
+00:01:40.720 --> 00:01:43.600
+substituindo o tradicional bundle de JavaScript bruto.
+
+43
+00:01:43.600 --> 00:01:46.440
+Como remove texto legível por humanos e lógica
+
+44
+00:01:46.440 --> 00:01:49.960
+não otimizada, esse bytecode resultante é cerca de 20% a 30%
+
+45
+00:01:49.960 --> 00:01:52.600
+menor do que o JavaScript minificado equivalente.
+
+46
+00:01:52.600 --> 00:01:54.720
+Quando o usuário eventualmente abre o app,
+
+47
+00:01:54.720 --> 00:01:57.440
+o dispositivo pula completamente a fase de parsing de texto
+
+48
+00:01:57.440 --> 00:02:00.640
+e executa imediatamente o bytecode pré-compilado.
+
+49
+00:02:00.640 --> 00:02:03.520
+Ao tratar o JavaScript exatamente como código Kotlin nativo
+
+50
+00:02:03.520 --> 00:02:05.600
+durante a fase de build, o Hermes permanentemente
+
+51
+00:02:05.600 --> 00:02:08.560
+tira o peso computacional mais pesado do celular do usuário
+
+52
+00:02:08.560 --> 00:02:10.440
+e transfere para o seu servidor de build.
+
+53
+00:02:10.440 --> 00:02:12.360
+Nessa comparação da linha do tempo de inicialização,
+
+54
+00:02:12.360 --> 00:02:14.200
+o motor legado fica completamente bloqueado
+
+55
+00:02:14.200 --> 00:02:16.080
+pela fase de parse e compilação.
+
+56
+00:02:16.080 --> 00:02:17.560
+Com uma compilação antecipada (ahead-of-time),
+
+57
+00:02:17.560 --> 00:02:21.080
+esse tempo de parse cai instantaneamente para 0 milissegundos.
+
+58
+00:02:21.080 --> 00:02:23.960
+Garantir essa inicialização instantânea exigiu um enorme sacrifício
+
+59
+00:02:23.960 --> 00:02:26.680
+arquitetural, removendo completamente o compilador just-in-time,
+
+60
+00:02:26.680 --> 00:02:28.360
+ou JIT.
+
+61
+00:02:28.360 --> 00:02:31.440
+Compiladores JIT analisam e otimizam o código em tempo de execução.
+
+62
+00:02:31.440 --> 00:02:34.000
+Isso causa picos repentinos de CPU, drena a bateria,
+
+63
+00:02:34.000 --> 00:02:36.480
+e cria engasgos de performance imprevisíveis.
+
+64
+00:02:36.480 --> 00:02:39.160
+Em contraste, a timeline do Hermes permanece perfeitamente suave
+
+65
+00:02:39.160 --> 00:02:40.200
+sem aquecimento.
+
+66
+00:02:40.200 --> 00:02:42.120
+Ao removê-lo, o Hermes opera estritamente
+
+67
+00:02:42.120 --> 00:02:44.560
+como um interpretador puro do bytecode que recebe.
+
+68
+00:02:44.560 --> 00:02:47.040
+Um interpretador puro inevitavelmente perderá
+
+69
+00:02:47.040 --> 00:02:51.240
+para um engine V8, ou JSC, em throughput máximo absoluto de CPU
+
+70
+00:02:51.240 --> 00:02:53.680
+ao executar scripts longos e pesados em cálculos matemáticos.
+
+71
+00:02:53.680 --> 00:02:55.400
+Mas aplicativos móveis raramente
+
+72
+00:02:55.400 --> 00:02:59.160
+realizam processamento de dados pesado e contínuo na thread principal.
+
+73
+00:02:59.160 --> 00:03:02.800
+Uma interface mobile prioriza interatividade rápida e fluida
+
+74
+00:03:02.800 --> 00:03:04.640
+e capacidade de resposta ágil.
+
+75
+00:03:04.640 --> 00:03:07.400
+Sacrificar a velocidade máxima teórica de execução
+
+76
+00:03:07.400 --> 00:03:11.160
+para garantir renderização instantânea da UI e eliminar picos térmicos
+
+77
+00:03:11.160 --> 00:03:14.160
+é a decisão de engenharia correta, com foco em mobile first.
+
+78
+00:03:14.160 --> 00:03:16.240
+Após resolver os gargalos de CPU,
+
+79
+00:03:16.240 --> 00:03:18.920
+o engine precisou se adequar à segunda restrição rígida
+
+80
+00:03:18.920 --> 00:03:22.560
+de todos os sistemas operacionais móveis: RAM fortemente limitada.
+
+81
+00:03:22.560 --> 00:03:24.560
+O coletor de lixo geracional do Hermes
+
+82
+00:03:24.560 --> 00:03:27.640
+divide o heap de memória em duas zonas distintas.
+
+83
+00:03:27.640 --> 00:03:30.880
+A zona de geração jovem armazena alocações de curta duração,
+
+84
+00:03:30.880 --> 00:03:34.480
+armazenando valores intermediários e atualizações rápidas de estado do react.
+
+85
+00:03:34.480 --> 00:03:37.520
+Descartados rapidamente, o engine executa ciclos de coleta
+
+86
+00:03:37.520 --> 00:03:39.720
+de alta frequência aqui, com baixos tempos de pausa.
+
+87
+00:03:39.720 --> 00:03:42.640
+Objetos sobreviventes e módulos de estado persistente
+
+88
+00:03:42.640 --> 00:03:45.560
+migram perfeitamente para a zona de geração antiga,
+
+89
+00:03:45.560 --> 00:03:47.600
+coletada com muito menos frequência.
+
+90
+00:03:47.600 --> 00:03:50.240
+Existe uma restrição crítica nessa arquitetura.
+
+91
+00:03:50.240 --> 00:03:52.880
+Toda a coleta de lixo do Hermes é executada inteiramente
+
+92
+00:03:52.880 --> 00:03:54.680
+na thread principal do JavaScript,
+
+93
+00:03:54.680 --> 00:03:57.600
+sem nenhuma execução concorrente em segundo plano.
+
+94
+00:03:57.600 --> 00:04:00.240
+A falta de concorrência significa que esses ciclos de coleta
+
+95
+00:04:00.240 --> 00:04:02.560
+são estritamente eventos stop-the-world.
+
+96
+00:04:02.560 --> 00:04:05.080
+Sempre que o coletor é executado, a execução do script
+
+97
+00:04:05.080 --> 00:04:06.640
+é interrompida completamente.
+
+98
+00:04:06.640 --> 00:04:09.480
+Mas ao ajustar o modelo geracional de forma tão precisa,
+
+99
+00:04:09.480 --> 00:04:12.600
+o engine mantém essas pausas abaixo de cinco milissegundos,
+
+100
+00:04:12.600 --> 00:04:15.720
+preservando uma taxa estável de 60 quadros por segundo.
+
+101
+00:04:15.720 --> 00:04:17.600
+Observando o medidor de consumo de memória,
+
+102
+00:04:17.600 --> 00:04:19.960
+esse modelo de execução preciso consegue,
+
+103
+00:04:19.960 --> 00:04:22.960
+com sucesso, reduzir pela metade o tamanho geral do heap do JavaScript quando ocioso,
+
+104
+00:04:22.960 --> 00:04:27.920
+baixando de 35 megabytes no JSC para apenas 18 megabytes.
+
+105
+00:04:27.920 --> 00:04:31.000
+Gerenciar a memória de forma síncrona, mas com extrema eficiência
+
+106
+00:04:31.000 --> 00:04:33.160
+geracional, evita que threads em segundo plano
+
+107
+00:04:33.160 --> 00:04:34.880
+drenem a bateria, enquanto mantém
+
+108
+00:04:34.880 --> 00:04:36.720
+o aplicativo notavelmente leve.
+
+109
+00:04:36.720 --> 00:04:38.960
+Construir um engine altamente otimizado
+
+110
+00:04:38.960 --> 00:04:41.640
+exige cortar agressivamente recursos legados
+
+111
+00:04:41.640 --> 00:04:43.920
+que não se encaixam nas novas restrições.
+
+112
+00:04:43.920 --> 00:04:46.680
+Funções JavaScript altamente dinâmicas inerentemente
+
+113
+00:04:46.680 --> 00:04:48.640
+quebram as suposições rígidas necessárias
+
+114
+00:04:48.640 --> 00:04:50.320
+para a compilação ahead of time,
+
+115
+00:04:50.320 --> 00:04:53.000
+então elas são intencionalmente removidas do Hermes.
+
+116
+00:04:53.000 --> 00:04:55.680
+Recursos como a função eVal e a instrução width
+
+117
+00:04:55.680 --> 00:04:57.440
+são as principais vítimas.
+
+118
+00:04:57.440 --> 00:05:00.760
+Eles são desabilitados por padrão para proteger tanto o desempenho mobile
+
+119
+00:05:00.760 --> 00:05:02.760
+quanto a segurança da aplicação.
+
+120
+00:05:02.760 --> 00:05:05.360
+Isso estabelece uma regra rígida para o ecossistema.
+
+121
+00:05:05.360 --> 00:05:08.240
+Se uma biblioteca de terceiros depende da execução de strings
+
+122
+00:05:08.240 --> 00:05:11.160
+como código, ela é incompatível com as restrições mobile
+
+123
+00:05:11.160 --> 00:05:12.800
+e precisa ser corrigida.
+
+124
+00:05:12.800 --> 00:05:16.120
+Do lado da experiência do desenvolvedor, versões mais novas do react native
+
+125
+00:05:16.120 --> 00:05:19.440
+usando Hermes diretamente expõem um protocolo Chrome Dev Tools
+
+126
+00:05:19.440 --> 00:05:21.200
+ou endpoint CDP.
+
+127
+00:05:21.200 --> 00:05:25.120
+Essa integração direta desbloqueia capacidades profundas de profiling.
+
+128
+00:05:25.120 --> 00:05:28.160
+Você pode inspecionar pilhas de chamadas assíncronas entre limites
+
+129
+00:05:28.160 --> 00:05:30.320
+e capturar snapshots exatos do heap de memória
+
+130
+00:05:30.320 --> 00:05:32.360
+direto do dispositivo físico.
+
+131
+00:05:32.360 --> 00:05:36.320
+Embora imponha padrões de codificação mais rígidos e modernos,
+
+132
+00:05:36.320 --> 00:05:39.720
+Hermes recompensa o desenvolvedor fornecendo ferramentas analíticas
+
+133
+00:05:39.720 --> 00:05:43.680
+de nível desktop rodando diretamente no hardware mobile.
+
+134
+00:05:43.680 --> 00:05:46.800
+Você pode capturar um raw sampling profiler trace
+
+135
+00:05:46.800 --> 00:05:49.200
+diretamente de um development build usando ferramentas
+
+136
+00:05:49.200 --> 00:05:51.840
+como o Hermes debugger plugin do flipper.
+
+137
+00:05:51.840 --> 00:05:54.160
+Esse arquivo de trace pode então ser carregado nativamente
+
+138
+00:05:54.160 --> 00:05:58.120
+em um navegador para auditar seus dados de performance do mundo real.
+
+139
+00:05:58.120 --> 00:06:01.520
+Observar esse trace confirma as afirmações arquiteturais.
+
+140
+00:06:01.520 --> 00:06:05.040
+Os desenvolvedores veem uma curva de execução plana e previsível
+
+141
+00:06:05.040 --> 00:06:07.560
+totalmente livre das interrupções caóticas
+
+142
+00:06:07.560 --> 00:06:09.480
+da compilação em tempo de execução.
+
+143
+00:06:09.480 --> 00:06:12.400
+Dados empíricos de rastreamento comprovam os benefícios teóricos
+
+144
+00:06:12.400 --> 00:06:14.680
+do modelo de interpretador, dando aos desenvolvedores
+
+145
+00:06:14.680 --> 00:06:17.760
+visibilidade completa sobre a performance de suas threads.
+
+146
+00:06:17.760 --> 00:06:20.280
+Ao observar um aplicativo react native típico
+
+147
+00:06:20.280 --> 00:06:22.560
+rodando em hardware Android de médio porte,
+
+148
+00:06:22.560 --> 00:06:25.120
+o impacto holístico do Hermes é claro.
+
+149
+00:06:25.120 --> 00:06:29.240
+Este dashboard consolida os benchmarks agregados finais.
+
+150
+00:06:29.240 --> 00:06:31.520
+A eliminação total do tempo de parse
+
+151
+00:06:31.520 --> 00:06:34.480
+aproximadamente 800 milissegundos até o primeiro frame,
+
+152
+00:06:34.480 --> 00:06:38.440
+um heap size minimizado, tudo isso por um custo mínimo de dois megabytes
+
+153
+00:06:38.440 --> 00:06:40.720
+no tamanho final do APK.
+
+154
+00:06:40.720 --> 00:06:43.720
+Como esses ganhos de performance são tão fundamentais,
+
+155
+00:06:43.720 --> 00:06:46.360
+utilizar o Hermes agora é estritamente obrigatório
+
+156
+00:06:46.360 --> 00:06:50.120
+para todos os apps que rodam a react native new architecture.
+
+157
+00:06:50.120 --> 00:06:53.200
+Mas isso nos deixa com uma questão estrutural crítica.
+
+158
+00:06:53.200 --> 00:06:56.120
+Se o processing engine finalmente é rápido o suficiente,
+
+159
+00:06:56.120 --> 00:06:59.120
+como consertamos a ponte estreita e desgastada que o conecta
+
+160
+00:06:59.120 --> 00:07:00.520
+ao lado nativo?
+
+161
+00:07:00.520 --> 00:07:04.240
+Esse gargalo remanescente é o bridge assíncrono legado,
+
+162
+00:07:04.240 --> 00:07:07.520
+uma fila serializada ultrapassada que historicamente ditava
+
+163
+00:07:07.520 --> 00:07:10.480
+como JavaScript e código nativo se comunicavam.
+
+164
+00:07:10.480 --> 00:07:13.120
+Substituir esse bridge requer a implementação
+
+165
+00:07:13.120 --> 00:07:15.760
+da JavaScript interface, ou JSI,
+
+166
+00:07:15.760 --> 00:07:19.040
+para finalmente alcançar comunicação síncrona zero copy
+
+167
+00:07:19.040 --> 00:07:21.280
+em todo o framework.
+

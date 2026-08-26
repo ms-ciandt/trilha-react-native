@@ -1,0 +1,262 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:04.460
+Building a modern product requires maintaining multiple platforms,
+
+2
+00:00:04.460 --> 00:00:07.080
+a web application, a mobile application,
+
+3
+00:00:07.080 --> 00:00:09.580
+and the backend services that support them.
+
+4
+00:00:09.580 --> 00:00:14.940
+Standard development workflows often isolate each platform into its own repository.
+
+5
+00:00:14.940 --> 00:00:18.900
+This separation forces teams to duplicate API clients,
+
+6
+00:00:18.900 --> 00:00:22.740
+TypeScript types, and core business logic for every code base.
+
+7
+00:00:22.740 --> 00:00:25.460
+This isolation creates version drift.
+
+8
+00:00:25.560 --> 00:00:30.460
+As shown here, the web application might be running on a newer version of the API schema,
+
+9
+00:00:30.460 --> 00:00:34.460
+while the mobile app remains stuck on an older, incompatible version.
+
+10
+00:00:34.460 --> 00:00:38.460
+Managing these disjointed repositories introduces friction.
+
+11
+00:00:38.460 --> 00:00:41.460
+Developers must coordinate separate pull requests
+
+12
+00:00:41.460 --> 00:00:47.060
+and manually sync changes, which slows down feature velocity across the entire product.
+
+13
+00:00:47.060 --> 00:00:53.060
+Amano repo eliminates this friction by unifying all platforms into a single repository.
+
+14
+00:00:53.160 --> 00:00:57.760
+This architecture establishes a single version of truth for every dependency.
+
+15
+00:00:57.760 --> 00:01:02.360
+Native mobile developers already use a similar approach to manage complex projects.
+
+16
+00:01:02.360 --> 00:01:07.560
+This mapping shows how an Android project uses separate Gradle modules for core logic,
+
+17
+00:01:07.560 --> 00:01:10.660
+data, and UI components within one repo.
+
+18
+00:01:10.660 --> 00:01:14.660
+The JavaScript workspace concept follows the exact same logic.
+
+19
+00:01:14.660 --> 00:01:20.960
+Adopting this model involves implementing a specific dependency architecture across the entire workspace.
+
+20
+00:01:21.060 --> 00:01:25.160
+The first step is physically separating executable code from shared logic.
+
+21
+00:01:25.160 --> 00:01:29.760
+We organize the repo into two main directories, apps and packages.
+
+22
+00:01:29.760 --> 00:01:32.760
+The apps directory holds the consumable endpoints.
+
+23
+00:01:32.760 --> 00:01:37.160
+Here, your React Native app and your web app exist as sibling projects.
+
+24
+00:01:37.160 --> 00:01:40.060
+The packages directory contains the shared logic.
+
+25
+00:01:40.060 --> 00:01:46.060
+This is where the API client and design tokens live, isolated from the specific UI implementations.
+
+26
+00:01:46.060 --> 00:01:50.360
+A root package.json file governs the entire workspace from the top level.
+
+27
+00:01:50.360 --> 00:01:54.360
+This root file enforces a single version for third-party dependencies.
+
+28
+00:01:54.360 --> 00:01:58.960
+If the project uses React version 18, it uses version 18 everywhere.
+
+29
+00:01:58.960 --> 00:02:01.860
+This structure prevents the version drift we saw earlier.
+
+30
+00:02:01.860 --> 00:02:06.760
+Every application in the repo is forced to stay in sync with the shared packages.
+
+31
+00:02:06.760 --> 00:02:12.460
+While the code is now consolidated, we need an orchestration layer to manage the build process.
+
+32
+00:02:12.460 --> 00:02:18.360
+In a massive interconnected code base, running standard build commands is prohibitively slow.
+
+33
+00:02:18.360 --> 00:02:23.560
+Developers shouldn't have to wait for every package to rebuild every time they make a change.
+
+34
+00:02:23.560 --> 00:02:30.860
+Turbo repo functions as a task orchestrator, managing execution pipelines alongside standard package managers.
+
+35
+00:02:30.860 --> 00:02:34.560
+The Turbo.json file acts as the brain of the system.
+
+36
+00:02:34.560 --> 00:02:38.660
+It maps out the dependency graph for every task in the repository.
+
+37
+00:02:38.660 --> 00:02:41.460
+This configuration defines the task pipeline.
+
+38
+00:02:41.460 --> 00:02:46.860
+It ensures that shared packages are built and ready before any application attempts to consume them.
+
+39
+00:02:46.960 --> 00:02:49.460
+Turbo repo also uses a global cache.
+
+40
+00:02:49.460 --> 00:02:54.960
+It remembers the results of previous tasks and skips rebuilding any package that hasn't changed.
+
+41
+00:02:54.960 --> 00:03:01.460
+When work needs to be done, Turbo repo executes scripts in parallel across both the apps and packages directories.
+
+42
+00:03:01.460 --> 00:03:08.860
+For the developer, this means a single terminal command can start the backend, web, and mobile environments at the same time.
+
+43
+00:03:08.860 --> 00:03:13.460
+To see how this works in practice, let's look inside the React Native application.
+
+44
+00:03:13.460 --> 00:03:20.860
+The mobile app imports shared logic using standard syntax, referencing the workspace package as if it were an external library.
+
+45
+00:03:20.860 --> 00:03:27.660
+Even though it looks like a remote package, the tooling resolves the import locally to the packages folder within the mono repo.
+
+46
+00:03:27.660 --> 00:03:36.060
+Turbo repo handles the macro level orchestration, but React Native has a specific micro constraint that requires us to make one final adjustment.
+
+47
+00:03:36.060 --> 00:03:39.760
+The technical hurdle for mobile development is the Metro Bundler.
+
+48
+00:03:39.860 --> 00:03:45.360
+Standard web bundlers like webpack or byte navigate directory trees to locate dependencies.
+
+49
+00:03:45.360 --> 00:03:47.760
+Metro operates under different constraints.
+
+50
+00:03:47.760 --> 00:03:52.660
+By default, Metro's resolution is strictly scoped to the mobile app's project folder.
+
+51
+00:03:52.660 --> 00:03:56.760
+When the mobile app tries to import a shared package, Metro hits a boundary.
+
+52
+00:03:56.760 --> 00:04:01.860
+It cannot see the packages directory because it sits one level up in the hierarchy.
+
+53
+00:04:01.860 --> 00:04:05.360
+We resolve this by modifying the Metro configuration.
+
+54
+00:04:05.360 --> 00:04:08.460
+We use a specific property called watch folders.
+
+55
+00:04:08.460 --> 00:04:15.060
+Using watch folders forces Metro to expand its scope, allowing it to see the entire mono repo route.
+
+56
+00:04:15.060 --> 00:04:22.060
+With this configuration, Metro can traverse the tree and bundle shared packages directly into the mobile application.
+
+57
+00:04:22.060 --> 00:04:26.060
+By explicitly breaking Metro out of its local directory constraint,
+
+58
+00:04:26.060 --> 00:04:30.560
+we integrate React Native into the modern JavaScript mono repo architecture.
+
+59
+00:04:30.560 --> 00:04:33.460
+This is the unified architecture in motion.
+
+60
+00:04:33.460 --> 00:04:38.560
+A single source of truth provides data and logic to every platform simultaneously.
+
+61
+00:04:38.560 --> 00:04:43.460
+We have successfully decoupled business logic and types from platform-specific code.
+
+62
+00:04:43.460 --> 00:04:49.460
+The system relies on turbo repo for orchestration and a modified Metro config for local resolution.
+
+63
+00:04:49.460 --> 00:04:53.460
+This repository is now structurally prepared for large-scale development.
+
+64
+00:04:53.460 --> 00:05:00.460
+With the physical structure resolved, the next challenge is managing the flow of data within this massive system.
+
+65
+00:05:00.460 --> 00:05:09.460
+Next, we will cover state management patterns designed for large-scale applications with many features and independent engineering teams.
+

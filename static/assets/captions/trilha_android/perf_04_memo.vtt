@@ -1,0 +1,582 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:03.280
+Quando se trata de construir interfaces de usuário modernas,
+
+2
+00:00:03.280 --> 00:00:06.320
+Jetpack Compose e React Native abordam a renderização
+
+3
+00:00:06.320 --> 00:00:09.040
+com arquiteturas centrais totalmente diferentes.
+
+4
+00:00:09.040 --> 00:00:13.280
+No Compose, o compilador rastreia quais composables leem o state.
+
+5
+00:00:13.280 --> 00:00:16.000
+Apenas os nodes dependentes são atualizados quando o state muda.
+
+6
+00:00:16.000 --> 00:00:18.320
+O restante é ignorado automaticamente.
+
+7
+00:00:18.320 --> 00:00:20.560
+O React é exatamente o oposto.
+
+8
+00:00:20.560 --> 00:00:24.480
+Por padrão, a atualização de um parent envia um sinal de render em cascata,
+
+9
+00:00:24.480 --> 00:00:27.120
+atingindo todos os child nodes conectados.
+
+10
+00:00:27.120 --> 00:00:29.920
+Essa cascata exaustiva é executada independentemente
+
+11
+00:00:29.920 --> 00:00:32.960
+de se os dados reais dos componentes filhos mudaram.
+
+12
+00:00:32.960 --> 00:00:36.320
+Um node com texto completamente estático vai se reconstruir
+
+13
+00:00:36.320 --> 00:00:39.360
+simplesmente porque o parent acima dele disparou uma mudança de estado.
+
+14
+00:00:39.360 --> 00:00:42.480
+Para alcançar a eficiência em nível nativo vista no Compose,
+
+15
+00:00:42.480 --> 00:00:45.680
+os engenheiros que constroem em React precisam intervir manualmente.
+
+16
+00:00:45.680 --> 00:00:48.720
+Você deve explicitamente fazer opt in para o smart rendering.
+
+17
+00:00:48.720 --> 00:00:52.560
+O React fornece três ferramentas distintas para interromper esse comportamento padrão.
+
+18
+00:00:52.560 --> 00:00:54.240
+A primeira é o memo wrapper.
+
+19
+00:00:54.240 --> 00:00:57.600
+A segunda é o hook use memo e, por fim, o call back.
+
+20
+00:00:57.600 --> 00:01:01.200
+Sem uma estratégia deliberada para orquestrar esses três hooks,
+
+21
+00:01:01.200 --> 00:01:04.880
+um aplicativo consome ciclos de CPU desnecessariamente,
+
+22
+00:01:04.880 --> 00:01:08.400
+fazendo com que a interface trave durante interações complexas.
+
+23
+00:01:08.400 --> 00:01:10.480
+Considere uma árvore React padrão.
+
+24
+00:01:10.480 --> 00:01:13.360
+Temos um nó pai conectado a um filho custoso
+
+25
+00:01:13.360 --> 00:01:14.720
+e a um filho estático.
+
+26
+00:01:14.720 --> 00:01:16.480
+Quando o estado do pai é atualizado,
+
+27
+00:01:16.480 --> 00:01:19.680
+aquele sinal de render vermelho percorre ambos os caminhos.
+
+28
+00:01:19.680 --> 00:01:21.840
+A primeira linha de defesa é o memo.
+
+29
+00:01:21.840 --> 00:01:23.920
+A função manual de skip do React.
+
+30
+00:01:23.920 --> 00:01:25.760
+Quando você envolve um componente em memo,
+
+31
+00:01:25.760 --> 00:01:27.840
+você coloca uma porta lógica na frente dele.
+
+32
+00:01:27.840 --> 00:01:29.440
+À medida que o sinal de renderização se aproxima,
+
+33
+00:01:29.440 --> 00:01:32.640
+o memo o intercepta para executar uma verificação de igualdade superficial.
+
+34
+00:01:32.640 --> 00:01:34.720
+Essa verificação compara as propriedades recebidas
+
+35
+00:01:34.720 --> 00:01:37.920
+com as propriedades exatas do ciclo de renderização anterior.
+
+36
+00:01:37.920 --> 00:01:40.960
+Se o React determinar que as props são matematicamente idênticas,
+
+37
+00:01:40.960 --> 00:01:42.320
+a porta lógica se mantém fechada.
+
+38
+00:01:42.320 --> 00:01:45.040
+A cascata de renderização é abortada para aquele branch específico,
+
+39
+00:01:45.040 --> 00:01:46.800
+economizando ciclos de CPU.
+
+40
+00:01:46.800 --> 00:01:49.280
+Embora o memo atue como um escudo altamente eficaz,
+
+41
+00:01:49.280 --> 00:01:52.320
+sua utilidade depende da estabilidade dos dados recebidos.
+
+42
+00:01:52.320 --> 00:01:55.920
+Seus crops mudam desnecessariamente, o shield quebra.
+
+43
+00:01:55.920 --> 00:02:00.160
+Se o componente filho custoso contém um loop computacional pesado,
+
+44
+00:02:00.160 --> 00:02:02.320
+como ordenar um array de dados enorme,
+
+45
+00:02:02.320 --> 00:02:05.520
+isso força a thread principal a travar durante o processamento.
+
+46
+00:02:05.520 --> 00:02:08.640
+Use memo armazena em cache o resultado desses cálculos pesados,
+
+47
+00:02:08.640 --> 00:02:11.840
+mantendo os dados processados em memória entre os ciclos de render,
+
+48
+00:02:11.840 --> 00:02:13.760
+para que o cálculo matemático não seja repetido.
+
+49
+00:02:13.760 --> 00:02:17.680
+Este diagrama ilustra uma balança dos custos de performance.
+
+50
+00:02:17.680 --> 00:02:20.160
+A primeira regra do use memo é que o cálculo
+
+51
+00:02:20.160 --> 00:02:24.000
+deve estar visivelmente lento, com profiling acima de um milissegundo.
+
+52
+00:02:24.000 --> 00:02:26.880
+Nesse peso, o custo de CPU claramente supera
+
+53
+00:02:26.880 --> 00:02:29.040
+o custo de cache da alocação de memória.
+
+54
+00:02:29.040 --> 00:02:32.080
+Estruturalmente, use use memo quando a saída for passada
+
+55
+00:02:32.080 --> 00:02:34.400
+diretamente para um filho envolvido em memo.
+
+56
+00:02:34.400 --> 00:02:36.640
+Mas observe o que acontece quando trocamos o loop pesado
+
+57
+00:02:36.640 --> 00:02:39.040
+por uma matemática básica ou concatenação de strings.
+
+58
+00:02:39.040 --> 00:02:41.040
+A balança se inverte instantaneamente.
+
+59
+00:02:41.040 --> 00:02:43.680
+Memoization exige sua própria alocação de memória
+
+60
+00:02:43.680 --> 00:02:46.320
+e ciclos de CPU para comparações de dependências.
+
+61
+00:02:46.320 --> 00:02:49.200
+Para operações simples, o cache demora mais
+
+62
+00:02:49.200 --> 00:02:51.520
+do que apenas recalcular o valor.
+
+63
+00:02:51.520 --> 00:02:53.920
+Use memo é uma ferramenta especializada,
+
+64
+00:02:53.920 --> 00:02:56.960
+aplicá-la indiscriminadamente prejudica a performance
+
+65
+00:02:56.960 --> 00:02:59.120
+ao acumular overhead estrutural
+
+66
+00:02:59.120 --> 00:03:02.320
+que ofusca a economia computacional real.
+
+67
+00:03:02.320 --> 00:03:06.080
+Mesmo com o memo implementado, o escudo tem uma vulnerabilidade.
+
+68
+00:03:06.080 --> 00:03:08.000
+A verificação de igualdade superficial (shallow equality) falha
+
+69
+00:03:08.000 --> 00:03:10.720
+quando encontra instabilidade referencial.
+
+70
+00:03:10.720 --> 00:03:14.160
+Quando o componente pai renderiza, ele executa seu código interno,
+
+71
+00:03:14.160 --> 00:03:16.000
+recriando funções do zero
+
+72
+00:03:16.000 --> 00:03:18.000
+com um novo ponteiro de endereço de memória.
+
+73
+00:03:18.000 --> 00:03:20.560
+Quando passada adiante, a verificação de igualdade superficial (shallow equality check)
+
+74
+00:03:20.560 --> 00:03:23.520
+percebe que o ponteiro mudou, a barreira se rompe,
+
+75
+00:03:23.520 --> 00:03:25.520
+e o componente filho é renderizado novamente de qualquer forma.
+
+76
+00:03:25.520 --> 00:03:28.720
+Para evitar isso, os desenvolvedores precisam usar o use callback
+
+77
+00:03:28.720 --> 00:03:30.480
+para travar a referência de memória da função
+
+78
+00:03:30.480 --> 00:03:33.120
+no lugar ao longo de múltiplos ciclos de renderização.
+
+79
+00:03:33.120 --> 00:03:36.400
+Por baixo dos panos, o use callback armazena em cache a própria definição
+
+80
+00:03:36.400 --> 00:03:37.360
+da função.
+
+81
+00:03:37.360 --> 00:03:39.120
+Ao encapsular a função, o ponteiro
+
+82
+00:03:39.120 --> 00:03:40.400
+trava estaticamente.
+
+83
+00:03:40.400 --> 00:03:42.000
+Na próxima vez que o pai atualizar,
+
+84
+00:03:42.000 --> 00:03:44.640
+ele repassa exatamente o mesmo endereço de memória.
+
+85
+00:03:44.640 --> 00:03:47.520
+O memo shield do filho reconhece a referência idêntica
+
+86
+00:03:47.520 --> 00:03:48.880
+e se mantém firme.
+
+87
+00:03:48.880 --> 00:03:51.920
+Use callback não faz a função executar mais rápido.
+
+88
+00:03:51.920 --> 00:03:55.120
+Seu único propósito arquitetural é manter uma referência estável
+
+89
+00:03:55.120 --> 00:03:58.400
+de ponteiro para proteger as verificações de shallow equality downstream.
+
+90
+00:03:58.400 --> 00:04:01.920
+Tanto use memo quanto use callback dependem de um único mecanismo de controle,
+
+91
+00:04:01.920 --> 00:04:05.440
+o array de dependências, que determina quando o cache é resetado.
+
+92
+00:04:05.440 --> 00:04:07.360
+Configurar esse array incorretamente é a principal causa
+
+93
+00:04:07.360 --> 00:04:09.280
+de erros de memoization no react.
+
+94
+00:04:09.280 --> 00:04:11.680
+O primeiro modo de falha é o stale closure.
+
+95
+00:04:11.680 --> 00:04:14.720
+Isso ocorre quando desenvolvedores omitem variáveis necessárias
+
+96
+00:04:14.720 --> 00:04:17.280
+do array, com dependências ausentes,
+
+97
+00:04:17.280 --> 00:04:20.240
+a função em cache executa usando variáveis desatualizadas
+
+98
+00:04:20.240 --> 00:04:23.760
+presas em seu closure original, causando dessincronizações silenciosas.
+
+99
+00:04:23.760 --> 00:04:26.720
+O erro inverso é superespecificar dependências,
+
+100
+00:04:26.720 --> 00:04:29.360
+o que acontece quando engenheiros preenchem o array com variáveis
+
+101
+00:04:29.360 --> 00:04:30.880
+que mudam constantemente.
+
+102
+00:04:30.880 --> 00:04:34.000
+Quando o cache invalida e reseta a cada ciclo,
+
+103
+00:04:34.000 --> 00:04:36.320
+você anula completamente a memoization.
+
+104
+00:04:36.320 --> 00:04:38.960
+Você paga o custo de performance das verificações e ainda assim recalcula
+
+105
+00:04:38.960 --> 00:04:40.080
+o valor.
+
+106
+00:04:40.080 --> 00:04:42.160
+Construir um array de dependências correto
+
+107
+00:04:42.160 --> 00:04:44.160
+exige precisão exata.
+
+108
+00:04:44.160 --> 00:04:46.320
+Você deve rastrear exatamente o que a função precisa
+
+109
+00:04:46.320 --> 00:04:50.080
+para permanecer matematicamente precisa e absolutamente nada mais.
+
+110
+00:04:50.080 --> 00:04:52.800
+A mecânica teórica só importa se você conseguir verificá-la
+
+111
+00:04:52.800 --> 00:04:54.320
+em um ambiente ao vivo.
+
+112
+00:04:54.320 --> 00:04:57.520
+Para diagnosticar cascatas de renderização, precisamos contar com medição
+
+113
+00:04:57.520 --> 00:04:58.400
+objetiva.
+
+114
+00:04:58.400 --> 00:05:01.200
+Isso nos leva ao react native DevTools profiler,
+
+115
+00:05:01.200 --> 00:05:03.920
+acessível pressionando J no metroterminal.
+
+116
+00:05:03.920 --> 00:05:06.480
+Ele serve como a fonte definitiva da verdade
+
+117
+00:05:06.480 --> 00:05:08.240
+para o desempenho dos componentes.
+
+118
+00:05:08.240 --> 00:05:10.720
+O fluxo de trabalho de profiling é simples.
+
+119
+00:05:10.720 --> 00:05:12.800
+Inicie uma gravação no DevTools,
+
+120
+00:05:12.800 --> 00:05:16.080
+acione manualmente a interação pesada no dispositivo físico,
+
+121
+00:05:16.080 --> 00:05:19.440
+e pare a gravação para gerar um relatório de telemetria.
+
+122
+00:05:19.440 --> 00:05:23.040
+Este flame chart mostra onde o processador gastou seu tempo.
+
+123
+00:05:23.040 --> 00:05:26.560
+Clicar na barra de um componente proeminente abre um painel perguntando,
+
+124
+00:05:26.560 --> 00:05:28.080
+por que esse render aconteceu?
+
+125
+00:05:28.080 --> 00:05:30.160
+As DevTools categorizam o gatilho,
+
+126
+00:05:30.160 --> 00:05:33.600
+se o state foi atualizado, uma prop mudou, ou, crucialmente,
+
+127
+00:05:33.600 --> 00:05:37.200
+se o componente atualizou simplesmente porque seu parent renderizou novamente.
+
+128
+00:05:37.200 --> 00:05:40.480
+Esses dados de diagnóstico guiam uma árvore de decisão simples.
+
+129
+00:05:40.480 --> 00:05:43.440
+Se um parent está forçando um child estático a atualizar,
+
+130
+00:05:43.440 --> 00:05:45.280
+use o memo como um escudo.
+
+131
+00:05:45.280 --> 00:05:47.920
+Se um cálculo pesado exceder um milissegundo,
+
+132
+00:05:47.920 --> 00:05:49.520
+armazene em cache com use memo.
+
+133
+00:05:49.520 --> 00:05:52.080
+E se um endereço de memória em mudança quebrar essa proteção,
+
+134
+00:05:52.080 --> 00:05:54.320
+estabilize com use callback.
+
+135
+00:05:54.320 --> 00:05:57.600
+Dominar essas três ferramentas leva o react de uma arquitetura
+
+136
+00:05:57.600 --> 00:06:01.840
+exaustiva de força bruta a um motor de renderização cirurgicamente preciso.
+
+137
+00:06:01.840 --> 00:06:04.640
+Uma vez que você tenha os ciclos de renderização sob controle,
+
+138
+00:06:04.640 --> 00:06:07.040
+a interação da aplicação é rápida,
+
+139
+00:06:07.040 --> 00:06:10.240
+mas ainda resta um gargalo final para resolver.
+
+140
+00:06:10.240 --> 00:06:12.000
+Latência de inicialização.
+
+141
+00:06:12.080 --> 00:06:15.280
+Fazer seu app iniciar imediatamente em um cold start
+
+142
+00:06:15.280 --> 00:06:18.720
+requer analisar a manipulação de bytecode do Hermes,
+
+143
+00:06:18.720 --> 00:06:21.120
+executar estratégias de lazy loading,
+
+144
+00:06:21.120 --> 00:06:24.400
+e auditar rigorosamente o tamanho final do bundle.
+
+145
+00:06:24.400 --> 00:06:26.400
+É para lá que vamos agora.
+

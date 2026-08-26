@@ -1,0 +1,150 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:09.000
+Toda vez que você atualiza um aplicativo React Native, você precisa abrir o simulador e navegar manualmente por cada tela para garantir que suas alterações não quebraram uma funcionalidade principal.
+
+2
+00:00:09.000 --> 00:00:14.000
+Com o tempo, as verificações manuais se tornam um enorme desperdício de velocidade de desenvolvimento.
+
+3
+00:00:14.000 --> 00:00:18.000
+O Detox resolve isso fornecendo um framework de testes end-to-end.
+
+4
+00:00:18.000 --> 00:00:25.000
+Ele controla um simulador iOS real, simulando swipes, toques e entrada de texto exatamente como um usuário faria.
+
+5
+00:00:25.000 --> 00:00:33.000
+Neste guia, vamos instalar o Detox, configurá-lo para um ambiente iOS e escrever um script que automatiza um fluxo padrão de login.
+
+6
+00:00:33.000 --> 00:00:40.000
+Para acompanhar, você vai precisar de um ambiente macOS com o Xcode instalado, um projeto React Native existente e o gerenciador de pacotes homebrew.
+
+7
+00:00:40.000 --> 00:00:46.000
+Com essas ferramentas prontas, podemos começar a deixar de lado os testes manuais em direção a um pipeline automatizado e consistente.
+
+8
+00:00:46.000 --> 00:00:52.000
+Primeiro, instale as ferramentas de linha de comando e a biblioteca do Detox no seu projeto usando um gerenciador de pacotes.
+
+9
+00:00:52.000 --> 00:00:55.000
+Também precisamos de dois utilitários no nível do sistema operacional.
+
+10
+00:00:55.000 --> 00:01:03.000
+Use o homebrew para instalar o Apple Simutils e o XC pretty no seu terminal. O Apple Simutils é essencial para esse workflow.
+
+11
+00:01:03.000 --> 00:01:10.000
+Ele atua como a camada de comunicação que permite que o Detox test runner envie instruções diretamente para o iOS simulator.
+
+12
+00:01:10.000 --> 00:01:19.000
+Agora execute o comando de inicialização para criar uma pasta E2E dedicada e gerar os arquivos de configuração base. Abra o novo arquivo de configuração.
+
+13
+00:01:19.000 --> 00:01:25.000
+Você deve substituir essas strings de placeholder pelos nomes reais de workspace e scheme definidos no seu Xcode project.
+
+14
+00:01:25.000 --> 00:01:33.000
+Em seguida, verifique o binary path no mesmo arquivo. Isso informa ao Detox exatamente onde encontrar o arquivo do app gerado durante o processo de build.
+
+15
+00:01:33.000 --> 00:01:38.000
+Por fim, ajuste as configurações do just para evitar um ponto de falha comum durante a execução.
+
+16
+00:01:38.000 --> 00:01:44.000
+Como este diagrama mostra, tentar rodar múltiplos testes ao mesmo tempo em um único simulator faz com que o runner trave.
+
+17
+00:01:44.000 --> 00:01:51.000
+Para evitar isso, você deve definir a propriedade max workers como um, garantindo que apenas um arquivo de teste rode por vez.
+
+18
+00:01:51.000 --> 00:01:57.000
+Esses passos garantem que o runner consiga encontrar e controlar sua aplicação específica com sucesso.
+
+19
+00:01:57.000 --> 00:02:02.000
+Antes de escrever o teste, precisamos tornar nossos elementos de UI visíveis para o runner.
+
+20
+00:02:02.000 --> 00:02:11.000
+Por padrão, o test runner não tem como distinguir um botão do outro. Resolvemos isso adicionando uma prop test ID aos nossos componentes react native.
+
+21
+00:02:11.000 --> 00:02:20.000
+No iOS, isso mapeia diretamente para o identificador de acessibilidade nativo. Use IDs descritivos e estáveis em vez de índices dinâmicos de lista.
+
+22
+00:02:20.000 --> 00:02:28.000
+Isso garante que o teste continue funcionando mesmo que a ordem dos itens mude. Com a UI marcada, voltamos ao terminal para compilar o app.
+
+23
+00:02:28.000 --> 00:02:35.000
+Execute o comando de build do Detox. Isso dispara uma compilação nativa especificamente otimizada para o simulador iOS.
+
+24
+00:02:36.000 --> 00:02:45.000
+Essa etapa leva alguns minutos, pois realiza um build completo do Xcode do seu projeto. Observe que você só precisa rodar esse build completo quando alterar código nativo.
+
+25
+00:02:45.000 --> 00:02:50.000
+Se você só modificar JavaScript, o Detox recarrega o bundle instantaneamente, sem um rebuild completo.
+
+26
+00:02:50.000 --> 00:02:55.000
+Assim que o build terminar, você terá um binário de testes especializado, pronto para automação.
+
+27
+00:02:55.000 --> 00:03:00.000
+Abra o arquivo de teste de exemplo na pasta E2E para que possamos programar nossa sequência de login.
+
+28
+00:03:00.000 --> 00:03:13.000
+Começamos dizendo ao runner para encontrar o campo de input de email usando nosso test ID. Ao usar a ação de digitar texto, o runner simulará a interação física de um usuário inserindo um endereço de email no campo.
+
+29
+00:03:13.000 --> 00:03:17.000
+Em seguida, adicionamos um comando para localizar o botão de login e realizar um tap.
+
+30
+00:03:17.000 --> 00:03:25.000
+Para finalizar o script, adicionamos uma expectativa. Isso instrui o teste a aguardar até que a tela de sucesso esteja visível antes de passar.
+
+31
+00:03:25.000 --> 00:03:34.000
+Agora, execute o comando de teste. O simulador inicializa automaticamente, instala o build e navega por toda a sequência da tela de login sozinho.
+
+32
+00:03:34.000 --> 00:03:42.000
+Quando a sequência terminar, verifique os resultados no seu terminal. Uma mensagem verde de sucesso confirma que o fluxo de login está funcionando corretamente no build atual.
+
+33
+00:03:42.000 --> 00:03:47.000
+Você acabou de automatizar com sucesso uma interação nativa no simulador iOS.
+
+34
+00:03:47.000 --> 00:03:56.000
+Ao configurar seu ambiente, marcar sua UI e criar o script do caminho do usuário, você criou um teste que pode ser repetido quantas vezes for necessário.
+
+35
+00:03:56.000 --> 00:04:06.000
+Para escalar isso, você pode integrar esses testes em um pipeline de integração contínua usando runners macOS, garantindo que seu app seja testado antes de cada pull request ser mesclado.
+
+36
+00:04:06.000 --> 00:04:16.000
+Você pode até usar o Detox para pré-conceder permissões do sistema, como acesso à localização ou à câmera, permitindo testar fluxos complexos sem interrupções manuais.
+
+37
+00:04:16.000 --> 00:04:26.000
+Cada teste automatizado que você adiciona reduz a necessidade de verificações manuais repetitivas, dando a você mais tempo para focar no desenvolvimento de novas funcionalidades.
+

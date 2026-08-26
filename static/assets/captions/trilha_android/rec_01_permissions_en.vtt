@@ -1,0 +1,278 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:05.760
+When building a React Native app, it is easy to view your sandboxed job-escript environment
+
+2
+00:00:05.760 --> 00:00:10.240
+as entirely decoupled from the host device's rigid security model.
+
+3
+00:00:10.240 --> 00:00:16.160
+In practice, Android's native permission system maps directly on to React Native's architecture.
+
+4
+00:00:16.160 --> 00:00:21.440
+Every underlying mechanic, from the runtime prompts and dangerous category classifications,
+
+5
+00:00:21.440 --> 00:00:27.200
+to the rationale dialogues shown to the user, executes exactly as it does in Native Kotlin.
+
+6
+00:00:27.360 --> 00:00:32.480
+Developer friction typically originates at the fragmented API surface of the JavaScript bridge
+
+7
+00:00:32.480 --> 00:00:37.200
+that interacts with these native rules. Depending on your stack, you might interface with this
+
+8
+00:00:37.200 --> 00:00:42.640
+bridge through the bare React Native permissions Android module, unified Expo feature modules,
+
+9
+00:00:42.640 --> 00:00:47.760
+or third-party packages. Regardless of the path you choose, the result is the same.
+
+10
+00:00:47.760 --> 00:00:53.040
+Developers trigger silent application failures by ignoring the edge cases of the Android OS state
+
+11
+00:00:53.040 --> 00:00:57.680
+machine. These failures usually cluster around two specific events,
+
+12
+00:00:57.680 --> 00:01:03.680
+the mishandling of permanent user denials, and running a foul of modern granular media constraints
+
+13
+00:01:03.680 --> 00:01:09.120
+on newer Android versions. This flow chart represents the complete patterned state machine.
+
+14
+00:01:09.120 --> 00:01:13.920
+It maps out the exact architectural solution to handle these exact edge cases,
+
+15
+00:01:13.920 --> 00:01:18.640
+routing initial requests to either granted, denied, or permanently denied states.
+
+16
+00:01:18.960 --> 00:01:23.760
+Reliable implementation relies on mapping these specific Android state transitions
+
+17
+00:01:23.760 --> 00:01:28.640
+directly into the application architecture. Before we can trigger any runtime code,
+
+18
+00:01:28.640 --> 00:01:33.760
+we have to start at the foundational layer. Imperative JavaScript code is entirely powerless
+
+19
+00:01:33.760 --> 00:01:39.520
+without declarative OS permissions to find first. This side-by-side code layout shows how we establish
+
+20
+00:01:39.520 --> 00:01:45.920
+those rules. On the left, in bare React Native projects, the Android Manifest.xml file acts as the
+
+21
+00:01:45.920 --> 00:01:51.040
+absolute source of truth for the operating system. In the Expo-managed workflow shown on the
+
+22
+00:01:51.040 --> 00:01:57.680
+right, you define these same requirements in your app.json file. Expo then dynamically generates
+
+23
+00:01:57.680 --> 00:02:04.080
+the underlying manifest at build time. The OS groups these requests into specific categories.
+
+24
+00:02:04.080 --> 00:02:09.280
+Normal permissions, like internet access, are granted automatically at install time and require
+
+25
+00:02:09.280 --> 00:02:14.560
+no further action. The category that triggers our runtime state machine is labeled protection
+
+26
+00:02:14.640 --> 00:02:20.320
+dangerous. This classification covers access to critical user data and hardware vectors,
+
+27
+00:02:20.320 --> 00:02:26.800
+specifically the camera, location, storage, and contacts. Android prevents any runtime state change
+
+28
+00:02:26.800 --> 00:02:32.000
+in JavaScript for a permission that was not declared in the manifest at install time. Once the
+
+29
+00:02:32.000 --> 00:02:37.760
+manifest is set, we return to the runtime state machine. This translation matrix maps native
+
+30
+00:02:37.760 --> 00:02:43.440
+Kotlin package manager results directly to their JavaScript equivalents. First, the bridge maps the
+
+31
+00:02:43.440 --> 00:02:49.760
+native permission granted success state directly to the JavaScript granted constant. Next, the native
+
+32
+00:02:49.760 --> 00:02:56.320
+permission denied state maps to the JavaScript denied constant. This represents a temporary block
+
+33
+00:02:56.320 --> 00:03:02.240
+where the user said no, but the app is still allowed to ask again. The third state is where most
+
+34
+00:03:02.240 --> 00:03:08.560
+architectural failures occur, permanent denial. Look at the complex native property on the left.
+
+35
+00:03:08.560 --> 00:03:14.720
+Native Android determines a permanent denial using a negative Boolean check. If the OS decides it
+
+36
+00:03:14.720 --> 00:03:19.440
+should not show a request rationale dialogue, it means the user permanently blocked the app.
+
+37
+00:03:20.080 --> 00:03:25.440
+React native abstracts this clunky Boolean logic into a single never-ask again constant on the
+
+38
+00:03:25.440 --> 00:03:31.280
+JavaScript side. If your app enters this state, you are behaviorally locked out. Any subsequent
+
+39
+00:03:31.280 --> 00:03:36.160
+permission requests you execute in JavaScript will automatically fail without ever showing a dialogue
+
+40
+00:03:36.160 --> 00:03:41.360
+to the user. Your application architecture must actively listen for the specific constant.
+
+41
+00:03:41.360 --> 00:03:47.360
+When detected, the only valid response is to display custom UI, redirecting the user out of your
+
+42
+00:03:47.360 --> 00:03:54.320
+app and into the Android OS settings menu. Explicitly handling this never-ask again node is the only
+
+43
+00:03:54.320 --> 00:04:00.240
+way to prevent users from falling into a silent, inescapable denial loop. Even with the result nodes
+
+44
+00:04:00.240 --> 00:04:06.320
+perfectly mapped, Android 13, API level 33, introduced a disruption that breaks the standard
+
+45
+00:04:06.320 --> 00:04:12.160
+flow. This diagram illustrates how Android 13 deprecated the monolithic read external storage
+
+46
+00:04:12.160 --> 00:04:18.240
+permission, splitting it into specific asset categories. These are scoped media permissions. Instead of
+
+47
+00:04:18.240 --> 00:04:23.760
+asking for global access to the entire file system, apps must now make granular requests for images,
+
+48
+00:04:23.760 --> 00:04:29.040
+video, or audio. If you ignore this architectural shift and request the old global storage permission
+
+49
+00:04:29.040 --> 00:04:34.560
+on a device running API 33 or higher, the OS will automatically and silently deny the request.
+
+50
+00:04:34.560 --> 00:04:40.880
+To fix this, you have to implement conditional logic. By checking platform.version in React native,
+
+51
+00:04:40.880 --> 00:04:46.400
+you can branch your request type based on the exact OS the user is running. A robust state
+
+52
+00:04:46.400 --> 00:04:52.000
+machine must query the host environment's version to ensure legacy permissions aren't sent to modern
+
+53
+00:04:52.000 --> 00:04:57.840
+systems. With the OS theory mapped and the edge cases accounted for, we can physically trigger this
+
+54
+00:04:57.840 --> 00:05:03.760
+state machine in a code base. You have a few raw tools available. Bear workflows use permissions
+
+55
+00:05:03.760 --> 00:05:10.400
+Android, while specific Expo modules rely on request permissions async. But the industry standard
+
+56
+00:05:10.400 --> 00:05:16.480
+for bridging these distinct API surfaces is the React native permissions package. The primary
+
+57
+00:05:16.480 --> 00:05:22.000
+advantage of this library is unification. It allows you to use the exact Android state machine we've
+
+58
+00:05:22.000 --> 00:05:27.360
+just built, while standardizing the API to work with iOS's inherently different life cycle.
+
+59
+00:05:28.000 --> 00:05:33.120
+The most effective implementation strategy is constructing a custom React hook designed
+
+60
+00:05:33.120 --> 00:05:39.280
+strictly for permission management. Looking back at our state machine flum chart, the hook manages
+
+61
+00:05:39.280 --> 00:05:45.760
+the entire life cycle. It initializes the status check, fires the request if undetermined, supplies
+
+62
+00:05:45.760 --> 00:05:50.400
+a rationale on the first denial, and prompts the settings redirect on permanent denial.
+
+63
+00:05:51.040 --> 00:05:56.960
+Isolating this logic inside a custom hook keeps your visual UI components completely clean of
+
+64
+00:05:56.960 --> 00:06:03.200
+OS level concerns and prevents race conditions on the native bridge. When that hook finally resolves
+
+65
+00:06:03.200 --> 00:06:10.400
+to the granted state, it signifies full authorization. Your app transforms from a sandboxed UI into a
+
+66
+00:06:10.400 --> 00:06:16.640
+privileged client, fully capable of interacting with the device hardware. With those privileges secured,
+
+67
+00:06:16.640 --> 00:06:22.080
+the immediate next step in the development life cycle is to bind our application directly to the
+
+68
+00:06:22.080 --> 00:06:28.480
+device's camera hardware. Next, we'll break down the native Android camera X concepts and map exactly
+
+69
+00:06:28.480 --> 00:06:36.960
+how they translate to react native vision systems.
+

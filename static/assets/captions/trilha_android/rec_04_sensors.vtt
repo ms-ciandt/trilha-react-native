@@ -1,0 +1,234 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:09.000
+Acessar o hardware do dispositivo no Android exige navegar por um sistema pesado e interligado de gerenciadores rígidos, listeners complexos e passagem constante de contexto.
+
+2
+00:00:09.000 --> 00:00:18.000
+Este diagrama de tela dividida ilustra o boilerplate necessário para ler um sensor básico em Android nativo, dominado por um modelo verboso de herança orientada a objetos.
+
+3
+00:00:18.000 --> 00:00:28.000
+Você percorre três fases obrigatórias do ciclo de vida, instanciando o sensor manager, registrando listeners de hardware e sobrescrevendo o on sensor change para interceptar os dados.
+
+4
+00:00:28.000 --> 00:00:33.000
+React Native e Expo abandonam completamente esse modelo de herança orientada a objetos.
+
+5
+00:00:33.000 --> 00:00:36.000
+Em vez disso, eles migram para subscriptions funcionais.
+
+6
+00:00:36.000 --> 00:00:42.000
+A alternativa do Expo condensa essa lógica em um hook use effect do JavaScript, compacto e autocontido.
+
+7
+00:00:42.000 --> 00:00:47.000
+Isso reduz drasticamente a pegada arquitetural necessária para escutar o hardware do dispositivo.
+
+8
+00:00:47.000 --> 00:00:51.000
+Mas esconder o sistema operacional atrás de uma camada JavaScript levanta uma preocupação óbvia.
+
+9
+00:00:51.000 --> 00:00:54.000
+Você perde o acesso granular ao próprio hardware?
+
+10
+00:00:54.000 --> 00:01:01.000
+A resposta curta é não. O Expo fornece um mapa de capacidades quase idêntico ao do framework Android subjacente.
+
+11
+00:01:01.000 --> 00:01:09.000
+Para provar isso, vamos mapear os principais frameworks de hardware do Android, movimento, localização e estado do dispositivo, diretamente para seus equivalentes no Expo.
+
+12
+00:01:09.000 --> 00:01:14.000
+Você aplica seu conhecimento existente do Android OS à lógica desses componentes modulares em JavaScript.
+
+13
+00:01:14.000 --> 00:01:19.000
+Começamos pela primeira categoria principal de hardware, os sensores de movimento e orientação.
+
+14
+00:01:20.000 --> 00:01:24.000
+Esta tabela estrutural mapeia exatamente como substituímos o sensor manager nativo.
+
+15
+00:01:24.000 --> 00:01:27.000
+Os sensores físicos básicos se mapeiam de forma direta.
+
+16
+00:01:27.000 --> 00:01:34.000
+Sensor accelerometer, gyroscope e magnetic field se tornam os módulos accelerometer, gyroscope e magnetometer no Expo.
+
+17
+00:01:34.000 --> 00:01:44.000
+Como cada um desses módulos do Expo gerencia suas próprias subscriptions internas, a necessidade de um manager centralizado ou de chamadas explícitas de register listener é completamente eliminada.
+
+18
+00:01:44.000 --> 00:01:52.000
+Além dos sensores básicos, o Android também expõe sensores derivados, como o type rotation vector, que combinam múltiplos pontos de dados de hardware.
+
+19
+00:01:52.000 --> 00:01:58.000
+Essa constante rotation vector se mapeia diretamente para o módulo device motion do Expo.
+
+20
+00:01:58.000 --> 00:02:07.000
+O módulo device motion realiza exatamente a mesma fusão matemática interna dos dados de accelerometer e gyroscope para calcular os ângulos de orientação.
+
+21
+00:02:07.000 --> 00:02:10.000
+No entanto, a abstração multiplataforma tem limites.
+
+22
+00:02:10.000 --> 00:02:16.000
+A tradução falha quando um sensor de hardware não é exposto de maneira uniforme em todos os sistemas operacionais.
+
+23
+00:02:16.000 --> 00:02:22.000
+Por exemplo, mapear o sensor de luz do Android gera um erro. Ele não está disponível na biblioteca principal.
+
+24
+00:02:22.000 --> 00:02:31.000
+O React Native exclui intencionalmente o sensor de luz ambiente porque a camada do OS subjacente, entre as diferentes plataformas móveis, não oferece uma ponte uniforme para o espaço do usuário.
+
+25
+00:02:31.000 --> 00:02:37.000
+Consequentemente, o pacote Expo sensors fornece acesso modular aos principais sensores de movimento e orientação,
+
+26
+00:02:37.000 --> 00:02:42.000
+eliminando a necessidade de um gerenciador nativo centralizado para essas interações principais de hardware.
+
+27
+00:02:42.000 --> 00:02:47.000
+Passando do movimento localizado do dispositivo para o contexto global, chegamos aos serviços de localização.
+
+28
+00:02:47.000 --> 00:02:53.000
+Essa pilha de arquitetura em três camadas revela o sistema subjacente do Expo location.
+
+29
+00:02:53.000 --> 00:03:00.000
+As funções JavaScript do Expo encapsulam diretamente o fused location provider client nativo do Android.
+
+30
+00:03:00.000 --> 00:03:08.000
+Se os play services não estiverem disponíveis, o Expo mantém o mecanismo exato de fallback nativo para o location manager do OS.
+
+31
+00:03:08.000 --> 00:03:17.000
+Esses recursos padrão são transferidos perfeitamente, permitindo que você acione solicitações rápidas de localização únicas ou inicie atualizações contínuas de coordenadas.
+
+32
+00:03:17.000 --> 00:03:27.000
+A verbosa classe de callback de localização do Android é completamente substituída pela passagem de simples funções de callback em JavaScript diretamente nos métodos do Expo.
+
+33
+00:03:27.000 --> 00:03:34.000
+Recursos avançados de mapeamento, como geocodificação direta e reversa, também são expostos nativamente através deste único módulo.
+
+34
+00:03:34.000 --> 00:03:41.000
+Mas o cenário de localização mais complexo para desenvolvedores mobile continua sendo o rastreamento de localização enquanto o app está em segundo plano.
+
+35
+00:03:41.000 --> 00:03:49.000
+Para manter um processo de localização ativo em segundo plano, o Expo exige que você direcione os dados recebidos através de seu gerenciador de tarefas interno.
+
+36
+00:03:49.000 --> 00:03:54.000
+Mesmo com esse gerenciador de tarefas em vigor, uma regra arquitetural permanece absoluta.
+
+37
+00:03:54.000 --> 00:04:00.000
+Uma abstração em JavaScript não pode contornar as rígidas políticas de segurança e privacidade do sistema operacional Android.
+
+38
+00:04:00.000 --> 00:04:05.000
+Este esquema do arquivo AndroidManifest destaca o primeiro passo obrigatório.
+
+39
+00:04:05.000 --> 00:04:10.000
+Assim como em um app nativo, você deve declarar a permissão access background location.
+
+40
+00:04:10.000 --> 00:04:19.000
+Acionar a localização em segundo plano através do Expo obriga o sistema operacional a impor requisitos rígidos de interface ao usuário, idênticos aos de uma aplicação Android nativa.
+
+41
+00:04:19.000 --> 00:04:26.000
+O resultado voltado para o usuário dessa aplicação do OS é uma notificação de serviço em primeiro plano persistente vinculada ao seu app.
+
+42
+00:04:26.000 --> 00:04:35.000
+Embora o Expo location forneça uma interface JavaScript altamente simplificada, você ainda precisa arquitetar seu app para respeitar as regras imutáveis de foreground service do Android.
+
+43
+00:04:35.000 --> 00:04:41.000
+A categoria final de acesso a hardware abrange feedback físico do dispositivo e gerenciamento de estado do hardware.
+
+44
+00:04:41.000 --> 00:04:46.000
+Começamos mapeando a classe nativa básica do vibrator do Android para seu equivalente cross-platform.
+
+45
+00:04:46.000 --> 00:04:52.000
+A funcionalidade simples de vibração é única aqui, pois não requer a instalação de um pacote Expo.
+
+46
+00:04:52.000 --> 00:04:55.000
+Ela é construída diretamente dentro da biblioteca core do react native.
+
+47
+00:04:55.000 --> 00:05:03.000
+No entanto, muitas vezes você precisa de padrões táteis granulares mais complexos, equivalentes ao VibrationEffect.EffectClick do Android.
+
+48
+00:05:03.000 --> 00:05:09.000
+Esses padrões táteis precisos são mapeados diretamente do core nativo para o Expo haptics module.
+
+49
+00:05:09.000 --> 00:05:15.000
+Gerenciar o estado real do hardware, especificamente controlando o comportamento da tela, segue o mesmo padrão modular.
+
+50
+00:05:15.000 --> 00:05:24.000
+O power manager nativo do Android, controlando os wakelocks da tela, se torna o Expo Keep-A-Wake, e o Brightness Manager do OS é mapeado diretamente para o Expo Brightness.
+
+51
+00:05:24.000 --> 00:05:29.000
+Essas interações de hardware terciárias demonstram a filosofia central do Expo.
+
+52
+00:05:29.000 --> 00:05:37.000
+Em vez de usar gerenciadores monolíticos para controlar múltiplos sistemas, recursos específicos do OS são compartimentalizados em pacotes de responsabilidade única.
+
+53
+00:05:37.000 --> 00:05:47.000
+Olhando novamente para nossa tabela de mapeamento abrangente, podemos ver o caminho completo de migração. O Expo alcança um mapeamento de capacidades quase um-para-um com as APIs nativas de dispositivo do Android.
+
+54
+00:05:47.000 --> 00:05:56.000
+Apesar de mapear para gerenciadores de OS bastante diferentes, o modelo de interação dentro do Expo é padronizado em subscriptions declarativas em JavaScript.
+
+55
+00:05:56.000 --> 00:06:08.000
+A regra de ouro para hardware multiplataforma permanece intacta. O JavaScript simplifica a forma como você invoca o hardware, mas as permissões do OS Android subjacente e as regras de lifecycle ainda ditam o comportamento real.
+
+56
+00:06:08.000 --> 00:06:17.000
+Com o hardware interno abstraído, resta um último obstáculo técnico para um desenvolvedor Android em transição, gerenciar a comunicação externa assíncrona.
+
+57
+00:06:17.000 --> 00:06:22.000
+Isso nos leva ao tópico final da nossa jornada de migração, push notifications.
+
+58
+00:06:22.000 --> 00:06:32.000
+No nosso próximo passo, vamos desconstruir exatamente como os canais de notificação nativos do Android mapeiam diretamente para o Firebase Cloud Messaging dentro de uma arquitetura React Native.
+

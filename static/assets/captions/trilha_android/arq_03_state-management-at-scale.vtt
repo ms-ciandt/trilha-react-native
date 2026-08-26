@@ -1,0 +1,490 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:05.480
+Este grafo de nós representa um instinto de engenharia legado no desenvolvimento com react native,
+
+2
+00:00:05.480 --> 00:00:10.120
+despejando todos os dados da aplicação em um único store global unificado.
+
+3
+00:00:10.120 --> 00:00:13.440
+Este é o acoplamento de dois tipos de dados incompatíveis,
+
+4
+00:00:13.440 --> 00:00:17.960
+dados remotos assíncronos do servidor e dados locais síncronos da UI.
+
+5
+00:00:17.960 --> 00:00:21.400
+Esse acoplamento cria sintomas arquiteturais imediatos.
+
+6
+00:00:21.400 --> 00:00:25.800
+O primeiro é a necessidade de escrever lógica manual de cache e validação,
+
+7
+00:00:25.920 --> 00:00:30.520
+forçando os desenvolvedores a gerenciar manualmente o momento das atualizações dos dados remotos.
+
+8
+00:00:30.520 --> 00:00:32.840
+O segundo sintoma decorre diretamente disso.
+
+9
+00:00:32.840 --> 00:00:36.920
+Como o store local inevitavelmente fica dessincronizado da fonte remota,
+
+10
+00:00:36.920 --> 00:00:40.280
+bugs de dados desatualizados começam a aparecer na interface do usuário.
+
+11
+00:00:40.280 --> 00:00:43.520
+O terceiro sintoma é o surgimento de race conditions.
+
+12
+00:00:43.520 --> 00:00:47.440
+Múltiplas buscas assíncronas entram em conflito dentro de uma única store,
+
+13
+00:00:47.440 --> 00:00:50.480
+deixando a interface do usuário em um estado não determinístico
+
+14
+00:00:50.480 --> 00:00:52.600
+que fica sem resposta para o usuário.
+
+15
+00:00:52.640 --> 00:00:56.840
+Essas não são limitações inerentes ao react native framework.
+
+16
+00:00:56.840 --> 00:00:59.760
+Elas são o resultado direto de uma suposição arquitetural
+
+17
+00:00:59.760 --> 00:01:02.160
+sobre como o state deveria ser gerenciado.
+
+18
+00:01:02.160 --> 00:01:05.760
+Escalabilidade previsível exige uma bifurcação rigorosa do state.
+
+19
+00:01:05.760 --> 00:01:08.800
+Devemos isolar os dados em categorias distintas
+
+20
+00:01:08.800 --> 00:01:11.920
+e aplicar ferramentas especializadas para governar cada domínio.
+
+21
+00:01:11.920 --> 00:01:15.440
+O desacoplamento estrito de estado fornece o isolamento estrutural necessário
+
+22
+00:01:15.440 --> 00:01:17.520
+para remover a lógica manual de cache,
+
+23
+00:01:17.520 --> 00:01:21.520
+proporcionando um caminho para a estabilidade em escala empresarial no react native.
+
+24
+00:01:21.560 --> 00:01:24.480
+Este diagrama de tela dividida ilustra a solução.
+
+25
+00:01:24.480 --> 00:01:28.480
+À esquerda está o estado do servidor, dados originados em um banco de dados remoto
+
+26
+00:01:28.480 --> 00:01:32.080
+que devem ser continuamente buscados, armazenados em cache e sincronizados.
+
+27
+00:01:32.080 --> 00:01:33.920
+A ferramenta empresarial padrão da indústria
+
+28
+00:01:33.920 --> 00:01:37.320
+para gerenciar esse domínio assíncrono é o TANstack Query.
+
+29
+00:01:37.320 --> 00:01:39.440
+Do lado direito, temos o estado do cliente.
+
+30
+00:01:39.440 --> 00:01:43.440
+Este é um dado efêmero que existe apenas durante o ciclo de vida da aplicação,
+
+31
+00:01:43.440 --> 00:01:47.280
+preferências de modo escuro, itens do carrinho local, ou sessões inativas.
+
+32
+00:01:47.280 --> 00:01:51.040
+A ferramenta mais adequada para gerenciar esse domínio local síncrono
+
+33
+00:01:51.040 --> 00:01:52.360
+é Zustant.
+
+34
+00:01:52.360 --> 00:01:54.360
+A principal restrição arquitetural
+
+35
+00:01:54.360 --> 00:01:58.880
+é que esses dois domínios de estado nunca devem ser misturados na mesma store.
+
+36
+00:01:58.880 --> 00:02:01.320
+Violar essa barreira força os desenvolvedores
+
+37
+00:02:01.320 --> 00:02:04.120
+a escrever manualmente lógica de sistemas distribuídos,
+
+38
+00:02:04.120 --> 00:02:09.160
+como retries de rede e caching, dentro de um gerenciador de estado de UI simples.
+
+39
+00:02:09.160 --> 00:02:13.400
+Respeitar esse limite transfere o caching complexo para o TANstack Query,
+
+40
+00:02:13.400 --> 00:02:15.920
+reduzindo a base de código total da aplicação
+
+41
+00:02:15.920 --> 00:02:19.080
+e reduzindo a carga cognitiva da equipe de engenharia.
+
+42
+00:02:19.080 --> 00:02:21.720
+Olhando especificamente para o domínio de estado do cliente,
+
+43
+00:02:21.720 --> 00:02:24.280
+o estado local da UI ainda pode se tornar um gargalo
+
+44
+00:02:24.280 --> 00:02:26.800
+à medida que o conjunto de funcionalidades de uma aplicação se expande.
+
+45
+00:02:26.800 --> 00:02:28.680
+Este diagrama de blocos mostra o que acontece
+
+46
+00:02:28.680 --> 00:02:32.360
+quando uma única store Zustand desorganizada cresce sem controle.
+
+47
+00:02:32.360 --> 00:02:34.880
+Ela se torna ingerenciável para equipes grandes,
+
+48
+00:02:34.880 --> 00:02:36.280
+gerando conflitos de merge
+
+49
+00:02:36.280 --> 00:02:39.200
+e disparando re-renders globais desnecessários.
+
+50
+00:02:39.200 --> 00:02:41.560
+A solução padrão de escalabilidade para esse gargalo
+
+51
+00:02:41.560 --> 00:02:43.560
+é o padrão Zustand Slices.
+
+52
+00:02:43.560 --> 00:02:48.600
+Esse padrão organiza o estado em arquiteturas modulares específicas de domínio.
+
+53
+00:02:48.600 --> 00:02:51.720
+Um slice exclusivamente para autenticação de usuário,
+
+54
+00:02:51.720 --> 00:02:54.160
+outro isolado para a lógica do carrinho de compras,
+
+55
+00:02:54.160 --> 00:02:57.240
+trazendo o desenvolvimento para um alinhamento nativo mobile.
+
+56
+00:02:57.240 --> 00:02:59.560
+O propósito conceitual de um Zustand Slices
+
+57
+00:02:59.560 --> 00:03:03.040
+mapeia diretamente para o papel de uma classe view model do Android.
+
+58
+00:03:03.040 --> 00:03:05.480
+Ao tratar slices como view models nativos,
+
+59
+00:03:05.480 --> 00:03:08.280
+os engenheiros reforçam uma separação de responsabilidades,
+
+60
+00:03:08.280 --> 00:03:10.720
+onde uma atualização mínima de UI no carrinho de compras
+
+61
+00:03:10.720 --> 00:03:14.200
+não pode disparar uma re-renderização em cascata no fluxo de autenticação.
+
+62
+00:03:14.200 --> 00:03:16.760
+Mudando o foco de volta para o domínio de estado do servidor,
+
+63
+00:03:16.760 --> 00:03:18.640
+simples chamadas fetch são insuficientes
+
+64
+00:03:18.640 --> 00:03:21.640
+para uma implementação enterprise de hand stack query.
+
+65
+00:03:21.640 --> 00:03:24.120
+Uma vulnerabilidade comum na lógica de caching padrão
+
+66
+00:03:24.120 --> 00:03:26.360
+é a dependência de chaves de string hard-coded
+
+67
+00:03:26.360 --> 00:03:28.480
+para identificar e recuperar dados.
+
+68
+00:03:28.480 --> 00:03:32.360
+Simples erros de digitação em strings inevitavelmente contornam as regras de cache e validação.
+
+69
+00:03:32.360 --> 00:03:34.120
+Isso cria falhas silenciosas de dados
+
+70
+00:03:34.120 --> 00:03:36.720
+que são difíceis de rastrear durante o debugging.
+
+71
+00:03:36.720 --> 00:03:39.160
+Esta representação visual do fluxo de código
+
+72
+00:03:39.160 --> 00:03:41.600
+demonstra a solução estrutural,
+
+73
+00:03:41.600 --> 00:03:44.000
+as typed query key factories.
+
+74
+00:03:44.040 --> 00:03:47.440
+Uma typed factory garante consistência absoluta das queries
+
+75
+00:03:47.440 --> 00:03:51.680
+e segurança de tipos em bases de código com múltiplos desenvolvedores.
+
+76
+00:03:51.680 --> 00:03:55.000
+Uma vez que a segurança de tipos esteja firmemente estabelecida,
+
+77
+00:03:55.000 --> 00:03:57.440
+a arquitetura precisa considerar a latência dos dados
+
+78
+00:03:57.440 --> 00:04:00.120
+por meio de busca proativa de dados em segundo plano.
+
+79
+00:04:00.120 --> 00:04:02.760
+Isso introduz o segundo padrão principal,
+
+80
+00:04:02.760 --> 00:04:05.200
+prefetching no tan stack query.
+
+81
+00:04:05.200 --> 00:04:07.880
+Este diagrama mostra um pipeline de dados em segundo plano
+
+82
+00:04:07.880 --> 00:04:11.480
+que reflete de perto a mecânica do work manager do Android.
+
+83
+00:04:11.480 --> 00:04:13.360
+Usar o modelo mental do work manager
+
+84
+00:04:13.360 --> 00:04:15.560
+ajuda os desenvolvedores a estruturar suas aplicações
+
+85
+00:04:15.560 --> 00:04:17.400
+para preparar dados em segundo plano.
+
+86
+00:04:17.400 --> 00:04:18.640
+Garantindo que estejam disponíveis,
+
+87
+00:04:18.640 --> 00:04:21.680
+no momento em que um usuário navega para uma nova tela.
+
+88
+00:04:21.680 --> 00:04:23.880
+O obstáculo final na latência da aplicação
+
+89
+00:04:23.880 --> 00:04:25.720
+ocorre durante mutations,
+
+90
+00:04:25.720 --> 00:04:28.960
+esperando a confirmação do servidor quando um usuário altera dados,
+
+91
+00:04:28.960 --> 00:04:31.000
+como pressionar um botão de curtir.
+
+92
+00:04:31.000 --> 00:04:34.040
+O método principal para reduzir essa percepção de lag de rede
+
+93
+00:04:34.040 --> 00:04:37.680
+é o terceiro padrão essencial, optimistic updates.
+
+94
+00:04:37.680 --> 00:04:41.320
+Este diagrama de fluxo sequencial mapeia o processo.
+
+95
+00:04:41.320 --> 00:04:45.280
+Você muta instantaneamente o estado local da UI mediante a ação do usuário,
+
+96
+00:04:45.280 --> 00:04:46.800
+operando sob a suposição
+
+97
+00:04:46.800 --> 00:04:49.480
+de que a requisição ao servidor eventualmente terá sucesso.
+
+98
+00:04:49.480 --> 00:04:51.920
+A rede de segurança aqui é que o tan stack query
+
+99
+00:04:51.920 --> 00:04:55.160
+reverte automaticamente a UI para seu estado anterior
+
+100
+00:04:55.160 --> 00:04:58.080
+caso a requisição em segundo plano ao servidor falhe.
+
+101
+00:04:58.080 --> 00:05:01.800
+Combinando key factories, prefetching e optimistic updates
+
+102
+00:05:01.800 --> 00:05:03.520
+transforma o tan stack query
+
+103
+00:05:03.520 --> 00:05:07.240
+em um mecanismo de sincronização resiliente e capaz de funcionar offline.
+
+104
+00:05:07.240 --> 00:05:09.320
+Voltando ao nosso diagrama de tela dividida,
+
+105
+00:05:09.320 --> 00:05:11.200
+agora podemos visualizar totalmente realizada
+
+106
+00:05:11.200 --> 00:05:14.520
+a arquitetura de motor duplo do react native em operação.
+
+107
+00:05:14.520 --> 00:05:18.000
+As slices do Zustand cuidam da lógica imediata da UI local,
+
+108
+00:05:18.000 --> 00:05:21.600
+enquanto o tan stack query governa estritamente a sincronização remota.
+
+109
+00:05:21.600 --> 00:05:23.440
+Impor essa separação rigorosa
+
+110
+00:05:23.440 --> 00:05:26.120
+aborda as causas estruturais dos bugs de estado de carregamento
+
+111
+00:05:26.120 --> 00:05:28.400
+e substitui o monólito de store única
+
+112
+00:05:28.400 --> 00:05:30.680
+por um sistema modular previsível.
+
+113
+00:05:30.680 --> 00:05:34.240
+No entanto, mesmo motores de estado perfeitamente arquitetados
+
+114
+00:05:34.240 --> 00:05:37.240
+ocasionalmente encontrarão falhas imprevisíveis de rede
+
+115
+00:05:37.240 --> 00:05:39.600
+ou de lógica em produção.
+
+116
+00:05:39.600 --> 00:05:43.480
+Isso introduz a necessidade de observabilidade estruturada.
+
+117
+00:05:43.480 --> 00:05:45.640
+Quando o estado falha, a equipe de engenharia
+
+118
+00:05:45.640 --> 00:05:47.920
+precisa saber exatamente por quê.
+
+119
+00:05:47.920 --> 00:05:51.480
+Isso prepara a próxima fase crítica do escalonamento empresarial,
+
+120
+00:05:51.480 --> 00:05:54.560
+implementando century, estruturando o crash reporting,
+
+121
+00:05:54.560 --> 00:05:56.760
+e construindo padrões globais de tratamento de erros
+
+122
+00:05:56.760 --> 00:05:59.760
+para capturar as falhas que as máquinas de estado não conseguem evitar.
+

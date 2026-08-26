@@ -1,0 +1,302 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:05.480
+Transitioning your data persistence layer from native Android to react native means mapping
+
+2
+00:00:05.480 --> 00:00:10.280
+the architectures you already know to their exact Expo module equivalence.
+
+3
+00:00:10.280 --> 00:00:14.240
+There's a common assumption that moving to cross-platform development forces you to
+
+4
+00:00:14.240 --> 00:00:18.120
+rely on slow web-based abstractions, like local storage.
+
+5
+00:00:18.120 --> 00:00:19.560
+That is incorrect.
+
+6
+00:00:19.560 --> 00:00:22.080
+Expo modules act as a JavaScript interface.
+
+7
+00:00:22.080 --> 00:00:27.040
+They bind directly to the exact same native Android storage engines you are already using.
+
+8
+00:00:27.040 --> 00:00:30.400
+This table breaks down data persistence into five categories.
+
+9
+00:00:30.400 --> 00:00:36.320
+Key value, relational, internal files, user-picked documents, and secure data.
+
+10
+00:00:36.320 --> 00:00:40.360
+Establishing a baseline, this first row maps Android's shared preferences directly to
+
+11
+00:00:40.360 --> 00:00:42.840
+MMKV or async storage.
+
+12
+00:00:42.840 --> 00:00:47.760
+While MMKV is highly efficient for managing basic application state, the rest of your architecture
+
+13
+00:00:47.760 --> 00:00:50.680
+requires much deeper native integration.
+
+14
+00:00:50.680 --> 00:00:55.040
+Handling relational data, managing raw files, and cryptographic keys demands a different
+
+15
+00:00:55.040 --> 00:00:56.360
+approach.
+
+16
+00:00:56.400 --> 00:01:01.240
+Having to a cross-platform framework does not mean giving up native performance.
+
+17
+00:01:01.240 --> 00:01:06.960
+It requires understanding the strict one-to-one mapping between existing native silos and their
+
+18
+00:01:06.960 --> 00:01:09.480
+respective Expo bridges.
+
+19
+00:01:09.480 --> 00:01:14.280
+Complex applications require a robust structure for persisting relational data.
+
+20
+00:01:14.280 --> 00:01:19.480
+You need a system that supports complex queries and strict data integrity.
+
+21
+00:01:19.480 --> 00:01:24.560
+Returning to our matrix, we map the Android standard, room, directly to the Expo SQL
+
+22
+00:01:24.560 --> 00:01:26.000
+Lite module.
+
+23
+00:01:26.000 --> 00:01:29.080
+This diagram illustrates an important distinction.
+
+24
+00:01:29.080 --> 00:01:34.680
+Expo SQL Lite is not a web SQL polyfill or a restricted browser sandbox.
+
+25
+00:01:34.680 --> 00:01:40.000
+It bypasses those layers entirely to bind with the exact same native Android database engine
+
+26
+00:01:40.000 --> 00:01:45.280
+that powers room, operating asynchronously so the main thread remains unblocked.
+
+27
+00:01:45.280 --> 00:01:48.680
+The syntax design maintains strict feature parity.
+
+28
+00:01:48.680 --> 00:01:53.280
+Creating schemas in Expo SQL Lite directly mirrors the structure you define using rooms
+
+29
+00:01:53.280 --> 00:01:54.960
+database annotations.
+
+30
+00:01:54.960 --> 00:02:02.240
+Furthermore, executing complex read, write, and update operations safely relies on SQL transactions
+
+31
+00:02:02.240 --> 00:02:05.920
+that perfectly replicate rooms transaction annotations.
+
+32
+00:02:05.920 --> 00:02:10.880
+For modern architecture, this native database integrates seamlessly with state management tools
+
+33
+00:02:10.880 --> 00:02:12.560
+like React Query.
+
+34
+00:02:12.560 --> 00:02:17.520
+When you write relational queries and react native, you command the exact same native Android
+
+35
+00:02:17.520 --> 00:02:21.920
+database engine as in an application built entirely in Kotlin.
+
+36
+00:02:21.920 --> 00:02:25.280
+Having raw files introduces another layer of complexity.
+
+37
+00:02:25.280 --> 00:02:30.640
+The Android operating system splits file handling into two distinct permission paradigms and react
+
+38
+00:02:30.640 --> 00:02:33.000
+native maps to each separately.
+
+39
+00:02:33.000 --> 00:02:38.600
+Back on our matrix, we map internal arbitrary read and write operations, downloads, and directory
+
+40
+00:02:38.600 --> 00:02:41.560
+listings directly to Expo file system.
+
+41
+00:02:41.560 --> 00:02:46.840
+This flow chart isolates the Expo file system module entirely within Branch A, built strictly
+
+42
+00:02:46.840 --> 00:02:51.160
+for internal file caching and background management without user interaction.
+
+43
+00:02:51.160 --> 00:02:57.920
+We move to Branch B when a workflow requires user to manually select a document or media file.
+
+44
+00:02:57.920 --> 00:03:03.240
+Because this interaction breaches the app internal boundary, React Native needs a dedicated module
+
+45
+00:03:03.240 --> 00:03:08.400
+designed specifically to trigger the native Android file picker user interface.
+
+46
+00:03:08.400 --> 00:03:13.440
+To execute this, the Expo document picker module binds directly to Android's intent for
+
+47
+00:03:13.440 --> 00:03:17.680
+opening documents and the system's storage access framework.
+
+48
+00:03:17.680 --> 00:03:22.640
+Native respects Android's compartmentalized boundaries by demanding one module for silent
+
+49
+00:03:22.640 --> 00:03:28.600
+background operations and entirely different tooling for user prompted media selection.
+
+50
+00:03:28.600 --> 00:03:33.920
+Securing highly sensitive data requires moving past software-based encryption and locking cryptographic
+
+51
+00:03:33.920 --> 00:03:37.840
+keys directly into the physical hardware of the device itself.
+
+52
+00:03:37.840 --> 00:03:42.840
+You must implement this strict security when storing authentication tokens or generating
+
+53
+00:03:42.840 --> 00:03:44.680
+cryptographic signatures.
+
+54
+00:03:44.680 --> 00:03:50.600
+Speaking of the final layer of our storage matrix, Android's encrypted shared preferences
+
+55
+00:03:50.600 --> 00:03:57.600
+translates to either an encrypted MMKV instance or the Expo secure store module.
+
+56
+00:03:57.600 --> 00:04:03.400
+This architecture diagram shows how Expo secure store bypasses JavaScript-based encryption
+
+57
+00:04:03.400 --> 00:04:04.400
+entirely.
+
+58
+00:04:04.400 --> 00:04:10.920
+Instead, the module routes directly to the native Android key generator and key store components.
+
+59
+00:04:10.920 --> 00:04:16.440
+By leveraging these native systems, the resulting payload is encrypted using the advanced encryption
+
+60
+00:04:16.440 --> 00:04:20.080
+standard with a 256-bit key length.
+
+61
+00:04:20.080 --> 00:04:25.120
+Because the module delegates the cryptographic heavylifting directly to the Android key store,
+
+62
+00:04:25.120 --> 00:04:29.920
+the resulting encrypted data becomes permanently tethered to that specific device's physical
+
+63
+00:04:29.920 --> 00:04:31.080
+hardware.
+
+64
+00:04:31.080 --> 00:04:36.480
+The Expo secure store module provides zero compromise on device security, replicating the
+
+65
+00:04:36.480 --> 00:04:41.120
+protections of native Android encrypted shared preferences, byte for byte.
+
+66
+00:04:41.120 --> 00:04:44.960
+This completed table shows the full architectural mapping.
+
+67
+00:04:44.960 --> 00:04:49.800
+Transitioning from native Android to re-oct native does not demand that you discard your knowledge
+
+68
+00:04:49.800 --> 00:04:53.000
+and learn entirely new storage paradigms.
+
+69
+00:04:53.000 --> 00:04:58.200
+Expo modules are explicitly designed to act as one-to-one bridges, connecting JavaScript
+
+70
+00:04:58.200 --> 00:05:03.200
+to the SQLite engine, the storage access framework, and the hardware key store.
+
+71
+00:05:03.200 --> 00:05:08.640
+This exact same cross-platform bridging logic extends well beyond data persistence.
+
+72
+00:05:08.640 --> 00:05:14.240
+Hardware sensors and device APIs like Android's sensor manager and location manager map just
+
+73
+00:05:14.240 --> 00:05:17.400
+as directly to their JavaScript equivalents.
+
+74
+00:05:17.400 --> 00:05:21.960
+Mastering React Native architecture is an exercise in leveraging your existing native Android
+
+75
+00:05:21.960 --> 00:05:25.720
+knowledge, simply executing it through a new declarative syntax.
+

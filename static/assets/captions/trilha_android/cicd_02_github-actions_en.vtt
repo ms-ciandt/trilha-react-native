@@ -1,0 +1,294 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:05.000
+Manually building a React Native Android app is an exercise in patience.
+
+2
+00:00:05.000 --> 00:00:09.000
+You compile, you wait, you drag files around, you upload.
+
+3
+00:00:09.000 --> 00:00:14.000
+Today, we are replacing that manual assembly line with a fully automated pipeline.
+
+4
+00:00:14.000 --> 00:00:18.000
+By the end of this setup, every pull request will be automatically checked for errors
+
+5
+00:00:18.000 --> 00:00:23.000
+and every merge to the main branch will deploy your app directly to the Google Play Store.
+
+6
+00:00:23.000 --> 00:00:27.000
+Before we write a single line of configuration, you need three things ready to go.
+
+7
+00:00:27.000 --> 00:00:33.000
+A GitHub repository, your Android release keystore file, and a Google Play service account JSON key.
+
+8
+00:00:33.000 --> 00:00:39.000
+Pay close attention to how you format your base 64 encoding and how you spell your repository secrets.
+
+9
+00:00:39.000 --> 00:00:43.000
+These two steps account for nearly all deployment failures.
+
+10
+00:00:43.000 --> 00:00:48.000
+Taking a few minutes to strictly configure this pipeline right now will save you hundreds of hours
+
+11
+00:00:48.000 --> 00:00:51.000
+of staring at loading bars in the future. Let's get to work.
+
+12
+00:00:51.000 --> 00:00:56.000
+To sign your Android app, GitHub actions needs access to your local keystore file.
+
+13
+00:00:56.000 --> 00:01:01.000
+But uploading raw cryptographic files to a repository is a massive security risk,
+
+14
+00:01:01.000 --> 00:01:04.000
+and the runner can't securely read them anyway.
+
+15
+00:01:04.000 --> 00:01:08.000
+Instead, we need to convert that physical file into a secure text string.
+
+16
+00:01:08.000 --> 00:01:12.000
+Open your terminal and navigate to the folder containing your keystore.
+
+17
+00:01:12.000 --> 00:01:16.000
+Run the command base64-i release.keystore.
+
+18
+00:01:16.000 --> 00:01:22.000
+Using this exact command ensures no invisible spaces or new line characters sneak into the output,
+
+19
+00:01:22.000 --> 00:01:24.000
+which would instantly corrupt the key.
+
+20
+00:01:24.000 --> 00:01:28.000
+Copy that block of text, then head over to your GitHub repository.
+
+21
+00:01:28.000 --> 00:01:32.000
+Navigate to settings, click on Secrets and Variables, and select Actions.
+
+22
+00:01:32.000 --> 00:01:37.000
+We need to create five specific repository secrets to match our workflow.
+
+23
+00:01:37.000 --> 00:01:44.000
+Keystore base64, Keystore password, Key alias, Key password, and Google Play service account.
+
+24
+00:01:44.000 --> 00:01:48.000
+Paste the terminal output you just generated into the base64 secret.
+
+25
+00:01:48.000 --> 00:01:55.000
+Then, take the raw text from your Google Play JSON key and paste it directly into the service account secret.
+
+26
+00:01:55.000 --> 00:01:59.000
+Fill in the remaining passwords and alias from your original local setup.
+
+27
+00:01:59.000 --> 00:02:03.000
+Double check your spelling and capitalization on these exact secret names.
+
+28
+00:02:03.000 --> 00:02:07.000
+A single casing error here means the workflow won't find the key,
+
+29
+00:02:07.000 --> 00:02:10.000
+and your deployment will fail silently later on.
+
+30
+00:02:10.000 --> 00:02:15.000
+With these secrets saved, your remote repository is armed with the cryptographic keys it needs
+
+31
+00:02:15.000 --> 00:02:18.000
+to build and publish your app entirely on its own,
+
+32
+00:02:18.000 --> 00:02:21.000
+keeping your sensitive data completely out of the code base.
+
+33
+00:02:21.000 --> 00:02:24.000
+Now we can build the actual automation files.
+
+34
+00:02:24.000 --> 00:02:27.000
+Step 1 is setting up a pull request checker workflow.
+
+35
+00:02:27.000 --> 00:02:32.000
+In your project folder, create a new file under the .github slash workflows directory,
+
+36
+00:02:32.000 --> 00:02:35.000
+called PR-checks.yaml.
+
+37
+00:02:35.000 --> 00:02:42.000
+We will set the trigger condition so this workflow runs anytime someone opens or updates a pull request targeting the main branch.
+
+38
+00:02:43.000 --> 00:02:45.000
+The core logic here is straightforward.
+
+39
+00:02:45.000 --> 00:02:50.000
+The runner will install dependencies, run your linter, execute your test suite,
+
+40
+00:02:50.000 --> 00:02:53.000
+and verify that the Android app actually compiles.
+
+41
+00:02:53.000 --> 00:02:56.000
+Think of this as an automated gatekeeper.
+
+42
+00:02:56.000 --> 00:03:00.000
+If a developer pushes code with a syntax error or a failing test,
+
+43
+00:03:00.000 --> 00:03:05.000
+this workflow physically blocks the broken code from merging into the main branch.
+
+44
+00:03:05.000 --> 00:03:11.000
+Catching these errors at the pull request stage ensures you never accidentally deploy a broken bill to production.
+
+45
+00:03:11.000 --> 00:03:15.000
+You are removing human oversight from the equation entirely.
+
+46
+00:03:15.000 --> 00:03:20.000
+With the gatekeeper in place, we move to the main event, the build and deploy workflow.
+
+47
+00:03:20.000 --> 00:03:26.000
+Create a second yaml file, configured to trigger exclusively when code is successfully merged into the main branch.
+
+48
+00:03:26.000 --> 00:03:30.000
+This workflow will compile a production ready Android app bundle.
+
+49
+00:03:30.000 --> 00:03:36.000
+To sign it, the script pulls the repository secrets we saved earlier straight into the runner's environment variables.
+
+50
+00:03:36.000 --> 00:03:44.000
+Notice how the variables defined in your yaml script map exactly one to one with the secret names you created in the GitHub settings.
+
+51
+00:03:44.000 --> 00:03:47.000
+Once the bundle is signed, we need to ship it.
+
+52
+00:03:47.000 --> 00:03:51.000
+For that, we use a trusted open source action called Upload Google Play.
+
+53
+00:03:51.000 --> 00:03:54.000
+This specific action takes your finished app bundle,
+
+54
+00:03:54.000 --> 00:03:57.000
+authenticates itself using your service account JSON secret,
+
+55
+00:03:57.000 --> 00:04:00.000
+and pushes the code directly to Google servers.
+
+56
+00:04:00.000 --> 00:04:04.000
+You can even specify your track assignment directly in the yaml file.
+
+57
+00:04:04.000 --> 00:04:11.000
+The system automatically assigns the upload to your internal testing, beta, or production tracks in the play console.
+
+58
+00:04:11.000 --> 00:04:18.000
+This single file replaces the tedious developer chore of running local builds, exporting files, logging into web consoles,
+
+59
+00:04:18.000 --> 00:04:21.000
+and manually dragging and dropping updates.
+
+60
+00:04:21.000 --> 00:04:23.000
+There is one major bottleneck to address.
+
+61
+00:04:23.000 --> 00:04:30.000
+A fresh react native Android build is incredibly heavy, often taking 20 minutes or more to compile from scratch.
+
+62
+00:04:30.000 --> 00:04:33.000
+To fix this, we need to cache our dependencies.
+
+63
+00:04:33.000 --> 00:04:38.000
+By telling GitHub options to store the GradleTache and node modules between runs,
+
+64
+00:04:38.000 --> 00:04:42.000
+the runner doesn't have to download the required files every time you merge code.
+
+65
+00:04:42.000 --> 00:04:50.000
+Looking at a standard build time, a properly configured cache can cut an un-cache 25-minute run down to just six minutes.
+
+66
+00:04:50.000 --> 00:04:55.000
+Implementing a caching strategy is what actually makes CICD pipelines viable.
+
+67
+00:04:55.000 --> 00:05:00.000
+If the automated build takes too long, developers get impatient and find ways to bypass the system.
+
+68
+00:05:00.000 --> 00:05:03.000
+Keep it fast and they'll trust the pipeline.
+
+69
+00:05:03.000 --> 00:05:10.000
+There's nothing quite like clicking merge on a pull request and watching your actions tab light up with a flawless run of green check marks.
+
+70
+00:05:10.000 --> 00:05:17.000
+Within just a few minutes, your new app bundle is sitting in the Google Play console, automatically versioned and ready for testing.
+
+71
+00:05:17.000 --> 00:05:26.000
+Now, while standard GitHub actions is incredibly capable, some react native teams prefer to offload this work entirely to expose dedicated cloud build service.
+
+72
+00:05:26.000 --> 00:05:28.000
+We now have our GitHub actions wired up.
+
+73
+00:05:28.000 --> 00:05:34.000
+Next, click the video on screen to learn to set up EAS build for react native.
+

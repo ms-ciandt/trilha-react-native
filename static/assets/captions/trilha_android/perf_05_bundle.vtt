@@ -1,0 +1,306 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:05.800
+Não há nada mais frustrante do que tocar no ícone de um app e ficar esperando em uma tela travada.
+
+2
+00:00:05.800 --> 00:00:10.000
+Essa inércia lenta define um cold start não otimizado.
+
+3
+00:00:10.000 --> 00:00:15.200
+Para desenvolvedores Android, a base de um cold start é uma sequência bem conhecida.
+
+4
+00:00:15.200 --> 00:00:21.800
+O Android runtime compila o código, os arquivos Dex são carregados, application.onCreate é executado,
+
+5
+00:00:21.800 --> 00:00:26.000
+a main activity infla o layout, e o primeiro frame aparece.
+
+6
+00:00:26.000 --> 00:00:32.000
+Este diagrama compara o start nativo padrão do Android em cima com um start do React Native embaixo.
+
+7
+00:00:32.000 --> 00:00:37.000
+A sequência nativa é idêntica, mas interrompida por um bloco enorme inserido,
+
+8
+00:00:37.000 --> 00:00:41.000
+a inicialização da camada JavaScript, que atrasa o layout final.
+
+9
+00:00:41.000 --> 00:00:47.000
+O React Native depende do Hermes engine, pré-compilando o JavaScript em bytecode com antecedência.
+
+10
+00:00:47.000 --> 00:00:51.000
+Embora a execução seja rápida, ler esse bytecode compilado do armazenamento
+
+11
+00:00:51.000 --> 00:00:54.000
+e carregá-lo na memória gera uma penalidade de tempo significativa.
+
+12
+00:00:55.000 --> 00:00:59.000
+Empurrar bundles JavaScript monolíticos e massivos por esse gargalo de memória
+
+13
+00:00:59.000 --> 00:01:04.000
+força o engine a uma avaliação eager (antecipada), disparando o tempo até ficar interativo.
+
+14
+00:01:04.000 --> 00:01:10.000
+Para comprimir a linha do tempo de inicialização, precisamos desmontar sistematicamente essa inicialização monolítica do JavaScript.
+
+15
+00:01:10.000 --> 00:01:16.000
+Conseguimos isso mapeando a sequência de inicialização usando o Flipper para isolar os gargalos exatos de execução.
+
+16
+00:01:16.000 --> 00:01:20.000
+Uma vez isolados, aplicamos alavancas arquiteturais específicas,
+
+17
+00:01:20.000 --> 00:01:26.000
+reduzindo o IO do bundle, implementando inline requires do Metro e aproveitando RAM bundles.
+
+18
+00:01:26.000 --> 00:01:33.000
+Otimizar a inicialização do react native significa adiar a execução de código do lançamento da aplicação diretamente para o runtime da aplicação.
+
+19
+00:01:33.000 --> 00:01:39.000
+Ir além dos logs de performance.now bruto exige analisar waterfalls visuais de execução.
+
+20
+00:01:39.000 --> 00:01:44.000
+Este é um gráfico de waterfall de execução do Flipper gerado pelo plugin de performance do react native.
+
+21
+00:01:44.000 --> 00:01:48.000
+Ele define o cold start através de quatro blocos sequenciais em cascata.
+
+22
+00:01:48.000 --> 00:01:52.000
+O primeiro bloco, configuração do native module, é a fase de inicialização nativa.
+
+23
+00:01:52.000 --> 00:01:56.000
+Isso é estritamente limitado pelas otimizações padrão do Android,
+
+24
+00:01:56.000 --> 00:02:00.000
+como adiar trabalhos não críticos no mainapplication.kt.
+
+25
+00:02:00.000 --> 00:02:02.000
+O segundo bloco é o bundle load.
+
+26
+00:02:02.000 --> 00:02:07.000
+Esta é a fase física em que o Hermes engine lê o bytecode pré-compilado do file system
+
+27
+00:02:07.000 --> 00:02:09.000
+e o carrega na memória.
+
+28
+00:02:09.000 --> 00:02:15.000
+O terceiro bloco, JS execution, representa o trabalho pesado de executar o global JavaScript scope.
+
+29
+00:02:15.000 --> 00:02:18.000
+O marco final é o content appeared.
+
+30
+00:02:18.000 --> 00:02:22.000
+O momento exato em que o primeiro frame significativo é renderizado com sucesso para o usuário.
+
+31
+00:02:22.000 --> 00:02:27.000
+O carregamento do bundle e a execução do JavaScript são os dois principais gargalos centrados em JavaScript.
+
+32
+00:02:27.000 --> 00:02:30.000
+Os engenheiros têm controle total sobre ambos.
+
+33
+00:02:30.000 --> 00:02:37.000
+Reduzir matematicamente esses dois blocos específicos de profiling é o único caminho garantido para alcançar um tempo de interatividade abaixo de um segundo.
+
+34
+00:02:37.000 --> 00:02:42.000
+Começamos direcionando o primeiro grande gargalo isolado, a fase de carregamento do bundle.
+
+35
+00:02:43.000 --> 00:02:47.000
+A duração dessa fase é ditada por uma restrição física rígida.
+
+36
+00:02:47.000 --> 00:02:52.000
+O tempo de carregamento é proporcional ao tamanho físico do payload de JavaScript armazenado em disco.
+
+37
+00:02:52.000 --> 00:02:57.000
+Para auditar isso, precisamos de métricas de referência para um bundle react native saudável e não comprimido.
+
+38
+00:02:57.000 --> 00:02:59.000
+Menos de um megabyte é bom.
+
+39
+00:02:59.000 --> 00:03:01.000
+Entre um e três megabytes é aceitável.
+
+40
+00:03:01.000 --> 00:03:04.000
+Ultrapassar três megabytes exige triagem imediata.
+
+41
+00:03:04.000 --> 00:03:09.000
+Esta é uma visualização em treemap gerada pelo react native bundle visualizer.
+
+42
+00:03:09.000 --> 00:03:12.000
+Ela mapeia todo o footprint de um bundle JavaScript completo.
+
+43
+00:03:12.000 --> 00:03:18.000
+Um bloco dominante é claramente visível, moment.js, pesando 240 kilobytes.
+
+44
+00:03:18.000 --> 00:03:26.000
+Bibliotecas legadas monolíticas exigem um footprint de memória massivo, e o Hermes engine é forçado a carregá-las por completo antes que o app possa iniciar.
+
+45
+00:03:26.000 --> 00:03:36.000
+Substituir essa dependência por uma alternativa moderna como date FNS reduz instantaneamente aquele bloco de 240 kilobytes para uma fração minúscula de 10 a 20 kilobytes.
+
+46
+00:03:37.000 --> 00:03:47.000
+Outra armadilha comum de payload é importar uma biblioteca utilitária inteira, como load ash, em vez de mirar explicitamente nas funções específicas que você realmente precisa.
+
+47
+00:03:47.000 --> 00:03:55.000
+Eliminar dependências duplicadas e remover famílias não utilizadas em grandes conjuntos de ícones reduz diretamente o overhead total de IO de memória.
+
+48
+00:03:55.000 --> 00:04:04.000
+Um payload físico menor permite que o Hermes carregue o bytecode na memória significativamente mais rápido, acelerando diretamente a fase de carregamento do bundle.
+
+49
+00:04:04.000 --> 00:04:09.000
+Com o payload otimizado, passamos para o próximo bloco crítico, a fase de execução do JS.
+
+50
+00:04:09.000 --> 00:04:15.000
+Por padrão, o JavaScript engine avalia de forma antecipada (eager) todo import de nível superior durante a inicialização.
+
+51
+00:04:15.000 --> 00:04:23.000
+Carregar a lógica de negócio de telas que o usuário nem sequer navegou aumenta desnecessariamente o tempo gasto nessa fase de execução.
+
+52
+00:04:23.000 --> 00:04:26.000
+Este trecho de código mostra um import padrão de nível superior.
+
+53
+00:04:26.000 --> 00:04:32.000
+O Metro Bundler oferece uma solução automatizada para adiar esse carregamento através de um recurso chamado inline requires.
+
+54
+00:04:32.000 --> 00:04:36.000
+Durante o processo de build, o Metro intercepta os imports padrão de nível superior.
+
+55
+00:04:36.000 --> 00:04:47.000
+Ele os reescreve de forma transparente, movendo a chamada para um require localizado, aninhado bem no interior de uma função específica, avaliando-o somente no exato momento da invocação.
+
+56
+00:04:47.000 --> 00:04:51.000
+Os desenvolvedores continuam escrevendo imports padrão no topo de seus arquivos.
+
+57
+00:04:51.000 --> 00:04:55.000
+O Metro lida com as transformações complexas silenciosamente nos bastidores.
+
+58
+00:04:55.000 --> 00:05:03.000
+Forçar esse adiamento evita que módulos não utilizados bloqueiem a JavaScript thread na inicialização, reduzindo enormemente o bloco de execução do JS.
+
+59
+00:05:03.000 --> 00:05:10.000
+Os inline requires corrigiram a avaliação antecipada em nível de módulo, mas aplicativos extremamente grandes exigem um adiamento arquitetural mais amplo.
+
+60
+00:05:10.000 --> 00:05:20.000
+Você pode usar o react.lazy para carregamento dinâmico de telas, direcionando explicitamente componentes de UI raramente visitados, como painéis de administração ou menus de configurações profundamente aninhados.
+
+61
+00:05:20.000 --> 00:05:28.000
+Mas em escala extrema, aplicações enterprise podem facilmente ultrapassar o limite de cinco megabytes do bundle, mesmo após uma poda agressiva.
+
+62
+00:05:28.000 --> 00:05:34.000
+Este diagrama de fluxo arquitetural ilustra os RAM bundles, que mudam a forma como o sistema carrega o payload.
+
+63
+00:05:34.000 --> 00:05:38.000
+O bundle monolítico de seis megabytes não é mais uma unidade única.
+
+64
+00:05:38.000 --> 00:05:42.000
+Ele é fisicamente dividido em dezenas de módulos menores e distintos.
+
+65
+00:05:42.000 --> 00:05:52.000
+Os RAM bundles pré-dividem esses módulos em tempo de build, e habilitar isso requer configurações explícitas tanto no build.gradle quanto no metro.config.js.
+
+66
+00:05:52.000 --> 00:05:58.000
+Essa divisão permite que o sistema de arquivos carregue apenas o ponto de entrada exato e as dependências imediatas necessárias no lançamento.
+
+67
+00:05:58.000 --> 00:06:03.000
+A grande maioria da base de código fica de fora até que seja explicitamente solicitada.
+
+68
+00:06:03.000 --> 00:06:12.000
+Os RAM bundles garantem que, mesmo que a base de código total de uma aplicação escale infinitamente, o payload real de memória no cold start permaneça artificialmente pequeno.
+
+69
+00:06:12.000 --> 00:06:18.000
+Voltando ao gráfico de cascata do Flipper, mapeamos o impacto cumulativo dessas técnicas de otimização.
+
+70
+00:06:18.000 --> 00:06:25.000
+A poda de dependências comprime a fase de carregamento do bundle, e a automação dos inline requires reduz a fase de execução do JS.
+
+71
+00:06:25.000 --> 00:06:30.000
+Simultaneamente, as otimizações nativas foram reduzindo o bloco de configuração do módulo nativo.
+
+72
+00:06:30.000 --> 00:06:41.000
+Para extrair os últimos milissegundos, garanta que os assets locais usem variantes 2x e 3x para que o metro possa servir automaticamente a resolução exata necessária.
+
+73
+00:06:41.000 --> 00:06:49.000
+Uma inicialização lenta do react native não é uma falha inerente da plataforma. É simplesmente um mau gerenciamento da prioridade de execução.
+
+74
+00:06:49.000 --> 00:06:58.000
+Ao auditar rigorosamente esses blocos de profiling, os engenheiros podem alcançar com confiança um tempo de interatividade quase nativo em arquiteturas multiplataforma.
+
+75
+00:06:59.000 --> 00:07:06.000
+Uma vez alcançado o desempenho máximo, o requisito de engenharia muda para garantir a estabilidade arquitetural a longo prazo.
+
+76
+00:07:06.000 --> 00:07:17.000
+Em seguida, mapeamos a stack de testes, traduzindo paradigmas familiares do Android como JUnit e Espresso para a just testing library do react native e o detox.
+

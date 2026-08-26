@@ -1,0 +1,450 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:05.760
+React Native's new architecture entirely eliminates the asynchronous communication bridge,
+
+2
+00:00:05.760 --> 00:00:09.400
+replacing it with a fully synchronous, bridgeless environment.
+
+3
+00:00:09.400 --> 00:00:13.880
+That shift makes the monolithic legacy chrome remote debugger obsolete.
+
+4
+00:00:13.880 --> 00:00:16.160
+It can no longer intercept the traffic.
+
+5
+00:00:16.160 --> 00:00:19.000
+Debugging is no longer a centralized process.
+
+6
+00:00:19.000 --> 00:00:21.960
+You are now working across a multi-tier architecture,
+
+7
+00:00:21.960 --> 00:00:25.600
+and diagnosing issues requires a domain-specific approach.
+
+8
+00:00:25.600 --> 00:00:28.760
+This diagram represents the new execution stack.
+
+9
+00:00:29.000 --> 00:00:32.000
+At the top, we have the JavaScript and React layer.
+
+10
+00:00:32.000 --> 00:00:35.280
+In the middle, sits the Hermes engine and the JSI layer.
+
+11
+00:00:35.280 --> 00:00:39.080
+At the base, we have native Kotlin and the Android operating system.
+
+12
+00:00:39.080 --> 00:00:42.880
+No single tool can see all three of these layers at the same time.
+
+13
+00:00:42.880 --> 00:00:47.200
+To cover the entire stack, you need an exact set of diagnostic tools.
+
+14
+00:00:47.200 --> 00:00:50.640
+React Native Dev Tools, the Chrome Dev Tools Protocol,
+
+15
+00:00:50.640 --> 00:00:54.800
+Flipper, Android Studio, CIS Trace, and Logbox.
+
+16
+00:00:54.800 --> 00:00:57.880
+You must construct a new debugging matrix,
+
+17
+00:00:57.880 --> 00:01:01.720
+mapping specific tools to exact architectural layers
+
+18
+00:01:01.720 --> 00:01:05.480
+in order to successfully isolate performance bottlenecks.
+
+19
+00:01:05.480 --> 00:01:10.160
+We start our analysis at the top of the stack, JavaScript and React.
+
+20
+00:01:10.160 --> 00:01:12.400
+For modern versions of React Rative,
+
+21
+00:01:12.400 --> 00:01:16.600
+the first party default debugger is React Native Dev Tools.
+
+22
+00:01:16.600 --> 00:01:19.600
+This interface handles your standard console logging
+
+23
+00:01:19.600 --> 00:01:22.560
+and allows you to inspect the React component tree
+
+24
+00:01:22.560 --> 00:01:25.560
+while monitoring the live state of your props.
+
+25
+00:01:25.560 --> 00:01:28.840
+TypeScript source maps route directly into this tool,
+
+26
+00:01:28.840 --> 00:01:31.240
+meaning you can set breakpoints in your source files
+
+27
+00:01:31.240 --> 00:01:35.800
+and step through a synchronous code with accurate file and line tracking.
+
+28
+00:01:35.800 --> 00:01:39.720
+When you need to inspect the network layer or the UI view hierarchy,
+
+29
+00:01:39.720 --> 00:01:41.240
+you switch to Flickr.
+
+30
+00:01:41.240 --> 00:01:44.160
+Flipper's layout inspector connects your React components
+
+31
+00:01:44.160 --> 00:01:46.960
+directly to the underlying yoga layout engine,
+
+32
+00:01:46.960 --> 00:01:50.360
+revealing exact margin, padding, and size data.
+
+33
+00:01:50.360 --> 00:01:52.560
+React Native Dev Tools and Flipper
+
+34
+00:01:52.600 --> 00:01:56.400
+handle the developer experience at this top layer exclusively.
+
+35
+00:01:56.400 --> 00:02:00.680
+They are blind to execution issues happening deeper in the engine.
+
+36
+00:02:00.680 --> 00:02:04.480
+Moving one layer down the stack, we reach the Hermes engine.
+
+37
+00:02:04.480 --> 00:02:07.680
+Advanced profiling at this level requires connecting directly
+
+38
+00:02:07.680 --> 00:02:11.880
+to Hermes via the Chrome Dev Tools Protocol or CDP.
+
+39
+00:02:11.880 --> 00:02:16.040
+This timeline illustrates finding memory leaks using heap snapshots.
+
+40
+00:02:16.040 --> 00:02:19.680
+Take a baseline snapshot at state A, navigate away,
+
+41
+00:02:19.680 --> 00:02:22.280
+and take a second snapshot at state B.
+
+42
+00:02:22.360 --> 00:02:25.240
+Comparing the two reveals persistent objects.
+
+43
+00:02:25.240 --> 00:02:27.240
+These are allocations failing collection
+
+44
+00:02:27.240 --> 00:02:29.240
+by the Hermes garbage collector.
+
+45
+00:02:29.240 --> 00:02:32.640
+CDP also provides a CPU profiler to identify
+
+46
+00:02:32.640 --> 00:02:36.320
+synchronous JavaScript execution blocks that delay the thread.
+
+47
+00:02:36.320 --> 00:02:38.960
+In this context, any execution block exceeding
+
+48
+00:02:38.960 --> 00:02:43.200
+50 milliseconds on the main thread is categorized as a long task.
+
+49
+00:02:43.200 --> 00:02:45.880
+By isolating the JavaScript engine with CDP,
+
+50
+00:02:45.880 --> 00:02:49.040
+you prevent the misdiagnosis of blaming the native device hardware
+
+51
+00:02:49.040 --> 00:02:52.240
+for computation delays happening strictly in your code.
+
+52
+00:02:52.240 --> 00:02:54.680
+We drop to the bottom layer of the architecture,
+
+53
+00:02:54.680 --> 00:02:57.200
+native Kotlin and the operating system.
+
+54
+00:02:57.200 --> 00:02:59.960
+The Hermes tools cannot penetrate this far down,
+
+55
+00:02:59.960 --> 00:03:02.600
+making Android Studio mandatory.
+
+56
+00:03:02.600 --> 00:03:06.240
+This is an Android Studio CPU profiler flame chart
+
+57
+00:03:06.240 --> 00:03:10.000
+used for diagnosing the performance of custom turbo modules.
+
+58
+00:03:10.000 --> 00:03:13.040
+By tracking custom trace sections placed in your code,
+
+59
+00:03:13.040 --> 00:03:16.200
+this chart reveals the exact microsecond execution times
+
+60
+00:03:16.200 --> 00:03:18.160
+for your Kotlin methods.
+
+61
+00:03:18.160 --> 00:03:20.320
+For diagnosing memory issues specifically
+
+62
+00:03:20.320 --> 00:03:22.480
+within fabric components, you switch
+
+63
+00:03:22.480 --> 00:03:25.160
+to Android Studio's memory profiler.
+
+64
+00:03:25.160 --> 00:03:26.760
+The workflow is direct.
+
+65
+00:03:26.760 --> 00:03:29.560
+You navigate to the screen holding your fabric component
+
+66
+00:03:29.560 --> 00:03:32.200
+then manually force garbage collection.
+
+67
+00:03:32.200 --> 00:03:33.800
+After generating a heap dump,
+
+68
+00:03:33.800 --> 00:03:37.000
+you filter the results to search for your specific UI class,
+
+69
+00:03:37.000 --> 00:03:39.480
+such as an abstract compose view.
+
+70
+00:03:39.480 --> 00:03:41.800
+If that class lingers in memory after the view
+
+71
+00:03:41.800 --> 00:03:43.560
+has been detached from the screen,
+
+72
+00:03:43.560 --> 00:03:45.720
+the native component is leaking.
+
+73
+00:03:45.720 --> 00:03:48.480
+This happens when callbacks or listeners are not properly
+
+74
+00:03:48.480 --> 00:03:50.440
+cleared out in the Kotlin code.
+
+75
+00:03:50.440 --> 00:03:54.000
+The native layer is no longer a hidden execution environment.
+
+76
+00:03:54.000 --> 00:03:57.000
+Mastering Android Studio is now a core requirement
+
+77
+00:03:57.000 --> 00:03:59.040
+for developers working with custom modules
+
+78
+00:03:59.040 --> 00:04:00.520
+on the new architecture.
+
+79
+00:04:00.520 --> 00:04:03.240
+Finally, we zoom out to view the entire system
+
+80
+00:04:03.240 --> 00:04:04.720
+interacting over time.
+
+81
+00:04:04.720 --> 00:04:07.840
+CIS Trace is the primary tool for diagnosing dropped frames
+
+82
+00:04:07.840 --> 00:04:09.120
+and UI jank.
+
+83
+00:04:09.120 --> 00:04:11.760
+This timeline reveals macro execution.
+
+84
+00:04:11.760 --> 00:04:15.360
+The choreographer track maintains a 16 millisecond window.
+
+85
+00:04:15.360 --> 00:04:18.440
+A gap here definitively identifies a dropped frame.
+
+86
+00:04:18.440 --> 00:04:20.840
+Tracing vertically down, a blocked render thread
+
+87
+00:04:20.840 --> 00:04:23.560
+means computationally heavy fabric layouts.
+
+88
+00:04:23.560 --> 00:04:25.720
+Further down, massive JS thread blocks
+
+89
+00:04:25.720 --> 00:04:28.640
+reveal synchronous execution delaying the render.
+
+90
+00:04:28.640 --> 00:04:30.760
+CIS Trace provides the definitive evidence
+
+91
+00:04:30.760 --> 00:04:33.480
+of how these layers interact, exposing exactly
+
+92
+00:04:33.480 --> 00:04:35.880
+where the bottleneck occurs during a frame drop.
+
+93
+00:04:35.880 --> 00:04:38.520
+As you migrate older applications to this architecture,
+
+94
+00:04:38.520 --> 00:04:40.640
+you will operate in a transition state.
+
+95
+00:04:40.640 --> 00:04:42.240
+Legacy native modules attempting
+
+96
+00:04:42.240 --> 00:04:45.200
+to use the old bridge APIs in a bridgeless environment
+
+97
+00:04:45.200 --> 00:04:47.040
+will trigger warnings or errors.
+
+98
+00:04:47.040 --> 00:04:50.040
+You monitor the log box structured error overlay,
+
+99
+00:04:50.040 --> 00:04:52.840
+specifically for these compatibility warnings.
+
+100
+00:04:52.840 --> 00:04:56.520
+The immediate solution is to update the library dependencies
+
+101
+00:04:56.520 --> 00:04:58.640
+or utilize the built-in interop layer
+
+102
+00:04:58.640 --> 00:05:01.680
+to run older modules in compatibility mode.
+
+103
+00:05:01.680 --> 00:05:04.560
+Returning to our three-tier architectural stack,
+
+104
+00:05:04.560 --> 00:05:07.320
+we now have a complete map of our diagnostic tools
+
+105
+00:05:07.320 --> 00:05:09.400
+locked into their correct layers.
+
+106
+00:05:09.400 --> 00:05:11.160
+The routing rules are clear.
+
+107
+00:05:11.160 --> 00:05:13.640
+UI frame drops require CIS Trace.
+
+108
+00:05:13.640 --> 00:05:16.480
+Kotlin memory issues require Android Studio.
+
+109
+00:05:16.480 --> 00:05:19.600
+And JavaScript engine lockups require CDP.
+
+110
+00:05:19.600 --> 00:05:23.080
+The new architecture demands native level engineering rigor.
+
+111
+00:05:23.080 --> 00:05:25.280
+You must master domain-specific tools
+
+112
+00:05:25.280 --> 00:05:28.240
+to diagnose and optimize the full stack.
+

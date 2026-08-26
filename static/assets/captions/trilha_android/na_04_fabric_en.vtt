@@ -1,0 +1,222 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:06.240
+For years, Android development was split between two worlds – standard React Native component
+
+2
+00:00:06.240 --> 00:00:10.760
+trees on one side, and Native Jetpack Compose UI on the other.
+
+3
+00:00:10.760 --> 00:00:16.200
+Today, we are connecting these environments by building a native 5-star rating bar component
+
+4
+00:00:16.200 --> 00:00:21.400
+entirely in compose and controlling it through React Native JSX.
+
+5
+00:00:21.400 --> 00:00:26.560
+Before we start, you'll React Native project must have the new architecture enabled, as the
+
+6
+00:00:26.560 --> 00:00:29.920
+fabric renderer is required for this integration.
+
+7
+00:00:29.920 --> 00:00:34.920
+While this involves several layers of code, the process is largely automated by code gen,
+
+8
+00:00:34.920 --> 00:00:37.520
+and can be completed in six steps.
+
+9
+00:00:37.520 --> 00:00:42.480
+This approach allows you to use any modern Android view in your React Native app.
+
+10
+00:00:42.480 --> 00:00:47.440
+Because updates move through the C++ layer, the system avoids the serialization overhead
+
+11
+00:00:47.440 --> 00:00:50.200
+that slowed down the previous architecture.
+
+12
+00:00:50.200 --> 00:00:53.480
+We start by creating a TypeScript specification.
+
+13
+00:00:53.480 --> 00:00:58.520
+This acts as a blueprint, strictly defining the props our component needs, like a numeric
+
+14
+00:00:58.520 --> 00:01:00.240
+value for the rating.
+
+15
+00:01:00.240 --> 00:01:05.440
+In step two, we run the code gen script in the terminal to process that specification.
+
+16
+00:01:05.440 --> 00:01:09.720
+This generates several Java files, including a View Manager interface.
+
+17
+00:01:09.720 --> 00:01:15.040
+These files serve as a contract, ensuring the native side matches our TypeScript definitions.
+
+18
+00:01:15.040 --> 00:01:17.720
+For step three, we write the compose UI.
+
+19
+00:01:17.720 --> 00:01:22.800
+To make it compatible with React Native, we wrap our composable code inside an abstract compose
+
+20
+00:01:22.800 --> 00:01:23.800
+view.
+
+21
+00:01:23.800 --> 00:01:26.440
+This view runs in its own isolated context.
+
+22
+00:01:26.440 --> 00:01:30.440
+You can use native material three themes here without affecting any of your global React
+
+23
+00:01:30.440 --> 00:01:31.840
+Native styles.
+
+24
+00:01:31.840 --> 00:01:34.720
+Here is where many developers run into an issue.
+
+25
+00:01:34.720 --> 00:01:39.440
+Fabrics layout engine, yoga, cannot automatically determine the dimensions of a jetpack compose
+
+26
+00:01:39.440 --> 00:01:40.440
+view.
+
+27
+00:01:40.440 --> 00:01:43.840
+This wireframe shows how yoga sees an unmeasured component.
+
+28
+00:01:43.840 --> 00:01:48.480
+To fix this, we must explicitly override the measure function in Kotlin and set the exact
+
+29
+00:01:48.480 --> 00:01:51.760
+dimensions so the view doesn't collapse to zero pixels.
+
+30
+00:01:51.760 --> 00:01:57.040
+By providing these measurements, we ensure the native compose view takes up its intended
+
+31
+00:01:57.040 --> 00:02:00.320
+space within the React Native layout tree.
+
+32
+00:02:00.320 --> 00:02:04.600
+In step four, we implement the generated View Manager interface.
+
+33
+00:02:04.600 --> 00:02:10.040
+This class is responsible for connecting our React props to the internal compose state.
+
+34
+00:02:10.040 --> 00:02:15.800
+In the new architecture, prop updates no longer rely on sending JSON strings across a bridge.
+
+35
+00:02:15.800 --> 00:02:19.680
+The C++ layer now calculates the difference between props.
+
+36
+00:02:19.680 --> 00:02:25.200
+That identifies a value changed from three to four, calling the Kotlin setter directly.
+
+37
+00:02:25.200 --> 00:02:28.720
+This setter updates a mutable state of variable.
+
+38
+00:02:28.720 --> 00:02:33.320
+Compose observes the state change, recomposing only the affected UI.
+
+39
+00:02:33.320 --> 00:02:35.080
+Step five is registration.
+
+40
+00:02:35.080 --> 00:02:38.840
+We add the View Manager to the Android main application package.
+
+41
+00:02:38.840 --> 00:02:43.120
+If this step is missed, the app will fail to recognize the component at runtime.
+
+42
+00:02:43.120 --> 00:02:48.400
+Finally, in step six, we import the component into our JavaScript code and wrap it so it can
+
+43
+00:02:48.400 --> 00:02:51.120
+be used like any other JSX element.
+
+44
+00:02:51.120 --> 00:02:57.760
+By removing the need for JSON serialization, this direct pipeline between C++ and Kotlin
+
+45
+00:02:57.760 --> 00:03:01.160
+allows for much more responsive UI rendering.
+
+46
+00:03:01.160 --> 00:03:06.520
+Now when a state change happens in React, the compose UI updates instantly, and our native
+
+47
+00:03:06.520 --> 00:03:09.080
+integration is finally complete.
+
+48
+00:03:09.080 --> 00:03:14.240
+We have successfully embedded a native Jetpack Compose component into React Native, utilizing
+
+49
+00:03:14.240 --> 00:03:17.640
+direct C++ prop dipping for communication.
+
+50
+00:03:17.640 --> 00:03:21.880
+For those who want to explore how shadow trees and yoga layouts work under the hood,
+
+51
+00:03:21.880 --> 00:03:26.120
+the React Native masterclass provides a deeper look at the fabric renderer.
+
+52
+00:03:26.120 --> 00:03:30.320
+In our next session, we'll look at how to monitor these new components using debugging tools
+
+53
+00:03:30.320 --> 00:03:33.680
+like Flipper and the Android Studio Profiler.
+
+54
+00:03:33.680 --> 00:03:37.760
+Mastering fabric components allows you to move past framework constraints and build with
+
+55
+00:03:37.760 --> 00:03:40.280
+the full power of the Android native toolkit.
+
