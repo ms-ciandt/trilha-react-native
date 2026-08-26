@@ -8,6 +8,7 @@ title: TurboModules com Swift
 
 <video width="100%" controls>
   <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/rec_05_turbomodule-swift.mp4" type="video/mp4">
+  <track kind="captions" src="/trilha-react-native/assets/captions/trilha_ios/rec_05_turbomodule-swift.vtt" srclang="pt" label="Português" default>
   Seu navegador não suporta a tag de vídeo.
 </video>
 

@@ -1,0 +1,222 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:05.000
+Tanto no SwiftUI quanto no React, o state é a única fonte de verdade.
+
+2
+00:00:05.000 --> 00:00:10.000
+Quando o state muda, essa mutação é o único motor das recomputações da UI.
+
+3
+00:00:10.000 --> 00:00:14.000
+Engenheiros Swift gerenciam esse state por meio de um conjunto específico de ferramentas,
+
+4
+00:00:14.000 --> 00:00:19.000
+property wrappers para valores locais, observables externos para lógica de negócio,
+
+5
+00:00:19.000 --> 00:00:22.000
+e modificadores de ciclo de vida discretos para lidar com side effects.
+
+6
+00:00:22.000 --> 00:00:29.000
+O React pega esses mecanismos e os consolida em um conjunto mínimo de funções fundamentais chamadas hooks.
+
+7
+00:00:29.000 --> 00:00:37.000
+Por causa dessa consolidação, o React Native moderno se afasta da programação orientada a objetos baseada em classes para gerenciar state fora da view.
+
+8
+00:00:37.000 --> 00:00:44.000
+Conseguimos traçar uma linha direta desde toggles locais até streams combinados complexos dentro do ecossistema de Hooks do React.
+
+9
+00:00:44.000 --> 00:00:47.000
+Para navegar por isso, vamos usar esta matriz de tradução.
+
+10
+00:00:47.000 --> 00:00:52.000
+Temos a arquitetura do SwiftUI à esquerda e os primitives do React à direita.
+
+11
+00:00:52.000 --> 00:00:58.000
+Vamos preencher sistematicamente esta grade linha por linha para construir um mapa mental de 1 para 1 de ambos os frameworks.
+
+12
+00:00:58.000 --> 00:01:03.000
+Dominar o React Native como desenvolvedor iOS não é sobre aprender uma nova arquitetura.
+
+13
+00:01:03.000 --> 00:01:09.000
+É sobre traduzir seu conhecimento existente de SwiftUI para um vocabulário generalizado mais compacto.
+
+14
+00:01:09.000 --> 00:01:14.000
+Mapeando at state para use state, o diagrama mostra a diferença estrutural.
+
+15
+00:01:14.000 --> 00:01:20.000
+Use state retorna uma tupla, o valor atual e uma função setter dedicada a atualizá-lo.
+
+16
+00:01:20.000 --> 00:01:22.000
+O React proíbe mutação direta.
+
+17
+00:01:22.000 --> 00:01:27.000
+Você não pode alterar a variável diretamente. Você deve chamar o setter para acionar uma atualização.
+
+18
+00:01:27.000 --> 00:01:37.000
+Se o seu novo estado depende do anterior, você passa uma closure diretamente para o setter usando o padrão de atualização funcional, garantindo que você nunca leia um valor desatualizado.
+
+19
+00:01:37.000 --> 00:01:46.000
+Nem todos os dados mutáveis devem acionar uma nova renderização da view. As aplicações dependem de valores como IDs de timers ou referências de nós que precisam mudar silenciosamente em segundo plano.
+
+20
+00:01:46.000 --> 00:01:55.000
+No SwiftUI, rastrear esses valores não renderizados com at-state pode, às vezes, causar atualizações de view desnecessárias, dependendo de onde os limites da view são desenhados.
+
+21
+00:01:55.000 --> 00:02:00.000
+Este diagrama mostra a solução do React para estado que não causa renderização. Use ref.
+
+22
+00:02:00.000 --> 00:02:05.000
+A propriedade current de um use ref atua como um contêiner mutável.
+
+23
+00:02:05.000 --> 00:02:11.000
+Ele sobrevive ao ciclo de renderização de forma invisível, atuando como uma variável de instância que o motor de renderização ignora.
+
+24
+00:02:11.000 --> 00:02:20.000
+O estado local no React exige intenção estrita. Você usa use state quando quer disparar o ciclo de renderização da UI e use ref quando precisa contorná-lo.
+
+25
+00:02:20.000 --> 00:02:27.000
+Um obstáculo comum para desenvolvedores Swift em transição é tentar recriar o padrão observable object em JavaScript.
+
+26
+00:02:27.000 --> 00:02:36.000
+No desenvolvimento iOS moderno, você usa a macro at-observable para extrair estado e lógica complexos de fora de uma única view para uma classe.
+
+27
+00:02:36.000 --> 00:02:43.000
+Olhando para este diagrama de blocos, o React separa essa responsabilidade. Ele abandona classes completamente usando funções simples chamadas de custom hooks.
+
+28
+00:02:44.000 --> 00:02:53.000
+Um custom hook é qualquer função JavaScript padrão que começa com a palavra use e encapsula lógica de negócio com estado. Esses hooks são altamente composáveis.
+
+29
+00:02:53.000 --> 00:03:01.000
+Um custom hook pode internamente chamar outros hooks básicos, empilhando use state ou use ref para construir comportamentos complexos.
+
+30
+00:03:01.000 --> 00:03:11.000
+A arquitetura resultante é limpa. O custom hook gerencia a lógica e alimenta os dados diretamente em um componente React, mantendo o componente em si puramente apresentacional.
+
+31
+00:03:11.000 --> 00:03:23.000
+O custom hook é o equivalente funcional direto do padrão V model. Migrar de V models baseados em classe para custom hooks funcionais permite a mesma lógica modular que você esperaria do Swift Composition.
+
+32
+00:03:23.000 --> 00:03:33.000
+O SwiftUI gerencia efeitos colaterais através de modificadores de ciclo de vida discretos anexados às views, como dot on appear, dot on disappear e dot on change.
+
+33
+00:03:33.000 --> 00:03:40.000
+Nós mapeamos esses modificadores especializados para um único primitivo use effect, controlado inteiramente pelo seu array de dependências.
+
+34
+00:03:40.000 --> 00:03:44.000
+Esse array determina exatamente quando sincronizar os dados.
+
+35
+00:03:44.000 --> 00:03:54.000
+Dot on appear é mapeado para um array vazio, executando o efeito uma vez na montagem. Dot on change é mapeado para um array de variáveis específicas, reexecutando apenas quando esses valores mudam.
+
+36
+00:03:54.000 --> 00:04:01.000
+Para o tear down, o equivalente ao D in it do Swift ou ao cancelamento de uma task, você retorna uma função de cleanup de dentro do corpo do efeito.
+
+37
+00:04:01.000 --> 00:04:13.000
+O React chama isso automaticamente antes do componente ser desmontado ou antes do efeito ser reexecutado. O modificador dot task do SwiftUI simplifica operações assíncronas ao vincular automaticamente uma async function ao tempo de vida da view.
+
+38
+00:04:13.000 --> 00:04:25.000
+Você consegue fazer isso no React definindo e invocando imediatamente uma async function dentro do use effect, enquanto utiliza uma flag booleana de cancelamento para evitar atualizações caso o componente seja desmontado.
+
+39
+00:04:25.000 --> 00:04:31.000
+Até streams reativos declarativos, como combine publishers, são mapeados para um padrão padrão de use effect.
+
+40
+00:04:31.000 --> 00:04:37.000
+Você se inscreve no corpo, armazena os dados recebidos via use state, e cancela a inscrição na função de cleanup.
+
+41
+00:04:37.000 --> 00:04:44.000
+O React não possui eventos discretos de ciclo de vida. Ele depende de sincronização de dados, controlada pelo array de dependências.
+
+42
+00:04:44.000 --> 00:04:51.000
+O SwiftUI cria closures de função novos a cada renderização, confiando no compilador do Swift para gerenciar a performance.
+
+43
+00:04:51.000 --> 00:05:01.000
+Passar uma referência de função recém-criada para um componente filho no React cria uma armadilha de performance. Isso força esse filho a renderizar novamente mesmo que os dados não tenham mudado.
+
+44
+00:05:01.000 --> 00:05:11.000
+Este diagrama ilustra a solução. Use callback. Esse hook estabiliza referências de função, memoizando-as para que o endereço de memória permaneça consistente entre os ciclos de renderização.
+
+45
+00:05:11.000 --> 00:05:20.000
+Para fazer cache de cálculos de dados custosos, mapeamos as computed properties do Swift ou lazy var diretamente para use memo do React.
+
+46
+00:05:20.000 --> 00:05:29.000
+Usar use memo em excesso adiciona overhead desnecessário. É o mesmo anti-padrão que adicionar lazy var a todas as propriedades de um projeto Swift.
+
+47
+00:05:29.000 --> 00:05:40.000
+Como o React gerencia todos esses hooks pela ordem de chamada, ele impõe regras rígidas de execução. Você deve chamar hooks apenas no nível superior do seu componente e apenas a partir de funções React.
+
+48
+00:05:40.000 --> 00:05:48.000
+Se você omitir uma variável do array de dependências de um hook, você cria uma stale closure. O effect será executado, mas lerá valores desatualizados.
+
+49
+00:05:48.000 --> 00:05:57.000
+Uma stale closure funciona como capturar uma weak reference no Swift que já foi desalocada. O effect vê valores antigos de um estado de renderização anterior.
+
+50
+00:05:57.000 --> 00:06:08.000
+O React não possui o compilador e as verificações de inicialização forçada que você tem no Swift, então depender de ferramentas como o plugin ESLint Hooks é uma rede de segurança arquitetural obrigatória para detectar dependências ausentes.
+
+51
+00:06:08.000 --> 00:06:15.000
+Aqui está nossa matriz de tradução completa, mapeando cada mecânica do SwiftUI para sua contraparte em React.
+
+52
+00:06:15.000 --> 00:06:23.000
+Observe que streams combinadas, view models observáveis e ciclos de vida de tasks não exigem bibliotecas externas pesadas.
+
+53
+00:06:23.000 --> 00:06:35.000
+Tudo isso é alcançado através da aplicação combinada de use state e use effect. A tradução central a ser internalizada é que o custom hook é o substituto direto do view model.
+
+54
+00:06:35.000 --> 00:06:44.000
+Pare de escrever classes para gerenciar estado externo, gerencie seus dependency arrays com rigor e confie no seu Linter para capturar erros de execução.
+
+55
+00:06:44.000 --> 00:06:54.000
+Hooks não são um framework alienígena. Eles são simplesmente sua experiência existente em SwiftUI compilada em um toolkit funcional mais enxuto.
+

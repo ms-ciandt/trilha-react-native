@@ -1,0 +1,402 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:04.800
+SwiftUI e React Native são construídos sobre premissas estruturais semelhantes,
+
+2
+00:00:04.800 --> 00:00:08.960
+o que significa que os modelos mentais que você usa em um geralmente se aplicam ao outro.
+
+3
+00:00:08.960 --> 00:00:12.240
+Apesar de depender de tecnologias subjacentes diferentes,
+
+4
+00:00:12.240 --> 00:00:16.480
+ambos os sistemas constroem exatamente as mesmas estruturas e resultados.
+
+5
+00:00:16.480 --> 00:00:20.720
+Em ambos os sistemas, a UI é declarativa, orientada a componentes,
+
+6
+00:00:20.720 --> 00:00:24.160
+e atualiza automaticamente quando o estado subjacente muda.
+
+7
+00:00:24.160 --> 00:00:26.640
+Uma preocupação comum para desenvolvedores iOS
+
+8
+00:00:26.640 --> 00:00:31.200
+é que migrar para React significa abandonar os padrões estabelecidos de desenvolvimento nativo.
+
+9
+00:00:31.200 --> 00:00:34.080
+A mudança envolve menos aprender como construir uma tela
+
+10
+00:00:34.080 --> 00:00:38.240
+e mais a forma específica como Swift e JavaScript lidam com dados e funções.
+
+11
+00:00:38.800 --> 00:00:42.240
+Especificamente, isso requer sair da dependência do Swift em
+
+12
+00:00:42.240 --> 00:00:46.320
+structs e property wrappers para o uso, no React, de closures e hooks.
+
+13
+00:00:46.320 --> 00:00:49.680
+Ao comparar os padrões do SwiftUI com a arquitetura do React,
+
+14
+00:00:49.680 --> 00:00:53.440
+podemos ver como a mesma lógica de UI se aplica a ambos os ambientes.
+
+15
+00:00:53.440 --> 00:00:55.520
+Migrar com sucesso entre essas plataformas
+
+16
+00:00:55.520 --> 00:00:58.960
+é um processo de traduzir a gramática de uma para a outra.
+
+17
+00:00:58.960 --> 00:01:02.240
+Toda aplicação começa com o mesmo requisito,
+
+18
+00:01:02.240 --> 00:01:04.240
+renderizar uma view estática.
+
+19
+00:01:04.240 --> 00:01:09.280
+Este layout mostra como um componente básico de UI é construído em ambos os ecossistemas,
+
+20
+00:01:09.280 --> 00:01:13.360
+com SwiftUI à esquerda e React TSX à direita.
+
+21
+00:01:13.360 --> 00:01:18.400
+A struct no SwiftUI corresponde ao function component no React.
+
+22
+00:01:18.400 --> 00:01:22.400
+Dentro dessas estruturas, a computed property body no Swift
+
+23
+00:01:22.400 --> 00:01:26.000
+desempenha o mesmo papel que o bloco return no React.
+
+24
+00:01:26.000 --> 00:01:29.680
+Nenhum dos dois sistemas usa comandos imperativos para montar a tela.
+
+25
+00:01:29.680 --> 00:01:33.520
+Você simplesmente descreve a árvore de UI que o framework deve renderizar.
+
+26
+00:01:33.520 --> 00:01:37.680
+O próximo passo é adicionar estado local para tornar o componente interativo.
+
+27
+00:01:37.680 --> 00:01:41.920
+O SwiftUI usa o wrapper @State como uma fonte de verdade local,
+
+28
+00:01:41.920 --> 00:01:45.120
+que é equivalente ao hook use-state no React.
+
+29
+00:01:45.120 --> 00:01:49.440
+No SwiftUI, você pode mudar esse estado atribuindo um valor diretamente,
+
+30
+00:01:49.440 --> 00:01:52.400
+por exemplo, incrementando uma variável account.
+
+31
+00:01:52.400 --> 00:01:55.280
+O React usa um padrão estrito de imutabilidade.
+
+32
+00:01:55.280 --> 00:01:58.000
+Você nunca altera a variável de estado diretamente.
+
+33
+00:01:58.000 --> 00:02:01.280
+Em vez disso, você usa a função setter retornada pelo hook.
+
+34
+00:02:01.280 --> 00:02:05.760
+Isso permite que o engine do React detecte a mudança e agende uma renderização.
+
+35
+00:02:05.760 --> 00:02:08.880
+Embora ambas as abordagens resultem em uma UI reativa,
+
+36
+00:02:08.880 --> 00:02:14.880
+o React impõe um padrão explícito de atualização que o SwiftUI geralmente trata nos bastidores.
+
+37
+00:02:14.880 --> 00:02:17.920
+Aplicações geralmente exigem dividir a UI
+
+38
+00:02:17.920 --> 00:02:20.240
+em componentes filhos aninhados.
+
+39
+00:02:20.240 --> 00:02:24.720
+Frequentemente, esses componentes filhos precisam ser capazes de atualizar o estado do componente pai.
+
+40
+00:02:24.720 --> 00:02:29.760
+Aqui, vemos a relação entre componentes pai e filho em ambas as linguagens.
+
+41
+00:02:29.760 --> 00:02:33.760
+SwiftUI facilita isso usando a propriedade at-binding,
+
+42
+00:02:33.760 --> 00:02:38.160
+criando um vínculo bidirecional onde o filho pode modificar os dados do pai.
+
+43
+00:02:38.160 --> 00:02:41.280
+React não possui um equivalente direto ao at-binding
+
+44
+00:02:41.280 --> 00:02:44.400
+e não utiliza fluxo de dados bidirecional implícito.
+
+45
+00:02:44.400 --> 00:02:48.400
+Em vez disso, ele depende de um padrão chamado controlled component.
+
+46
+00:02:48.400 --> 00:02:53.600
+O pai deve passar explicitamente o valor de estado atual para o filho como uma prop.
+
+47
+00:02:53.600 --> 00:02:56.560
+O pai também passa uma função de atualização separada,
+
+48
+00:02:56.560 --> 00:03:01.440
+um callback on-change, que o filho chama sempre que precisa disparar uma mudança.
+
+49
+00:03:01.440 --> 00:03:05.440
+Enquanto o at-binding permite que um desenvolvedor trate o estado do pai
+
+50
+00:03:05.440 --> 00:03:07.680
+como se fosse local ao filho,
+
+51
+00:03:07.680 --> 00:03:12.000
+O React exige que a troca de dados permaneça explícita no código.
+
+52
+00:03:12.000 --> 00:03:14.880
+Isso é conhecido como fluxo de dados unidirecional.
+
+53
+00:03:14.880 --> 00:03:18.640
+O React prioriza esse fluxo de dados explícito e rastreável
+
+54
+00:03:18.640 --> 00:03:21.680
+em vez dos wrappers automatizados encontrados no SwiftUI.
+
+55
+00:03:21.680 --> 00:03:24.240
+À medida que um app cresce, ele precisa de um estado global
+
+56
+00:03:24.240 --> 00:03:27.200
+que possa ser compartilhado por toda a árvore de componentes.
+
+57
+00:03:27.200 --> 00:03:32.000
+Este diagrama representa a injeção de estado a partir de um store central em nossos componentes.
+
+58
+00:03:32.000 --> 00:03:35.840
+O sistema at-observable object e at-published do SwiftUI
+
+59
+00:03:35.840 --> 00:03:38.480
+pode ser mapeado para um zoo stand store no React
+
+60
+00:03:38.480 --> 00:03:40.880
+ou usar context para escopos menores.
+
+61
+00:03:40.880 --> 00:03:44.240
+SwiftUI depende de classes e identidade de objeto.
+
+62
+00:03:44.240 --> 00:03:47.440
+Já o ZooStan usa closures e hooks,
+
+63
+00:03:47.440 --> 00:03:50.640
+evitando a necessidade de decorators ou instâncias de classe.
+
+64
+00:03:50.640 --> 00:03:52.720
+Passando para a lógica interna da UI,
+
+65
+00:03:52.720 --> 00:03:55.680
+também precisamos lidar com coleções dinâmicas de dados.
+
+66
+00:03:55.680 --> 00:03:58.080
+O iterador four-each no SwiftUI
+
+67
+00:03:58.080 --> 00:04:02.160
+é funcionalmente equivalente ao método .map nativo do JavaScript.
+
+68
+00:04:02.160 --> 00:04:07.520
+No SwiftUI, o parâmetro ID é usado para rastrear itens específicos na lista.
+
+69
+00:04:07.520 --> 00:04:10.400
+No React, a prop key cumpre o mesmo propósito,
+
+70
+00:04:10.400 --> 00:04:13.520
+ajudando o reconciler a identificar quais itens mudaram
+
+71
+00:04:13.520 --> 00:04:15.920
+sem reconstruir a lista inteira.
+
+72
+00:04:15.920 --> 00:04:18.160
+Por fim, precisamos lidar com efeitos colaterais,
+
+73
+00:04:18.160 --> 00:04:21.200
+como executar código quando um valor específico muda.
+
+74
+00:04:21.200 --> 00:04:25.840
+O modificador dot-on-change do SwiftUI corresponde ao hook use-effect no React,
+
+75
+00:04:25.840 --> 00:04:29.280
+que usa um array de dependências para determinar quando deve ser executado.
+
+76
+00:04:29.280 --> 00:04:31.280
+Se uma operação precisar ser cancelada,
+
+77
+00:04:31.280 --> 00:04:33.520
+retornar uma função de limpeza do use-effect
+
+78
+00:04:33.520 --> 00:04:37.200
+desempenha o mesmo papel que chamar cancel em uma Swiftask.
+
+79
+00:04:37.200 --> 00:04:39.600
+O React gerencia esses ciclos de vida e efeitos
+
+80
+00:04:39.600 --> 00:04:41.360
+por meio de dependências explícitas,
+
+81
+00:04:41.360 --> 00:04:44.080
+em vez de ciclos de vida de objetos proprietários.
+
+82
+00:04:44.080 --> 00:04:46.400
+A principal mudança estrutural é simples.
+
+83
+00:04:46.400 --> 00:04:49.120
+Swiftstrucks são substituídos por funções React.
+
+84
+00:04:49.120 --> 00:04:52.000
+O gerenciamento de estado passa de property wrappers para hooks,
+
+85
+00:04:52.000 --> 00:04:55.680
+e os bindings implícitos são substituídos por callbacks explícitos.
+
+86
+00:04:55.680 --> 00:04:58.880
+Esta tabela fornece uma referência rápida para o mapeamento.
+
+87
+00:04:58.880 --> 00:05:01.520
+Body se torna um retorno JSX.
+
+88
+00:05:01.520 --> 00:05:04.640
+Environment object se torna use context,
+
+89
+00:05:04.640 --> 00:05:07.680
+e view modifier corresponde a style sheet.
+
+90
+00:05:07.680 --> 00:05:11.280
+Essas semelhanças se estendem ao fluxo de trabalho de desenvolvimento real.
+
+91
+00:05:11.280 --> 00:05:15.360
+Os ciclos de feedback visual em ambos os ambientes são quase idênticos.
+
+92
+00:05:15.360 --> 00:05:18.320
+As atualizações em tempo real fornecidas pelos Xcode previews
+
+93
+00:05:18.320 --> 00:05:20.720
+são equiparadas pelo fast refresh do expose,
+
+94
+00:05:20.720 --> 00:05:24.240
+que mantém o estado da aplicação intacto enquanto você edita o código.
+
+95
+00:05:24.240 --> 00:05:27.040
+A transição para React Native é essencialmente um processo
+
+96
+00:05:27.040 --> 00:05:30.640
+de aplicar sua lógica de UI existente usando functional hooks
+
+97
+00:05:30.640 --> 00:05:32.400
+em vez de property wrappers.
+
+98
+00:05:32.400 --> 00:05:35.600
+Como a lógica de engenharia subjacente permanece consistente,
+
+99
+00:05:35.600 --> 00:05:38.240
+a transição de um para o outro é uma extensão direta
+
+100
+00:05:38.240 --> 00:05:40.240
+das habilidades que você já possui.
+

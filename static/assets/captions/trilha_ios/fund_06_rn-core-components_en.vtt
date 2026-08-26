@@ -1,0 +1,274 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:06.560
+Writing in JavaScript and JSX often invites the assumption that a browser engine is doing the heavy lifting.
+
+2
+00:00:06.560 --> 00:00:14.400
+The common bias suggests a document object model is hiding underneath, translating code into a hybrid web-based instance.
+
+3
+00:00:14.400 --> 00:00:18.720
+In reality, there is no HTML involved in the core rendering pipeline.
+
+4
+00:00:18.720 --> 00:00:22.640
+React Native does not rely on a web view to display its interface.
+
+5
+00:00:22.640 --> 00:00:25.120
+React Native acts as an orchestrator.
+
+6
+00:00:25.120 --> 00:00:28.160
+Every declarative core component serves as a bridge,
+
+7
+00:00:28.240 --> 00:00:32.320
+instructing the operating system to instantiate a real native UI primitive.
+
+8
+00:00:32.880 --> 00:00:36.720
+The text component communicates directly with the device's native threat
+
+9
+00:00:36.720 --> 00:00:38.720
+to invoke a U-label on iOS.
+
+10
+00:00:39.360 --> 00:00:42.800
+To understand how this translation achieves native execution,
+
+11
+00:00:42.800 --> 00:00:48.240
+we have to decode this component mapping using UIKit and SwiftUI as our architectural baselines.
+
+12
+00:00:48.800 --> 00:00:53.680
+Treating this framework like a web environment leads to significant layout and memory overhead.
+
+13
+00:00:53.760 --> 00:00:59.600
+We'll begin by examining the specific primitives that govern the transition from JSX to the native
+
+14
+00:00:59.600 --> 00:01:06.480
+threat. The structural model starts with view. React Native handles spatial logic via the yoga flexbox
+
+15
+00:01:06.480 --> 00:01:13.760
+engine. A column direction generates a vertical UI stack view container. Inside, text replaces the static
+
+16
+00:01:13.760 --> 00:01:20.400
+UI label. Properties map directly. Ellipsize mode passes its value to label.linebreak mode.
+
+17
+00:01:20.400 --> 00:01:24.160
+Similarly, the number of lines prop dictates where text cuts off,
+
+18
+00:01:24.160 --> 00:01:28.160
+executing the same logic as the .line limit modifier in SwiftUI.
+
+19
+00:01:28.880 --> 00:01:32.960
+Media is handled by the image component, equivalent to a UI image view.
+
+20
+00:01:33.520 --> 00:01:40.160
+Resize mode cover translates to .scale aspect fill, while contain triggers .scale aspect fit.
+
+21
+00:01:40.160 --> 00:01:45.040
+In production, the community standard replaces the core image component with Expo image.
+
+22
+00:01:45.040 --> 00:01:50.720
+This provides more robust native optimizations, specifically for caching and blur hash placeholders.
+
+23
+00:01:50.720 --> 00:01:56.320
+User input is consolidated. The text input component covers the requirements of both UI
+
+24
+00:01:56.320 --> 00:02:02.400
+text field and UI text view, managing everything from secure text entry to multi-line formatting.
+
+25
+00:02:02.960 --> 00:02:08.400
+For interactivity, pressable is the standard for new development. While touchability opacity
+
+26
+00:02:08.400 --> 00:02:13.280
+still functions, it is considered legacy because it forces a specific opacity animation.
+
+27
+00:02:13.920 --> 00:02:18.400
+Pressable provides a more direct API to hook into the various stages of a press,
+
+28
+00:02:18.400 --> 00:02:24.160
+functioning much like a native UI button. To replicate the behavior of UI button .content edge
+
+29
+00:02:24.160 --> 00:02:30.480
+insets, react native uses the hitslop prop. This allows you to expand the interactive tap target
+
+30
+00:02:30.480 --> 00:02:35.680
+without changing the visual dimensions of the element on screen. These primitives allow developers
+
+31
+00:02:35.680 --> 00:02:40.960
+to write declarative code that follows exact structural patterns of native iOS UI construction.
+
+32
+00:02:41.600 --> 00:02:46.080
+The base scrolling component is scroll view, the equivalent of UI scroll view.
+
+33
+00:02:46.080 --> 00:02:52.320
+Its primary behavior is to mount and render all its child elements immediately upon loading.
+
+34
+00:02:52.320 --> 00:02:58.240
+This creates a significant memory footprint. If you drop 1000 items into a scroll view,
+
+35
+00:02:58.240 --> 00:03:03.520
+the memory gauge spikes as the system attempts to render them all at once, leading to dropped frames.
+
+36
+00:03:04.080 --> 00:03:09.520
+This limits scroll view to short fixed content. For large dynamic data sets,
+
+37
+00:03:09.520 --> 00:03:14.160
+the architecture requires an optimized model, the flat list. Flat list
+
+38
+00:03:14.160 --> 00:03:19.760
+decreases UI table view and UI collection view. It only keeps visible items in memory.
+
+39
+00:03:20.320 --> 00:03:26.080
+This automates the register and DQ reusable cell pattern. As a row scrolls off the top,
+
+40
+00:03:26.080 --> 00:03:31.440
+its memory is recycled for the next row at the bottom. Interaction patterns also differ.
+
+41
+00:03:31.440 --> 00:03:36.720
+While scroll view requires a separate refresh control component, flat list has a built-in prop
+
+42
+00:03:36.720 --> 00:03:42.160
+to handle pull-to-refresh logic. When every item in a list has a known fixed height,
+
+43
+00:03:42.160 --> 00:03:45.920
+you can optimize the list further with the get-item layout prop.
+
+44
+00:03:45.920 --> 00:03:51.600
+By providing these dimensions up front, you bypass dynamic measurements. This is the functional
+
+45
+00:03:51.600 --> 00:03:56.960
+equivalent of implementing table view dot height for row at with a constant value in UI kit.
+
+46
+00:03:57.520 --> 00:04:02.960
+This shift from scroll view to flat list is the transition from a naive layout to proper native
+
+47
+00:04:02.960 --> 00:04:08.880
+virtualization. While the framework abstracts much of the UI, physical hardware realities like
+
+48
+00:04:08.880 --> 00:04:14.080
+the notch and the home indicator remain. React Native addresses this with safe area view,
+
+49
+00:04:14.080 --> 00:04:20.160
+which maps to the safe area insets used in UI kit. Note that the built-in safe area view only
+
+50
+00:04:20.160 --> 00:04:25.680
+handles iOS. To maintain a consistent layout across different platforms, developers generally use
+
+51
+00:04:25.680 --> 00:04:31.760
+the React Native safe area context library. Controlling system level visuals, such as the status bar
+
+52
+00:04:31.760 --> 00:04:37.120
+style is handled declaratively using the status bar component. Software constraints also require
+
+53
+00:04:37.120 --> 00:04:42.960
+specific handling, particularly when the virtual keyboard enters the frame. Unlike Swift UI,
+
+54
+00:04:42.960 --> 00:04:50.400
+React Native uses keyboard avoiding view, requiring different OS configurations. On iOS,
+
+55
+00:04:50.400 --> 00:04:56.480
+setting behavior to padding pushes the content upward. On Android, the height setting
+
+56
+00:04:56.480 --> 00:05:02.160
+resizes the entire view to fit the space above the keyboard. Within scrollable views,
+
+57
+00:05:02.160 --> 00:05:08.560
+you must also set keyboard should persist taps to handle. Without this, the first tap on a button
+
+58
+00:05:08.560 --> 00:05:13.920
+while the keyboard is open only dismisses it, requiring a second tap to actually trigger the buttons
+
+59
+00:05:13.920 --> 00:05:20.320
+action. Achieving a native feel requires addressing these specific platform behaviors that exist
+
+60
+00:05:20.320 --> 00:05:25.840
+beneath the abstraction layer. We can now assemble these components into a standard user card,
+
+61
+00:05:25.840 --> 00:05:31.440
+featuring an avatar image, a name, and a verification badge. Rapping the card in a pressable with a
+
+62
+00:05:31.440 --> 00:05:37.120
+hit-slop configuration ensures the component meets native standards for touch interaction. Using a
+
+63
+00:05:37.120 --> 00:05:42.960
+flexbox view container, the image and text elements are organized into a horizontal layout. These
+
+64
+00:05:42.960 --> 00:05:48.880
+declarations are translated into their UI image view width and U-label equivalence and rendered on
+
+65
+00:05:48.880 --> 00:05:55.280
+the native thread. This demonstrates the core model. React Native is a translation layer that relies
+
+66
+00:05:55.280 --> 00:06:01.120
+on native UI primitives. Utilizing the framework effectively involves working within the constraints
+
+67
+00:06:01.120 --> 00:06:06.640
+of native memory management and platform boundaries. By scripting native view hierarchies through
+
+68
+00:06:06.640 --> 00:06:19.040
+declarative JSX, developers can achieve the specific performance profile of a native iOS application.
+

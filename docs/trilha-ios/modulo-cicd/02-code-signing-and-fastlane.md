@@ -6,6 +6,7 @@ title: Code Signing and Fastlane for React Native iOS
 
 <video width="100%" controls style="border-radius: 8px; margin: 16px 0;">
   <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/cicd_02_code_signing_and_fastlane.mp4" type="video/mp4">
+  <track kind="captions" src="/trilha-react-native/assets/captions/trilha_ios/cicd_02_code_signing_and_fastlane_en.vtt" srclang="en" label="English" default>
   Your browser does not support the video tag.
 </video>
 

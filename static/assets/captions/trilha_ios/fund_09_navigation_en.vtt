@@ -1,0 +1,294 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:04.600
+Modern mobile applications rely on a clear spatial hierarchy.
+
+2
+00:00:04.600 --> 00:00:10.400
+Screens must slide, stack, and dismiss in a way that feels consistent to the user.
+
+3
+00:00:10.400 --> 00:00:13.400
+For an iOS engineer moving to react native,
+
+4
+00:00:13.400 --> 00:00:18.600
+the transition doesn't require a total reconstruction of how you think about abstracture.
+
+5
+00:00:18.600 --> 00:00:22.800
+Both ecosystems have moved away from the imperative UI kit model,
+
+6
+00:00:22.800 --> 00:00:28.600
+where you manually pushed and popped view controllers in favor of a declarative navigation tree.
+
+7
+00:00:28.600 --> 00:00:35.200
+We can map the core SwiftUI navigation APIs directly to their react navigation 7 equivalents.
+
+8
+00:00:35.200 --> 00:00:39.200
+In both frameworks, you describe the structure of the navigation tree
+
+9
+00:00:39.200 --> 00:00:42.600
+and allow the underlying system to manage the transitions.
+
+10
+00:00:42.600 --> 00:00:48.400
+Transitioning to cross-platform development doesn't mean losing the structure of a native routing architecture.
+
+11
+00:00:48.400 --> 00:00:52.600
+The logic carries over, the foundational container translates directly.
+
+12
+00:00:52.600 --> 00:00:56.200
+In SwiftUI, you wrap content in a navigation stack.
+
+13
+00:00:56.200 --> 00:01:00.600
+In react navigation 7, the equivalent is create static navigation.
+
+14
+00:01:00.600 --> 00:01:07.000
+This static API is the current recommendation for react native when working with a fixed set of screens.
+
+15
+00:01:07.000 --> 00:01:11.600
+The shift between these frameworks is found in how you trigger a navigation change.
+
+16
+00:01:11.600 --> 00:01:17.000
+The dot append in Swift corresponds to executing navigation.navigate in JavaScript.
+
+17
+00:01:17.000 --> 00:01:20.000
+Returning to a previous screen follows the same logic.
+
+18
+00:01:20.000 --> 00:01:24.800
+Removing the last item from a Swift array maps to the navigation.go back command.
+
+19
+00:01:24.800 --> 00:01:29.400
+To clear the stack and return to the root, you reset the navigation path in Swift
+
+20
+00:01:29.400 --> 00:01:32.800
+or fire the navigation dot reset command in react native.
+
+21
+00:01:32.800 --> 00:01:36.600
+While the trigger mechanism moves from state arrays to programmatic hooks,
+
+22
+00:01:36.600 --> 00:01:39.000
+the underlying logic flows remain the same.
+
+23
+00:01:39.000 --> 00:01:44.600
+When screens are isolated, you must pass data structures or IDs between them.
+
+24
+00:01:44.600 --> 00:01:51.800
+In SwiftUI, you bind a destination view to a specific data type using navigation destination 4.
+
+25
+00:01:51.800 --> 00:01:56.000
+React navigation handles this through the route.params object.
+
+26
+00:01:56.000 --> 00:02:01.800
+The receiving screen reads from this object the same way a SwiftUI view reads its bound value.
+
+27
+00:02:01.800 --> 00:02:08.400
+React native lacks a direct equivalent to iOS delegate protocols for passing data back to a previous screen.
+
+28
+00:02:08.400 --> 00:02:11.200
+You typically use a callback function instead.
+
+29
+00:02:11.200 --> 00:02:15.600
+For native engineers, the primary concern when moving to a JavaScript framework
+
+30
+00:02:15.600 --> 00:02:18.400
+is maintaining strict compile time safety.
+
+31
+00:02:18.400 --> 00:02:23.400
+By utilizing TypeScript, React navigation 7 provides developers with safety checks
+
+32
+00:02:23.400 --> 00:02:26.000
+that mirror the Swift development experience.
+
+33
+00:02:26.000 --> 00:02:32.200
+You define a parameter list in TypeScript to lock down the expected payloads for every route in the navigator.
+
+34
+00:02:32.200 --> 00:02:35.600
+Omit a required parameter or pass the wrong type
+
+35
+00:02:35.600 --> 00:02:38.400
+and the TypeScript compiler flags it in your editor,
+
+36
+00:02:38.400 --> 00:02:41.800
+providing a failsafe matching Xcode's type checker.
+
+37
+00:02:41.800 --> 00:02:47.000
+Migrating to React native doesn't require abandoning the protection of a typed compiler.
+
+38
+00:02:47.000 --> 00:02:52.000
+Beyond the data layer, we must consider how screens visually appear to the user,
+
+39
+00:02:52.000 --> 00:02:54.000
+such as Models and Sheets.
+
+40
+00:02:54.000 --> 00:03:00.000
+SwiftUI's native .sheet modifier translates to the React native stack option, FormSheet,
+
+41
+00:03:00.000 --> 00:03:04.000
+which renders the standard iOS sheet with swipe to dismiss.
+
+42
+00:03:04.000 --> 00:03:10.000
+Similarly, the . fullscreen cover modifier maps to the fullscreen modal presentation option.
+
+43
+00:03:10.000 --> 00:03:13.000
+For complex bottom sheets with custom snappoints,
+
+44
+00:03:13.000 --> 00:03:20.000
+developers often use the GoreHome bottom sheet library to replicate the behavior of UI sheet presentation controller.
+
+45
+00:03:20.000 --> 00:03:23.000
+The navigation chrome is also handled differently.
+
+46
+00:03:23.000 --> 00:03:28.000
+In SwiftUI, you use the modifiers like . navigation title or . toolbar.
+
+47
+00:03:28.000 --> 00:03:32.000
+React navigation moves these into configuration objects.
+
+48
+00:03:32.000 --> 00:03:39.000
+You use screen options for global defaults and navigation.set options for dynamic per screen updates.
+
+49
+00:03:40.000 --> 00:03:44.000
+These configuration options allow the app to maintain native interaction patterns
+
+50
+00:03:44.000 --> 00:03:48.000
+and the visual style users expect on iOS.
+
+51
+00:03:48.000 --> 00:03:54.000
+At the architectural level, you must be able to drive navigation from outside the immediate view hierarchy.
+
+52
+00:03:54.000 --> 00:03:59.000
+In SwiftUI, this often means publishing navigation paths from a separate view model.
+
+53
+00:03:59.000 --> 00:04:02.000
+React native provides the use navigation hook.
+
+54
+00:04:02.000 --> 00:04:08.000
+This allows any component or custom hook to trigger routing without passing navigation props down through the tree.
+
+55
+00:04:09.000 --> 00:04:14.000
+For events that happen entirely outside the component tree, such as background push notifications,
+
+56
+00:04:14.000 --> 00:04:18.000
+a dedicated navigation ref provides direct access to the routing state.
+
+57
+00:04:18.000 --> 00:04:20.000
+Authentication follows the same logic.
+
+58
+00:04:20.000 --> 00:04:26.000
+SwiftUI handles this by checking a state variable and conditionally rendering different root views.
+
+59
+00:04:26.000 --> 00:04:28.000
+React navigation uses the same pattern.
+
+60
+00:04:28.000 --> 00:04:33.000
+You conditionally render different navigators based on the global authentication state.
+
+61
+00:04:34.000 --> 00:04:39.000
+When the authentication status changes, the framework swaps the active navigator automatically.
+
+62
+00:04:39.000 --> 00:04:42.000
+This logic scales to standard app structures.
+
+63
+00:04:42.000 --> 00:04:50.000
+Embedding independent stacks within a tab view, maps directly to nesting native stack navigators inside a bottom tab navigator.
+
+64
+00:04:50.000 --> 00:04:56.000
+Deep linking is handled through a declarative linking config, which maps incoming URLs to specific screens,
+
+65
+00:04:56.000 --> 00:05:01.000
+mirroring the purpose of the . on open URL modifier in SwiftUI.
+
+66
+00:05:01.000 --> 00:05:08.000
+The structural approach to building complex apps in SwiftUI remains applicable when architecting for React native.
+
+67
+00:05:08.000 --> 00:05:14.000
+React navigation 7 introduces a choice between two API styles, static and dynamic.
+
+68
+00:05:14.000 --> 00:05:18.000
+For most apps with a fixed set of screens, you should use the static API.
+
+69
+00:05:18.000 --> 00:05:22.000
+It provides the best TypeScript inference and simplifies the setup.
+
+70
+00:05:22.000 --> 00:05:28.000
+The dynamic API is reserved for specific cases where your screen list must change based on runtimes data.
+
+71
+00:05:28.000 --> 00:05:33.000
+This table summarizes the relationship between the two frameworks.
+
+72
+00:05:33.000 --> 00:05:39.000
+Most core SwiftUI routing commands have a direct counterpart in React navigation 7.
+
+73
+00:05:39.000 --> 00:05:50.000
+By leveraging the static API and TypeScript, your experience with declarative SwiftUI navigation gives you a clear path forward when building for React native.
+

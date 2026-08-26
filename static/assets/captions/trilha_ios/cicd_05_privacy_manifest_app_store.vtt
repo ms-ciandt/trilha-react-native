@@ -1,0 +1,270 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:04.000
+Você envia seu aplicativo React Native para revisão e, 24 horas depois,
+
+2
+00:00:04.000 --> 00:00:08.000
+um e-mail chega na sua caixa de entrada citando uma declaração de API ausente.
+
+3
+00:00:08.000 --> 00:00:13.000
+A Apple exige um registro legível por máquina de quaisquer APIs sensíveis do sistema que seu aplicativo utiliza.
+
+4
+00:00:13.000 --> 00:00:17.000
+O problema para os desenvolvedores React Native é que o próprio framework
+
+5
+00:00:17.000 --> 00:00:20.000
+acessa internamente várias dessas APIs restritas para funcionar.
+
+6
+00:00:20.000 --> 00:00:24.000
+Seu código JavaScript personalizado pode nunca chamar esses recursos do sistema diretamente,
+
+7
+00:00:24.000 --> 00:00:28.000
+mas, como o motor do React Native é compilado no seu binário vinculado,
+
+8
+00:00:28.000 --> 00:00:32.000
+o sistema de revisão automatizado da Apple detecta o acesso e sinaliza a submissão.
+
+9
+00:00:32.000 --> 00:00:36.000
+Se você estiver usando o Expo SDK 56 ou posterior no managed workflow,
+
+10
+00:00:36.000 --> 00:00:40.000
+o Expo CLI cuida dessa declaração automaticamente durante a etapa de pre-built.
+
+11
+00:00:40.000 --> 00:00:45.000
+No entanto, se você estiver executando um projeto bear workflow ou adicionando módulos nativos personalizados,
+
+12
+00:00:45.000 --> 00:00:47.000
+você deve resolver esse requisito manualmente.
+
+13
+00:00:47.000 --> 00:00:52.000
+Para passar pelos revisores automatizados, você precisa criar um arquivo de lista de propriedades específico
+
+14
+00:00:52.000 --> 00:00:56.000
+que traduz a arquitetura interna do React Native em uma checklist declarada.
+
+15
+00:00:56.000 --> 00:00:59.000
+Agora, o passo um é gerar o arquivo.
+
+16
+00:00:59.000 --> 00:01:04.000
+Abra seu projeto iOS no Xcode selecionando o arquivo .xc workspace
+
+17
+00:01:04.000 --> 00:01:09.000
+em vez do arquivo .xc project, para garantir que suas dependências sejam vinculadas corretamente.
+
+18
+00:01:09.000 --> 00:01:13.000
+No menu superior, vá em file, new, depois file from template.
+
+19
+00:01:13.000 --> 00:01:18.000
+Filtre sua busca por privacy e selecione o template app privacy.
+
+20
+00:01:18.000 --> 00:01:22.000
+Nomeie o arquivo exatamente como privacyinfo.xc privacy.
+
+21
+00:01:23.000 --> 00:01:29.000
+No navegador de projetos, verifique se este arquivo está exatamente no mesmo nível do seu arquivo app delegate.
+
+22
+00:01:29.000 --> 00:01:32.000
+Simplesmente colocar o arquivo no diretório correto não é suficiente.
+
+23
+00:01:32.000 --> 00:01:37.000
+O Xcode precisa de instruções explícitas para incluir esse arquivo quando ele compila a aplicação final.
+
+24
+00:01:37.000 --> 00:01:42.000
+Selecione o novo arquivo de privacidade, abra o file inspector no painel do lado direito,
+
+25
+00:01:42.000 --> 00:01:46.000
+e marque a caixa para target membership atribuída ao seu app target principal.
+
+26
+00:01:46.000 --> 00:01:50.000
+Deixar essa caixa desmarcada faz com que o compilador remova o manifest
+
+27
+00:01:51.000 --> 00:01:56.000
+do seu build archive final, resultando em uma rejeição garantida da app store.
+
+28
+00:01:56.000 --> 00:01:59.000
+Com o arquivo corretamente direcionado, abra-o.
+
+29
+00:01:59.000 --> 00:02:01.000
+O Xcode exibe um editor estruturado.
+
+30
+00:02:01.000 --> 00:02:06.000
+Clique no botão de mais para adicionar um novo array de nível superior chamado privacy access API types.
+
+31
+00:02:06.000 --> 00:02:10.000
+Este diagrama mapeia o uso específico da API do framework.
+
+32
+00:02:10.000 --> 00:02:15.000
+Primeiro, o React Native lê e grava no NS user defaults durante a inicialização da sua bridge
+
+33
+00:02:15.000 --> 00:02:18.000
+para gerenciar o estado interno do framework.
+
+34
+00:02:18.000 --> 00:02:20.000
+No editor estruturado, adicione uma nova linha.
+
+35
+00:02:20.000 --> 00:02:26.000
+Selecione user defaults no menu suspenso de categoria e atribua a ele o código de motivo específico do framework,
+
+36
+00:02:26.000 --> 00:02:28.000
+CA92.1.
+
+37
+00:02:28.000 --> 00:02:32.000
+Em seguida, o Metro Bundler run time e as camadas de cache de imagem do framework.
+
+38
+00:02:32.000 --> 00:02:36.000
+Leem os timestamps de arquivos para lidar com a invalidação interna de cache.
+
+39
+00:02:36.000 --> 00:02:42.000
+Adicione as APIs de timestamp de arquivo como sua segunda categoria e atribua o código de motivo C617.1.
+
+40
+00:02:43.000 --> 00:02:49.000
+Por fim, o React Native mede intervalos decorridos para seus subsistemas de rastreamento de performance e animação
+
+41
+00:02:49.000 --> 00:02:52.000
+usando métricas de alta precisão de tempo de inicialização do sistema.
+
+42
+00:02:52.000 --> 00:02:58.000
+Adicione a categoria system boot time à sua lista e aplique o código de motivo 35F9.1.
+
+43
+00:02:58.000 --> 00:03:04.000
+Declarar esses três códigos de motivo específicos cobre a pegada fundamental de API do react native engine
+
+44
+00:03:04.000 --> 00:03:08.000
+e satisfaz efetivamente os scanners automatizados de binários da Apple.
+
+45
+00:03:08.000 --> 00:03:11.000
+As APIs do sistema são apenas o primeiro requisito.
+
+46
+00:03:11.000 --> 00:03:16.000
+Você também deve declarar quaisquer dados reais de usuário que seu aplicativo colete, adicionando um segundo array de nível superior
+
+47
+00:03:16.000 --> 00:03:19.000
+chamado privacy collected data types.
+
+48
+00:03:19.000 --> 00:03:24.000
+Se sua árvore de dependências incluir integrações externas como crash litix ou um SDK de análise de terceiros,
+
+49
+00:03:24.000 --> 00:03:29.000
+você adiciona identificadores específicos como crash data ou device IDs a esta seção.
+
+50
+00:03:29.000 --> 00:03:33.000
+Para cada tipo de dado que você adicionar, responda às perguntas booleanas associadas.
+
+51
+00:03:33.000 --> 00:03:38.000
+Especifique se os dados estão vinculados à identidade do usuário e declare se são usados para fins de rastreamento
+
+52
+00:03:38.000 --> 00:03:43.000
+em outros aplicativos. Assim que os arrays estiverem completos, valide a configuração.
+
+53
+00:03:43.000 --> 00:03:50.000
+Gere um build de archive completo do seu app para que o Xcode possa compilar o binário e verificá-lo em relação ao seu novo manifest.
+
+54
+00:03:50.000 --> 00:03:57.000
+Abra o Xcode organizer, clique com o botão direito no seu archive concluído e selecione Generate Privacy Report.
+
+55
+00:03:57.000 --> 00:04:01.000
+Este documento detalha cada API obrigatória encontrada pelo compilador.
+
+56
+00:04:01.000 --> 00:04:06.000
+Um relatório limpo confirma que seu manifest legível por máquina corresponde perfeitamente ao binário compilado.
+
+57
+00:04:06.000 --> 00:04:10.000
+A integração técnica do seu privacy manifest agora está completa.
+
+58
+00:04:10.000 --> 00:04:16.000
+Como etapa final de validação, envie seu build arquivado para o App Store Connect e distribua-o para testadores externos
+
+59
+00:04:16.000 --> 00:04:18.000
+via test flight antes da revisão completa.
+
+60
+00:04:18.000 --> 00:04:22.000
+A distribuição externa via test flight funciona como uma rede de segurança de baixo risco.
+
+61
+00:04:22.000 --> 00:04:26.000
+Isso aciona uma varredura automatizada que verifica seu privacy manifest dentro de 24 horas.
+
+62
+00:04:26.000 --> 00:04:32.000
+Se uma entrada estiver faltando, você recebe feedback imediato sem a penalidade de uma rejeição formal da App Store.
+
+63
+00:04:32.000 --> 00:04:35.000
+Trate seu privacy manifest como um documento vivo.
+
+64
+00:04:35.000 --> 00:04:40.000
+Sempre que você adicionar uma nova dependência nativa ao seu projeto, execute um novo relatório de privacidade
+
+65
+00:04:40.000 --> 00:04:44.000
+para ver se esse SDK introduz novos requisitos de API.
+
+66
+00:04:44.000 --> 00:04:49.000
+Ao consolidar esse fluxo de trabalho, você elimina o atrito das verificações automatizadas de conformidade
+
+67
+00:04:49.000 --> 00:04:54.000
+e mantém um caminho claro e previsível para todos os futuros lançamentos na App Store.
+

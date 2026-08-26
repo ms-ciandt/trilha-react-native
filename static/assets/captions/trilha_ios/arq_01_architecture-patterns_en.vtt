@@ -1,0 +1,466 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:05.200
+Transitioning from iOS to React Native can feel like a collision of worlds.
+
+2
+00:00:05.200 --> 00:00:09.920
+Moving from the highly opinionated Swift ecosystem to a JavaScript framework
+
+3
+00:00:09.920 --> 00:00:13.040
+often carries a specific type of developer friction.
+
+4
+00:00:13.040 --> 00:00:16.160
+It feels like you are abandoning structural discipline.
+
+5
+00:00:16.160 --> 00:00:19.600
+You worry about losing trusted patterns like MVVM,
+
+6
+00:00:19.600 --> 00:00:24.880
+Viper, and Clean Dependency Graphs in favor of an environment that appears unopinionated.
+
+7
+00:00:24.880 --> 00:00:28.720
+However, React Native supports and scales on these specific layers
+
+8
+00:00:28.720 --> 00:00:30.960
+and precise dependency injection.
+
+9
+00:00:30.960 --> 00:00:33.360
+While the syntax and vocabulary are different,
+
+10
+00:00:33.360 --> 00:00:37.120
+the separation of concerns follows a strikingly similar logic.
+
+11
+00:00:37.120 --> 00:00:39.920
+Because these underlying dependency graphs align,
+
+12
+00:00:39.920 --> 00:00:43.680
+your existing mental model as an iOS developer provides a direct map
+
+13
+00:00:43.680 --> 00:00:45.840
+for navigating React architecture.
+
+14
+00:00:45.840 --> 00:00:49.040
+We are going to map MVVM, the combined framework,
+
+15
+00:00:49.040 --> 00:00:53.520
+dependency injection, and your data layers directly to their React Native equivalents.
+
+16
+00:00:53.520 --> 00:00:56.240
+You do not need to relearn how to build software.
+
+17
+00:00:56.240 --> 00:01:01.840
+You only need to identify how your Swift instincts translate to these new tools.
+
+18
+00:01:01.840 --> 00:01:05.040
+In SwiftUI, you build a V-model as a class
+
+19
+00:01:05.040 --> 00:01:09.600
+that publishes state changes using observable object and at-published.
+
+20
+00:01:09.600 --> 00:01:11.920
+The view subscribes to those changes,
+
+21
+00:01:11.920 --> 00:01:13.920
+re-renders when the state updates,
+
+22
+00:01:13.920 --> 00:01:16.880
+and does not execute network calls itself.
+
+23
+00:01:16.880 --> 00:01:21.600
+This pattern maps directly to its React Native counterpart, the Custom Hook.
+
+24
+00:01:21.600 --> 00:01:24.000
+To keep the architectural intent clear,
+
+25
+00:01:24.000 --> 00:01:27.840
+we use a naming convention like UseProductListVModel.
+
+26
+00:01:27.840 --> 00:01:31.840
+It makes the module's role easy to identify within the code base.
+
+27
+00:01:31.840 --> 00:01:33.280
+A key constraint here,
+
+28
+00:01:33.280 --> 00:01:37.600
+the Custom Hook must remain completely free of any JSX code.
+
+29
+00:01:37.600 --> 00:01:39.600
+By removing the UI components,
+
+30
+00:01:39.600 --> 00:01:42.160
+the hook functions as a headless data engine,
+
+31
+00:01:42.160 --> 00:01:45.840
+returning only state variables and executable callbacks.
+
+32
+00:01:45.840 --> 00:01:47.200
+Because it is headless,
+
+33
+00:01:47.200 --> 00:01:50.160
+you can write unit tests for the logic and isolation,
+
+34
+00:01:50.160 --> 00:01:52.480
+just as you would for a Swift class.
+
+35
+00:01:52.480 --> 00:01:54.960
+Utilizing Custom Hooks as view models
+
+36
+00:01:54.960 --> 00:01:57.360
+enforces a thin presentation layer,
+
+37
+00:01:57.360 --> 00:01:59.680
+preventing the massive view controller issue
+
+38
+00:01:59.680 --> 00:02:02.720
+from migrating into your React Native project.
+
+39
+00:02:02.720 --> 00:02:06.160
+iOS developers often use monolithic combined pipelines
+
+40
+00:02:06.160 --> 00:02:08.240
+to map asynchronous network responses
+
+41
+00:02:08.240 --> 00:02:10.800
+directly into reactive view states.
+
+42
+00:02:10.800 --> 00:02:13.600
+Modern React Native architecture splits this pipeline
+
+43
+00:02:13.600 --> 00:02:15.680
+into two specialized pathways,
+
+44
+00:02:15.680 --> 00:02:18.800
+one for server state and one for client state.
+
+45
+00:02:18.800 --> 00:02:21.120
+The first pathway uses TANstack Query
+
+46
+00:02:21.120 --> 00:02:23.760
+to handle all asynchronous server state.
+
+47
+00:02:23.760 --> 00:02:27.360
+TANstack Query manages complex server tasks automatically,
+
+48
+00:02:27.360 --> 00:02:30.240
+including request de-duplication, background fetching,
+
+49
+00:02:30.240 --> 00:02:31.680
+and network retries.
+
+50
+00:02:31.680 --> 00:02:34.080
+This isolates network loading and error states
+
+51
+00:02:34.080 --> 00:02:36.080
+from your core business logic.
+
+52
+00:02:36.080 --> 00:02:38.160
+The second pathway uses ZooStand,
+
+53
+00:02:38.160 --> 00:02:42.080
+a dedicated engine for managing synchronous local UI state.
+
+54
+00:02:42.080 --> 00:02:45.360
+Structurally, a ZooStand store serves as the direct replacement
+
+55
+00:02:45.360 --> 00:02:48.480
+for at-published properties within the Swift ecosystem.
+
+56
+00:02:48.560 --> 00:02:51.120
+It prevents unnecessary re-renders,
+
+57
+00:02:51.120 --> 00:02:55.600
+allowing views to select only these specific slices of state they need.
+
+58
+00:02:55.600 --> 00:02:59.840
+Separating volatile server cache from stable local UI state
+
+59
+00:02:59.840 --> 00:03:03.360
+provides more precise control over application reactivity
+
+60
+00:03:03.360 --> 00:03:05.600
+than a single combined pipeline.
+
+61
+00:03:05.600 --> 00:03:08.560
+In the data layer, the iOS repository pattern
+
+62
+00:03:08.560 --> 00:03:12.000
+abstract sources using URL session and codeable.
+
+63
+00:03:12.000 --> 00:03:15.200
+This transforms smoothly into the React Native equivalent,
+
+64
+00:03:15.200 --> 00:03:18.400
+a strictly typed TypeScript API client.
+
+65
+00:03:18.400 --> 00:03:21.360
+We use TypeScript generics to guarantee type safety
+
+66
+00:03:21.360 --> 00:03:22.880
+at the network boundary.
+
+67
+00:03:22.880 --> 00:03:26.000
+This serves the same function as Swift's codeable.
+
+68
+00:03:26.000 --> 00:03:28.000
+For managing module dependencies,
+
+69
+00:03:28.000 --> 00:03:30.640
+SwiftUI relies on at-environment object
+
+70
+00:03:30.640 --> 00:03:32.400
+for dependency injection.
+
+71
+00:03:32.400 --> 00:03:35.920
+The React equivalent for this behavior is ReactContext.
+
+72
+00:03:35.920 --> 00:03:39.520
+By wrapping feature modules inside ReactContext providers,
+
+73
+00:03:39.520 --> 00:03:42.320
+we can isolate and manage the specific dependencies
+
+74
+00:03:42.320 --> 00:03:43.840
+that tree requires.
+
+75
+00:03:43.840 --> 00:03:46.800
+This makes it simple to swap a production API provider
+
+76
+00:03:46.800 --> 00:03:49.040
+for a mock provider during testing.
+
+77
+00:03:49.040 --> 00:03:52.160
+This provider pattern follows the same interface contract
+
+78
+00:03:52.160 --> 00:03:56.160
+requirements found in Swift protocol-oriented programming.
+
+79
+00:03:56.160 --> 00:03:59.120
+Using ReactContext for dependency injection
+
+80
+00:03:59.120 --> 00:04:02.080
+ensures that modules remain as decoupled and unit
+
+81
+00:04:02.080 --> 00:04:05.040
+testable as any native Swift module.
+
+82
+00:04:05.040 --> 00:04:09.520
+Traditional iOS Viper structures are organized by horizontal layers,
+
+83
+00:04:09.520 --> 00:04:12.640
+grouping all views, interactors, and presenters together
+
+84
+00:04:12.640 --> 00:04:14.480
+across the entire app.
+
+85
+00:04:14.480 --> 00:04:16.240
+React Native developers typically
+
+86
+00:04:16.240 --> 00:04:18.520
+prefer a feature slice design, which
+
+87
+00:04:18.520 --> 00:04:21.800
+organizes the code based vertically by feature domains.
+
+88
+00:04:21.800 --> 00:04:24.360
+Each feature domain uses a barrel export,
+
+89
+00:04:24.360 --> 00:04:28.080
+the index.ts file, as the gatekeeper for that folder.
+
+90
+00:04:28.080 --> 00:04:31.000
+The barrel export serves as the strict public interface
+
+91
+00:04:31.000 --> 00:04:32.160
+for the module.
+
+92
+00:04:32.160 --> 00:04:35.160
+It encapsulates the feature, hiding internal logic
+
+93
+00:04:35.160 --> 00:04:37.960
+and private files from the rest of the application.
+
+94
+00:04:37.960 --> 00:04:40.800
+This prevents unauthorized cross-feature imports
+
+95
+00:04:40.800 --> 00:04:43.840
+and forces the code to respect domain boundaries.
+
+96
+00:04:43.840 --> 00:04:47.160
+By combining feature slice design with barrel exports,
+
+97
+00:04:47.160 --> 00:04:49.520
+you achieve the same module isolation
+
+98
+00:04:49.520 --> 00:04:51.760
+that Viper mandates on iOS.
+
+99
+00:04:51.760 --> 00:04:54.320
+To summarize, this comprehensive mapping
+
+100
+00:04:54.320 --> 00:04:58.160
+shows how your architectural knowledge translates row by row.
+
+101
+00:04:58.160 --> 00:05:00.040
+View models become hooks.
+
+102
+00:05:00.040 --> 00:05:02.280
+At publish state becomes a stand.
+
+103
+00:05:02.280 --> 00:05:04.760
+At environment object becomes context.
+
+104
+00:05:04.760 --> 00:05:08.240
+And Viper organization becomes feature slice design.
+
+105
+00:05:08.280 --> 00:05:10.800
+The core principle remains identical.
+
+106
+00:05:10.800 --> 00:05:12.720
+Presentation components must always
+
+107
+00:05:12.720 --> 00:05:15.960
+be thin, logic free, and purely visual.
+
+108
+00:05:15.960 --> 00:05:18.760
+Continue to push complex business and state logic
+
+109
+00:05:18.760 --> 00:05:20.320
+into custom hooks.
+
+110
+00:05:20.320 --> 00:05:22.440
+Maintain your use of generics to ensure
+
+111
+00:05:22.440 --> 00:05:24.280
+safety at the network edge.
+
+112
+00:05:24.280 --> 00:05:27.400
+React Native does not require you to unlearn software
+
+113
+00:05:27.400 --> 00:05:28.360
+engineering.
+
+114
+00:05:28.360 --> 00:05:30.440
+Your existing Swift instincts provide
+
+115
+00:05:30.440 --> 00:05:32.080
+the logical foundation required
+
+116
+00:05:32.080 --> 00:05:34.600
+to build scalable cross-platform applications.
+

@@ -1,0 +1,150 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:09.000
+Every time you update a React Native app, you have to open the simulator and manually tap through every screen to make sure your changes didn't break a core feature.
+
+2
+00:00:09.000 --> 00:00:14.000
+Over time, use manual checks become a massive drain on development speed.
+
+3
+00:00:14.000 --> 00:00:18.000
+Detox addresses this by providing an end-to-end testing framework.
+
+4
+00:00:18.000 --> 00:00:25.000
+It controls a real iOS simulator, simulating swipes, taps and text input exactly as a user would.
+
+5
+00:00:25.000 --> 00:00:33.000
+In this guide, we will install Detox, configure it for an iOS environment, and write a script that automates a standard login flow.
+
+6
+00:00:33.000 --> 00:00:40.000
+To follow along, you'll need a macOS environment with Xcode installed, an existing React Native project, and the homebrew package manager.
+
+7
+00:00:40.000 --> 00:00:46.000
+Once these tools are in place, we can begin moving away from manual testing toward a consistent automated pipeline.
+
+8
+00:00:46.000 --> 00:00:52.000
+First, install the Detox command line tools and library into your project using a package manager.
+
+9
+00:00:52.000 --> 00:00:55.000
+We also need two OS-level utilities.
+
+10
+00:00:55.000 --> 00:01:03.000
+Use homebrew to install Apple Simutils and XC pretty in your terminal. Apple Simutils is on a wire meant for this workflow.
+
+11
+00:01:03.000 --> 00:01:10.000
+It acts as the communication layer that allows the Detox test runner to send instructions directly to the iOS simulator.
+
+12
+00:01:10.000 --> 00:01:19.000
+Now run the initialization command to create a dedicated E2E folder and generate the base configuration files. Open the new configuration file.
+
+13
+00:01:19.000 --> 00:01:25.000
+You must replace these placeholder strings with the actual workspace and scheme names defined in your Xcode project.
+
+14
+00:01:25.000 --> 00:01:33.000
+Next, check the binary path in the same file. This tells Detox exactly where to find the app file generated during the build process.
+
+15
+00:01:33.000 --> 00:01:38.000
+Finally, adjust the just settings to avoid a common failure point during execution.
+
+16
+00:01:38.000 --> 00:01:44.000
+As this diagram shows, trying to run multiple tests at once on a singular simulator causes the runner to hang.
+
+17
+00:01:44.000 --> 00:01:51.000
+To prevent this, you must set the max workers property to one, ensuring only one test file runs at a time.
+
+18
+00:01:51.000 --> 00:01:57.000
+These steps ensure the runner can successfully find and control your specific application.
+
+19
+00:01:57.000 --> 00:02:02.000
+Before writing the test, we must make our UI elements visible to the runner.
+
+20
+00:02:02.000 --> 00:02:11.000
+By default, the test runner has no way to distinguish one button from another. We solve this by adding a test ID prop to our react native components.
+
+21
+00:02:11.000 --> 00:02:20.000
+On iOS, this maps directly to the native accessibility identifier. Use stable descriptive IDs rather than dynamic list indexes.
+
+22
+00:02:20.000 --> 00:02:28.000
+This ensures the test still works even if the item order changes. With the UI tagged, we move back to the terminal to compile the app.
+
+23
+00:02:28.000 --> 00:02:35.000
+Run the Detox build command. This triggers a native compilation specifically optimized for the iOS simulator.
+
+24
+00:02:36.000 --> 00:02:45.000
+This step takes a few minutes as it performs a full Xcode build of your project. Note that you only need to run this full build when you change native code.
+
+25
+00:02:45.000 --> 00:02:50.000
+If you only modify JavaScript, Detox reloads the bundle instantly without a full rebuild.
+
+26
+00:02:50.000 --> 00:02:55.000
+Once the build finishes, you have a specialized testing binary ready for automation.
+
+27
+00:02:55.000 --> 00:03:00.000
+Open the sample test file in the E2E folder so we can script our login sequence.
+
+28
+00:03:00.000 --> 00:03:13.000
+We start by telling the runner to find the email input field using our test ID. By using the type text action, the runner will simulate the physical interaction of a user entering an email address into the field.
+
+29
+00:03:13.000 --> 00:03:17.000
+Next, we add a command to locate the login button and perform a tap.
+
+30
+00:03:17.000 --> 00:03:25.000
+To finish the script, we add an expectation. This tells the test to wait until the success screen is visible before passing.
+
+31
+00:03:25.000 --> 00:03:34.000
+Now, run the test command. The simulator automatically boots, installs the build, and navigates through the entire login screen sequence on its own.
+
+32
+00:03:34.000 --> 00:03:42.000
+When the sequence finishes, check your terminal for the results. A green success message confirms the login flow is functioning correctly in the current build.
+
+33
+00:03:42.000 --> 00:03:47.000
+You've just successfully automated a native interaction on the iOS simulator.
+
+34
+00:03:47.000 --> 00:03:56.000
+By configuring your environment, tagging your UI, and scripting the user path, you've created a test that can be repeated as many times as needed.
+
+35
+00:03:56.000 --> 00:04:06.000
+To scale this, you can integrate these tests into a continuous integration pipeline using macOS runners, ensuring your app is tested before every pull request is merged.
+
+36
+00:04:06.000 --> 00:04:16.000
+You can even use Detox to pre-grant system permissions like location or camera access, allowing you to test complex workflows without manual interruptions.
+
+37
+00:04:16.000 --> 00:04:26.000
+Every automated test you add reduces the need for repetitive manual checks, giving you more time to focus on developing new features.
+

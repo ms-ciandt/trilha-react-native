@@ -1,0 +1,278 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:05.600
+Ao avaliar o React Native, engenheiros iOS frequentemente enfrentam um obstáculo específico,
+
+2
+00:00:05.600 --> 00:00:10.600
+mapear paradigmas rígidos e type-safe para um ambiente construído sobre TypeScript.
+
+3
+00:00:10.600 --> 00:00:13.800
+Parece um mundo completamente diferente à primeira vista.
+
+4
+00:00:13.800 --> 00:00:20.000
+Mas a lógica de renderização real, a topologia de como uma tela é montada, permanece inalterada.
+
+5
+00:00:20.000 --> 00:00:23.800
+Em ambos os ecossistemas, a UI é uma função do estado.
+
+6
+00:00:23.800 --> 00:00:26.800
+Os dados fluem de forma unidirecional a partir de fora,
+
+7
+00:00:26.800 --> 00:00:29.800
+e a view renderiza estritamente com base nesses dados.
+
+8
+00:00:29.800 --> 00:00:31.800
+A mudança é estrutural.
+
+9
+00:00:31.800 --> 00:00:34.800
+Em vez de definir uma struct em Swift com um inicializador,
+
+10
+00:00:34.800 --> 00:00:39.800
+você escreve uma função simples em TypeScript que recebe um único objeto chamado props.
+
+11
+00:00:39.800 --> 00:00:44.800
+À esquerda, um payload JSON entra em uma view Swift através do seu parâmetro init.
+
+12
+00:00:44.800 --> 00:00:49.800
+À direita, o mesmo payload exato entra em uma função TypeScript como props.
+
+13
+00:00:49.800 --> 00:00:55.800
+A sintaxe difere, mas a fase de rendering avalia os dados para produzir o componente de UI Native idêntico.
+
+14
+00:00:55.800 --> 00:00:58.800
+Sua expertise existente em iOS se traduz diretamente.
+
+15
+00:00:58.800 --> 00:01:05.800
+Se atualizar em React Native é principalmente um exercício de mapear seus modelos mentais atuais para uma nova sintaxe.
+
+16
+00:01:05.800 --> 00:01:10.800
+Este roadmap guia a análise, cobrindo tudo, desde strict types e composition
+
+17
+00:01:10.800 --> 00:01:13.800
+até generics e referências de views Native.
+
+18
+00:01:13.800 --> 00:01:16.800
+Os hábitos arquiteturais Native se traduzem diretamente.
+
+19
+00:01:16.800 --> 00:01:19.800
+O compiler é a única variável que realmente muda.
+
+20
+00:01:19.800 --> 00:01:23.800
+Ao construir componentes reutilizáveis, você deve impor quais dados são obrigatórios
+
+21
+00:01:23.800 --> 00:01:26.800
+antes de uma view ter permissão para renderizar.
+
+22
+00:01:26.800 --> 00:01:32.800
+Swift reforça isso em nível de tipo, distinguindo strings padrão não opcionais das opcionais.
+
+23
+00:01:32.800 --> 00:01:36.800
+TypeScript alcança a mesma distinção usando propriedades de objeto opcionais.
+
+24
+00:01:36.800 --> 00:01:40.800
+Nesta comparação de código, o lado esquerdo mostra a string opcional do Swift.
+
+25
+00:01:40.800 --> 00:01:46.800
+O lado direito mostra uma interface TypeScript usando o mesmo modificador de ponto de interrogação para indicar uma prop opcional.
+
+26
+00:01:46.800 --> 00:01:52.800
+Se um desenvolvedor esquecer de passar uma prop obrigatória, o TypeScript imediatamente lança um erro de compilação no local da chamada.
+
+27
+00:01:52.800 --> 00:01:57.800
+Isso oferece a mesma garantia de segurança que um inicializador estrito do Swift.
+
+28
+00:01:57.800 --> 00:02:01.800
+Para dados que são opcionais, geralmente é necessário atribuir um valor padrão.
+
+29
+00:02:01.800 --> 00:02:05.800
+No Swift, esses valores padrão ficam na assinatura do inicializador.
+
+30
+00:02:05.800 --> 00:02:10.800
+No React Native, você usa a desestruturação de objetos do JavaScript para extrair as propriedades recebidas.
+
+31
+00:02:10.800 --> 00:02:14.800
+Atribua nomes locais e defina valores padrão simultaneamente.
+
+32
+00:02:14.800 --> 00:02:18.800
+Observando este bloco de destructuring, o código é avaliado da esquerda para a direita.
+
+33
+00:02:19.800 --> 00:02:27.800
+Isso permite que um valor padrão posterior, como o accessibility label, referencie com segurança uma propriedade desestruturada anteriormente, como o name.
+
+34
+00:02:27.800 --> 00:02:30.800
+Você vai estruturar essas entradas usando declarações de função simples.
+
+35
+00:02:30.800 --> 00:02:35.800
+Uma sintaxe que o time do React agora recomenda em vez do antigo padrão React.FC.
+
+36
+00:02:35.800 --> 00:02:45.800
+Ao combinar interfaces estritas do TypeScript com destructuring, seus componentes mantêm as garantias rigorosas de compile time exigidas pelos padrões enterprise do iOS.
+
+37
+00:02:45.800 --> 00:02:50.800
+Telas grandes são montadas aninhando views pequenas, focadas e composable.
+
+38
+00:02:50.800 --> 00:02:56.800
+O SwiftUI lida com conteúdo de views aninhadas usando trailing closures e o atributo view builder.
+
+39
+00:02:56.800 --> 00:03:01.800
+O React Native replica essa composição por meio de uma propriedade dedicada chamada children.
+
+40
+00:03:01.800 --> 00:03:06.800
+Aqui, o view builder do SwiftUI se transforma em JSX do React Native.
+
+41
+00:03:06.800 --> 00:03:12.800
+Qualquer coisa colocada entre as tags de abertura e fechamento popula automaticamente a prop children do componente,
+
+42
+00:03:12.800 --> 00:03:15.800
+que você declara explicitamente na interface.
+
+43
+00:03:15.800 --> 00:03:19.800
+O tipo mais amplo que você pode atribuir a essa propriedade é React node.
+
+44
+00:03:19.800 --> 00:03:25.800
+Isso aceita com segurança elementos únicos, strings de texto puro, números ou arrays de outras views.
+
+45
+00:03:25.800 --> 00:03:31.800
+Ao passar arrays dinâmicos de dados para container views, a aplicação estrita de Type deve ser mantida.
+
+46
+00:03:31.800 --> 00:03:35.800
+A solução em SwiftUI é a constraint T conforms to view.
+
+47
+00:03:35.800 --> 00:03:39.800
+O React Native mapeia isso diretamente para a sintaxe genérica do TypeScript.
+
+48
+00:03:39.800 --> 00:03:49.800
+Quando um array de itens é passado para um componente genérico do React Native, o compilador do TypeScript infere automaticamente o Type genérico T sem exigir declaração manual.
+
+49
+00:03:49.800 --> 00:03:55.800
+O resultado é uma árvore de componentes type safe que suporta exatamente os padrões de arquitetura modular que você já utiliza.
+
+50
+00:03:55.800 --> 00:04:04.800
+Em grande escala, você frequentemente precisa construir wrapper components, como um branded text input, que ainda aceitem as dezenas de propriedades nativas suportadas pela view subjacente.
+
+51
+00:04:04.800 --> 00:04:12.800
+Redeclarar manualmente cada propriedade, como tipo de teclado e flags de autocorreção, cria um código frágil que exige manutenção constante.
+
+52
+00:04:12.800 --> 00:04:16.800
+O JavaScript evita essa repetição utilizando os operadores spread e rest.
+
+53
+00:04:16.800 --> 00:04:21.800
+Neste diagrama, uma interface de input com estilo customizado usa a palavra-chave extends.
+
+54
+00:04:21.800 --> 00:04:27.800
+Ela absorve todas as propriedades padrão do text input nativo base, mesclando-as perfeitamente com seus próprios acréscimos customizados.
+
+55
+00:04:27.800 --> 00:04:37.800
+Quando o conjunto de propriedades entra na função, a desestruturação nos permite extrair explicitamente nossas propriedades customizadas, direcionando coisas como cor do tema e força para a lógica do wrapper.
+
+56
+00:04:37.800 --> 00:04:46.800
+O operador rest reúne tudo o que não nomeamos explicitamente e encaminha diretamente para a view nativa interna como um único bloco intacto.
+
+57
+00:04:46.800 --> 00:04:54.800
+Automatizar esse encaminhamento garante que wrappers customizados permaneçam sincronizados com as views nativas que eles encapsulam, mesmo conforme essas APIs subjacentes evoluem.
+
+58
+00:04:54.800 --> 00:05:02.800
+O operador spread permite a criação de camadas de componentes flexíveis, preservando ao mesmo tempo a segurança de tipos exigida pela interface.
+
+59
+00:05:02.800 --> 00:05:10.800
+A composição declarativa lida com a maioria das tarefas de layout, mas inputs de formulário e elementos interativos exigem uma clara definição de propriedade dos dados ao longo do tempo.
+
+60
+00:05:10.800 --> 00:05:21.800
+O React Native determina essa propriedade por meio de componentes controlados e não controlados. Um componente controlado exige que o pai seja o dono do estado, mapeando diretamente para o binding do SwiftUI.
+
+61
+00:05:21.800 --> 00:05:28.800
+Um componente não controlado gerencia seu próprio estado interno, equivalente a um wrapper de estado local no Swift.
+
+62
+00:05:28.800 --> 00:05:39.800
+Use componentes controlados para campos de formulário que exigem validação ou resets do parent. Use componentes não controlados quando o parent só precisa escutar eventos isolados.
+
+63
+00:05:39.800 --> 00:05:46.800
+Além do estado, existem casos extremos que exigem controle imperativo direto, como forçar um campo de texto a abrir o teclado.
+
+64
+00:05:46.800 --> 00:05:59.800
+No UIKit, você consegue isso mantendo uma referência a um ponteiro de UI view. Este diagrama descreve o mapeamento imperativo. À esquerda, o UIKit chama become first responder em um ponteiro.
+
+65
+00:05:59.800 --> 00:06:10.800
+À direita, o React Native chama focus em um ref encaminhado (forwarded ref). Ambos usam optional chaining, o ponto de interrogação e o ponto, para pular a operação com segurança caso a view seja null.
+
+66
+00:06:10.800 --> 00:06:19.800
+Para que isso funcione, o child expõe a native view para o parent usando forward ref, e o parent mantém esse ponteiro usando use ref.
+
+67
+00:06:19.800 --> 00:06:28.800
+Testar essas variações de componentes isoladamente exige trocar o preview provider do SwiftUI por blocos inline de developer guard ou ferramentas de estrutura como storybook.
+
+68
+00:06:28.800 --> 00:06:39.800
+Mas independentemente de como você compõe ou faz preview do seu trabalho, uma regra arquitetural permanece fixa. Props, assim como os valores de initializer no SwiftUI, são imutáveis do ponto de vista do componente.
+
+69
+00:06:39.800 --> 00:06:56.800
+Você não pode mutá-los. Qualquer dado que muda com o tempo deve ser tratado pelo state. Migrar de Swift Structs para funções TypeScript exige um ajuste de sintaxe; os princípios estruturais, o fluxo de dados estrito, a composição declarativa e o estado controlado permanecem fundamentalmente inalterados.
+

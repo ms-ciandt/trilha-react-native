@@ -1,0 +1,270 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:04.000
+You submit your React Native app for review, and 24 hours later,
+
+2
+00:00:04.000 --> 00:00:08.000
+an email lands in your inbox citing a missing API declaration.
+
+3
+00:00:08.000 --> 00:00:13.000
+Apple requires a machine readable record of any sensitive system APIs your app uses.
+
+4
+00:00:13.000 --> 00:00:17.000
+The catch for React Native developers is that the framework itself
+
+5
+00:00:17.000 --> 00:00:20.000
+accesses several of these restricted APIs internally to function.
+
+6
+00:00:20.000 --> 00:00:24.000
+Your custom JavaScript code might never call these system features directly,
+
+7
+00:00:24.000 --> 00:00:28.000
+but because the React Native engine is compiled into your linked binary,
+
+8
+00:00:28.000 --> 00:00:32.000
+Apple's automated review system detects the access and flags the submission.
+
+9
+00:00:32.000 --> 00:00:36.000
+If you are using Expo SDK 56 or later on the managed workflow,
+
+10
+00:00:36.000 --> 00:00:40.000
+the Expo CLI handles this declaration automatically during the pre-built step.
+
+11
+00:00:40.000 --> 00:00:45.000
+However, if you are running a bear workflow project or adding custom native modules,
+
+12
+00:00:45.000 --> 00:00:47.000
+you must address this requirement manually.
+
+13
+00:00:47.000 --> 00:00:52.000
+To pass the automated reviewers, you have to create a specific property list file
+
+14
+00:00:52.000 --> 00:00:56.000
+that translates React Native's internal architecture into a declared checklist.
+
+15
+00:00:56.000 --> 00:00:59.000
+Now, step one is generating the file.
+
+16
+00:00:59.000 --> 00:01:04.000
+Open your iOS project in Xcode by selecting the .xc workspace file
+
+17
+00:01:04.000 --> 00:01:09.000
+rather than the .xc project file to ensure your dependencies link correctly.
+
+18
+00:01:09.000 --> 00:01:13.000
+In the top menu, go to file, new, then file from template.
+
+19
+00:01:13.000 --> 00:01:18.000
+Filter your search for privacy and select the app privacy template.
+
+20
+00:01:18.000 --> 00:01:22.000
+Name the file exactly privacyinfo.xc privacy.
+
+21
+00:01:23.000 --> 00:01:29.000
+In the project navigator, verify that this file sits at the exact same level as your app delegate file.
+
+22
+00:01:29.000 --> 00:01:32.000
+Simply placing the file in the right directory is not enough.
+
+23
+00:01:32.000 --> 00:01:37.000
+Excode needs explicit instructions to include this file when it bundles the final application.
+
+24
+00:01:37.000 --> 00:01:42.000
+Select the new privacy file, open the file inspector on the right-hand panel,
+
+25
+00:01:42.000 --> 00:01:46.000
+and check the box for target membership assigned to your primary app target.
+
+26
+00:01:46.000 --> 00:01:50.000
+Leaving that box unchecked causes the compiler to strip the manifest
+
+27
+00:01:51.000 --> 00:01:56.000
+from your final build archive, resulting in a guaranteed rejection from the app store.
+
+28
+00:01:56.000 --> 00:01:59.000
+With the file correctly targeted, open it.
+
+29
+00:01:59.000 --> 00:02:01.000
+Xcode displays a structured editor.
+
+30
+00:02:01.000 --> 00:02:06.000
+Click the plus button to add a new top level array called privacy access API types.
+
+31
+00:02:06.000 --> 00:02:10.000
+This diagram maps out the framework's specific API usage.
+
+32
+00:02:10.000 --> 00:02:15.000
+First, React Native reads and writes to NS user defaults during its bridge initialization
+
+33
+00:02:15.000 --> 00:02:18.000
+to manage internal framework state.
+
+34
+00:02:18.000 --> 00:02:20.000
+In the structured editor, add a new row.
+
+35
+00:02:20.000 --> 00:02:26.000
+Select user defaults from the category dropdown and assign it the specific framework level reason code,
+
+36
+00:02:26.000 --> 00:02:28.000
+CA92.1.
+
+37
+00:02:28.000 --> 00:02:32.000
+Next, the Metro Bundler run time and the frameworks image caching layers.
+
+38
+00:02:32.000 --> 00:02:36.000
+Read file timestamps to handle internal cache invalidation.
+
+39
+00:02:36.000 --> 00:02:42.000
+Add file timestamp APIs as your second category and assign reason code C617.1.
+
+40
+00:02:43.000 --> 00:02:49.000
+Finally, React Native measures elapsed intervals for its performance tracing and animation subsystems
+
+41
+00:02:49.000 --> 00:02:52.000
+using high precision system boot time metrics.
+
+42
+00:02:52.000 --> 00:02:58.000
+Add the system boot time category to your list and apply reason code 35F9.1.
+
+43
+00:02:58.000 --> 00:03:04.000
+Declaring these three specific reason codes covers the foundational API footprint of the react native engine
+
+44
+00:03:04.000 --> 00:03:08.000
+and effectively satisfying Apple's automated binary scanners.
+
+45
+00:03:08.000 --> 00:03:11.000
+System APIs are only the first requirement.
+
+46
+00:03:11.000 --> 00:03:16.000
+You must also declare any actual user data your application collects by adding a second top level array
+
+47
+00:03:16.000 --> 00:03:19.000
+called privacy collected data types.
+
+48
+00:03:19.000 --> 00:03:24.000
+If your dependency tree includes external integrations like crash litix or a third party analytics SDK,
+
+49
+00:03:24.000 --> 00:03:29.000
+you add specific identifiers like crash data or device IDs to this section.
+
+50
+00:03:29.000 --> 00:03:33.000
+For each data type you add, answer the accompanying Boolean questions.
+
+51
+00:03:33.000 --> 00:03:38.000
+Specify whether the data is linked to the user's identity and declare whether it is used for tracking purposes
+
+52
+00:03:38.000 --> 00:03:43.000
+across other applications. Once the arrays are complete, validate the configuration.
+
+53
+00:03:43.000 --> 00:03:50.000
+Generate a full archive build of your app so Xcode can compile the binary and check it against your new manifest.
+
+54
+00:03:50.000 --> 00:03:57.000
+Open the Xcode organizer, right-click your completed archive and select Generate Privacy Report.
+
+55
+00:03:57.000 --> 00:04:01.000
+This document details every required API the compiler found.
+
+56
+00:04:01.000 --> 00:04:06.000
+A clean report verifies that your machine readable manifest perfectly matches the compiled binary.
+
+57
+00:04:06.000 --> 00:04:10.000
+The technical integration of your privacy manifest is now complete.
+
+58
+00:04:10.000 --> 00:04:16.000
+As a final validation step, upload your archived build to App Store Connect and distribute it to external testers
+
+59
+00:04:16.000 --> 00:04:18.000
+via test flight before full review.
+
+60
+00:04:18.000 --> 00:04:22.000
+External test flight distribution acts as a low-risk safety net.
+
+61
+00:04:22.000 --> 00:04:26.000
+It triggers an automated scan that checks your privacy manifest within 24 hours.
+
+62
+00:04:26.000 --> 00:04:32.000
+If an entry is missing, you receive immediate feedback without the penalty of a formal App Store rejection.
+
+63
+00:04:32.000 --> 00:04:35.000
+Treat your privacy manifest as a living document.
+
+64
+00:04:35.000 --> 00:04:40.000
+Whenever you add a new native dependency to your project, run a new privacy report
+
+65
+00:04:40.000 --> 00:04:44.000
+to see if that SDK introduces new API requirements.
+
+66
+00:04:44.000 --> 00:04:49.000
+By locking in this workflow, you eliminate the friction of automated compliance checks
+
+67
+00:04:49.000 --> 00:04:54.000
+and maintain a clear, predictable path for all future App Store releases.
+

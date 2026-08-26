@@ -1,0 +1,366 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:05.520
+When a physical skyscraper goes up, specific structural load points determine how tall the
+
+2
+00:00:05.520 --> 00:00:08.720
+building can safely get before it collapses.
+
+3
+00:00:08.720 --> 00:00:13.680
+As a React Native application scales beyond a handful of screens, your state management
+
+4
+00:00:13.680 --> 00:00:17.120
+decisions bear the weight of your entire architecture.
+
+5
+00:00:17.120 --> 00:00:23.080
+At the absolute baseline you have used state, its local, invisible to the rest of the application,
+
+6
+00:00:23.080 --> 00:00:27.920
+and works perfectly for isolated data like a text input or a toggle switch.
+
+7
+00:00:27.920 --> 00:00:33.120
+This flow chart tracks the first major failure point of local state, prop drilling.
+
+8
+00:00:33.120 --> 00:00:37.440
+The exact moment you have to pass the same piece of data down through a third component
+
+9
+00:00:37.440 --> 00:00:41.280
+layer, the friction begins to drag on your performance.
+
+10
+00:00:41.280 --> 00:00:46.320
+That friction multiplies when two completely unrelated screens need to react to the exact
+
+11
+00:00:46.320 --> 00:00:49.120
+same piece of data simultaneously.
+
+12
+00:00:49.120 --> 00:00:51.520
+Local states simply cannot bridge that gap.
+
+13
+00:00:51.520 --> 00:00:57.880
+Finally, top-level components begin recalculating expensive subtrees on every minor update.
+
+14
+00:00:57.880 --> 00:01:02.920
+And your data gets permanently wiped out when navigation transitions unmount to screen.
+
+15
+00:01:02.920 --> 00:01:06.120
+You are forced to look outward for a global container.
+
+16
+00:01:06.120 --> 00:01:10.440
+The React ecosystem has dozens of competing tools to solve this problem.
+
+17
+00:01:10.440 --> 00:01:15.320
+If you pick the wrong one for your specific scale, your code base will either suffocate under heavy
+
+18
+00:01:15.320 --> 00:01:19.640
+boilerplate or devolve into an untraceable mess of spaghetti code.
+
+19
+00:01:19.640 --> 00:01:25.000
+To prevent long-term technical debt, we need to map which exact state tools belong to which
+
+20
+00:01:25.000 --> 00:01:27.240
+exact scale of application.
+
+21
+00:01:27.240 --> 00:01:31.880
+The most significant architectural unlock comes before you ever install a library.
+
+22
+00:01:31.880 --> 00:01:36.040
+You must explicitly separate your data into two distinct categories.
+
+23
+00:01:36.040 --> 00:01:37.720
+First is client state.
+
+24
+00:01:37.720 --> 00:01:41.400
+This is data your app completely owns and controls in memory.
+
+25
+00:01:41.400 --> 00:01:46.360
+Things like a modal being open, draft form values, or a user's local navigation history.
+
+26
+00:01:46.360 --> 00:01:48.360
+This matrix highlights the divide.
+
+27
+00:01:48.360 --> 00:01:50.520
+On the right is server state.
+
+28
+00:01:50.520 --> 00:01:54.360
+Remote data temporarily cached, like order history.
+
+29
+00:01:54.440 --> 00:01:59.800
+Forcing this data, which needs background refreshing, into the same container as local UI
+
+30
+00:01:59.800 --> 00:02:05.160
+toggles creates a conflict. One lifecycle is predictable, the other a synchronous.
+
+31
+00:02:05.800 --> 00:02:11.320
+Separating them keeps the application logic clean, but it introduces a specific trade-off.
+
+32
+00:02:11.320 --> 00:02:15.000
+Your developers now have to learn and maintain two distinct libraries.
+
+33
+00:02:15.640 --> 00:02:18.600
+To manage the complex lifecycle of remote data,
+
+34
+00:02:18.600 --> 00:02:21.480
+TanStack Query is the purpose-built standard.
+
+35
+00:02:21.480 --> 00:02:25.800
+If two different components ask for the exact same data at the same time,
+
+36
+00:02:25.800 --> 00:02:29.160
+TanStack Query automatically de-duplicates the request.
+
+37
+00:02:29.160 --> 00:02:31.000
+The network call only happens once.
+
+38
+00:02:31.640 --> 00:02:34.920
+This timeline shows the stale-while-revalidate pattern.
+
+39
+00:02:34.920 --> 00:02:38.520
+Users instantly see cache data, avoiding loading spinners,
+
+40
+00:02:38.520 --> 00:02:41.400
+while a background fetch swaps in fresh versions.
+
+41
+00:02:41.400 --> 00:02:43.800
+It also manages optimistic updates.
+
+42
+00:02:43.800 --> 00:02:45.880
+UI changes apply immediately.
+
+43
+00:02:45.960 --> 00:02:49.960
+If the server errors, the library automatically rolls back to the previous state.
+
+44
+00:02:49.960 --> 00:02:51.800
+As you fetch more endpoints,
+
+45
+00:02:51.800 --> 00:02:58.040
+maintaining a central query key factory pattern becomes a strict requirement to keep your cache organized.
+
+46
+00:02:58.040 --> 00:03:02.600
+Writing that extra organizational code is the necessary cost of doing business.
+
+47
+00:03:02.600 --> 00:03:07.560
+It prevents subtle, heart-to-track cache collision bugs across a massive application.
+
+48
+00:03:07.560 --> 00:03:11.720
+With server state handled, we need a lightweight tool for client state that solves
+
+49
+00:03:11.720 --> 00:03:15.400
+prop drilling and data persistence without adding heavy ceremony.
+
+50
+00:03:15.400 --> 00:03:18.120
+This diagram demonstrates ZewStand.
+
+51
+00:03:18.120 --> 00:03:19.960
+Instead of one giant object,
+
+52
+00:03:19.960 --> 00:03:24.680
+developers create independent cohesive slices of domain-specific data.
+
+53
+00:03:24.680 --> 00:03:27.480
+By pointing selectors at specific slices,
+
+54
+00:03:27.480 --> 00:03:31.160
+UI components only subscribe to exact data they need.
+
+55
+00:03:31.160 --> 00:03:35.400
+If a cart updates, the user profile won't unnecessarily re-render.
+
+56
+00:03:35.400 --> 00:03:38.040
+The primary trade-off here is human error.
+
+57
+00:03:38.040 --> 00:03:41.080
+ZewStand does not enforce strict architecture rules,
+
+58
+00:03:41.080 --> 00:03:44.200
+meaning your team needs strict discipline to keep files small
+
+59
+00:03:44.200 --> 00:03:47.080
+and avoid accidentally building a monolith anyway.
+
+60
+00:03:47.080 --> 00:03:49.400
+If you need extreme precision,
+
+61
+00:03:49.400 --> 00:03:51.240
+Jotai is the alternative.
+
+62
+00:03:51.240 --> 00:03:53.000
+It relies on atoms,
+
+63
+00:03:53.000 --> 00:03:58.040
+tiny individual units of state that nut perfectly to granular UI pieces.
+
+64
+00:03:58.040 --> 00:04:03.400
+This ensures that a re-render is limited only to the component reading that specific atom.
+
+65
+00:04:03.400 --> 00:04:05.720
+While Jotai minimizes re-renders,
+
+66
+00:04:05.720 --> 00:04:10.840
+creating an individual atom for every single variable creates atom proliferation,
+
+67
+00:04:11.000 --> 00:04:15.640
+in a large app, managing the sheer volume of them becomes a heavy organizational burden.
+
+68
+00:04:16.280 --> 00:04:19.560
+This scrubbing timeline represents the heavy duty option,
+
+69
+00:04:19.560 --> 00:04:21.000
+Redux Toolkit.
+
+70
+00:04:21.000 --> 00:04:24.600
+It's built for massive applications needing intense observability
+
+71
+00:04:24.600 --> 00:04:27.400
+over a relentless stream of complex events.
+
+72
+00:04:27.400 --> 00:04:31.240
+Redux Toolkit provides time-travel debugging and a strict audit trail,
+
+73
+00:04:31.240 --> 00:04:35.080
+logging the exact history and sequence of every state mutation in your app.
+
+74
+00:04:35.720 --> 00:04:39.560
+This look-up table shows how RTK query handles normalization.
+
+75
+00:04:39.560 --> 00:04:44.040
+Instead of duplicating data, entities are stored exactly once by ID.
+
+76
+00:04:44.040 --> 00:04:45.880
+With one source of truth,
+
+77
+00:04:45.880 --> 00:04:49.800
+updating a profile picture instantly syncs across a comment thread,
+
+78
+00:04:49.800 --> 00:04:52.920
+friend list, and settings page without leaving stale data.
+
+79
+00:04:53.480 --> 00:04:57.400
+You pay a high premium and boiler code to get this architecture.
+
+80
+00:04:57.400 --> 00:04:59.960
+It is only worth the cost if real-time,
+
+81
+00:04:59.960 --> 00:05:04.440
+multi-source syncing and strict predictability are non-negotiable business requirements.
+
+82
+00:05:05.160 --> 00:05:06.360
+We have the tools.
+
+83
+00:05:06.360 --> 00:05:09.000
+Now we need a concrete framework to make the decision.
+
+84
+00:05:09.560 --> 00:05:10.920
+This matrix is the blueprint.
+
+85
+00:05:11.560 --> 00:05:16.200
+For most apps, use TANstack for server state and zoo stand for client state.
+
+86
+00:05:16.200 --> 00:05:17.560
+Solos stick to you state.
+
+87
+00:05:18.120 --> 00:05:22.120
+Mid-level teams use the TANstack zoo stand hybrid for denormalized data.
+
+88
+00:05:22.680 --> 00:05:27.240
+Enterprise architects adopt Redux Toolkit for complex audits and strict normalization.
+
+89
+00:05:27.960 --> 00:05:31.960
+Sound architecture is never about hunting for a universal silver bullet.
+
+90
+00:05:31.960 --> 00:05:35.400
+It is about looking at the operational cost of a specific tool
+
+91
+00:05:35.400 --> 00:05:38.040
+and matching it precisely to the scale of your application.
+

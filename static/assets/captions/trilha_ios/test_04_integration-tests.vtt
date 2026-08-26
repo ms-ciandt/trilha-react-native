@@ -1,0 +1,386 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:03.240
+O teste de aplicativos mobile abrange um amplo espectro.
+
+2
+00:00:03.240 --> 00:00:07.520
+Os testes unitários à esquerda verificam componentes individuais usando Mox.
+
+3
+00:00:07.520 --> 00:00:09.760
+Os testes de integração ficam no meio.
+
+4
+00:00:09.760 --> 00:00:13.640
+Aqui, renderizamos o componente real da tela com seus filhos reais,
+
+5
+00:00:13.640 --> 00:00:17.840
+interceptando apenas sistemas externos fora do limite do JavaScript.
+
+6
+00:00:17.840 --> 00:00:19.880
+Se você vem de um background em iOS,
+
+7
+00:00:19.880 --> 00:00:22.720
+essa filosofia arquitetural se traduz diretamente.
+
+8
+00:00:22.720 --> 00:00:28.240
+Um conjunto de testes de integração XC tipicamente inicializa um view controller de UI real com suas subviews.
+
+9
+00:00:28.400 --> 00:00:32.840
+O objetivo é verificar que tocar em um botão dispara a transição de estado de UI pretendida
+
+10
+00:00:32.840 --> 00:00:34.840
+em toda a hierarquia de views.
+
+11
+00:00:34.840 --> 00:00:40.160
+No React Native, o conceito de UI view controller mapeia diretamente para o React test renderer.
+
+12
+00:00:40.160 --> 00:00:45.320
+Em vez de uma view nativa, ele constrói uma árvore de componentes virtual puramente no lado do JavaScript.
+
+13
+00:00:45.320 --> 00:00:48.760
+Você não precisa testar o framework de navegação nativo em si.
+
+14
+00:00:48.760 --> 00:00:53.800
+Você simplesmente precisa verificar se sua tela dispara a intenção de transição correta quando os usuários agem.
+
+15
+00:00:53.800 --> 00:00:56.840
+Essa configuração é otimizada para fluxos de dados complexos.
+
+16
+00:00:56.840 --> 00:01:00.400
+Verificar a entrada do usuário, checar a validação do formulário,
+
+17
+00:01:00.400 --> 00:01:05.920
+e as atualizações de tela resultantes é o cenário principal para o qual essa camada de teste foi criada.
+
+18
+00:01:05.920 --> 00:01:10.280
+Ao dominar essa fronteira, você ganha a velocidade de execução de um unit test
+
+19
+00:01:10.280 --> 00:01:16.000
+enquanto mantém a cobertura em nível de aplicação normalmente associada a testes end-to-end pesados.
+
+20
+00:01:16.000 --> 00:01:18.320
+Para alcançar essa cobertura sem flakiness,
+
+21
+00:01:18.320 --> 00:01:22.800
+temos que construir a primeira camada de isolamento, o limite de rede.
+
+22
+00:01:22.800 --> 00:01:24.840
+Usamos o Mock service worker.
+
+23
+00:01:24.840 --> 00:01:32.080
+No React Native, o MSW intercepta requisições HTTP no nível do node ao fazer patch nas APIs globais de fetch.
+
+24
+00:01:32.080 --> 00:01:37.800
+Como o React Native não possui service workers de navegador, dependemos de patch direto no node.
+
+25
+00:01:37.800 --> 00:01:43.000
+Isso funciona exatamente como subclassing de URL protocol no desenvolvimento nativo iOS.
+
+26
+00:01:43.000 --> 00:01:47.360
+Você registra um handler que intercepta requisições que correspondem a um padrão específico.
+
+27
+00:01:47.360 --> 00:01:51.240
+Isso permite que seus testes retornem respostas de dados cuidadosamente elaboradas
+
+28
+00:01:51.240 --> 00:01:54.200
+sem tocar no código de produção que faz a requisição.
+
+29
+00:01:54.240 --> 00:01:58.680
+Mas para garantir o isolamento dos testes, temos que configurar o servidor MSW
+
+30
+00:01:58.680 --> 00:02:01.280
+com uma configuração restritiva específica.
+
+31
+00:02:01.280 --> 00:02:04.760
+Você deve definir a propriedade on-handled request como error.
+
+32
+00:02:04.760 --> 00:02:10.200
+Se você emitir isso, qualquer requisição não marcada que seu teste fizer será executada contra um endpoint real,
+
+33
+00:02:10.200 --> 00:02:15.000
+quebrando o determinismo e levando diretamente a pipelines de integração contínua instáveis (flaky).
+
+34
+00:02:15.000 --> 00:02:19.400
+Impor uma interceptação de rede rigorosa, com lançamento de erro, garante que o ambiente de teste
+
+35
+00:02:19.400 --> 00:02:22.960
+tenha autoridade absoluta sobre todas as entradas de dados externas.
+
+36
+00:02:22.960 --> 00:02:27.160
+Uma vez que a rede está controlada, temos que travar a camada de estado interno.
+
+37
+00:02:27.160 --> 00:02:31.160
+O TANSTAC query é a próxima grande fonte de testes imprevisíveis.
+
+38
+00:02:31.160 --> 00:02:36.400
+Por design, o TANSTAC query armazena resultados em cache e tenta novamente automaticamente requisições que falharam.
+
+39
+00:02:36.400 --> 00:02:38.320
+Em produção, isso é uma funcionalidade.
+
+40
+00:02:38.320 --> 00:02:41.120
+Em cenários de teste, isso quebra o isolamento.
+
+41
+00:02:41.120 --> 00:02:44.240
+Se você construir um único query client no nível do módulo,
+
+42
+00:02:44.240 --> 00:02:47.680
+os dados em cache de um teste bem-sucedido vão vazar para o próximo teste,
+
+43
+00:02:47.680 --> 00:02:49.880
+satisfazendo falsamente seus requisitos.
+
+44
+00:02:49.880 --> 00:02:53.280
+O segundo risco vem da lógica de retry padrão,
+
+45
+00:02:53.280 --> 00:02:57.120
+que usa exponential back-off quando uma chamada de rede falha.
+
+46
+00:02:57.120 --> 00:03:01.560
+Quando você escreve um teste de integração especificamente para verificar um estado de erro,
+
+47
+00:03:01.560 --> 00:03:06.160
+esse comportamento padrão obriga o teste a esperar vários segundos pelos retries,
+
+48
+00:03:06.160 --> 00:03:08.120
+frequentemente disparando timeouts.
+
+49
+00:03:08.120 --> 00:03:11.480
+A solução arquitetural é construir um factory wrapper
+
+50
+00:03:11.480 --> 00:03:16.000
+que gera um query client novo e isolado para cada teste individual.
+
+51
+00:03:16.000 --> 00:03:18.320
+Configure esta factory com três parâmetros
+
+52
+00:03:18.320 --> 00:03:20.600
+para construir um firewall entre os testes.
+
+53
+00:03:20.600 --> 00:03:23.960
+Definir o retry como zero exibe os erros instantaneamente.
+
+54
+00:03:23.960 --> 00:03:28.280
+Definir o GC try como zero força a coleta de lixo (garbage collection) imediata do cache.
+
+55
+00:03:28.280 --> 00:03:33.440
+Por fim, um stale time zero garante que toda montagem dispare uma nova requisição de rede.
+
+56
+00:03:33.440 --> 00:03:38.240
+Quando você combina essa factory com uma chamada a server.reset handlers após cada execução,
+
+57
+00:03:38.240 --> 00:03:40.400
+você higieniza todo o ambiente.
+
+58
+00:03:40.400 --> 00:03:43.480
+Esse isolamento hermético de estado evita a poluição dos testes,
+
+59
+00:03:43.480 --> 00:03:48.720
+onde uma única falha ou sucesso é determinado pela ordem específica de execução da suíte de testes.
+
+60
+00:03:48.720 --> 00:03:52.520
+Com o estado e a rede isolados, a camada arquitetural final
+
+61
+00:03:52.520 --> 00:03:57.160
+está sincronizando nossas ações simuladas do usuário com o event loop do JavaScript.
+
+62
+00:03:57.160 --> 00:04:01.080
+Houve uma mudança significativa na versão 12 da react native testing library
+
+63
+00:04:01.080 --> 00:04:03.560
+em relação a como interagimos com a UI.
+
+64
+00:04:03.560 --> 00:04:07.600
+Todos os métodos de user event, como pressionar um botão ou digitar um texto,
+
+65
+00:04:07.600 --> 00:04:09.920
+agora são operações assíncronas.
+
+66
+00:04:09.920 --> 00:04:12.680
+Se você esquecer a palavra-chave await antes dessas ações,
+
+67
+00:04:12.680 --> 00:04:14.560
+você cria uma race condition.
+
+68
+00:04:14.560 --> 00:04:20.240
+O test runner vai executar suas assertions antes que a interação simulada tenha sido realmente processada.
+
+69
+00:04:20.240 --> 00:04:24.280
+As mesmas regras de timing se aplicam ao consultar dados após uma interação.
+
+70
+00:04:24.280 --> 00:04:29.960
+As respostas de rede que configuramos no NSW só se resolvem no próximo tick do event loop.
+
+71
+00:04:29.960 --> 00:04:33.640
+Por causa disso, a primeira asserção que você faz para verificar os dados do fetch
+
+72
+00:04:33.640 --> 00:04:35.960
+deve ser envolvida em um bloco wait for.
+
+73
+00:04:35.960 --> 00:04:40.240
+Dominar esses limites assíncronos é como você modela com precisão a realidade temporal
+
+74
+00:04:40.240 --> 00:04:43.520
+de um usuário interagindo com interfaces dependentes de rede.
+
+75
+00:04:43.520 --> 00:04:49.200
+Vamos revisar a arquitetura que construímos e compará-la diretamente com o padrão nativo do iOS.
+
+76
+00:04:49.200 --> 00:04:51.240
+Primeiro, o ambiente de renderização.
+
+77
+00:04:51.240 --> 00:04:55.120
+XTest usa uma hierarquia real de UI kit em um simulador.
+
+78
+00:04:55.120 --> 00:04:58.040
+React Native usa uma árvore de componentes virtual.
+
+79
+00:04:58.040 --> 00:05:01.360
+Para redes, o nativo faz subclasse de URL protocol,
+
+80
+00:05:01.360 --> 00:05:04.280
+enquanto nós fazemos patch do fetch usando MSW.
+
+81
+00:05:04.280 --> 00:05:07.200
+Finalmente, o iOS gerencia o timing da animação
+
+82
+00:05:07.200 --> 00:05:10.720
+enquanto o React Native lida com atualizações assíncronas e retentativas.
+
+83
+00:05:10.720 --> 00:05:15.040
+O objetivo subjacente de testar transições de estado é idêntico em ambos os mundos,
+
+84
+00:05:15.040 --> 00:05:18.320
+mesmo que os mecanismos físicos de execução sejam desacoplados.
+
+85
+00:05:18.320 --> 00:05:21.360
+Ao operar inteiramente dentro da camada JavaScript,
+
+86
+00:05:21.360 --> 00:05:24.360
+podemos executar centenas de testes de integração em segundos,
+
+87
+00:05:24.360 --> 00:05:27.600
+contornando a sobrecarga de inicializar um simulador iOS.
+
+88
+00:05:27.600 --> 00:05:31.400
+No entanto, essa arquitetura não consegue capturar bugs de renderização nativa.
+
+89
+00:05:31.400 --> 00:05:35.360
+Problemas ligados a erros de core animation ou de layout no fabric renderer
+
+90
+00:05:35.360 --> 00:05:39.280
+vão passar na camada JavaScript, mas falhar em um dispositivo físico.
+
+91
+00:05:39.280 --> 00:05:42.080
+É aqui que os testes end-to-end com detox entram em cena.
+
+92
+00:05:42.080 --> 00:05:47.120
+Eles devem ser reservados para verificar essas integrações específicas de layout nativo,
+
+93
+00:05:47.120 --> 00:05:49.920
+em vez de lógica de negócio complexa.
+
+94
+00:05:49.920 --> 00:05:54.280
+Combinar uma camada de integração em JavaScript com testes detox direcionados
+
+95
+00:05:54.280 --> 00:05:57.520
+permite que as equipes verifiquem a lógica de negócio em escala,
+
+96
+00:05:57.520 --> 00:06:00.160
+enquanto captura regressões nativas no dispositivo.
+

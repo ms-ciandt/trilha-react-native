@@ -1,0 +1,306 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:04.000
+In Swift, you are trained to never trust an untyped value.
+
+2
+00:00:04.000 --> 00:00:09.000
+You rely on static typing to catch mistakes and prevent runtime crashes.
+
+3
+00:00:09.000 --> 00:00:15.000
+JavaScript strips all of that away, allowing any variable to hold any value at any time.
+
+4
+00:00:15.000 --> 00:00:19.000
+TypeScript is the strict superset layer designed to restore order.
+
+5
+00:00:19.000 --> 00:00:24.000
+It gives you back the compiler-enforced contract you already rely on to write save code,
+
+6
+00:00:24.000 --> 00:00:29.000
+but the architecture is different. Swift bakes its types directly into the compiled machine code.
+
+7
+00:00:29.000 --> 00:00:33.000
+TypeScript typebaritations exist only during development.
+
+8
+00:00:33.000 --> 00:00:38.000
+Before the code ever runs in the browser or on the device, the types are completely erased.
+
+9
+00:00:38.000 --> 00:00:44.000
+Because of this erasure, all of that strict type checking costs exactly zero performance overhead at runtime.
+
+10
+00:00:44.000 --> 00:00:49.000
+The best mental model is to view TypeScript's supervision over JavaScript,
+
+11
+00:00:49.000 --> 00:00:54.000
+the same way you view Swift's type system operating over legacy crash-prone objective C patterns.
+
+12
+00:00:54.000 --> 00:00:58.000
+It is an analytical layer sitting on top of a dynamic runtime.
+
+13
+00:00:58.000 --> 00:01:02.000
+TypeScript provides a safety model but mirrors Swift.
+
+14
+00:01:02.000 --> 00:01:09.000
+However, maintaining that model requires you to configure specific boundaries before the code ever reaches the compiler.
+
+15
+00:01:09.000 --> 00:01:15.000
+By default, TypeScript is lenient to make migrating old JavaScript code bases easier.
+
+16
+00:01:15.000 --> 00:01:18.000
+This contradicts the entire Swift philosophy.
+
+17
+00:01:18.000 --> 00:01:23.000
+To fix this, you start by enabling the no implicit any flag.
+
+18
+00:01:23.000 --> 00:01:29.000
+This acts directly like Swift's compiler, establishing a ban on untyped variables.
+
+19
+00:01:29.000 --> 00:01:32.000
+Next, you enable strict null checks.
+
+20
+00:01:32.000 --> 00:01:34.000
+This flag replicates Swift optional.
+
+21
+00:01:34.000 --> 00:01:39.000
+It prevents nulls from silently bypassing your type checks and causing crashes and production.
+
+22
+00:01:39.000 --> 00:01:44.000
+With the compiler locked down, the basic primitives map over cleanly.
+
+23
+00:01:44.000 --> 00:01:51.000
+Swift's string, int, or double, and bool translate directly to TypeScript's string, number, and boolean.
+
+24
+00:01:51.000 --> 00:01:56.000
+When you genuinely don't know what a value is, TypeScript provides the unknown type.
+
+25
+00:01:56.000 --> 00:02:03.000
+This forces you to logically narrow the type before you use it, exactly as you would with an as-question mark cast in Swift.
+
+26
+00:02:03.000 --> 00:02:12.000
+You must avoid TypeScript's any keyword, using any disables the compiler for that variable, removing your safety net.
+
+27
+00:02:12.000 --> 00:02:19.000
+Without enforcing strict mode and utilizing unknown for ambiguous data, the environment is compromised.
+
+28
+00:02:19.000 --> 00:02:22.000
+It cannot provide the compile time safety you expect.
+
+29
+00:02:22.000 --> 00:02:30.000
+Swift's optional type, T-question mark, is split into two distinct values in TypeScript, null and undefined.
+
+30
+00:02:30.000 --> 00:02:36.000
+null represents an intentionally absent value, like a missing database field.
+
+31
+00:02:36.000 --> 00:02:39.000
+Undefined means a value simply hasn't been set yet.
+
+32
+00:02:39.000 --> 00:02:46.000
+When strict mode is enabled, the compiler handles both of these knowledge states by forcing you to explicitly unwrap them,
+
+33
+00:02:46.000 --> 00:02:49.000
+mirroring how Swift forces you to handle nil.
+
+34
+00:02:49.000 --> 00:02:53.000
+Moving to structures, Swift relies heavily on struct and class.
+
+35
+00:02:53.000 --> 00:02:57.000
+In TypeScript, you map these to interface and type aliases.
+
+36
+00:02:57.000 --> 00:03:02.000
+But there is a catch. TypeScript has no concept of a value type struct.
+
+37
+00:03:02.000 --> 00:03:06.000
+At runtime, every complex shape you build operates as a reference type.
+
+38
+00:03:06.000 --> 00:03:12.000
+So while your structural type definitions will look similar to Swift's structs on the surface,
+
+39
+00:03:12.000 --> 00:03:19.000
+you have to remember that underneath the syntax, JavaScript is still executing reference-based behavior.
+
+40
+00:03:19.000 --> 00:03:22.000
+Swift enums are first-class types.
+
+41
+00:03:22.000 --> 00:03:30.000
+TypeScript does have a built-in enum keyword, but it generates non-standard runtime code that causes unexpected behavior.
+
+42
+00:03:30.000 --> 00:03:35.000
+Instead, map simple Swift enums to TypeScript string unions.
+
+43
+00:03:35.000 --> 00:03:40.000
+This represents the state as a series of specific, acceptable, literal strings.
+
+44
+00:03:40.000 --> 00:03:47.000
+To replicate the stability of Swift's raw value, you use a plain object mapped with the as-const assertion.
+
+45
+00:03:47.000 --> 00:03:50.000
+This creates a stable read-only reference.
+
+46
+00:03:50.000 --> 00:03:53.000
+But for complex structures, we need a different approach.
+
+47
+00:03:53.000 --> 00:03:59.000
+When translating Swift enums carrying associated values, use TypeScript discriminated unions.
+
+48
+00:03:59.000 --> 00:04:03.000
+Create a shared literal field, often called status.
+
+49
+00:04:03.000 --> 00:04:08.000
+This field acts as the discriminant, serving as the pivot point for the union.
+
+50
+00:04:08.000 --> 00:04:13.000
+When checking this discriminant field, the compiler automatically narrows the type to that specific branch.
+
+51
+00:04:13.000 --> 00:04:19.000
+This narrowing provides the same exhaustiveness guarantees you get using a Swift statement.
+
+52
+00:04:19.000 --> 00:04:29.000
+Mastering discriminated unions allows you to model complex, mutually exclusive states using the same logic you would apply to an enum heavy architecture in Swift.
+
+53
+00:04:29.000 --> 00:04:34.000
+Because TypeScript erases all types at compile time, it has a vulnerability.
+
+54
+00:04:34.000 --> 00:04:39.000
+When a JSON payload arrives over the network, TypeScript cannot verify its shape.
+
+55
+00:04:39.000 --> 00:04:42.000
+To the runtime, it is just an unknown object.
+
+56
+00:04:42.000 --> 00:04:48.000
+In Swift, you use codeable to ensure that JSON decoding matches your expected static types.
+
+57
+00:04:48.000 --> 00:04:54.000
+To bridge this runtime validation gap in JavaScript, you rely on a third-party library called ZOD.
+
+58
+00:04:54.000 --> 00:04:57.000
+With ZOD, you define your schema first.
+
+59
+00:04:57.000 --> 00:05:01.000
+This schema becomes the source of truth for the data shape you expect from the server.
+
+60
+00:05:01.000 --> 00:05:04.000
+ZOD parses the incoming payload at runtime.
+
+61
+00:05:04.000 --> 00:05:11.000
+If the payload is missing a required field or has the wrong data type, ZOD throws an error before that data can reach your app state.
+
+62
+00:05:11.000 --> 00:05:16.000
+From that exact same schema, ZOD automatically derives static TypeScript types.
+
+63
+00:05:16.000 --> 00:05:18.000
+You never have to write the type twice.
+
+64
+00:05:18.000 --> 00:05:24.000
+You define the validation once and you get both runtime checking and compile-time static types.
+
+65
+00:05:24.000 --> 00:05:28.000
+It is a close replication of the codeable experience.
+
+66
+00:05:28.000 --> 00:05:33.000
+Relying on TypeScript interfaces alone for API calls creates a gap in your TypeSafety.
+
+67
+00:05:33.000 --> 00:05:39.000
+ZOD bridges that gap by validating data before it flows into the rest of your application.
+
+68
+00:05:39.000 --> 00:05:45.000
+There is one final utility to align TypeScript with Swift's precision, the Satisfies operator.
+
+69
+00:05:45.000 --> 00:05:49.000
+It validates object shapes without losing inferred literal types.
+
+70
+00:05:49.000 --> 00:05:57.000
+When applying generic typing to a TypeScript object, the compiler often widens specific literal values into broader base types.
+
+71
+00:05:57.000 --> 00:06:03.000
+But Satisfies checks the overall shape against an interface, preserving the narrowest possible inference inside.
+
+72
+00:06:03.000 --> 00:06:08.000
+In React Native, this operator is specifically useful for validating style sheet objects.
+
+73
+00:06:08.000 --> 00:06:14.000
+You get compiler validation for your style keys, while maintaining precise autocomplete for the values.
+
+74
+00:06:14.000 --> 00:06:23.000
+Developing in React Native allows you to carry over Swift's rigorous logic by translating those familiar safety patterns into TypeScript syntax.
+
+75
+00:06:23.000 --> 00:06:30.000
+By enforcing strict null checks, isolating states with discriminated unions, and using ZOD for network boundaries,
+
+76
+00:06:30.000 --> 00:06:37.000
+you gain the same functional guard rails provided by the Swift compiler, catching errors long before they reach the user.
+

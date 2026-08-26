@@ -1,0 +1,402 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:02.880
+Observe esta estrutura rígida de ponte.
+
+2
+00:00:02.880 --> 00:00:08.880
+Por anos, a ponte Legacy do React Native exigiu que toda a comunicação de módulos nativos fosse serializada,
+
+3
+00:00:08.880 --> 00:00:12.920
+passada através de um abismo assíncrono, e interpretada do outro lado.
+
+4
+00:00:12.920 --> 00:00:14.760
+Essa estrutura está obsoleta.
+
+5
+00:00:14.760 --> 00:00:18.560
+Ela foi substituída por um fluxo unificado e de alta velocidade.
+
+6
+00:00:18.560 --> 00:00:23.560
+Em vez de depender de descoberta em tempo de execução e serialização JSON, a nova arquitetura depende
+
+7
+00:00:23.560 --> 00:00:27.600
+de um pipeline C++ rigorosamente verificado em tempo de compilação.
+
+8
+00:00:27.600 --> 00:00:32.320
+Vamos detalhar a mecânica exata desse pipeline, focando estritamente nas implementações de quatro camadas
+
+9
+00:00:32.320 --> 00:00:35.440
+específicas dos sistemas iOS.
+
+10
+00:00:35.440 --> 00:00:40.280
+O objetivo é mapear todo o pipeline de JSI para Swift e a cadeia de resolução de módulos
+
+11
+00:00:40.280 --> 00:00:43.120
+para eliminar a sobrecarga de comunicação legada.
+
+12
+00:00:43.120 --> 00:00:47.920
+Ao mover as verificações de integração para longe de ambientes de execução imprevisíveis e forçar falhas
+
+13
+00:00:47.920 --> 00:00:52.400
+determinísticas de build em tempo de compilação, você garante a estabilidade da sua infraestrutura mobile antes que
+
+14
+00:00:52.400 --> 00:00:54.920
+uma única linha de JavaScript seja executada.
+
+15
+00:00:54.920 --> 00:01:00.680
+Este diagrama estrutural mostra a arquitetura de quatro camadas de um turbo module iOS.
+
+16
+00:01:00.680 --> 00:01:05.640
+Observe a camada superior, o spec do TypeScript, iniciando o processo ao enviar um pacote de
+
+17
+00:01:05.640 --> 00:01:07.680
+dados verificado para baixo.
+
+18
+00:01:07.680 --> 00:01:12.600
+Esse spec atua como o contrato absoluto em tempo de build para o seu ambiente nativo.
+
+19
+00:01:12.600 --> 00:01:17.480
+Esse contrato passa para a segunda camada, o CodeGen, que traduz automaticamente o spec do
+
+20
+00:01:17.480 --> 00:01:22.160
+TypeScript em interfaces nativas em C++ durante o processo de build.
+
+21
+00:01:22.160 --> 00:01:24.640
+A seguir está o arquivo objective C++.
+
+22
+00:01:24.640 --> 00:01:30.080
+Esse glue code faz a ponte entre as definições JSI C++ e o sistema nativo iOS.
+
+23
+00:01:30.080 --> 00:01:34.800
+Finalmente, chegamos à camada Swift, onde reside a lógica de negócio real.
+
+24
+00:01:34.800 --> 00:01:40.080
+Como o Swift não possui interrupt raw em C++ compatível com a convenção de chamada do JSI, a
+
+25
+00:01:40.080 --> 00:01:43.440
+camada objective C++ é obrigatória para conectar os dois.
+
+26
+00:01:43.440 --> 00:01:48.760
+Para fazer essa conexão, a string passada para a macro RCT export module no seu código nativo
+
+27
+00:01:48.760 --> 00:01:54.360
+deve corresponder perfeitamente à string usada no turbo module registry.strictget no lado JavaScript.
+
+28
+00:01:54.360 --> 00:01:59.480
+Se houver até mesmo uma pequena diferença de maiúsculas/minúsculas nessa fronteira, o JavaScript falhará em localizar
+
+29
+00:01:59.480 --> 00:02:03.920
+o módulo em tempo de execução, mas esse é um dos raros erros de runtime.
+
+30
+00:02:03.920 --> 00:02:09.560
+Se um método for declarado na spec mas estiver ausente na implementação objective C++, o Xcode
+
+31
+00:02:09.560 --> 00:02:13.360
+o build falhará intencionalmente com um erro de conformidade de protocolo.
+
+32
+00:02:13.360 --> 00:02:18.640
+Essa rigidez de quatro camadas permite que o framework contorne completamente a serialização JSON.
+
+33
+00:02:18.640 --> 00:02:21.640
+Se o módulo compila, o contrato está íntegro.
+
+34
+00:02:21.640 --> 00:02:26.160
+Quando o build é concluído, a execução passa para o runtime, o momento exato em que o JavaScript invoca
+
+35
+00:02:26.160 --> 00:02:28.880
+turbomoduleregistry.get.
+
+36
+00:02:28.880 --> 00:02:34.560
+JSI direciona essa busca para o RCT turbomodule manager, o objeto central do iOS responsável por
+
+37
+00:02:34.560 --> 00:02:36.640
+resolver as requisições de módulos.
+
+38
+00:02:36.640 --> 00:02:41.360
+Esse manager reside no app delegate durante a inicialização do app, ou é gerenciado internamente pelo RCT
+
+39
+00:02:41.360 --> 00:02:45.040
+host no React Native 0.74 como modo Bridgeless.
+
+40
+00:02:45.040 --> 00:02:48.200
+Essa árvore de lógica ilustra o manager consultando seu delegate.
+
+41
+00:02:48.200 --> 00:02:53.120
+Uma requisição JavaScript recebida atinge o master node e passa por três portões de prioridade sequenciais.
+
+42
+00:02:53.120 --> 00:02:54.640
+portões de prioridade sequenciais.
+
+43
+00:02:54.640 --> 00:02:59.640
+O primeiro portão é o GetModule class from name, que verifica o registry para checar se a
+
+44
+00:02:59.640 --> 00:03:01.440
+classe nativa solicitada existe.
+
+45
+00:03:01.440 --> 00:03:06.720
+Se a classe existir, a resolução avança para o segundo portão, GetModule instance from class,
+
+46
+00:03:06.720 --> 00:03:10.960
+que aloca fisicamente o objeto objective C ou Swift na memória.
+
+47
+00:03:10.960 --> 00:03:16.560
+O terceiro portão, GetModule, atua como o mecanismo final de fallback para módulos puramente em C++ que
+
+48
+00:03:16.560 --> 00:03:18.640
+não possuem uma classe objective C.
+
+49
+00:03:18.640 --> 00:03:23.760
+Se esse fallback final em C++ retornar um ponteiro nulo, o sistema redireciona silenciosamente a requisição de volta
+
+50
+00:03:23.760 --> 00:03:27.120
+para o caminho de resolução legado, ou trava (crash).
+
+51
+00:03:27.120 --> 00:03:31.760
+Dominar essa cadeia de delegação específica dá aos engenheiros controle absoluto sobre exatamente como e
+
+52
+00:03:31.760 --> 00:03:35.480
+quando os objetos nativos são instanciados pelo JavaScript runtime.
+
+53
+00:03:35.480 --> 00:03:39.400
+Por padrão, os turbomodules permanecem em um estado de inicialização preguiçosa (lazy initialization).
+
+54
+00:03:39.400 --> 00:03:45.600
+O objeto não é alocado na memória até o momento exato da primeira chamada JavaScript,
+
+55
+00:03:45.600 --> 00:03:47.960
+mantendo baixos os tempos de inicialização das aplicações.
+
+56
+00:03:47.960 --> 00:03:50.440
+Você pode sobrescrever esse comportamento.
+
+57
+00:03:50.440 --> 00:03:55.520
+Implementar o main queue setup e retornar yes força a instanciação antecipada durante
+
+58
+00:03:55.520 --> 00:04:00.540
+a inicialização do app, o que é necessário para módulos que precisam configurar o estado global antes que
+
+59
+00:04:00.540 --> 00:04:01.880
+qualquer código seja executado.
+
+60
+00:04:01.880 --> 00:04:07.560
+Para isolamento estrito de estado, adotar o protocolo RCT turbomodule shared nothing força
+
+61
+00:04:07.560 --> 00:04:12.760
+o runtime cria instâncias por cor, em vez de singletons, mantendo os dados isolados
+
+62
+00:04:12.760 --> 00:04:15.280
+entre múltiplas superfícies de renderização.
+
+63
+00:04:15.280 --> 00:04:19.960
+Use essas duas trilhas de execução paralelas à esquerda e a fila assíncrona.
+
+64
+00:04:19.960 --> 00:04:24.720
+À direita, um bloco de código se mescla diretamente em um nó da tabela de dispatch em C++.
+
+65
+00:04:24.720 --> 00:04:29.920
+Para métodos que retornam valores diretos em vez de promises, a execução é totalmente síncrona.
+
+66
+00:04:29.920 --> 00:04:32.120
+A fila ASIN é completamente ignorada.
+
+67
+00:04:32.120 --> 00:04:37.200
+JSI chama diretamente a tabela de dispatch em C++, permitindo que o valor de retorno volte para
+
+68
+00:04:37.200 --> 00:04:39.760
+o JavaScript no mesmo stack frame exato.
+
+69
+00:04:39.760 --> 00:04:45.440
+Combinando o controle preciso de alocação de memória com a execução síncrona em um único stack frame
+
+70
+00:04:45.440 --> 00:04:50.680
+eleva o teto de performance das aplicações React Native para velocidades quase nativas.
+
+71
+00:04:50.680 --> 00:04:55.440
+O protocolo padrão de code gen tem limitações ao construir infraestrutura altamente especializada
+
+72
+00:04:55.440 --> 00:04:59.600
+de ferramentas, como rastreadores de performance personalizados ou relatores de crash.
+
+73
+00:04:59.600 --> 00:05:06.400
+Para contornar essas limitações, os módulos podem adotar o protocolo RCT turbomodule com JSI bindings.
+
+74
+00:05:06.400 --> 00:05:11.120
+Isso expõe uma função principal chamada install JSI bindings with runtime.
+
+75
+00:05:11.120 --> 00:05:16.000
+Este esquema mostra como essa função funciona, um objeto de dados ignora completamente a stack
+
+76
+00:05:16.000 --> 00:05:22.400
+de code gen de quatro camadas, e se injeta diretamente no container isolado do runtime JavaScript.
+
+77
+00:05:22.400 --> 00:05:26.000
+Engenheiros podem usar isso para instalar objetos host JSI personalizados.
+
+78
+00:05:26.000 --> 00:05:30.960
+Essa injeção personalizada ocorre imediatamente após a inicialização do JSI, mas antes que o
+
+79
+00:05:30.960 --> 00:05:32.800
+bundle JavaScript seja executado.
+
+80
+00:05:32.800 --> 00:05:38.040
+Usando JSI bindings diretos, concede-se aos engenheiros de infraestrutura acesso root ao JavaScript
+
+81
+00:05:38.040 --> 00:05:43.520
+ambiente de execução, permitindo diagnósticos profundos do sistema que eram impossíveis com a
+
+82
+00:05:43.520 --> 00:05:44.520
+bridge legada.
+
+83
+00:05:44.520 --> 00:05:49.800
+A aplicação de limites rígidos em tempo de compilação isola o código nativo, simplificando drasticamente
+
+84
+00:05:49.800 --> 00:05:50.800
+os testes.
+
+85
+00:05:50.800 --> 00:05:56.200
+A lógica de negócios em Swift pode ser testada unitariamente via xe-test, de forma completamente independente do JSI ou da
+
+86
+00:05:56.200 --> 00:05:58.480
+configuração do runtime do react native.
+
+87
+00:05:58.480 --> 00:06:03.280
+No lado do JavaScript, o mock do módulo de spec TypeScript permite testar via just sem
+
+88
+00:06:03.280 --> 00:06:05.520
+acionar requisitos de build nativo.
+
+89
+00:06:05.520 --> 00:06:10.040
+Para bases de código empresariais fortemente dependentes de módulos nativos legados, uma reescrita imediata
+
+90
+00:06:10.040 --> 00:06:11.360
+não é necessária.
+
+91
+00:06:11.360 --> 00:06:16.800
+A camada de interrupção do turbo module do react native 0.76 automaticamente envolve módulos legados em uma
+
+92
+00:06:16.800 --> 00:06:18.920
+facade de turbo module.
+
+93
+00:06:18.920 --> 00:06:23.800
+Os engenheiros podem manter as declarações de método RCT export legadas junto com a nova
+
+94
+00:06:23.800 --> 00:06:27.800
+conformidade de turbo module, migrando método por método em uma transição lado a lado.
+
+95
+00:06:27.800 --> 00:06:31.400
+Como precaução, a camada de interrupção tem sim ressalvas.
+
+96
+00:06:31.400 --> 00:06:37.440
+Módulos que utilizam filas seriais customizadas ou métodos de callback legados podem se comportar de forma imprevisível
+
+97
+00:06:37.440 --> 00:06:40.840
+até que sejam totalmente migrados para o spec tipado.
+
+98
+00:06:40.840 --> 00:06:44.720
+Turbo modules no iOS impõem limites rigorosos de engenharia.
+
+99
+00:06:44.720 --> 00:06:50.200
+Eles transferem o caos em tempo de execução para segurança em tempo de compilação, eliminam gargalos assíncronos e concedem aos
+
+100
+00:06:50.200 --> 00:06:53.040
+desenvolvedores controle absoluto sobre a execução nativa.
+

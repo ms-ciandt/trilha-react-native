@@ -1,0 +1,338 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:05.800
+React Native builds directly on to the standard Apple tool chain rather than bypassing it.
+
+2
+00:00:05.800 --> 00:00:09.600
+The framework automates the setup of a native iOS foundation,
+
+3
+00:00:09.600 --> 00:00:15.900
+utilizing the same build phases, dependency managers, and compilers used in traditional development.
+
+4
+00:00:15.900 --> 00:00:22.400
+Initializing a project generates an iOS folder containing a complete standard Xcode project.
+
+5
+00:00:22.400 --> 00:00:25.200
+The operational divergence happens immediately,
+
+6
+00:00:25.300 --> 00:00:30.900
+attempting to build from the standard .xcode project file results in an immediate failure.
+
+7
+00:00:30.900 --> 00:00:35.100
+The .xc workspace file is the only valid entry point.
+
+8
+00:00:35.100 --> 00:00:39.600
+Every native dependency in React Native flows strictly through Cocoa Pods targets
+
+9
+00:00:39.600 --> 00:00:43.100
+which Xcode can only resolve from inside the workspace.
+
+10
+00:00:43.100 --> 00:00:52.700
+Understanding React Native on iOS requires deconstructing exactly how its tools use the standard Cocoa Pods in Xcode build phase pipelines to configure the environment.
+
+11
+00:00:52.700 --> 00:00:57.500
+The React Native pod file functions as the central nervous system of the native layer,
+
+12
+00:00:57.500 --> 00:01:02.600
+controlling both the core framework internals and every third-party community library.
+
+13
+00:01:02.600 --> 00:01:08.200
+At the top of this file, the minimum deployment target is defined as iOS 14.0.
+
+14
+00:01:08.200 --> 00:01:13.000
+This value is required because the underlying C++ rendering engine, fabric,
+
+15
+00:01:13.000 --> 00:01:18.700
+and the JavaScript interface APIs depend on system methods introduced in iOS 14.
+
+16
+00:01:18.700 --> 00:01:22.500
+This schematic visualizes the use native module's Ruby macro,
+
+17
+00:01:22.500 --> 00:01:25.900
+which eliminates the need for manual native dependency linking.
+
+18
+00:01:25.900 --> 00:01:28.900
+It automatically scans the node module's directory,
+
+19
+00:01:28.900 --> 00:01:32.900
+locating .podspec files hidden inside NPM packages.
+
+20
+00:01:32.900 --> 00:01:39.200
+It then injects these resolved specs directly into your Xcode workspace configuration during a pod install.
+
+21
+00:01:39.200 --> 00:01:43.000
+Below that lies a secondary macro, use React Native.
+
+22
+00:01:43.000 --> 00:01:45.800
+This command injects the core React architecture,
+
+23
+00:01:45.800 --> 00:01:51.600
+passing specific arguments to enable the fabric renderer for native components and the Hermes JavaScript engine.
+
+24
+00:01:51.600 --> 00:01:58.600
+This reliance on macros explains the current limitations regarding Swift package manager in React Native development.
+
+25
+00:01:58.600 --> 00:02:04.800
+Swift package manager currently lacks the robust post-install hook systems required to patch deployment targets
+
+26
+00:02:04.800 --> 00:02:10.500
+and propagates specific C++ compiler flags across dozens of subspecs simultaneously.
+
+27
+00:02:10.600 --> 00:02:14.900
+Because React Native uses these specific Ruby macros to configure the build,
+
+28
+00:02:14.900 --> 00:02:19.300
+Cocoa Pods remains the required path for anything bridging to JavaScript.
+
+29
+00:02:19.300 --> 00:02:21.700
+Navigating to the project's root entry file,
+
+30
+00:02:21.700 --> 00:02:25.000
+we find app delegate using the .MM extension.
+
+31
+00:02:25.000 --> 00:02:31.700
+This objective C++ extension is a technical requirement for the modern runtime rather than a legacy artifact.
+
+32
+00:02:31.700 --> 00:02:36.800
+This split plane diagram represents the boundary where the standard iOS lifecycle interfaces
+
+33
+00:02:36.800 --> 00:02:39.400
+with the React Native C++ runtime.
+
+34
+00:02:39.400 --> 00:02:45.200
+Pure Swift cannot be used at this root level because it lacks the ability to directly import the C++ headers
+
+35
+00:02:45.200 --> 00:02:48.300
+required to initialize JSI and turbo modules.
+
+36
+00:02:48.300 --> 00:02:53.000
+Individual custom modules and view controllers can still be written in Swift,
+
+37
+00:02:53.000 --> 00:02:57.600
+provided the initial application root remains an objective C++.
+
+38
+00:02:57.600 --> 00:03:03.500
+In modern React Native versions, this file uses RCT app delegate as its base class.
+
+39
+00:03:03.500 --> 00:03:09.000
+This class reads the project's configuration and signals new architecture features to the runtime.
+
+40
+00:03:09.000 --> 00:03:13.500
+Developers avoid manually toggling architecture flags inside this file.
+
+41
+00:03:13.500 --> 00:03:16.300
+Those properties are controlled by the pod file macros,
+
+42
+00:03:16.300 --> 00:03:22.100
+which propagate through compiler preprocessor defines like RCT new arc enabled.
+
+43
+00:03:22.100 --> 00:03:28.400
+The .MM extension is a deliberate border wall that enforces proper C++ runtime initialization
+
+44
+00:03:28.400 --> 00:03:31.100
+while protecting the developer's Swift code.
+
+45
+00:03:31.100 --> 00:03:35.200
+The final structural modification happens inside the Xcode build phases
+
+46
+00:03:35.200 --> 00:03:38.600
+where React Native injects a custom execution script.
+
+47
+00:03:38.600 --> 00:03:40.800
+Execution order here is strict.
+
+48
+00:03:40.800 --> 00:03:48.500
+The bundle React Native code and images phase must run before Xcode reaches the copy bundle resources phase
+
+49
+00:03:48.500 --> 00:03:52.600
+to ensure the generated assets exist before they are embedded.
+
+50
+00:03:52.600 --> 00:03:57.200
+This logic flow chart illustrates how the script branches the application's behavior
+
+51
+00:03:57.200 --> 00:03:59.400
+based on the build configuration.
+
+52
+00:03:59.400 --> 00:04:04.800
+In the debug path, the script initiates a local Metro bundle server on your machine.
+
+53
+00:04:04.800 --> 00:04:10.400
+In this mode, the app dynamically fetches the JavaScript payload over HTTP from local host,
+
+54
+00:04:10.400 --> 00:04:13.200
+enabling fast refreshing during development.
+
+55
+00:04:13.200 --> 00:04:16.500
+In the release path, the script bypasses the local server
+
+56
+00:04:16.500 --> 00:04:21.100
+and commands the bundler to compile a static main.js bundle file.
+
+57
+00:04:21.100 --> 00:04:25.900
+This static bundling ensures production IPA files are entirely self-contained
+
+58
+00:04:25.900 --> 00:04:28.900
+and require no local server connection to execute.
+
+59
+00:04:28.900 --> 00:04:32.500
+To manage environment variables for scenarios like a staging server,
+
+60
+00:04:32.600 --> 00:04:35.600
+you must extend this configuration structure manually.
+
+61
+00:04:35.600 --> 00:04:40.000
+This process involves duplicating the release configuration in Xcode
+
+62
+00:04:40.000 --> 00:04:46.100
+and creating a custom scheme inherited.exe config file for the new environment.
+
+63
+00:04:46.100 --> 00:04:53.000
+When creating these custom configurations, you must include the pods.exe config at the top of the file.
+
+64
+00:04:53.000 --> 00:04:58.600
+Cocoa pods writes its linker flags there and omitting that include breaks the link phase.
+
+65
+00:04:58.700 --> 00:05:02.200
+These injected scripts and configuration files are the mechanisms
+
+66
+00:05:02.200 --> 00:05:08.500
+that transform a standard iOS target into an environment capable of executing JavaScript.
+
+67
+00:05:08.500 --> 00:05:11.700
+Because this architecture relies on deep automation,
+
+68
+00:05:11.700 --> 00:05:15.800
+linking Ruby, Xcode, and Node, pipeline desynchronization
+
+69
+00:05:15.800 --> 00:05:18.300
+causes the majority of build failures.
+
+70
+00:05:18.300 --> 00:05:24.800
+The most common symptom is the terminal log error, undefined symbol, underscore RCT bridge.
+
+71
+00:05:24.900 --> 00:05:29.200
+This specific error indicates the linker and not find react native symbols,
+
+72
+00:05:29.200 --> 00:05:34.100
+typically caused by opening the .exe project file instead of the workspace
+
+73
+00:05:34.100 --> 00:05:38.100
+or neglecting to run pod install after adding a dependency.
+
+74
+00:05:38.100 --> 00:05:42.900
+A more hidden danger occurs when modifying new architecture flags in the pod file
+
+75
+00:05:42.900 --> 00:05:45.100
+without clearing the build environment.
+
+76
+00:05:45.100 --> 00:05:49.300
+Xcode caches compiled pod targets in the system's derived data folder
+
+77
+00:05:49.300 --> 00:05:51.300
+to speed up compile times.
+
+78
+00:05:51.300 --> 00:05:55.000
+Changing compiler defines without flushing this derived data cache
+
+79
+00:05:55.000 --> 00:05:58.900
+causes Xcode to link stale binaries built with previous flags,
+
+80
+00:05:58.900 --> 00:06:01.300
+leading to silent runtime crashes.
+
+81
+00:06:01.300 --> 00:06:05.800
+Committing the pod file.lock file ensures environment parity across a team,
+
+82
+00:06:05.800 --> 00:06:10.200
+guaranteeing every developer and CI machine builds with the same native code.
+
+83
+00:06:10.200 --> 00:06:14.600
+The system functions as a standard C++ bound Cocoa pods workspace,
+
+84
+00:06:14.600 --> 00:06:17.800
+one that iOS engineers already have the tools to master.
+

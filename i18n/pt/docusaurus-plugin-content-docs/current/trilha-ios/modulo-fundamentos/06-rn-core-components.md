@@ -10,6 +10,7 @@ title: RN Core Components — Mapeamento UIKit e SwiftUI
 
 <video width="100%" controls>
   <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/fund_06_rn-core-components.mp4" type="video/mp4">
+  <track kind="captions" src="/trilha-react-native/assets/captions/trilha_ios/fund_06_rn-core-components.vtt" srclang="pt" label="Português" default>
   Seu navegador não suporta o elemento de vídeo.
 </video>
 

@@ -1,0 +1,222 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:09.000
+Existe uma suposição persistente de que construir um aplicativo com muita mídia em React Native resulta em uma experiência lenta e altamente abstraída.
+
+2
+00:00:09.000 --> 00:00:18.000
+As Media Libraries modernas do React Native operam de forma diferente. Elas funcionam como interfaces precisas e diretas para os frameworks nativos do iOS.
+
+3
+00:00:18.000 --> 00:00:27.000
+Quando você implementa recursos de câmera e mídia hoje, você está interagindo diretamente com AV Foundation, Photokit e AV audio session.
+
+4
+00:00:27.000 --> 00:00:36.000
+Historicamente, tarefas de captura de alta performance eram limitadas pela necessidade de serializar e passar cada instrução através da Bridge assíncrona do React Native.
+
+5
+00:00:36.000 --> 00:00:48.000
+Essa arquitetura foi substituída. Ao utilizar o Fabric renderer e o JSI, a interface JavaScript, as bibliotecas modernas alcançam execução síncrona diretamente na thread de captura nativa.
+
+6
+00:00:48.000 --> 00:00:55.000
+Vamos mapear esses conceitos profundos dos frameworks nativos do iOS para suas implementações otimizadas em React Native.
+
+7
+00:00:55.000 --> 00:01:02.000
+O objetivo é entender exatamente como essas linhas de TypeScript se traduzem em instruções de hardware nativas do iOS.
+
+8
+00:01:02.000 --> 00:01:11.000
+Antes de acessar qualquer API de mídia nativa, o iOS exige que permissões estritas em nível de sistema operacional sejam declaradas no bundle da aplicação.
+
+9
+00:01:11.000 --> 00:01:21.000
+O fluxo de trabalho legado para isso exige que os desenvolvedores editem manualmente o arquivo Info.plist do Xcode para inserir strings específicas de descrição de uso.
+
+10
+00:01:21.000 --> 00:01:29.000
+Projetos Expo gerenciados substituem essa edição manual pelo sistema de config plugin, uma abordagem declarativa para configuração nativa.
+
+11
+00:01:29.000 --> 00:01:33.000
+Este diagrama mostra como seu arquivo app.json alimenta o compilador.
+
+12
+00:01:33.000 --> 00:01:41.000
+Plugins injetam automaticamente NS camera usage description e NS microphone usage description no arquivo gerado.
+
+13
+00:01:41.000 --> 00:01:54.000
+A biblioteca de fotos requer autorização de segurança distinta. O compilador mapeia sua configuração para NS photo library usage description para leitura de arquivos e NS photo library add usage description para salvá-los.
+
+14
+00:01:54.000 --> 00:02:00.000
+Toda essa lógica é executada no momento em que você roda o comando Expo pre-build para regenerar completamente suas pastas iOS.
+
+15
+00:02:01.000 --> 00:02:09.000
+Fundamentalmente, o sistema de plugins lida com a configuração nativa mantendo estrita conformidade com os requisitos de permissão da Apple em tempo de compilação.
+
+16
+00:02:09.000 --> 00:02:15.000
+Quando você precisa de uma interface de câmera altamente personalizada no iOS, é necessário construir um pipeline com AV foundation.
+
+17
+00:02:15.000 --> 00:02:23.000
+No ecossistema React Native, o React Native vision camera atua como o wrapper em TypeScript para implementar essas classes do AV foundation.
+
+18
+00:02:23.000 --> 00:02:26.000
+Esta comparação lado a lado mostra a relação direta.
+
+19
+00:02:26.000 --> 00:02:32.000
+Montar o componente React Native camera equivale a instanciar uma AV capture session em Swift.
+
+20
+00:02:32.000 --> 00:02:40.000
+Para entrada de hardware, configurar um AV capture device input se traduz em resolver a prop device via use camera device.
+
+21
+00:02:40.000 --> 00:02:43.000
+Exibir uma imagem estática segue o mesmo padrão.
+
+22
+00:02:43.000 --> 00:02:49.000
+Instanciar um AV capture photo output é feito definindo a prop photo como true e acionando take photo.
+
+23
+00:02:49.000 --> 00:02:53.000
+A captura de vídeo mapeia AV capture movie file output para iniciar a gravação.
+
+24
+00:02:54.000 --> 00:03:04.000
+Para realmente exibir o viewfinder na tela, uma implementação nativa em Swift exige que você anexe manualmente uma AVC capture video preview layer a uma CA layer.
+
+25
+00:03:04.000 --> 00:03:09.000
+O Vision Camera gerencia o ciclo de vida dessa preview layer nativamente dentro do componente de câmera.
+
+26
+00:03:09.000 --> 00:03:20.000
+Você mantém controle granular sobre o hardware físico, incluindo lentes ultra-wide e sensores lidar, enquanto conduz toda a sessão por meio de uma interface React declarativa.
+
+27
+00:03:20.000 --> 00:03:31.000
+AR em tempo real e leitura de código de barras exigem analisar milhões de pixels por segundo, um volume de dados que frequentemente criava sérios gargalos de frame rate na antiga bridge assíncrona.
+
+28
+00:03:31.000 --> 00:03:34.000
+Esse pipeline ilustra o ponto de falha.
+
+29
+00:03:34.000 --> 00:03:40.000
+Serializar frames pesados da câmera em JSON e enviá-los pela bridge causa latência significativa.
+
+30
+00:03:40.000 --> 00:03:46.000
+O Vision Camera versão 4 resolve isso com frame processors, arquitetados sobre Fabric e JSI.
+
+31
+00:03:46.000 --> 00:03:53.000
+Frame processors são funções JavaScript projetadas para rodar de forma síncrona em cada frame de câmera capturado.
+
+32
+00:03:53.000 --> 00:03:59.000
+Nesse fluxo de dados atualizado, um frame chega na capture thread e é executado imediatamente via JSI.
+
+33
+00:03:59.000 --> 00:04:04.000
+Não há serialização, não há round trip pela bridge, e não há re-renderização do React envolvida nesse loop.
+
+34
+00:04:04.000 --> 00:04:10.000
+Isso é conceitualmente idêntico a um callback de CM sample buffer no desenvolvimento nativo em iOS.
+
+35
+00:04:10.000 --> 00:04:17.000
+Ele utiliza o mesmo modelo de execução de um AV capture video data output sample buffer delegate nativo.
+
+36
+00:04:17.000 --> 00:04:23.000
+Você escreve a lógica analítica em JavaScript, mas ela roda via o engine Hermes em um worklet isolado dedicado.
+
+37
+00:04:23.000 --> 00:04:28.000
+Mas mantém a mesma velocidade de execução síncrona que o código puro em Swift na capture thread.
+
+38
+00:04:28.000 --> 00:04:33.000
+Nem toda aplicação precisa do controle de baixo nível de um pipeline customizado de AV capture session.
+
+39
+00:04:34.000 --> 00:04:40.000
+Muitas vezes, você só precisa apresentar ao usuário a interface padrão do sistema iOS para selecionar uma foto existente.
+
+40
+00:04:40.000 --> 00:04:44.000
+Essa matriz mostra os mapeamentos nativos para tarefas de mais alto nível.
+
+41
+00:04:44.000 --> 00:04:51.000
+O Expo Image Picker é uma interface direta para o PH Picker View Controller, o framework moderno introduzido no iOS 14.
+
+42
+00:04:51.000 --> 00:04:59.000
+Usar essa biblioteca permite que você pule a construção de uma "armadura" personalizada e passe o controle para a folha segura do Picker nativo da Apple.
+
+43
+00:04:59.000 --> 00:05:07.000
+Além da UI, os apps frequentemente precisam executar tarefas em segundo plano, como ler ou gravar assets diretamente no rolo da câmera do usuário.
+
+44
+00:05:07.000 --> 00:05:13.000
+Aqui, o Expo Media Library é mapeado para a API nativa PH Photo Library.
+
+45
+00:05:13.000 --> 00:05:22.000
+Em vez de escrever blocos verbosos de PH asset change request perform em Swift, você executa funções assíncronas em TypeScript para gerenciar os assets.
+
+46
+00:05:22.000 --> 00:05:27.000
+Por fim, aplicativos de mídia exigem gerenciamento preciso de som e roteamento de hardware.
+
+47
+00:05:27.000 --> 00:05:32.000
+O Expo AV fornece uma API em JavaScript para a AVAudioSession do iOS.
+
+48
+00:05:32.000 --> 00:05:39.000
+Passar a flag "plays in silent mode" do iOS no seu código define, por baixo dos panos, avaudiosession.category.playback.
+
+49
+00:05:39.000 --> 00:05:46.000
+Escolher a biblioteca certa depende de saber qual framework de sistema subjacente do iOS é mais adequado para a tarefa.
+
+50
+00:05:46.000 --> 00:05:50.000
+Podemos sintetizar essas ferramentas em uma matriz de decisão final.
+
+51
+00:05:50.000 --> 00:05:59.000
+Se a aplicação exige processamento em tempo real ou parâmetros de captura personalizados, o vision camera com um JSI frame processor é o caminho correto.
+
+52
+00:05:59.000 --> 00:06:06.000
+Se o app só precisa de um upload de arquivo básico, use como padrão a UI do sistema via Expo Dash Image Picker.
+
+53
+00:06:06.000 --> 00:06:11.000
+O ecossistema de mídia do React Native evoluiu para além das abstrações de alta latência.
+
+54
+00:06:11.000 --> 00:06:17.000
+Ao utilizar JSI, as camadas JavaScript e nativa agora compartilham um caminho de execução direto.
+
+55
+00:06:17.000 --> 00:06:27.000
+Para construir aplicações de mídia de alta performance, você deve olhar além da sintaxe JavaScript e arquitetar seu pipeline como um engenheiro nativo iOS.
+

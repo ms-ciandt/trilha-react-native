@@ -1,0 +1,686 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:02.340
+Look at these two rendering outputs.
+
+2
+00:00:02.340 --> 00:00:05.440
+On the left, a fluid stream of UI elements.
+
+3
+00:00:05.440 --> 00:00:07.880
+On the right, the exact same interaction
+
+4
+00:00:07.880 --> 00:00:09.640
+stutters and pauses.
+
+5
+00:00:09.640 --> 00:00:13.000
+If you are an iOS engineer transitioning to React Native,
+
+6
+00:00:13.000 --> 00:00:15.640
+you've likely encountered this exact frame-rate drop
+
+7
+00:00:15.640 --> 00:00:18.880
+when building complex lists or nested screens.
+
+8
+00:00:18.880 --> 00:00:20.880
+React's render engine is fast.
+
+9
+00:00:20.880 --> 00:00:22.280
+The performance drop on the right
+
+10
+00:00:22.280 --> 00:00:24.720
+is caused by the architecture itself.
+
+11
+00:00:24.720 --> 00:00:26.680
+When components are deeply nested,
+
+12
+00:00:26.680 --> 00:00:28.920
+an update at the top can trigger a cascade
+
+13
+00:00:28.920 --> 00:00:32.240
+of unnecessary re-renders all the way down the tree.
+
+14
+00:00:32.240 --> 00:00:33.840
+To fix this, you don't need to learn
+
+15
+00:00:33.840 --> 00:00:35.960
+a completely foreign way of thinking.
+
+16
+00:00:35.960 --> 00:00:37.440
+The computer science principles
+
+17
+00:00:37.440 --> 00:00:39.200
+to stabilize a React rendering loop
+
+18
+00:00:39.200 --> 00:00:40.960
+are identical to the memory management
+
+19
+00:00:40.960 --> 00:00:44.400
+and view and validation logic you already use in Swift.
+
+20
+00:00:44.400 --> 00:00:47.080
+We will bypass the generic React tutorials.
+
+21
+00:00:47.080 --> 00:00:49.600
+Instead, we map the optimization patterns you know
+
+22
+00:00:49.600 --> 00:00:52.840
+from Swift UI directly to their React equivalents.
+
+23
+00:00:52.840 --> 00:00:55.520
+Achieving native level performance in React Native
+
+24
+00:00:55.520 --> 00:00:58.640
+requires translating your established iOS intuition
+
+25
+00:00:58.680 --> 00:01:00.560
+into the React lifecycle.
+
+26
+00:01:00.560 --> 00:01:03.440
+This translation matrix provides a one-to-one mapping
+
+27
+00:01:03.440 --> 00:01:06.280
+between iOS paradigms and React hooks.
+
+28
+00:01:06.280 --> 00:01:09.600
+We'll fill this board, mapping Swift UI in validation,
+
+29
+00:01:09.600 --> 00:01:11.680
+computed properties, and state enums
+
+30
+00:01:11.680 --> 00:01:13.960
+directly to their React counterparts.
+
+31
+00:01:13.960 --> 00:01:16.280
+The strict rule, apply these surgically
+
+32
+00:01:16.280 --> 00:01:17.920
+based on profiling data.
+
+33
+00:01:17.920 --> 00:01:19.360
+Internalizing this map solves
+
+34
+00:01:19.360 --> 00:01:21.960
+the most common beginner mistake in React Native.
+
+35
+00:01:21.960 --> 00:01:23.680
+You stop fighting the render engine
+
+36
+00:01:23.680 --> 00:01:25.520
+and start cooperating with it.
+
+37
+00:01:25.520 --> 00:01:27.720
+In Swift, when a Swift UI view conforms
+
+38
+00:01:27.720 --> 00:01:31.160
+to the equatable protocol, you dictate recalculations.
+
+39
+00:01:31.160 --> 00:01:34.320
+The compiler checks the specific values the view depends on.
+
+40
+00:01:34.320 --> 00:01:38.160
+If unchanged, Swift UI skips re-evaluating the body entirely.
+
+41
+00:01:38.160 --> 00:01:41.160
+React's exact equivalent is React.memo.
+
+42
+00:01:41.160 --> 00:01:43.680
+Like Swift UI, it uses shallow comparison,
+
+43
+00:01:43.680 --> 00:01:46.040
+checking if primitive values or memory references
+
+44
+00:01:46.040 --> 00:01:47.560
+match the previous render.
+
+45
+00:01:47.560 --> 00:01:50.480
+If props remain identical, the child skips rendering.
+
+46
+00:01:50.480 --> 00:01:52.920
+For complex structures, React.nemo
+
+47
+00:01:52.920 --> 00:01:55.360
+accepts a custom comparison function
+
+48
+00:01:55.360 --> 00:01:58.000
+like manual double equals in Swift.
+
+49
+00:01:58.000 --> 00:02:00.120
+Rapping a component in React.memo
+
+50
+00:02:00.120 --> 00:02:03.320
+is the necessary first step for caching your UI,
+
+51
+00:02:03.320 --> 00:02:06.880
+but it immediately exposes how React handles memory references
+
+52
+00:02:06.880 --> 00:02:08.560
+differently than Swift.
+
+53
+00:02:08.560 --> 00:02:11.480
+Watch how React executes this functional component.
+
+54
+00:02:11.480 --> 00:02:14.520
+Everything inside the body is recreated from scratch,
+
+55
+00:02:14.520 --> 00:02:17.360
+receiving a new memory address on every render.
+
+56
+00:02:17.360 --> 00:02:19.240
+Passing this newly minted function
+
+57
+00:02:19.240 --> 00:02:22.800
+to a React.memo child instantly breaks the cache.
+
+58
+00:02:22.800 --> 00:02:24.520
+The child component receives a function
+
+59
+00:02:24.520 --> 00:02:26.480
+with a brand new memory reference.
+
+60
+00:02:26.480 --> 00:02:28.360
+It fails the shallow equality check
+
+61
+00:02:28.360 --> 00:02:31.240
+and triggers a full unnecessary re-render.
+
+62
+00:02:31.240 --> 00:02:33.680
+In iOS, you prevent this kind of redundant work
+
+63
+00:02:33.680 --> 00:02:36.640
+but using computed properties, isolating derivations
+
+64
+00:02:36.640 --> 00:02:40.240
+so they only recalculate when their specific base values change.
+
+65
+00:02:40.240 --> 00:02:42.320
+React handles this with use memo.
+
+66
+00:02:42.320 --> 00:02:45.520
+A dependency array tells React to hold the previous value,
+
+67
+00:02:45.520 --> 00:02:48.160
+recalculating only when dependencies change.
+
+68
+00:02:48.160 --> 00:02:51.560
+For functions, the equivalent to Swift's stored closures
+
+69
+00:02:51.560 --> 00:02:53.320
+is used callback.
+
+70
+00:02:53.320 --> 00:02:55.360
+It guarantees reference stability,
+
+71
+00:02:55.360 --> 00:02:59.320
+ensuring the child components sees the exact same memory address.
+
+72
+00:02:59.320 --> 00:03:01.400
+This also applies to objects.
+
+73
+00:03:01.400 --> 00:03:05.120
+An empty object literal creates a new reference every render.
+
+74
+00:03:05.120 --> 00:03:07.640
+If you pass an object as a prop or inject it
+
+75
+00:03:07.640 --> 00:03:09.680
+into another hooks dependency list,
+
+76
+00:03:09.680 --> 00:03:11.960
+it must be wrapped in use memo.
+
+77
+00:03:11.960 --> 00:03:15.200
+React.memo, use memo, and use callback,
+
+78
+00:03:15.200 --> 00:03:17.560
+operate as a coordinated trio.
+
+79
+00:03:17.560 --> 00:03:20.440
+Failing to stabilize even one prop reference
+
+80
+00:03:20.440 --> 00:03:22.760
+invalidates the entire caching strategy
+
+81
+00:03:22.760 --> 00:03:24.400
+for that UI branch.
+
+82
+00:03:24.400 --> 00:03:28.120
+Let's trace a state update using React's context API.
+
+83
+00:03:28.120 --> 00:03:31.120
+The central provider node distributes a state object.
+
+84
+00:03:31.120 --> 00:03:33.960
+When updated, it generates a new object literal,
+
+85
+00:03:33.960 --> 00:03:37.160
+forcing every single consumer in the tree to re-render,
+
+86
+00:03:37.160 --> 00:03:39.880
+even if their specific value hasn't changed.
+
+87
+00:03:39.880 --> 00:03:43.680
+The immediate fix is wrapping the context payload in use memo.
+
+88
+00:03:43.680 --> 00:03:45.640
+Now, the reference remains stable,
+
+89
+00:03:45.640 --> 00:03:47.200
+and consumers only re-render
+
+90
+00:03:47.200 --> 00:03:49.880
+when the underlying data actually updates.
+
+91
+00:03:49.880 --> 00:03:53.400
+But wrapping everything in use memo is a patch.
+
+92
+00:03:53.400 --> 00:03:56.920
+The superior architectural solution, matching SwiftUI,
+
+93
+00:03:56.920 --> 00:04:00.280
+is components splitting to isolate state dependencies.
+
+94
+00:04:00.280 --> 00:04:01.680
+The rule is simple.
+
+95
+00:04:01.680 --> 00:04:04.600
+Move state to the closest component that needs it.
+
+96
+00:04:04.600 --> 00:04:07.240
+By decentralizing state away from the root,
+
+97
+00:04:07.240 --> 00:04:09.880
+React naturally invalidates and re-renders
+
+98
+00:04:09.880 --> 00:04:12.160
+smaller, specific subviews.
+
+99
+00:04:12.160 --> 00:04:13.800
+When you have multiple state properties
+
+100
+00:04:13.800 --> 00:04:16.360
+that must change together, Swift developers
+
+101
+00:04:16.360 --> 00:04:18.600
+model these coordinated transitions using
+
+102
+00:04:18.600 --> 00:04:22.320
+unums or immutable structs with dedicated transition methods.
+
+103
+00:04:22.320 --> 00:04:25.800
+React's direct equivalent for complex isolated state logic
+
+104
+00:04:25.800 --> 00:04:27.280
+is use reducer.
+
+105
+00:04:27.280 --> 00:04:29.680
+Beyond organizing complex transitions,
+
+106
+00:04:29.680 --> 00:04:32.200
+use reducer has a hidden performance feature.
+
+107
+00:04:32.200 --> 00:04:33.920
+Its dispatch function inherently
+
+108
+00:04:33.920 --> 00:04:36.800
+maintains a stable memory reference between renders.
+
+109
+00:04:36.800 --> 00:04:38.840
+You can pass it deep into your component tree
+
+110
+00:04:38.840 --> 00:04:40.760
+without ever needing use callback.
+
+111
+00:04:40.760 --> 00:04:43.520
+Relying on architectural boundaries and tools
+
+112
+00:04:43.520 --> 00:04:47.120
+like use reducer solves performance bottlenecks by design.
+
+113
+00:04:47.120 --> 00:04:50.320
+Long before you have to patch them with memoization hooks,
+
+114
+00:04:50.320 --> 00:04:53.320
+this horizontal timeline maps how iOS engineers
+
+115
+00:04:53.320 --> 00:04:55.680
+prioritize UI responsiveness.
+
+116
+00:04:55.680 --> 00:04:57.520
+Urgent main thread work is strictly
+
+117
+00:04:57.520 --> 00:05:00.000
+separated from heavy processing by pushing
+
+118
+00:05:00.000 --> 00:05:02.800
+the heavy loads to a background dispatch queue.
+
+119
+00:05:02.800 --> 00:05:07.160
+React 18 introduced a concurrent equivalent, start transition.
+
+120
+00:05:07.160 --> 00:05:10.280
+By marking a specific state update as non-urgent,
+
+121
+00:05:10.280 --> 00:05:13.280
+the render engine can literally pause a heavy list update
+
+122
+00:05:13.280 --> 00:05:15.880
+to handle immediate high priority input,
+
+123
+00:05:15.880 --> 00:05:17.600
+like typing in a search bar.
+
+124
+00:05:17.600 --> 00:05:19.840
+By utilizing the is pending flag,
+
+125
+00:05:19.840 --> 00:05:21.840
+you can display a loading state and achieve
+
+126
+00:05:21.840 --> 00:05:25.480
+zero latency UI interactions while complex state changes
+
+127
+00:05:25.480 --> 00:05:27.480
+continue rendering in the background.
+
+128
+00:05:27.480 --> 00:05:31.000
+Memoization hooks exist to avoid unnecessary renders.
+
+129
+00:05:31.000 --> 00:05:33.040
+Start transition dictates the priority
+
+130
+00:05:33.040 --> 00:05:35.160
+of the renders that are necessary, ensuring
+
+131
+00:05:35.160 --> 00:05:38.160
+smooth interactions without blocking the main thread.
+
+132
+00:05:38.160 --> 00:05:41.800
+You do not apply the lazy keyword to every single property
+
+133
+00:05:41.800 --> 00:05:43.400
+in a Swift application.
+
+134
+00:05:43.400 --> 00:05:45.440
+That is premature optimization
+
+135
+00:05:45.480 --> 00:05:48.480
+and the exact same logic applies to React.
+
+136
+00:05:48.480 --> 00:05:51.520
+Look at the execution time of a memoized component.
+
+137
+00:05:51.520 --> 00:05:55.800
+React.memo, use memo, and use callback are not free.
+
+138
+00:05:55.800 --> 00:05:58.800
+They execute an active computational cost.
+
+139
+00:05:58.800 --> 00:06:02.360
+Under the hood, React is actively storing previous values,
+
+140
+00:06:02.360 --> 00:06:04.600
+iterating through arrays of dependencies
+
+141
+00:06:04.600 --> 00:06:08.040
+and managing cache memory for every memoized component.
+
+142
+00:06:08.040 --> 00:06:11.440
+If your component is simple and only renders primitive elements,
+
+143
+00:06:11.440 --> 00:06:13.960
+performing that cache comparison takes more time
+
+144
+00:06:13.960 --> 00:06:17.120
+than just letting React re-render the component natively.
+
+145
+00:06:17.120 --> 00:06:19.880
+There are strict mathematical anti-patterns here.
+
+146
+00:06:19.880 --> 00:06:22.600
+Do not memoize if a component almost always receives
+
+147
+00:06:22.600 --> 00:06:25.360
+different props anyway and do not use use memo
+
+148
+00:06:25.360 --> 00:06:28.360
+for trivial calculations like basic arithmetic.
+
+149
+00:06:28.360 --> 00:06:31.320
+Blanket memoization doesn't speed up an application.
+
+150
+00:06:31.320 --> 00:06:35.240
+It transforms a lightweight UI into a heavy cache bloated system
+
+151
+00:06:35.240 --> 00:06:37.680
+actively fighting its own render engine.
+
+152
+00:06:37.680 --> 00:06:40.720
+The golden rule of rendering across all platforms
+
+153
+00:06:40.720 --> 00:06:43.720
+is measure first, optimize later.
+
+154
+00:06:43.720 --> 00:06:47.040
+This React dev tools flame chart is the exact equivalent
+
+155
+00:06:47.040 --> 00:06:48.480
+to the time profiler.
+
+156
+00:06:48.480 --> 00:06:51.360
+It maps the component hierarchy during a commit.
+
+157
+00:06:51.360 --> 00:06:53.960
+Look at the why did this render metadata?
+
+158
+00:06:53.960 --> 00:06:57.040
+If it states parent re-rendered with identical props
+
+159
+00:06:57.040 --> 00:07:00.400
+that mathematically justifies applying React.memo.
+
+160
+00:07:00.400 --> 00:07:02.720
+To monitor this at scale, you can implement
+
+161
+00:07:02.720 --> 00:07:04.560
+the why did you render library.
+
+162
+00:07:04.560 --> 00:07:07.960
+It automatically prints unnecessary re-renders to the console,
+
+163
+00:07:07.960 --> 00:07:09.680
+specifically targeting components that
+
+164
+00:07:09.680 --> 00:07:11.800
+receive the exact same values housed
+
+165
+00:07:11.800 --> 00:07:13.560
+in different memory references.
+
+166
+00:07:13.560 --> 00:07:15.880
+Here is the completed translation matrix.
+
+167
+00:07:15.880 --> 00:07:18.440
+True React native mastery for an iOS engineer
+
+168
+00:07:18.440 --> 00:07:21.520
+does not require memorizing arbitrary lifecycle hooks.
+
+169
+00:07:21.520 --> 00:07:24.440
+It requires projecting your existing architectural discipline
+
+170
+00:07:24.440 --> 00:07:27.920
+onto a new profiling tool and only executing optimizations
+
+171
+00:07:27.920 --> 00:07:30.600
+when the data explicitly demands it.
+
