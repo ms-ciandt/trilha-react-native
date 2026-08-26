@@ -1,0 +1,230 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:08.000
+O desempenho da UI do React Native tem um limite superior rígido quando depende de uma thread JavaScript congestionada para calcular quadros de animação.
+
+2
+00:00:08.000 --> 00:00:16.000
+Para manter uma fluidez de 60 quadros por segundo em dispositivos modernos, precisamos contornar completamente esse congestionamento.
+
+3
+00:00:16.000 --> 00:00:21.000
+Na arquitetura legada, a bridge assíncrona criava um gargalo constante.
+
+4
+00:00:21.000 --> 00:00:29.000
+Ela precisava fazer ping na thread JS, já sobrecarregada, a cada único quadro apenas para calcular o próximo passo incremental de uma animação.
+
+5
+00:00:29.000 --> 00:00:36.000
+A nova arquitetura do React Native resolve isso removendo a bridge, substituindo-a pela JavaScript interface, ou JSI.
+
+6
+00:00:36.000 --> 00:00:45.000
+Este diagrama animado mostra dois pipelines, uma thread JavaScript e uma thread de UI nativa, conectados diretamente por um bloco JSI síncrono.
+
+7
+00:00:45.000 --> 00:00:53.000
+Você constrói um grafo de animação em JavaScript exatamente uma vez, passa-o pela interface, e a thread nativa o executa em um loop contínuo.
+
+8
+00:00:53.000 --> 00:01:00.000
+A partir da versão 0.76, o framework exige que o campo use native driver seja definido explicitamente.
+
+9
+00:01:00.000 --> 00:01:09.000
+Omiti-lo agora dispara um aviso, e misturar drivers nativos e não nativos dentro de um mesmo grupo paralelo resulta em um erro em tempo de execução.
+
+10
+00:01:09.000 --> 00:01:18.000
+Alcançar transições fluidas e ininterruptas significa desacoplar completamente o loop de execução dos quadros de animação do JavaScript.
+
+11
+00:01:18.000 --> 00:01:23.000
+A unidade fundamental desse grafo declarativo é o animated.value.
+
+12
+00:01:23.000 --> 00:01:28.000
+Animated.value é uma classe que armazena um único número mutável.
+
+13
+00:01:28.000 --> 00:01:34.000
+O motor de execução da animação rastreia esse número de forma independente, fora do estado padrão do React.
+
+14
+00:01:34.000 --> 00:01:39.000
+Instanciar um animated.value dentro de um bloco use-state é um erro comum.
+
+15
+00:01:39.000 --> 00:01:44.000
+À medida que o componente é renderizado, o objeto é repetidamente destruído e recriado.
+
+16
+00:01:44.000 --> 00:01:50.000
+Para garantir a persistência, envolva o valor em um use ref hook, o objeto permanece estável.
+
+17
+00:01:50.000 --> 00:01:57.000
+Para acessar essa instância estável e atualizar o número subjacente, basta desembrulhar a referência usando a propriedade .current.
+
+18
+00:01:57.000 --> 00:02:05.000
+No entanto, você nunca deve desestruturar esses animated values para extrair coordenadas específicas, como X e Y de um pan gesture.
+
+19
+00:02:05.000 --> 00:02:11.000
+Fazer isso rompe o proxy interno que rastreia as dependências, quebrando o value por completo.
+
+20
+00:02:12.000 --> 00:02:21.000
+Se você não persistir corretamente o animated value entre as renderizações, você destrói o rastreamento interno do framework e quebra sua conexão com o native driver.
+
+21
+00:02:21.000 --> 00:02:29.000
+A configuração useNativeDriver.true roteia fisicamente o loop de animação para fora do JavaScript e para a UI thread.
+
+22
+00:02:29.000 --> 00:02:36.000
+Engenheiros frequentemente assumem que essa configuração é uma correção universal capaz de animar suavemente qualquer propriedade de estilo CSS.
+
+23
+00:02:36.000 --> 00:02:45.000
+Não é. Observe como os nós para as propriedades transform e opacity fluem sincronamente para um nó verde do driver nativo de GPU.
+
+24
+00:02:45.000 --> 00:02:52.000
+O hardware da GPU os acelera diretamente, escalando e desvanecendo sem recalcular posições físicas.
+
+25
+00:02:52.000 --> 00:03:04.000
+Mas quando nós de propriedades de layout, como height e margin, tentam fluir para o nó da GPU, eles esbarram em um bloco vermelho do yoga layout engine e são violentamente redirecionados de volta para a JavaScript thread.
+
+26
+00:03:04.000 --> 00:03:12.000
+Propriedades que alteram dimensões ou espaçamento forçam o yoga engine a recalcular toda a árvore de layout a cada frame.
+
+27
+00:03:12.000 --> 00:03:25.000
+A interpolação de cor, incluindo background color e text color, opera sob uma limitação semelhante, calcular os passos intermediários entre códigos hex ou valores RGB inerentemente requer execução em JavaScript.
+
+28
+00:03:25.000 --> 00:03:36.000
+Esta tabela categoriza claramente a divisão, transform e opacity ficam inteiramente sob suporte nativo, enquanto dimensions, spacing e color forçam uma passagem de layout ou JS.
+
+29
+00:03:36.000 --> 00:03:46.000
+Contornar o requisito nativo significa que a JS thread recalcula e envia valores manualmente a cada frame. Qualquer disputa de CPU causa imediatamente frames perdidos e travamentos.
+
+30
+00:03:46.000 --> 00:03:54.000
+Entender o limite do yoga layout determina se você constrói uma interação suave de 60 quadros por segundo ou causa uma falha de UI instável.
+
+31
+00:03:54.000 --> 00:04:00.000
+Com o estado estabilizado e roteado, você precisa de um mecanismo para conduzir o valor animado do ponto adiante através do tempo.
+
+32
+00:04:00.000 --> 00:04:07.000
+A API fornece três construtores de animação principais para lidar com essa progressão matemática: timing, spring e decay.
+
+33
+00:04:07.000 --> 00:04:13.000
+O construtor animated dot timing avança um node de 0 a 1 ao longo de um limite de tempo fixo.
+
+34
+00:04:13.000 --> 00:04:21.000
+Por outro lado, animated dot spring opta por durações fixas, oscilando e amortecendo gradualmente em torno de uma linha central até se estabilizar.
+
+35
+00:04:21.000 --> 00:04:30.000
+Como imita a física do mundo real, spring depende completamente de parâmetros pareados, configurando friction e tension ou stiffness e damping.
+
+36
+00:04:30.000 --> 00:04:40.000
+Animated dot decay conduz interações de liberação de momentum. Ele aceita uma velocidade inicial alta e calcula uma curva de desaceleração acentuada até que o valor naturalmente chegue ao repouso.
+
+37
+00:04:40.000 --> 00:04:47.000
+Esses construtores geram números brutos. Para mapear esses números em dados de UI utilizáveis, você os encadeia em uma função interpolate.
+
+38
+00:04:47.000 --> 00:04:57.000
+A interpolação mapeia seus intervalos de entrada para intervalos de saída específicos, traduzindo entradas numéricas em graus de rotação, strings de unidades de pixel ou códigos hexadecimais precisos de cor.
+
+39
+00:04:57.000 --> 00:05:05.000
+Os construtores ditam estritamente como um valor se move através do tempo, enquanto a interpolação dita o que esse movimento representa na tela.
+
+40
+00:05:05.000 --> 00:05:11.000
+Interações complexas de UI exigem a orquestração de múltiplos valores animados simultaneamente.
+
+41
+00:05:11.000 --> 00:05:15.000
+A API fornece wrappers composicionais específicos para essa orquestração.
+
+42
+00:05:15.000 --> 00:05:21.000
+Ela executa de ponta a ponta, execuções paralelas simultâneas e disparos escalonados com atrasos em cascata.
+
+43
+00:05:21.000 --> 00:05:30.000
+Envolver uma animação em uma função de loop com reset antes da iteração determina se um valor volta abruptamente ao início ou continua fluidamente a partir de sua posição de repouso.
+
+44
+00:05:30.000 --> 00:05:40.000
+Um componente de UI padrão naturalmente rejeita fluxos de dados animados recebidos. Você deve envolvê-lo em um animated dot create animated component shell para absorver os dados com sucesso.
+
+45
+00:05:40.000 --> 00:05:51.000
+Ao aplicar esse wrapper em componentes funcionais do react, você deve utilizar forward ref. Ele atua como um conduto direto, permitindo que o native driver manipule a view subjacente fora do ciclo de renderização padrão do react.
+
+46
+00:05:51.000 --> 00:06:00.000
+Sem forward ref, o native driver não consegue contornar o react para atualizar a UI diretamente, o que torna todo o grafo de animação inútil.
+
+47
+00:06:00.000 --> 00:06:09.000
+Essa arquitetura de grafo é altamente eficiente para animações predefinidas, mas ela se destaca quando conduzida por entradas de usuário contínuas e de alta frequência, como o rastreamento de scroll.
+
+48
+00:06:09.000 --> 00:06:17.000
+Usando animated dot event, você pode mapear valores aninhados de um evento nativo de toque ou scroll diretamente para um animated dot value.
+
+49
+00:06:17.000 --> 00:06:30.000
+Este diagrama mostra uma interface mobile com uma lista rolável. A saída bruta do scroll no eixo y alimenta instantaneamente um grafo de interpolação, ajustando de forma contínua a opacidade e a translação do cabeçalho fixo (sticky header) acima.
+
+50
+00:06:30.000 --> 00:06:42.000
+Você controla o fluxo desses eventos usando scroll event throttle. Um valor de 16 limita os disparos a aproximadamente um por frame, equilibrando a redução de eventos JavaScript e minimizando o atraso em quaisquer funções derivadas.
+
+51
+00:06:42.000 --> 00:06:53.000
+Nada de eventos do usuário diretamente na UI thread demonstra o poder da nova arquitetura, lidando com interações pesadas e contínuas com absolutamente zero overhead de JavaScript.
+
+52
+00:06:54.000 --> 00:07:00.000
+Mesmo com a arquitetura devidamente alinhada, algumas restrições rígidas de runtime frequentemente pegam os engenheiros de surpresa.
+
+53
+00:07:00.000 --> 00:07:07.000
+Primeiro, todas as animações aninhadas dentro de uma composição paralela devem usar exatamente a mesma configuração de driver.
+
+54
+00:07:07.000 --> 00:07:13.000
+Misturar drivers nativos e não nativos gera um erro de runtime crítico no react native 0.7 cents.
+
+55
+00:07:13.000 --> 00:07:21.000
+Segundo, tentar ler o valor de dot current de uma animated value diretamente durante um ciclo de render do componente é um anti-padrão grave que quebra a sincronização.
+
+56
+00:07:22.000 --> 00:07:32.000
+Por fim, se você executar uma animação em loop onde os valores inicial e final de repouso são matematicamente idênticos, você deve acionar manualmente um reset com dot set value antes da próxima iteração.
+
+57
+00:07:32.000 --> 00:07:42.000
+Ao tratar a Animated API como um construtor declarativo de grafos, em vez de um executor imperativo, você aproveita totalmente o JSI para igualar a performance nativa sem comprometimentos.
+

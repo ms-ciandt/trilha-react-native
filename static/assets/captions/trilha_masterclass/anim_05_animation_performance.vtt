@@ -1,0 +1,178 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:06.000
+Construir uma UI mobile de alta performance é uma disciplina de estrita adesão às restrições de tempo do hardware.
+
+2
+00:00:06.000 --> 00:00:11.000
+Transições e gestos suaves dependem inteiramente do "quack" do hardware do dispositivo.
+
+3
+00:00:11.000 --> 00:00:17.000
+Este diagrama mapeia a arquitetura central do React Native, a thread de JavaScript no topo, e a thread de UI abaixo.
+
+4
+00:00:17.000 --> 00:00:25.000
+Para uma tela padrão de 60Hz, o limite para calcular e desenhar um frame é exatamente 16,67 milissegundos.
+
+5
+00:00:25.000 --> 00:00:30.000
+Em uma tela de 120Hz, isso cai para impiedosos 8,33 milissegundos.
+
+6
+00:00:30.000 --> 00:00:34.000
+A thread de JS e a thread de UI nativa operam em paralelo.
+
+7
+00:00:34.000 --> 00:00:39.000
+Elas precisam completar suas respectivas tarefas dentro dessa janela apertada para que o frame seja commitado a tempo.
+
+8
+00:00:39.000 --> 00:00:42.000
+Um timeout em qualquer uma das threads resulta em um frame perdido.
+
+9
+00:00:42.000 --> 00:00:50.000
+Se o JavaScript leva 30 milissegundos para processar uma renderização, isso atrasa a próxima mutação de layout, forçando a animação a engasgar.
+
+10
+00:00:50.000 --> 00:00:58.000
+Frames perdidos são altamente previsíveis. Eles derivam de anti-padrões arquiteturais específicos que empurram uma dessas duas threads para além do limite do hardware.
+
+11
+00:00:58.000 --> 00:01:06.000
+Entregar consistentemente 60 quadros por segundo significa projetar suas atualizações de estado e layout para caber estritamente dentro desse orçamento de thread dupla.
+
+12
+00:01:06.000 --> 00:01:12.000
+O gargalo mais comum do lado do JavaScript é disparar animações sem usar o native driver.
+
+13
+00:01:13.000 --> 00:01:20.000
+Calcular uma animação na thread do JavaScript sem o native driver serializa dados através da bridge a cada único frame.
+
+14
+00:01:20.000 --> 00:01:28.000
+Qualquer tarefa rotineira do JavaScript, como uma atualização de estado pesada, ocupa a thread do JavaScript, bloqueando essas animações de atravessarem a bridge a tempo.
+
+15
+00:01:28.000 --> 00:01:36.000
+Depois há o custo de hábitos de desenvolvimento chegando à produção, especificamente chamadas de console.log colocadas dentro dos hotpaths de animação.
+
+16
+00:01:36.000 --> 00:01:40.000
+Cada chamada de log serializa argumentos para o canal de debug do Hermes.
+
+17
+00:01:40.000 --> 00:01:46.000
+Em um loop de 60 quadros por segundo, isso rouba ciclos vitais da thread JS 60 vezes por segundo.
+
+18
+00:01:46.000 --> 00:01:52.000
+Migrar para usar native driver ou cargas de trabalho do reanimated remove o JavaScript completamente do loop de animação.
+
+19
+00:01:52.000 --> 00:02:02.000
+A matemática é passada diretamente para o código nativo, permitindo que a thread da UI lide com os cálculos de forma independente dentro dos limites do V sync, enquanto a thread JS fica ociosa.
+
+20
+00:02:02.000 --> 00:02:10.000
+Proteger o orçamento de frame requer desacoplar completamente os cálculos de animação de alta frequência da carga de trabalho imprevisível da thread do JavaScript.
+
+21
+00:02:10.000 --> 00:02:16.000
+Mesmo com a thread JavaScript ignorada, você ainda pode perder frames diretamente no lado nativo.
+
+22
+00:02:16.000 --> 00:02:24.000
+O gargalo mais comum na UI thread é a armadilha do layout, tentar animar propriedades estruturais como width, height, margin ou padding.
+
+23
+00:02:24.000 --> 00:02:40.000
+O yoga engine estrutura sua UI como uma árvore invertida. Quando um nó inferior muda de dimensões, o yoga percorre a árvore até a raiz, recalculando a geometria do layout para cada nó pai, forçar essa travessia 60 vezes por segundo garante uma quebra do V sync.
+
+24
+00:02:40.000 --> 00:02:48.000
+A alternativa correta de engenharia é animar a propriedade transform.scale em vez das dimensões do layout, transforms são executados praticamente de graça.
+
+25
+00:02:48.000 --> 00:02:56.000
+A GPU do dispositivo escala sem esforço uma textura plana já decodificada, sem nunca acionar o yoga layout engine.
+
+26
+00:02:56.000 --> 00:03:08.000
+Esse custo de layout causa o jank on navigate pattern, montar novas views nativas no meio da animação força a criação simultânea de views e travessias do yoga, criando picos massivos de CPU.
+
+27
+00:03:08.000 --> 00:03:24.000
+As animações devem manipular texturas visuais na GPU, nunca a geometria estrutural calculada pela CPU. Mesmo com as threads de JS e UI otimizadas, as animações ainda podem engasgar por gargalos ocorrendo mais fundo, diretamente na GPU.
+
+28
+00:03:24.000 --> 00:03:34.000
+No Android, animar opacity em filhos semi-transparentes sobrepostos dispara uma falha de renderização. O pipeline é forçado a fazer compositing de alpha fora da tela por frame.
+
+29
+00:03:34.000 --> 00:03:40.000
+As layers são mantidas fora da tela principal, achatadas em uma imagem composta e um buffer, e então empurradas de volta.
+
+30
+00:03:40.000 --> 00:03:51.000
+Escrever toda aquela subárvore em um buffer fora da tela a cada frame consome a largura de banda da memória da GPU, levando a frames perdidos apesar do baixo uso de CPU. O iOS tem uma penalidade equivalente.
+
+31
+00:03:51.000 --> 00:03:59.000
+Usar incorretamente propriedades como should rasterize iOS em conteúdo dinâmico cria uma passagem de renderização off screen extremamente custosa.
+
+32
+00:03:59.000 --> 00:04:09.000
+Complexidade visual que depende de transparências aninhadas cria um custo oculto de rasterização por frame que vai silenciosamente destruir uma animação, do contrário, otimizada.
+
+33
+00:04:09.000 --> 00:04:19.000
+Diagnosticar esses gargalos exige dados precisos, o que significa que as métricas de performance do modo de desenvolvimento, incluindo as contagens de frames por segundo do Metro Bundler, são completamente inválidas.
+
+34
+00:04:19.000 --> 00:04:27.000
+Recursos como validação de props e instrumentação de debug do Hermes deixam a thread de JavaScript até cinco vezes mais lenta no desenvolvimento do que na realidade de produção.
+
+35
+00:04:27.000 --> 00:04:36.000
+O único método de diagnóstico confiável é o tracing em nível de sistema de um build de release, usando ferramentas como a integração do Profeto no Android Studio ou o iOS instruments.
+
+36
+00:04:36.000 --> 00:04:46.000
+No visualizador de trace do Profeto, o primeiro passo crucial é habilitar o destaque de Vsync. Essas linhas verticais mapeiam a execução em relação ao clock de 16 milissegundos em todas as threads.
+
+37
+00:04:46.000 --> 00:04:54.000
+Ao analisar a linha da thread de JS, uma execução contínua que ultrapassa a linha de Vsync confirma um problema de bloqueio do lado do JS.
+
+38
+00:04:55.000 --> 00:05:04.000
+Na linha da thread de UI, desenhos de frame ou fatias de traversal excessivamente largos confirmam um gargalo de cálculo de layout do yoga ou de criação de views.
+
+39
+00:05:04.000 --> 00:05:14.000
+E na thread de renderização da GPU, fatias longas de draw frame apontam diretamente para renderização off screen ou overdraw. Você não pode simplesmente chutar para resolver quedas de frame.
+
+40
+00:05:14.000 --> 00:05:24.000
+Mapeie a execução em relação ao clock de hardware para encontrar a linha exata de código que estoura o orçamento. Entregar uma aplicação altamente performática se resume a três mandamentos rígidos.
+
+41
+00:05:24.000 --> 00:05:30.000
+Primeiro, remova o JavaScript do loop completamente ao impor o native driver e as workloads do reanimated.
+
+42
+00:05:30.000 --> 00:05:37.000
+Segundo, proteja a UI thread animando exclusivamente transforms de GPU, nunca disparando traversals de layout do yoga.
+
+43
+00:05:38.000 --> 00:05:45.000
+Terceiro, nunca confie no development mode. Faça o profile de builds de release usando o Profeto ou instruments para rastrear o caminho crítico do Vsync.
+
+44
+00:05:45.000 --> 00:05:56.000
+Entregar aplicações react native premium com 120 frames por segundo exige alinhar a arquitetura dos seus componentes com as restrições absolutas de threading do host system.
+

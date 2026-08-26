@@ -1,0 +1,254 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:07.500
+The traditional React Native architecture relied on a singular communication bridge between the JavaScript thread and the native device.
+
+2
+00:00:07.500 --> 00:00:12.000
+For complex animations, this created a strict physical limitation.
+
+3
+00:00:12.000 --> 00:00:19.500
+Every frame of motion had to be calculated in JavaScript, serialized, sent across the bridge and decoded on the native side.
+
+4
+00:00:19.500 --> 00:00:27.000
+When the application processes a heavy JSON payload or executes a complex state update, the JavaScript thread blocks.
+
+5
+00:00:27.000 --> 00:00:35.000
+The result is dropped animation frames and stuttering gestures, because layout calculations required to update the UI cannot cross the bridge in time.
+
+6
+00:00:35.000 --> 00:00:42.000
+The engineering solution to this bottleneck is the combination of React Native gesture handler 2 and reanimated 3.
+
+7
+00:00:42.000 --> 00:00:45.000
+These libraries do not attempt to optimize the bridge.
+
+8
+00:00:45.000 --> 00:00:48.500
+Instead, they bypass standard React execution entirely.
+
+9
+00:00:48.500 --> 00:00:57.500
+To guarantee a fluid 120 frames per second, touch recognition and continuous animation updates are relocated exclusively to the native UI thread.
+
+10
+00:00:57.500 --> 00:01:06.500
+Moving execution to the UI thread isolates visual motion from business logic, but it requires abandoning standard React architectural assumptions.
+
+11
+00:01:06.500 --> 00:01:15.500
+Achieving highly responsive motion requires engineers to stop thinking in terms of React component life cycles and start designing for native view life cycles.
+
+12
+00:01:15.500 --> 00:01:22.500
+This diagram illustrates the primary architectural division, the JavaScript thread operating independently from the native UI thread.
+
+13
+00:01:22.500 --> 00:01:25.500
+The touch event drops directly into the UI lane.
+
+14
+00:01:25.500 --> 00:01:30.500
+It's intercepted by a worklet, calculating layout updates directly to the native view.
+
+15
+00:01:30.500 --> 00:01:33.500
+The JavaScript lane remains entirely empty.
+
+16
+00:01:33.500 --> 00:01:44.500
+Because the JavaScript thread is completely unblocked by the animation, it remains entirely free to handle business logic, application state, and background network requests without interrupting the visual frame rate.
+
+17
+00:01:44.500 --> 00:01:52.500
+The isolation is strict, meaning any requirement to synchronize animation data back to React state requires explicit manual intervention.
+
+18
+00:01:52.500 --> 00:01:57.500
+Engineers use the run on JS command as a manual toggle.
+
+19
+00:01:57.500 --> 00:02:04.500
+This explicitly sends a signal from the UI bound worklet back across the bridge to trigger a function on the JavaScript thread.
+
+20
+00:02:04.500 --> 00:02:13.500
+However, using run on JS to drive visual frame updates immediately reinstates the very bottleneck this architecture was built to avoid.
+
+21
+00:02:13.500 --> 00:02:19.500
+It should only be used to synchronize final state, like updating a database after a swipe is completed.
+
+22
+00:02:19.500 --> 00:02:23.500
+A threat safe UI relies on these strict execution boundaries.
+
+23
+00:02:23.500 --> 00:02:30.500
+The JavaScript thread acts as an asynchronous manager, while the UI thread functions as a synchronous autonomous worker.
+
+24
+00:02:30.500 --> 00:02:37.500
+We can observe the practical application of this pipeline by looking at the physics of interaction, starting with a basic, draggable card.
+
+25
+00:02:37.500 --> 00:02:44.500
+When a user swipes a card across the screen, the UI thread continuously calculates the vector and speed of the finger in motion.
+
+26
+00:02:44.500 --> 00:02:47.500
+This diagram demonstrates velocity handoff.
+
+27
+00:02:47.500 --> 00:02:53.500
+The release speed of the user's finger transfers directly into the initial state of the spring equation.
+
+28
+00:02:53.500 --> 00:02:57.500
+Without this velocity parameter, the spring calculates its start from zero.
+
+29
+00:02:57.500 --> 00:03:00.500
+The card's stutters before the spring accelerates.
+
+30
+00:03:00.500 --> 00:03:08.500
+Maintaining true physical accuracy relies entirely on the fact that this velocity data never waits on a JavaScript bridge to resolve.
+
+31
+00:03:08.500 --> 00:03:13.500
+For complex interfaces, gesture compositions splits logic into distinct paths.
+
+32
+00:03:13.500 --> 00:03:16.500
+Simultaneous allows gestures to recognize concurrently.
+
+33
+00:03:16.500 --> 00:03:20.500
+Exclusive dictates the first gesture blocks all others.
+
+34
+00:03:20.500 --> 00:03:27.500
+In a race condition, the first gesture to hit its activation threshold cancels all other potential gestures, securing sole control.
+
+35
+00:03:27.500 --> 00:03:39.500
+Additionally, when building nested scrolling interfaces, require external gesture to fail ensures that an inner scroll area remains inactive until the outer swipe gesture is mathematically proven to have failed.
+
+36
+00:03:39.500 --> 00:03:50.500
+UI fluidity is the result of continuous physics math and discrete state logic executing natively on a millisecond basis, devoid of latency.
+
+37
+00:03:50.500 --> 00:04:00.500
+Beyond touch interactions, this native execution model extends to layout changes, the physical mounting, unmounting, and resizing of UI components.
+
+38
+00:04:00.500 --> 00:04:04.500
+Historically, react renders drove layout animations.
+
+39
+00:04:04.500 --> 00:04:10.500
+Fabric architecture shifts authority, directly commanding the view hierarchy, independent of render cycles.
+
+40
+00:04:10.500 --> 00:04:19.500
+Entering and exiting animation presets are now strictly triggered by Fabric's native lifecycle events, the animation runs at the native view level.
+
+41
+00:04:19.500 --> 00:04:32.500
+When animating items within a changing list, layout transitions, like linear transition, or sequence transition, mathematically calculate and execute the movement of sibling components as adjacent elements mount or unmount.
+
+42
+00:04:32.500 --> 00:04:36.500
+This architecture introduces a critical performance trap.
+
+43
+00:04:36.500 --> 00:04:43.500
+Engineers frequently instantiate reanimated presets, like fade in, directly inside an inline component map function.
+
+44
+00:04:43.500 --> 00:04:53.500
+Because React rebuilds the mapping on every cycle, writing the preset in line forces the engine to generate entirely new animation builder object in memory on every single render.
+
+45
+00:04:53.500 --> 00:05:02.500
+The strict engineering rule to prevent this is to always define animation presets outside the component scope entirely, or properly memoize them within a used memo hook.
+
+46
+00:05:02.500 --> 00:05:07.500
+For complex initial renders, reanimated provides the layout animation config wrapper.
+
+47
+00:05:07.500 --> 00:05:17.500
+By wrapping a list in layout animation config, you can disable all layout animations for that specific subtree on mount, preventing visual chaos when rendering dozens of list items simultaneously.
+
+48
+00:05:17.500 --> 00:05:26.500
+Under Fabric, optimizing animations means engineers must stop attempting to animate react components and focus strictly on animating the resulting native layout nodes.
+
+49
+00:05:26.500 --> 00:05:33.500
+Relying on the native view lifecycle introduces platform specific architectural friction points that conflict with standard react development patterns.
+
+50
+00:05:34.500 --> 00:05:44.500
+This diagram details Android view flattening. To optimize memory, Android natively removes intermediate views lacking visual styling, condensing the hierarchy.
+
+51
+00:05:44.500 --> 00:05:52.500
+This silently breaks exiting animations. Reanimated fails to attach the animation hook because the view has already been deleted natively.
+
+52
+00:05:52.500 --> 00:06:02.500
+The required fix is explicit, applying the collapsible equals false property to the animated view forces Android to keep the empty node alive in memory, allowing the animation hook to attach.
+
+53
+00:06:02.500 --> 00:06:07.500
+The second major friction point occurs when non-animated react parents unmount.
+
+54
+00:06:07.500 --> 00:06:12.500
+When a parent component unmounts and react, it ruthlessly destroys its native children instantly.
+
+55
+00:06:12.500 --> 00:06:17.500
+If those children have in-progress exit animations, they are immediately terminated. The parent does not wait.
+
+56
+00:06:17.500 --> 00:06:27.500
+To preserve the motion, either the parent itself must be animated to physically delay its own unmount, or the children must be portal to render entirely outside the unmounting parent's tree.
+
+57
+00:06:27.500 --> 00:06:40.500
+Furthermore, if a parent component explicitly overrides its native ID, it blinds reanimated's internal tracking, disabling entering animations for all descendant views unless they are wrapped in an undecorated view container.
+
+58
+00:06:40.500 --> 00:06:49.500
+React's declarative assumptions regarding tree destruction will perpetually conflict with native animation life cycles. The engineer must explicitly manage the boundary between the two.
+
+59
+00:06:49.500 --> 00:06:53.500
+Under maximum load, the value of this architecture is absolute.
+
+60
+00:06:53.500 --> 00:07:01.500
+The native UI thread operates in a continuous loop, capturing gestures, executing velocity handoffs, and calculating transitions framed by frame.
+
+61
+00:07:01.500 --> 00:07:07.500
+Simultaneously, the isolated JavaScript lane processes massive background payloads without ever dropping a single visual frame.
+
+62
+00:07:07.500 --> 00:07:15.500
+In modern React native, React provides the structural blueprint and manages the state, but the actual interaction is purely native execution.
+
+63
+00:07:15.500 --> 00:07:30.500
+By mastering UI workloads, physical velocity mathematics, and native view life cycles, engineers elevate their applications from hybrid approximations into true native experiences, completely immune to the limitations of JavaScript.
+

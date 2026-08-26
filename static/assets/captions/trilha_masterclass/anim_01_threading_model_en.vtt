@@ -1,0 +1,378 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:06.040
+Writing software often feels abstract, but rendering a user interface is bound by strict,
+
+2
+00:00:06.040 --> 00:00:08.320
+unyielding physical deadlines.
+
+3
+00:00:08.320 --> 00:00:13.880
+At 60 frames per second, a display refreshes every 16.67 milliseconds.
+
+4
+00:00:13.880 --> 00:00:18.840
+For a 120 hertz display, that shrinks to 8.33 milliseconds.
+
+5
+00:00:18.840 --> 00:00:23.280
+If the system takes a fraction of a millisecond longer to commit draw commands, the display
+
+6
+00:00:23.280 --> 00:00:24.720
+misses the update.
+
+7
+00:00:24.720 --> 00:00:26.600
+You drop a frame.
+
+8
+00:00:26.600 --> 00:00:31.240
+Writing this requires knowing exactly where your animation code executes, because the execution
+
+9
+00:00:31.240 --> 00:00:33.840
+environment dictates the performance.
+
+10
+00:00:33.840 --> 00:00:38.240
+Hitting 120 frames per second requires strict adherence to the physics of the device's
+
+11
+00:00:38.240 --> 00:00:39.840
+refresh cycle.
+
+12
+00:00:39.840 --> 00:00:42.480
+Two threads dominate the React Native pipeline.
+
+13
+00:00:42.480 --> 00:00:48.000
+The JS thread runs the Hermes VM, executing all React renders, state updates, business logic,
+
+14
+00:00:48.000 --> 00:00:49.480
+and network callbacks.
+
+15
+00:00:49.480 --> 00:00:53.920
+The native UI thread dispatches touch events, runs the layout engine, and draws pixels to
+
+16
+00:00:53.920 --> 00:00:55.400
+the screen.
+
+17
+00:00:55.400 --> 00:01:00.320
+Writing or mutating a native view must happen on the UI thread, which relies on the JS
+
+18
+00:01:00.320 --> 00:01:03.680
+thread to deliver rendering instructions on time.
+
+19
+00:01:03.680 --> 00:01:08.680
+Because there is exactly one JS thread per app, heavy business logic will block it.
+
+20
+00:01:08.680 --> 00:01:14.400
+When the JS thread chokes, the UI thread receives no updates, and the rendering pipeline stalls.
+
+21
+00:01:14.400 --> 00:01:19.040
+Consider a standard performance failure, an active, smoothly running animation suddenly
+
+22
+00:01:19.040 --> 00:01:23.680
+stutters because a heavy React state update fires at the same time.
+
+23
+00:01:23.680 --> 00:01:28.120
+This flow chart maps the legacy React Native architecture, where these threads communicated
+
+24
+00:01:28.120 --> 00:01:32.840
+exclusively through an asynchronous JSON message queue known as the bridge.
+
+25
+00:01:32.840 --> 00:01:38.600
+An animation driven by the JS thread recalculated its value every frame, serialize that data,
+
+26
+00:01:38.600 --> 00:01:40.640
+and sent it across this bridge.
+
+27
+00:01:40.640 --> 00:01:46.080
+At 60 frames per second, the system forces 60 serialized JSON-round trips every second,
+
+28
+00:01:46.080 --> 00:01:48.160
+just to keep the animation moving.
+
+29
+00:01:48.160 --> 00:01:54.440
+These 60 updates compete for space in the exact same queue as heavy network responses and
+
+30
+00:01:54.440 --> 00:01:56.640
+dense state updates.
+
+31
+00:01:56.640 --> 00:01:58.600
+Congestion is inevitable.
+
+32
+00:01:58.600 --> 00:02:04.000
+Engineers mitigated this using the use Native driver API, sending the animation description
+
+33
+00:02:04.000 --> 00:02:09.080
+over the bridge exactly once, allowing the native UI thread to run the loop.
+
+34
+00:02:09.080 --> 00:02:14.400
+However, this approach had measurable setup latency, and was strictly limited to declarative
+
+35
+00:02:14.400 --> 00:02:20.480
+up-front animations, making it useless for continuous, dynamically changing gesture inputs.
+
+36
+00:02:20.480 --> 00:02:27.200
+A synchronous serialized communication cannot drive complex, interruptible interface animations.
+
+37
+00:02:27.200 --> 00:02:30.720
+Simply put, the architecture itself was the bottleneck.
+
+38
+00:02:30.720 --> 00:02:33.120
+The new architecture solves this bottleneck.
+
+39
+00:02:33.120 --> 00:02:37.720
+The bridge is completely replaced by the JavaScript interface, or JSI.
+
+40
+00:02:37.720 --> 00:02:43.680
+JSI establishes direct C++ method bindings accessed natively by the Hermes VM.
+
+41
+00:02:43.680 --> 00:02:49.320
+This eliminates serialization, removes asynchronous waiting, and destroys the message queue.
+
+42
+00:02:49.320 --> 00:02:54.120
+The framework shifts away from a disconnected message passing system to a synchronous showed
+
+43
+00:02:54.120 --> 00:02:55.640
+memory model.
+
+44
+00:02:55.640 --> 00:03:01.160
+By removing the bridge's latency, JSI allows the JSI and native layers to execute complex
+
+45
+00:03:01.160 --> 00:03:06.560
+calculations across boundaries, well within a single 16 millisecond frame.
+
+46
+00:03:06.560 --> 00:03:12.280
+Looking back at the UI thread, the reanimated library leverages JSI to spawn worklets, executing
+
+47
+00:03:12.280 --> 00:03:15.600
+animation functions directly within the native environment.
+
+48
+00:03:15.600 --> 00:03:20.920
+A worklet is a secondary miniature Hermes runtime that lives directly on the UI thread to execute
+
+49
+00:03:20.920 --> 00:03:23.080
+animation functions locally.
+
+50
+00:03:23.080 --> 00:03:27.960
+If we run that same heavy React state update alongside a gesture animation, but execute the
+
+51
+00:03:27.960 --> 00:03:33.280
+animation logic inside a worklet, the main JSI thread can block for 30 milliseconds, failing
+
+52
+00:03:33.280 --> 00:03:37.960
+its rendering deadline, while the animation continues executing at full frame rate.
+
+53
+00:03:37.960 --> 00:03:42.760
+The worklet reads and writes shared value synchronously via JSI on the UI thread.
+
+54
+00:03:42.760 --> 00:03:46.640
+It is completely isolated from the congested JSI event loop.
+
+55
+00:03:46.640 --> 00:03:51.440
+Moving animation logic to the UI thread via worklets keeps the frame rate stable, even when
+
+56
+00:03:51.440 --> 00:03:55.000
+the JavaScript thread is overwhelmed by application load.
+
+57
+00:03:55.000 --> 00:03:58.480
+JSI also changes how the framework handles layout measurements.
+
+58
+00:03:58.480 --> 00:04:02.120
+The measure function now returns native layout coordinate synchronously.
+
+59
+00:04:02.120 --> 00:04:06.600
+There is no more waiting for an asynchronous callback chain to locate a view on screen.
+
+60
+00:04:06.600 --> 00:04:11.160
+This ties directly into fabric, React Native's concurrent renderer, which manages layout
+
+61
+00:04:11.160 --> 00:04:13.200
+trees on the UI thread.
+
+62
+00:04:13.200 --> 00:04:18.080
+Fabric can intelligently interrupt low priority rendering tasks, like off screen list updates,
+
+63
+00:04:18.080 --> 00:04:21.640
+to immediately process urgent gesture driven animations.
+
+64
+00:04:21.640 --> 00:04:26.760
+Combined, JSI and fabric create an architecture that physically prioritizes human interaction
+
+65
+00:04:26.760 --> 00:04:28.600
+over background compute.
+
+66
+00:04:28.600 --> 00:04:31.720
+This matrix maps out the new architectural challenge.
+
+67
+00:04:31.720 --> 00:04:35.280
+Engineers must explicitly manage how data travels between the main JSI thread and the
+
+68
+00:04:35.280 --> 00:04:36.960
+UI worklet.
+
+69
+00:04:36.960 --> 00:04:42.720
+Shared values are the primary, lock-free mechanism for passing data between these threads without
+
+70
+00:04:42.720 --> 00:04:45.400
+writing explicit synchronization code.
+
+71
+00:04:45.400 --> 00:04:47.840
+A strict boundary rule applies.
+
+72
+00:04:47.840 --> 00:04:53.800
+Never attempt to call a standard React state setter directly from inside a UI worklet.
+
+73
+00:04:53.800 --> 00:04:55.400
+React isn't thread safe.
+
+74
+00:04:55.400 --> 00:04:58.600
+State setters must execute in the main JS loop.
+
+75
+00:04:58.600 --> 00:05:03.920
+To safely dispatch a function from a UI worklet to the main JS thread, wrap the call in run
+
+76
+00:05:03.920 --> 00:05:05.400
+on JS.
+
+77
+00:05:05.400 --> 00:05:10.800
+Conversely, to schedule a UI worklet function from JS, use run on UI.
+
+78
+00:05:10.800 --> 00:05:15.360
+Treating these boundaries as rigid manual handoffs prevents dangerous race conditions and
+
+79
+00:05:15.360 --> 00:05:18.640
+completely protects the UI thread from crashes.
+
+80
+00:05:18.640 --> 00:05:21.360
+Managing the animation frame is only the first step.
+
+81
+00:05:21.360 --> 00:05:26.680
+Heavy tasks executed immediately after an animation can still cause the trailing frames to stutter.
+
+82
+00:05:26.680 --> 00:05:30.920
+This diagram shows the interaction manager, a holding queue designed to safely defer this
+
+83
+00:05:30.920 --> 00:05:32.840
+non-essential work.
+
+84
+00:05:32.840 --> 00:05:39.040
+The run after interactions method holds tasks in this queue until all active animations and
+
+85
+00:05:39.040 --> 00:05:41.400
+touch events are fully complete.
+
+86
+00:05:41.400 --> 00:05:43.520
+There's one crucial exception.
+
+87
+00:05:43.520 --> 00:05:48.960
+Decorative or looping background animations must be flagged as is interaction false.
+
+88
+00:05:48.960 --> 00:05:53.360
+Otherwise, they hold the queue open permanently and block deferred tasks.
+
+89
+00:05:53.360 --> 00:05:59.120
+Finally, when verifying these optimizations, only profile thread performance in a fully compiled
+
+90
+00:05:59.120 --> 00:06:04.760
+release build, development mode injects heavy JS overhead that generates inaccurate flame
+
+91
+00:06:04.760 --> 00:06:05.760
+charts.
+
+92
+00:06:05.760 --> 00:06:10.560
+Achieving 120 frames per second means abandoning the black box mentality.
+
+93
+00:06:10.560 --> 00:06:15.320
+You have to map every single calculation to its correct thread and aggressively protect
+
+94
+00:06:15.320 --> 00:06:17.360
+your 16 millisecond physical budget.
+

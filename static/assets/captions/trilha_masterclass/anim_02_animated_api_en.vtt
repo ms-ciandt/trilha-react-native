@@ -1,0 +1,230 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:08.000
+React Native UI performance has a strict upper limit when relying on a congested JavaScript thread to calculate animation frames.
+
+2
+00:00:08.000 --> 00:00:16.000
+In order to maintain a fluid 60 frames per second on modern devices, we have to route around this congestion completely.
+
+3
+00:00:16.000 --> 00:00:21.000
+Under the legacy architecture, the asynchronous bridge created a constant bottleneck.
+
+4
+00:00:21.000 --> 00:00:29.000
+It had to ping the heavily loaded JS thread on every single frame just to calculate the next incremental step of an animation.
+
+5
+00:00:29.000 --> 00:00:36.000
+React Native's new architecture solves this by removing the bridge, replacing it with the JavaScript interface or JSI.
+
+6
+00:00:36.000 --> 00:00:45.000
+This animated diagram shows two pipelines, a JavaScript thread and a native UI thread, connected directly by a synchronous JSI block.
+
+7
+00:00:45.000 --> 00:00:53.000
+You construct an animation graph in JavaScript exactly once, pass it across the interface, and the native thread spins it in a continuous loop.
+
+8
+00:00:53.000 --> 00:01:00.000
+Starting with version 0.76, the framework requires the use native driver field to be explicitly defined.
+
+9
+00:01:00.000 --> 00:01:09.000
+Omitting it now triggers a warning and mixing native and non-native drivers within a single parallel group results in a runtime error.
+
+10
+00:01:09.000 --> 00:01:18.000
+Achieving fluid uninterrupted transitions means completely decoupling the animation frame execution loop from JavaScript.
+
+11
+00:01:18.000 --> 00:01:23.000
+The foundational unit of this declarative graph is animated.value.
+
+12
+00:01:23.000 --> 00:01:28.000
+Animated.value is a class that holds a single mutable number.
+
+13
+00:01:28.000 --> 00:01:34.000
+The animation runtime engine tracks this number independently outside of standard React state.
+
+14
+00:01:34.000 --> 00:01:39.000
+Instantiating an animated.value inside a U-state block is a common error.
+
+15
+00:01:39.000 --> 00:01:44.000
+As the component renders, the object is repeatedly destroyed and recreated.
+
+16
+00:01:44.000 --> 00:01:50.000
+To guarantee persistence, wrap the value in a use ref hook, the object remains stable.
+
+17
+00:01:50.000 --> 00:01:57.000
+To access this stable instance and update the underlying number, you simply unwrap the reference using the .current property.
+
+18
+00:01:57.000 --> 00:02:05.000
+However, you must never destructure these animated values to extract specific coordinates, like X and Y from a pan gesture.
+
+19
+00:02:05.000 --> 00:02:11.000
+Doing so severs the internal proxy that tracks dependencies, breaking the value entirely.
+
+20
+00:02:12.000 --> 00:02:21.000
+If you fail to persist the animated value correctly across renders, you destroy the frameworks internal tracking and break its connection to the native driver.
+
+21
+00:02:21.000 --> 00:02:29.000
+The configuration setting usenative driver.true physically routes the animation loop away from JavaScript and onto the UI thread.
+
+22
+00:02:29.000 --> 00:02:36.000
+Engineers frequently assume this setting is a universal fix that can smoothly animate any CSS style property.
+
+23
+00:02:36.000 --> 00:02:45.000
+It is not. Notice how nodes for transform and opacity properties flow synchronously into a green native GPU driver node.
+
+24
+00:02:45.000 --> 00:02:52.000
+The GPU hardware accelerates them directly, scaling and fading without recalculating physical positions.
+
+25
+00:02:52.000 --> 00:03:04.000
+But when nodes for layout properties, like with height and margin, attempt to flow into the GPU node, they hit a red yoga layout engine block and are violently redirected back to the JavaScript thread.
+
+26
+00:03:04.000 --> 00:03:12.000
+Properties that alter dimensions or spacing force the yoga engine to recalculate the entire layout tree on every single frame.
+
+27
+00:03:12.000 --> 00:03:25.000
+Color interpolation, including background color and text color, operates under a similar limitation, calculating the intermediate steps between hex codes or RGB values inherently requires JavaScript execution.
+
+28
+00:03:25.000 --> 00:03:36.000
+This table cleanly categorizes the divide, transform and opacity fall entirely under native support while dimensions spacing and color force a layout or JS pass.
+
+29
+00:03:36.000 --> 00:03:46.000
+Bypassing the native requirement means the JS thread manually recalculates and dispatches values every frame. Any CPU contention immediately causes dropped frames and stuttering.
+
+30
+00:03:46.000 --> 00:03:54.000
+Understanding the yoga layout boundary dictates whether you engineer a smooth 60 frames per second interaction or cause a jittery UI failure.
+
+31
+00:03:54.000 --> 00:04:00.000
+With the state stabilized and routed, you need a mechanism to drive the animated dot value forward through time.
+
+32
+00:04:00.000 --> 00:04:07.000
+The API provides three core animation builders to handle this mathematical progression, timing, spring and decay.
+
+33
+00:04:07.000 --> 00:04:13.000
+The animated dot timing builder advances a node from 0 to 1 over a fixed time limit.
+
+34
+00:04:13.000 --> 00:04:21.000
+Conversely, animated dot spring is choose fixed durations, oscillating and gradually dampening around a center line until settling.
+
+35
+00:04:21.000 --> 00:04:30.000
+Because it mimics real world physics, spring relies completely on paired parameters, configuring either friction and tension or stiffness and damping.
+
+36
+00:04:30.000 --> 00:04:40.000
+Animated dot decay drives momentum release interactions. It accepts a high initial velocity and calculates a steep deceleration curve until the value naturally comes to rest.
+
+37
+00:04:40.000 --> 00:04:47.000
+These builders output raw numbers. To map those numbers into usable UI data, you chain them into an interpolate function.
+
+38
+00:04:47.000 --> 00:04:57.000
+The interpolation maps your input ranges to specific output ranges, translate numeric inputs into rotation degrees, strings of pixel units or precise color hex codes.
+
+39
+00:04:57.000 --> 00:05:05.000
+The builders strictly dictate how a value moves through time, while interpolation dictates what that movement represents on screen.
+
+40
+00:05:05.000 --> 00:05:11.000
+Complex UI interactions require orchestrating multiple animated values simultaneously.
+
+41
+00:05:11.000 --> 00:05:15.000
+The API provides specific compositional wrappers for this orchestration.
+
+42
+00:05:15.000 --> 00:05:21.000
+It executes end to end, parallel runs simultaneously and stagger fires with cascading delays.
+
+43
+00:05:21.000 --> 00:05:30.000
+Rapping an animation in a loop function with reset before iteration determines if a value snaps back to the start or continues fluidly from its resting position.
+
+44
+00:05:30.000 --> 00:05:40.000
+A standard UI component shell naturally rejects incoming animated data streams. You must wrap it in an animated dot create animated component shell to successfully absorb the data.
+
+45
+00:05:40.000 --> 00:05:51.000
+When applying this wrapper to functional react components, you must utilize forward ref. It acts as a direct conduit allowing the native driver to manipulate the underlying view outside the standard react render cycle.
+
+46
+00:05:51.000 --> 00:06:00.000
+Without forward ref, the native driver cannot bypass react to update the UI directly, which renders the entire animation graph useless.
+
+47
+00:06:00.000 --> 00:06:09.000
+This graph architecture is highly efficient for predefined animations, but it excels when driven by continuous high frequency user input like scroll tracking.
+
+48
+00:06:09.000 --> 00:06:17.000
+Using animated dot event, you can map nested values from a native touch or scroll event directly into an animated dot value.
+
+49
+00:06:17.000 --> 00:06:30.000
+This diagram shows a mobile interface with a scrolling list. The raw y-axis scroll output feeds instantly through an interpolation graph, seamlessly adjusting the opacity and translation of the sticky header above.
+
+50
+00:06:30.000 --> 00:06:42.000
+You control the flow of these events using scroll event throttle. A value of 16 limits dispatches to roughly one per frame, balancing the reduction of JavaScript events while minimizing lag in any derivative functions.
+
+51
+00:06:42.000 --> 00:06:53.000
+Nothing user events directly on the UI thread demonstrates the power of the new architecture, handling heavy, continuous interaction with absolutely zero JavaScript overhead.
+
+52
+00:06:54.000 --> 00:07:00.000
+Even with the architecture properly aligned, a few strict runtime constraints often catch engineers off guard.
+
+53
+00:07:00.000 --> 00:07:07.000
+First, all animations nested inside a parallel composition must use the exact same driver configuration.
+
+54
+00:07:07.000 --> 00:07:13.000
+Mixing native and non-native drivers throws a hard runtime error in react native 0.7 cents.
+
+55
+00:07:13.000 --> 00:07:21.000
+Second, attempting to read a dot current animated value directly during a component render cycle is a severe anti-pattern that breaks synchronization.
+
+56
+00:07:22.000 --> 00:07:32.000
+Finally, if you execute a looping animation where the initial and final resting values are mathematically identical, you must manually trigger a dot set value reset before the next iteration.
+
+57
+00:07:32.000 --> 00:07:42.000
+By treating the animated API as a declarative graph builder rather than an imperative executor, you fully leverage JSI to match native performance without compromise.
+

@@ -1,0 +1,254 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:07.500
+A arquitetura tradicional do React Native dependia de uma única ponte de comunicação (bridge) entre a thread JavaScript e o dispositivo nativo.
+
+2
+00:00:07.500 --> 00:00:12.000
+Para animações complexas, isso criava uma limitação física rígida.
+
+3
+00:00:12.000 --> 00:00:19.500
+Cada frame de movimento tinha que ser calculado em JavaScript, serializado, enviado através da bridge e decodificado no lado nativo.
+
+4
+00:00:19.500 --> 00:00:27.000
+Quando a aplicação processa um payload JSON pesado ou executa uma atualização de estado complexa, a thread JavaScript trava.
+
+5
+00:00:27.000 --> 00:00:35.000
+O resultado são frames de animação perdidos e gestos truncados, porque os cálculos de layout necessários para atualizar a UI não conseguem atravessar a bridge a tempo.
+
+6
+00:00:35.000 --> 00:00:42.000
+A solução de engenharia para esse gargalo é a combinação do React Native gesture handler 2 com o reanimated 3.
+
+7
+00:00:42.000 --> 00:00:45.000
+Essas bibliotecas não tentam otimizar a bridge.
+
+8
+00:00:45.000 --> 00:00:48.500
+Em vez disso, elas ignoram completamente a execução padrão do React.
+
+9
+00:00:48.500 --> 00:00:57.500
+Para garantir 120 frames por segundo de forma fluida, o reconhecimento de toque e as atualizações contínuas de animação são realocados exclusivamente para a thread de UI nativa.
+
+10
+00:00:57.500 --> 00:01:06.500
+Mover a execução para a thread de UI isola o movimento visual da lógica de negócio, mas isso exige abandonar as premissas arquiteturais padrão do React.
+
+11
+00:01:06.500 --> 00:01:15.500
+Alcançar movimento altamente responsivo exige que os engenheiros parem de pensar em termos de ciclos de vida de componentes React e comecem a projetar para ciclos de vida de views nativas.
+
+12
+00:01:15.500 --> 00:01:22.500
+Este diagrama ilustra a principal divisão arquitetural, a thread JavaScript operando de forma independente da thread de UI nativa.
+
+13
+00:01:22.500 --> 00:01:25.500
+O evento de toque cai diretamente na faixa de UI.
+
+14
+00:01:25.500 --> 00:01:30.500
+Ele é interceptado por um worklet, calculando atualizações de layout diretamente para a view nativa.
+
+15
+00:01:30.500 --> 00:01:33.500
+A faixa JavaScript permanece completamente vazia.
+
+16
+00:01:33.500 --> 00:01:44.500
+Como a thread JavaScript fica completamente desbloqueada pela animação, ela permanece totalmente livre para lidar com lógica de negócio, estado da aplicação e requisições de rede em segundo plano, sem interromper a taxa de quadros visual.
+
+17
+00:01:44.500 --> 00:01:52.500
+O isolamento é rigoroso, o que significa que qualquer necessidade de sincronizar dados de animação de volta para o estado do React exige intervenção manual explícita.
+
+18
+00:01:52.500 --> 00:01:57.500
+Os engenheiros usam o comando run on JS como um toggle manual.
+
+19
+00:01:57.500 --> 00:02:04.500
+Isso envia explicitamente um sinal do worklet vinculado à UI de volta pela bridge para acionar uma função na thread JavaScript.
+
+20
+00:02:04.500 --> 00:02:13.500
+No entanto, usar run on JS para conduzir atualizações de quadros visuais imediatamente reintroduz exatamente o gargalo que essa arquitetura foi criada para evitar.
+
+21
+00:02:13.500 --> 00:02:19.500
+Ele deve ser usado apenas para sincronizar o estado final, como atualizar um banco de dados após um swipe ser concluído.
+
+22
+00:02:19.500 --> 00:02:23.500
+Uma UI thread-safe depende desses limites de execução rigorosos.
+
+23
+00:02:23.500 --> 00:02:30.500
+A thread JavaScript atua como um gerenciador assíncrono, enquanto a thread de UI funciona como um worker autônomo síncrono.
+
+24
+00:02:30.500 --> 00:02:37.500
+Podemos observar a aplicação prática desse pipeline analisando a física da interação, começando com um cartão básico e arrastável.
+
+25
+00:02:37.500 --> 00:02:44.500
+Quando um usuário arrasta um cartão pela tela, a UI thread calcula continuamente o vetor e a velocidade do dedo em movimento.
+
+26
+00:02:44.500 --> 00:02:47.500
+Este diagrama demonstra a transferência de velocidade.
+
+27
+00:02:47.500 --> 00:02:53.500
+A velocidade de soltura do dedo do usuário é transferida diretamente para o estado inicial da equação de mola.
+
+28
+00:02:53.500 --> 00:02:57.500
+Sem esse parâmetro de velocidade, a mola calcula seu início a partir de zero.
+
+29
+00:02:57.500 --> 00:03:00.500
+O cartão engasga antes que a mola acelere.
+
+30
+00:03:00.500 --> 00:03:08.500
+Manter a precisão física real depende inteiramente do fato de que esses dados de velocidade nunca esperam a resolução de uma bridge JavaScript.
+
+31
+00:03:08.500 --> 00:03:13.500
+Para interfaces complexas, composições de gestures dividem a lógica em caminhos distintos.
+
+32
+00:03:13.500 --> 00:03:16.500
+Simultaneous permite que gestures sejam reconhecidos simultaneamente.
+
+33
+00:03:16.500 --> 00:03:20.500
+Exclusive determina que o primeiro gesture bloqueia todos os outros.
+
+34
+00:03:20.500 --> 00:03:27.500
+Em uma race condition, o primeiro gesture a atingir seu limite de ativação cancela todos os outros gestures potenciais, garantindo controle exclusivo.
+
+35
+00:03:27.500 --> 00:03:39.500
+Além disso, ao construir interfaces de scroll aninhadas, require external gesture to fail garante que uma área de scroll interna permaneça inativa até que o swipe gesture externo seja matematicamente comprovado como falho.
+
+36
+00:03:39.500 --> 00:03:50.500
+A fluidez da UI é resultado de cálculos físicos contínuos e lógica de estado discreta executando nativamente em base de milissegundos, sem latência.
+
+37
+00:03:50.500 --> 00:04:00.500
+Além das interações de toque, esse modelo de execução nativa se estende a mudanças de layout, à montagem física, desmontagem e redimensionamento de componentes de UI.
+
+38
+00:04:00.500 --> 00:04:04.500
+Historicamente, os renders do React conduziam as animações de layout.
+
+39
+00:04:04.500 --> 00:04:10.500
+A arquitetura Fabric transfere essa autoridade, comandando diretamente a view hierarchy, independente dos ciclos de render.
+
+40
+00:04:10.500 --> 00:04:19.500
+Os presets de animação de entrada e saída agora são estritamente disparados pelos eventos de lifecycle nativos do Fabric, a animação roda no nível de view nativa.
+
+41
+00:04:19.500 --> 00:04:32.500
+Ao animar itens dentro de uma lista em mudança, as transições de layout, como linear transition ou sequence transition, calculam matematicamente e executam o movimento dos componentes irmãos à medida que elementos adjacentes são montados ou desmontados.
+
+42
+00:04:32.500 --> 00:04:36.500
+Essa arquitetura introduz uma armadilha crítica de performance.
+
+43
+00:04:36.500 --> 00:04:43.500
+Engenheiros frequentemente instanciam presets do reanimated, como fade in, diretamente dentro de uma função map de componente inline.
+
+44
+00:04:43.500 --> 00:04:53.500
+Como o React reconstrói o mapeamento a cada ciclo, escrever o preset inline força o engine a gerar um objeto de animation builder totalmente novo na memória a cada renderização.
+
+45
+00:04:53.500 --> 00:05:02.500
+A regra rígida de engenharia para evitar isso é sempre definir os presets de animação fora do escopo do componente, ou memoizá-los adequadamente usando um hook use memo.
+
+46
+00:05:02.500 --> 00:05:07.500
+Para renderizações iniciais complexas, o reanimated fornece o wrapper layout animation config.
+
+47
+00:05:07.500 --> 00:05:17.500
+Ao envolver uma lista em layout animation config, é possível desabilitar todas as animações de layout daquela subárvore específica na montagem, evitando caos visual ao renderizar dezenas de itens de lista simultaneamente.
+
+48
+00:05:17.500 --> 00:05:26.500
+Sob a Fabric, otimizar animações significa que os engenheiros devem parar de tentar animar componentes React e focar estritamente em animar os nós de layout nativos resultantes.
+
+49
+00:05:26.500 --> 00:05:33.500
+Depender do ciclo de vida da view nativa introduz pontos de atrito arquitetural específicos de cada plataforma, que conflitam com os padrões de desenvolvimento padrão do React.
+
+50
+00:05:34.500 --> 00:05:44.500
+Este diagrama detalha o view flattening do Android. Para otimizar memória, o Android nativamente remove views intermediárias sem estilização visual, condensando a hierarquia.
+
+51
+00:05:44.500 --> 00:05:52.500
+Isso quebra silenciosamente as animações de saída. O Reanimated falha ao anexar o animation hook porque a view já foi deletada nativamente.
+
+52
+00:05:52.500 --> 00:06:02.500
+A correção necessária é explícita: aplicar a propriedade collapsible igual a false na animated view força o Android a manter o nó vazio vivo em memória, permitindo que o animation hook se anexe.
+
+53
+00:06:02.500 --> 00:06:07.500
+O segundo ponto de fricção importante ocorre quando parents do React não animados são desmontados.
+
+54
+00:06:07.500 --> 00:06:12.500
+Quando um componente parent é desmontado, o React destrói seus filhos nativos instantaneamente, sem piedade.
+
+55
+00:06:12.500 --> 00:06:17.500
+Se esses filhos têm animações de saída em andamento, elas são imediatamente encerradas. O parent não espera.
+
+56
+00:06:17.500 --> 00:06:27.500
+Para preservar o movimento, ou o próprio parent precisa ser animado para atrasar fisicamente seu próprio unmount, ou os filhos precisam ser portal para renderizar completamente fora da árvore do parent que está sendo desmontado.
+
+57
+00:06:27.500 --> 00:06:40.500
+Além disso, se um componente parent sobrescreve explicitamente seu native ID, isso cega o rastreamento interno do Reanimated, desabilitando as entering animations para todas as views descendentes, a menos que estejam envolvidas em um undecorated view container.
+
+58
+00:06:40.500 --> 00:06:49.500
+As suposições declarativas do React em relação à destruição da árvore vão conflitar perpetuamente com os ciclos de vida das animações nativas. O engenheiro precisa gerenciar explicitamente o limite entre os dois.
+
+59
+00:06:49.500 --> 00:06:53.500
+Sob carga máxima, o valor dessa arquitetura é absoluto.
+
+60
+00:06:53.500 --> 00:07:01.500
+A native UI thread opera em um loop contínuo, capturando gestures, executando velocity handoffs e calculando transições quadro a quadro.
+
+61
+00:07:01.500 --> 00:07:07.500
+Simultaneamente, a lane isolada de JavaScript processa payloads massivos em segundo plano sem nunca descartar um único frame visual.
+
+62
+00:07:07.500 --> 00:07:15.500
+No React Native moderno, o React fornece o blueprint estrutural e gerencia o state, mas a interação real é execução puramente nativa.
+
+63
+00:07:15.500 --> 00:07:30.500
+Ao dominar UI workloads, a matemática de velocidade física e os ciclos de vida de views nativas, engenheiros elevam suas aplicações de aproximações híbridas para experiências verdadeiramente nativas, completamente imunes às limitações do JavaScript.
+
