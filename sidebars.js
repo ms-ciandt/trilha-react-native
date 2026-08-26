@@ -129,6 +129,7 @@ const sidebars = {
         'trilha-masterclass/modulo-01-brownfield/setup-and-embedding',
         'trilha-masterclass/modulo-01-brownfield/surfaces-and-lifecycle',
         'trilha-masterclass/modulo-01-brownfield/communication-and-navigation',
+        'trilha-masterclass/modulo-01-brownfield/bundle-strategy',
       ],
     },
     {
@@ -323,6 +324,7 @@ const sidebars = {
       collapsed: false,
       items: [
         'rn-advanced-lab/brownfield-bootstrap',
+        'rn-advanced-lab/brownfield-bundle-split',
         'rn-advanced-lab/brownfield-navigation',
         'rn-advanced-lab/native-library-bridge',
         'rn-advanced-lab/ui-thread-vs-js-thread',

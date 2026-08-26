@@ -30,6 +30,12 @@
       "hasVideo": false,
       "videoFile": null
     },
+    "rn-advanced-lab/01b-brownfield-bundle-split.md": {
+      "readMin": 6,
+      "videoMin": null,
+      "hasVideo": false,
+      "videoFile": null
+    },
     "rn-advanced-lab/02-brownfield-navigation.md": {
       "readMin": 6,
       "videoMin": null,
@@ -576,6 +582,12 @@
       "hasVideo": true,
       "videoFile": "mc01_03_communication-and-navigation.mp4"
     },
+    "trilha-masterclass/modulo-01-brownfield/04-bundle-strategy.md": {
+      "readMin": 5,
+      "videoMin": null,
+      "hasVideo": false,
+      "videoFile": null
+    },
     "trilha-masterclass/modulo-02-jsi-fabric/01-jsi-javascript-interface.md": {
       "readMin": 4,
       "videoMin": 5.6,
@@ -909,6 +921,11 @@
       "videoMin": 0,
       "docCount": 1
     },
+    "rn-advanced-lab/01b-brownfield-bundle-split.md": {
+      "readMin": 6,
+      "videoMin": 0,
+      "docCount": 1
+    },
     "rn-advanced-lab/02-brownfield-navigation.md": {
       "readMin": 6,
       "videoMin": 0,
@@ -1010,9 +1027,9 @@
       "docCount": 1
     },
     "trilha-masterclass/modulo-01-brownfield": {
-      "readMin": 10,
+      "readMin": 15,
       "videoMin": 14.900000000000002,
-      "docCount": 3
+      "docCount": 4
     },
     "trilha-masterclass/modulo-02-jsi-fabric": {
       "readMin": 26,
@@ -1077,9 +1094,9 @@
       "docCount": 4
     },
     "rn-advanced-lab": {
-      "readMin": 30,
+      "readMin": 36,
       "videoMin": 0,
-      "docCount": 5
+      "docCount": 6
     },
     "trilha-android": {
       "readMin": 112,
@@ -1092,9 +1109,9 @@
       "docCount": 43
     },
     "trilha-masterclass": {
-      "readMin": 146,
+      "readMin": 151,
       "videoMin": 219.29999999999998,
-      "docCount": 38
+      "docCount": 39
     },
     "trilha-web": {
       "readMin": 57,
@@ -1103,8 +1120,8 @@
     }
   },
   "total": {
-    "readMin": 626,
+    "readMin": 637,
     "videoMin": 867.6000000000001,
-    "docCount": 147
+    "docCount": 149
   }
 }
