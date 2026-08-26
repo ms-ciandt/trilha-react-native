@@ -10,8 +10,7 @@ one native/RN slice at a time.
 ## Pitch
 
 An internal tool for CI&T employees to organize and track informal "internal
-championships" — office soccer, pool (sinuca), Mortal Kombat, FIFA, and anything else a
-group wants to run a bracket for. One person creates a tournament, picks a format,
+championships" — whatever a group wants to run a bracket for. One person creates a tournament, picks a format,
 adds participants, and the app tracks matches, scores, and a standings table. Wins
 also feed a company-wide ranking across all modalities.
 
@@ -21,13 +20,13 @@ also feed a company-wide ranking across all modalities.
 | Field | Notes |
 |---|---|
 | `id` | |
-| `name` | free text, e.g. "Sinuca Q3 2026" |
-| `modality` | free text/tag, e.g. `futebol`, `sinuca`, `mortal-kombat`, `fifa` — no fixed enum, organizer types it |
+| `name` | free text, e.g. "Championship Q3 2026" |
+| `modality` | free text/tag — no fixed enum, organizer types whatever they're running |
 | `format` | one of: `single-elimination` (mata-mata), `round-robin` (ida-volta), `swiss` (suíço) |
-| `matchStyle` | best-of, e.g. `single`, `md3`, `md5` — relevant for FIFA/fighting games, optional for others |
+| `matchStyle` | best-of, e.g. `single`, `md3`, `md5` — relevant for versus-style modalities, optional for others |
 | `participantCount` | target size, drives bracket/pairing generation |
 | `pointsConfig` | `{ win: number, draw: number, loss: number }` — only meaningful for round-robin/swiss tables |
-| `teamLabelsEnabled` | boolean — e.g. FIFA where each participant also picks a team label |
+| `teamLabelsEnabled` | boolean — e.g. a modality where each participant also picks a team label |
 | `status` | `upcoming` \| `in-progress` \| `finished` |
 | `createdAt` | |
 
@@ -60,8 +59,8 @@ lost, points, score diff. Only rendered for `round-robin`/`swiss` formats — a
 ### Global ranking (derived, not stored)
 Cross-tournament, cross-modality leaderboard per person. A person's score is the sum
 of placement points from every tournament they participated in, regardless of
-modality — this is the "fulano ganhou de sinuca1 e fifa2" case: both wins add to the
-same running total.
+modality — this is the "fulano ganhou de modalidade1 e modalidade2" case: both wins add to
+the same running total.
 
 Placement points (proposed baseline, tune later):
 - 1st place: `100 × sizeFactor`
@@ -82,8 +81,8 @@ Placement points (proposed baseline, tune later):
   instead of a full round robin — used for larger pools where round robin would take
   too many rounds.
 - **MD3 / MD5**: not a tournament format by itself — a match-style modifier meaning a
-  single match is decided by best-of-3 or best-of-5 games (common for FIFA and fighting
-  games like Mortal Kombat).
+  single match is decided by best-of-3 or best-of-5 games (common for versus-style
+  modalities).
 
 ## Screens implied (for lab framing only)
 

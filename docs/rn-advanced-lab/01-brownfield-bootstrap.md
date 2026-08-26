@@ -11,8 +11,8 @@ title: Brownfield Bootstrap
 ## Context
 
 The CI&T Championships app (see the [Labs overview](/lab)) already exists as a native Android app. It
-has one working screen: a list of internal tournaments (office soccer, pool, Mortal
-Kombat, FIFA), each rendered as a card by `TournamentListScreen.kt`. Two more native
+has one working screen: a list of internal tournaments, each rendered as a card by
+`TournamentListScreen.kt`. Two more native
 screens already exist too — **History** and **Global Ranking** — reachable from text
 buttons on the tournament list, wired through a Jetpack Navigation Compose graph in
 `MainActivity.kt`.
