@@ -7,6 +7,7 @@ title: "Assets e xcassets no React Native"
 
 <video width="100%" controls style="border-radius: 8px; margin: 16px 0;">
   <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/rec_06_xcassets.mp4" type="video/mp4">
+  <track kind="captions" src="/trilha-react-native/assets/captions/trilha_ios/rec_06_xcassets.vtt" srclang="pt" label="Português" default>
   Seu navegador não suporta o elemento de vídeo.
 </video>
 

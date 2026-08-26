@@ -8,6 +8,7 @@ title: Brownfield Integration — Embedding React Native in an Existing iOS App
 
 <video width="100%" controls>
   <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/arq_02_brownfield-integration.mp4" type="video/mp4">
+  <track kind="captions" src="/trilha-react-native/assets/captions/trilha_ios/arq_02_brownfield-integration.vtt" srclang="pt" label="Português" default>
   Your browser does not support the video tag.
 </video>
 

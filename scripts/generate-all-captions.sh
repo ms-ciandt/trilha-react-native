@@ -23,12 +23,12 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-if [[ -z "${ANTHROPIC_API_KEY:-}" ]]; then
-  echo "ERROR: ANTHROPIC_API_KEY is not set." >&2
+if [[ -z "${ANTHROPIC_API_KEY:-}" && -z "${ANTHROPIC_AUTH_TOKEN:-}" ]]; then
+  echo "ERROR: neither ANTHROPIC_API_KEY nor ANTHROPIC_AUTH_TOKEN is set." >&2
   exit 1
 fi
 
-TRILHAS=(trilha_android trilha_web trilha_masterclass)
+TRILHAS=(trilha_android trilha_web trilha_masterclass trilha_ios)
 FAILED_TRANSLATIONS=()
 
 transcribe_one() {

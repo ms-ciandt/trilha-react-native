@@ -8,6 +8,7 @@ title: Components and Props
 
 <video width="100%" controls>
   <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/fund_04_components-and-props.mp4" type="video/mp4">
+  <track kind="captions" src="/trilha-react-native/assets/captions/trilha_ios/fund_04_components-and-props.vtt" srclang="pt" label="Português" default>
   Seu navegador não suporta o elemento de vídeo.
 </video>
 

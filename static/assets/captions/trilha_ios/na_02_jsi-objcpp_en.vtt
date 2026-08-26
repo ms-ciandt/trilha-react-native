@@ -1,0 +1,126 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:11.600
+In a fundamental shift, React Native 0.76 completely replaces the application's legacy communication bridge with a direct memory sharing architecture.
+
+2
+00:00:11.600 --> 00:00:19.200
+For years, JavaScript and Native Code operated on completely isolated execution threads. They shared no physical memory.
+
+3
+00:00:19.200 --> 00:00:26.400
+Every time they communicated, they translated data into JSON, used an asynchronous queue, and waited for parsing.
+
+4
+00:00:26.400 --> 00:00:38.400
+This translation created severe latency. A single round trip took tens of milliseconds, expanding well past the 16.6 millisecond threshold required for 60 frames per second.
+
+5
+00:00:38.400 --> 00:00:49.400
+When an application attempted to execute high frequency operations, like tracking a user's finger during a swipe gesture, or reading a hardware gyroscope, that asynchronous queue backed up.
+
+6
+00:00:49.400 --> 00:01:04.400
+The interface would skip frames and visibly stutter. A system built on copying serialized text across an asynchronous gap was incapable of meeting modern rendering demands. The entire architecture had to shift from copying data to sharing it.
+
+7
+00:01:04.400 --> 00:01:20.400
+The solution is the JavaScript interface, or JSI. It is a synchronous C++ communication layer that completely eliminates the JSON queue. Under JSI, JavaScript and Native Code now run inside the exact same process space.
+
+8
+00:01:20.400 --> 00:01:27.400
+Sharing a process means sharing memory. JavaScript no longer waits for copies. It points directly to existing native data.
+
+9
+00:01:27.400 --> 00:01:35.400
+A pointer referencing a C++ buffer passes to the JavaScript thread, instantly treated as an array buffer. Zero bytes are copied.
+
+10
+00:01:35.400 --> 00:01:52.400
+By removing the queue and the serialization steps, round-trip communication latency drops from tens of milliseconds to mere microseconds. Operating at a microsecond scale is what finally allows React Native to execute frame-by-frame animations and complex gestures at a flawless 60 frames per second.
+
+11
+00:01:52.400 --> 00:02:04.400
+To understand how this shared memory works, we have to look at the C++ bedrock of JSI. It begins with the JSI.Runtime, the actual execution environment provided by the React Native host.
+
+12
+00:02:04.400 --> 00:02:13.400
+This runtime is strictly threadifying. Attempting to store a reference to it and execute it on a background thread will trigger undefined behavior and crash your application.
+
+13
+00:02:13.400 --> 00:02:23.400
+Within this runtime, every piece of JavaScript data from a simple boolean to a complex object is represented by a single C++ type called JSI.Value.
+
+14
+00:02:23.400 --> 00:02:38.400
+JSI.Value uses C++ move semantics. To duplicate data, you must explicitly call .as object. This manual duplication is required because the Hermes-Garmt-Grabot-Grabot-Grabot-Grabots act of references. When that counter takes down to zero, the engine instantly clears the memory.
+
+15
+00:02:38.400 --> 00:02:48.400
+Working with JSI means native developers can no longer rely on automatic bridge translations. You are now directly responsible for managing the lifecycle and memory references of your JavaScript data.
+
+16
+00:02:48.400 --> 00:02:58.400
+So how do we actually expose complex iOS features like the camera or the file system to the C++ runtime? JSI provides a structural pattern for this called JSI.HOST object.
+
+17
+00:02:58.400 --> 00:03:13.400
+It is a C++ interface specifically designed to hold stateful native objects. During initialization, you implement your custom logic inside a C++ class and inject that host object directly into the JavaScript global scope.
+
+18
+00:03:13.400 --> 00:03:23.400
+Once installed, execution is immediate. A function call in JavaScript bypasses all intermediate layers, triggering the C++ logic synchronously and instantly.
+
+19
+00:03:23.400 --> 00:03:34.400
+And because they share the same memory space, the Hermes engine automatically maintains the C++ object via shared pointers, keeping it alive for exactly as long as the JavaScript side holds an active reference.
+
+20
+00:03:34.400 --> 00:03:50.400
+The host object pattern achieves true zero latency communication, but it permanently intertwines the life cycles of your native instances and your JavaScript objects. This introduces a major friction point for modern iOS developers. Why can't we just write these host objects directly in Swift?
+
+21
+00:03:51.400 --> 00:04:07.400
+Swift has evolving C++ interoperability, but hits a hard roadblock against the complex architecture of JSI. JSI.HOST object uses virtual inheritance and templates, which Swift cannot parse.
+
+22
+00:04:07.400 --> 00:04:25.400
+To bridge this gap, we must use Objective C++, the .MM format, as a translation layer. The client compiler treats .MM files as standard Objective C, but grants them unrestricted native access to the complete C++ API.
+
+23
+00:04:25.400 --> 00:04:36.400
+This requires a specific three-file architecture for any iOS turbo module. First, an Objective C header file exposes only clean, safe Objective C types.
+
+24
+00:04:36.400 --> 00:04:55.400
+Second, the .MM implementation file encapsulates all of the C++ complexity. This is where you instantiate the host object and execute the raw JSI logic. Finally, your Swift code accesses that clean Objective C interface through a standard bridging header. Swift never sees the C++ types.
+
+25
+00:04:55.400 --> 00:05:06.400
+Objective C++ is often viewed as a relic, but in modern react native iOS development, it is the essential encapsulation mechanism required to achieve maximum performance.
+
+26
+00:05:06.400 --> 00:05:22.400
+This comparative data table shows exactly what that performance looks like. By comparing the legacy bridge to JSI, we see round-trip latency drop from tens of milliseconds down to microseconds alongside the new ability to access memory directly via pointers.
+
+27
+00:05:23.400 --> 00:05:37.400
+These microseconds speeds make high-intensity tasks viable, such as real-time image processing, direct sensor reads, and Apple Metal API integration. However, the synchronous nature of JSI creates a significant operational risk.
+
+28
+00:05:37.400 --> 00:05:50.400
+Under the legacy bridge, native operations ran in the background, but in JSI, a slow calculation on the native C++ side will instantly paralyze the JavaScript thread, freezing the entire application interface.
+
+29
+00:05:50.400 --> 00:06:03.400
+To avoid this synchronous trap, developers must strictly limit synchronous JSI calls to operations that execute in microseconds, such as reading state from memory or initializing callbacks.
+
+30
+00:06:03.400 --> 00:06:14.400
+Any computationally heavy task must be explicitly offloaded to a background native thread using standard JavaScript promises to return the data once the work is complete.
+
+31
+00:06:14.400 --> 00:06:32.400
+React Native 0.76 grants iOS developers micro-second-level execution by completely removing the communication bottleneck, but wielding this shared memory architecture safely requires strict discipline over C++ constraints and low-level memory management.
+

@@ -1,0 +1,590 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:04.320
+A user taps a camera icon inside a React Native app.
+
+2
+00:00:04.320 --> 00:00:08.160
+Instead of a viewfinder, the screen goes entirely dark.
+
+3
+00:00:08.160 --> 00:00:10.320
+The application has crashed.
+
+4
+00:00:10.320 --> 00:00:15.920
+Accessing device hardware on iOS requires two distinct systems to agree.
+
+5
+00:00:15.920 --> 00:00:20.320
+The application must declare its intent statically before it is compiled,
+
+6
+00:00:20.320 --> 00:00:24.880
+and only then can the JavaScript layer execute the request at runtime.
+
+7
+00:00:24.880 --> 00:00:28.320
+If the JavaScript code triggers an API like the camera,
+
+8
+00:00:28.320 --> 00:00:32.640
+but the Native build lacks the matching XML key authorizing that hardware,
+
+9
+00:00:32.640 --> 00:00:34.960
+the iOS kernel intervenes.
+
+10
+00:00:34.960 --> 00:00:39.040
+It forces an immediate, unrecoverable crash to protect user privacy.
+
+11
+00:00:39.680 --> 00:00:42.640
+Sometimes the application survives local testing,
+
+12
+00:00:42.640 --> 00:00:44.000
+only to fail in review.
+
+13
+00:00:44.560 --> 00:00:48.000
+If the build succeeds locally but fails Apple's static analysis
+
+14
+00:00:48.000 --> 00:00:50.480
+because of vague or missing permission strings,
+
+15
+00:00:50.480 --> 00:00:54.720
+the binary is automatically rejected under guideline 5.1.1.
+
+16
+00:00:55.360 --> 00:00:58.480
+Fixing these failures requires a precise pipeline.
+
+17
+00:00:58.480 --> 00:01:03.600
+Developers must map their JavaScript configuration down to the native compilation step,
+
+18
+00:01:03.600 --> 00:01:07.360
+which then dictates how the application's runtime state machine operates.
+
+19
+00:01:08.080 --> 00:01:13.440
+Developers coming from the web or Android often assume permissions are handled entirely on the fly,
+
+20
+00:01:14.000 --> 00:01:18.560
+applying that purely dynamic logic to Apple platforms guarantees structural failures.
+
+21
+00:01:19.120 --> 00:01:21.840
+Apple enforces a strict security perimeter,
+
+22
+00:01:21.840 --> 00:01:24.880
+before a device will execute a runtime permission request.
+
+23
+00:01:24.880 --> 00:01:28.400
+The operating system checks if the app has declared a specific purpose string
+
+24
+00:01:28.400 --> 00:01:30.080
+for that protected resource category.
+
+25
+00:01:30.640 --> 00:01:33.680
+These purpose strings are stored within the application package
+
+26
+00:01:33.680 --> 00:01:35.840
+in a file called info.plist.
+
+27
+00:01:35.840 --> 00:01:37.920
+It acts as a static manifest of intent.
+
+28
+00:01:38.560 --> 00:01:42.240
+This diagram shows a side-by-side comparison of usage strings.
+
+29
+00:01:42.240 --> 00:01:44.800
+Writing app needs camera as your purpose string
+
+30
+00:01:44.800 --> 00:01:47.120
+will get your binary automatically rejected.
+
+31
+00:01:47.120 --> 00:01:50.880
+Apple's review process requires that the text explicitly details
+
+32
+00:01:50.880 --> 00:01:53.680
+the exact feature the user gets in return,
+
+33
+00:01:53.680 --> 00:01:56.320
+such as scan product barcodes for your order.
+
+34
+00:01:56.960 --> 00:02:00.640
+Modern iOS divides access into granular categories.
+
+35
+00:02:00.640 --> 00:02:03.200
+If an app only needs to save a downloaded image,
+
+36
+00:02:03.200 --> 00:02:04.720
+it only requires right access.
+
+37
+00:02:05.280 --> 00:02:08.480
+Asking for full read access to the entire photo library
+
+38
+00:02:08.480 --> 00:02:11.760
+when the app only saves media is a direct path to rejection.
+
+39
+00:02:12.320 --> 00:02:15.440
+Location tracking demands even stricter configuration.
+
+40
+00:02:15.440 --> 00:02:17.120
+To track a user in the background,
+
+41
+00:02:17.120 --> 00:02:20.080
+the manifest must contain both the background usage key
+
+42
+00:02:20.080 --> 00:02:21.600
+and the foreground key.
+
+43
+00:02:21.600 --> 00:02:22.640
+They must coexist.
+
+44
+00:02:23.280 --> 00:02:26.320
+Even frameworks that run quietly, like Core Bluetooth,
+
+45
+00:02:26.320 --> 00:02:28.800
+now demand their own explicit usage descriptions.
+
+46
+00:02:29.360 --> 00:02:31.280
+Any initialization of these libraries,
+
+47
+00:02:31.280 --> 00:02:32.800
+even just in the foreground,
+
+48
+00:02:32.800 --> 00:02:34.960
+checks the static manifest first.
+
+49
+00:02:34.960 --> 00:02:38.640
+Apple's automated review bots do not execute your JavaScript logic.
+
+50
+00:02:38.640 --> 00:02:40.800
+They only read these static strings.
+
+51
+00:02:40.800 --> 00:02:44.160
+Ensuring this file perfectly matches your code's capabilities
+
+52
+00:02:44.160 --> 00:02:46.880
+is the primary defense against binary rejection.
+
+53
+00:02:47.440 --> 00:02:49.440
+Starting with iOS 17,
+
+54
+00:02:49.440 --> 00:02:52.800
+Apple expanded its static analysis to target covert tracking.
+
+55
+00:02:53.440 --> 00:02:57.840
+Apps and third-party SDKs must now declare specific data practices
+
+56
+00:02:57.840 --> 00:03:01.280
+in a new manifest called privacyinfo.x privacy.
+
+57
+00:03:01.920 --> 00:03:06.400
+This file tracks required reason APIs, functions that seem benign
+
+58
+00:03:06.400 --> 00:03:08.480
+but can be weaponized for device fingerprinting.
+
+59
+00:03:09.040 --> 00:03:10.880
+Checking the amount of free disk space
+
+60
+00:03:10.880 --> 00:03:12.720
+or reading file system timestamps
+
+61
+00:03:12.800 --> 00:03:14.560
+now requires formal documentation.
+
+62
+00:03:15.120 --> 00:03:16.160
+For standard builds,
+
+63
+00:03:16.160 --> 00:03:20.080
+modern React Native and Expo SDKs handle this requirement internally.
+
+64
+00:03:20.560 --> 00:03:23.120
+Core modules package their own privacy manifests
+
+65
+00:03:23.120 --> 00:03:25.120
+that seamlessly merge during the build process.
+
+66
+00:03:25.680 --> 00:03:27.920
+The gap appears when developers add older
+
+67
+00:03:27.920 --> 00:03:30.480
+or un-maintained third-party native libraries.
+
+68
+00:03:30.480 --> 00:03:34.640
+If an external SDK uses a restricted API and lacks its own manifest,
+
+69
+00:03:34.640 --> 00:03:37.920
+the developer must manually supplement the main application file.
+
+70
+00:03:37.920 --> 00:03:41.520
+This mapping table shows how every restricted API call
+
+71
+00:03:41.520 --> 00:03:44.560
+made by these dependencies must be directly mapped
+
+72
+00:03:44.560 --> 00:03:48.800
+to strict alpha-numeric reason codes provided by Apple's documentation.
+
+73
+00:03:49.280 --> 00:03:52.560
+Missing a single reason code for a buried dependency
+
+74
+00:03:52.560 --> 00:03:55.200
+triggers an automatic failure in AppStore Connect.
+
+75
+00:03:55.760 --> 00:03:58.400
+This shifts the heavy lifting of dependency auditing
+
+76
+00:03:58.400 --> 00:04:00.480
+directly onto the React Native developer.
+
+77
+00:04:01.120 --> 00:04:05.040
+Writing raw XML files manually introduces syntax risks.
+
+78
+00:04:05.040 --> 00:04:06.800
+In an Expo-managed workflow,
+
+79
+00:04:06.800 --> 00:04:09.920
+the app.json file serves as the true source of truth
+
+80
+00:04:09.920 --> 00:04:11.120
+for the entire application.
+
+81
+00:04:11.760 --> 00:04:14.320
+Libraries expose Expo-config plugins,
+
+82
+00:04:14.320 --> 00:04:16.800
+specifically a modifier called with info-lisp.
+
+83
+00:04:17.360 --> 00:04:19.920
+This function takes the JavaScript configuration arrays
+
+84
+00:04:19.920 --> 00:04:22.400
+and translates them into native iOS constraints.
+
+85
+00:04:22.960 --> 00:04:25.360
+This flowchart illustrates the pre-build execution.
+
+86
+00:04:25.840 --> 00:04:28.080
+Running the command executes these plugins,
+
+87
+00:04:28.080 --> 00:04:30.640
+consuming the JSON data and dynamically generating
+
+88
+00:04:30.640 --> 00:04:32.320
+the native Xcode project structure.
+
+89
+00:04:32.720 --> 00:04:34.640
+The plugin reads the plain text arrays
+
+90
+00:04:34.640 --> 00:04:37.600
+and automatically structures them into the correct XML keys
+
+91
+00:04:37.680 --> 00:04:39.840
+and string values required by the operating system.
+
+92
+00:04:40.400 --> 00:04:43.920
+In this architecture, opening Xcode and modifying the manifest by hand
+
+93
+00:04:43.920 --> 00:04:45.040
+is actively destructive.
+
+94
+00:04:45.520 --> 00:04:47.520
+The next time the project compiles,
+
+95
+00:04:47.520 --> 00:04:51.760
+the pre-build command will completely overwrite any manual edits.
+
+96
+00:04:51.760 --> 00:04:54.400
+To maintain stability in a managed workflow,
+
+97
+00:04:54.400 --> 00:04:57.200
+developers must step away from Xcode entirely.
+
+98
+00:04:57.680 --> 00:05:00.960
+Permissions require treatment as configuration as code,
+
+99
+00:05:00.960 --> 00:05:03.520
+residing firmly inside the JavaScript pipeline.
+
+100
+00:05:04.000 --> 00:05:06.400
+Once the static compilation is secure,
+
+101
+00:05:06.400 --> 00:05:08.320
+focus moves to runtime execution.
+
+102
+00:05:08.880 --> 00:05:11.120
+This is the exact moment a user attempts
+
+103
+00:05:11.120 --> 00:05:13.840
+to access a protected feature for the very first time.
+
+104
+00:05:14.400 --> 00:05:17.120
+On Android, applications can programmatically prompt
+
+105
+00:05:17.120 --> 00:05:19.040
+the user for permission multiple times.
+
+106
+00:05:19.440 --> 00:05:22.640
+iOS operates under a much more restrictive philosophy.
+
+107
+00:05:23.120 --> 00:05:26.320
+This flowchart maps out the iOS one-shot state machine.
+
+108
+00:05:26.880 --> 00:05:29.600
+The system dialog appears exactly once
+
+109
+00:05:29.600 --> 00:05:32.080
+and the user's response creates a permanent branch
+
+110
+00:05:32.080 --> 00:05:33.600
+in the application's functionality.
+
+111
+00:05:34.080 --> 00:05:35.840
+If the user selects granted,
+
+112
+00:05:35.840 --> 00:05:38.080
+the state machine records the authorization
+
+113
+00:05:38.080 --> 00:05:41.280
+and the API executes normally for all future sessions.
+
+114
+00:05:41.600 --> 00:05:44.560
+If the user selects denied, they hit a hard wall.
+
+115
+00:05:44.880 --> 00:05:48.000
+The application can never trigger that native prompt again.
+
+116
+00:05:48.480 --> 00:05:53.200
+Surviving this strict architecture dictates a specific user experience strategy.
+
+117
+00:05:53.520 --> 00:05:56.480
+Developers build custom pre-authorization screens.
+
+118
+00:05:56.960 --> 00:06:00.800
+By rendering custom UI that clearly explains the value of the feature
+
+119
+00:06:00.800 --> 00:06:03.200
+before the native dialog is ever invoked,
+
+120
+00:06:03.200 --> 00:06:06.160
+the likelihood of an initial grant increases significantly.
+
+121
+00:06:06.640 --> 00:06:08.880
+If the app does end up in a denied state,
+
+122
+00:06:08.880 --> 00:06:10.560
+the code must catch that status
+
+123
+00:06:10.560 --> 00:06:13.840
+and gracefully redirect the user completely out of the application
+
+124
+00:06:13.840 --> 00:06:15.840
+and into the global iOS settings menu.
+
+125
+00:06:16.320 --> 00:06:18.960
+Because the authorization change happens externally,
+
+126
+00:06:18.960 --> 00:06:22.000
+the application needs an active app state event listener.
+
+127
+00:06:22.240 --> 00:06:24.080
+When the user switches back to the app,
+
+128
+00:06:24.080 --> 00:06:25.680
+this listener detects the return
+
+129
+00:06:25.680 --> 00:06:27.920
+and checks if the permission status has updated.
+
+130
+00:06:28.160 --> 00:06:30.720
+The front-end user experience is heavily dictated
+
+131
+00:06:30.800 --> 00:06:32.480
+by the native security architecture
+
+132
+00:06:32.480 --> 00:06:33.920
+and forced by the iOS kernel.
+
+133
+00:06:34.480 --> 00:06:37.680
+The architecture of iOS permissions and react native
+
+134
+00:06:37.680 --> 00:06:40.000
+spans from a localized JSON file
+
+135
+00:06:40.000 --> 00:06:43.360
+all the way to a single unrepeatable interaction with the user.
+
+136
+00:06:43.840 --> 00:06:45.600
+A three-step audit is required.
+
+137
+00:06:46.000 --> 00:06:48.000
+Verify explicit usage strings,
+
+138
+00:06:48.240 --> 00:06:50.960
+audit dependencies against privacy manifests,
+
+139
+00:06:50.960 --> 00:06:53.200
+and verify pre-authorization UX.
+
+140
+00:06:53.760 --> 00:06:57.440
+Apple's automated reviewers blindly evaluate the static declarations
+
+141
+00:06:57.440 --> 00:06:58.640
+in the first two steps.
+
+142
+00:06:58.880 --> 00:07:01.680
+In production, step three becomes your only defense
+
+143
+00:07:01.680 --> 00:07:03.200
+against permanent feature lockout.
+
+144
+00:07:03.760 --> 00:07:06.080
+By ensuring the static configuration files
+
+145
+00:07:06.080 --> 00:07:09.520
+precisely align with a resilient dynamic user experience,
+
+146
+00:07:09.520 --> 00:07:11.680
+developers eliminate the primary vectors
+
+147
+00:07:11.680 --> 00:07:14.320
+for local crashes and automated rejections.
+

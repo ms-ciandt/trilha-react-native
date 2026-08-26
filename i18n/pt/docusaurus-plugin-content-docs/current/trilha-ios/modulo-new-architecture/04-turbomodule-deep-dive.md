@@ -8,6 +8,7 @@ title: TurboModule Deep Dive — iOS
 
 <video width="100%" controls>
   <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/na_04_turbomodule-deep-dive.mp4" type="video/mp4">
+  <track kind="captions" src="/trilha-react-native/assets/captions/trilha_ios/na_04_turbomodule-deep-dive.vtt" srclang="pt" label="Português" default>
   Your browser does not support the video tag.
 </video>
 

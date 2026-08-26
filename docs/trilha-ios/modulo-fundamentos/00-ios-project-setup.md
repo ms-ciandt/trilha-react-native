@@ -8,6 +8,7 @@ title: iOS Project Setup — CocoaPods, Xcode Workspace, and SPM
 
 <video width="100%" controls>
   <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/fund_00_ios-project-setup.mp4" type="video/mp4">
+  <track kind="captions" src="/trilha-react-native/assets/captions/trilha_ios/fund_00_ios-project-setup_en.vtt" srclang="en" label="English" default>
   Your browser does not support the video tag.
 </video>
 

@@ -1,0 +1,270 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:07.120
+A frozen UI. A sudden crash. If you build for iOS, your first instinct is to open Xcode.
+
+2
+00:00:07.120 --> 00:00:12.080
+But in a React Native app, standard native profiling tools often hit a brick wall.
+
+3
+00:00:12.080 --> 00:00:17.840
+React Native runs across two environments. The Hermes JavaScript thread and the iOS main thread,
+
+4
+00:00:17.840 --> 00:00:21.280
+separated by a rigid boundary, data must be serialized across.
+
+5
+00:00:21.840 --> 00:00:27.040
+Standard Swift tooling only understands one side. Xcode inspects the iOS thread while the
+
+6
+00:00:27.040 --> 00:00:32.480
+JavaScript side remains dark. When a crash originates inside the JavaScript runtime, those native tools
+
+7
+00:00:32.480 --> 00:00:37.520
+lose visibility. The diagnostic trace simply stops. Applying native debugging intuition
+
+8
+00:00:37.520 --> 00:00:42.960
+directly to React Native fails because the execution path vanishes the moment it crosses the bridge.
+
+9
+00:00:42.960 --> 00:00:46.960
+This leads to the specific frustration of clicking through an Xcode stack trace,
+
+10
+00:00:46.960 --> 00:00:51.920
+only to find empty, unreadable frames. This is a standard Xcode crash report,
+
+11
+00:00:51.920 --> 00:00:57.600
+prominently showing the underscore RCT fatal error. This is the opaque error handler that
+
+12
+00:00:57.600 --> 00:01:02.240
+surfaces when the Hermes engine aborts a process and triggers a native termination.
+
+13
+00:01:02.800 --> 00:01:09.120
+Xcode displays these unrecognizable HBC markers because it cannot parse the Hermes engines compiled
+
+14
+00:01:09.120 --> 00:01:14.800
+bytecode. Recovery visibility requires mapping existing native debugging intuition
+
+15
+00:01:14.800 --> 00:01:19.040
+to the specific architecture of the React Native 0.76 stack.
+
+16
+00:01:19.600 --> 00:01:24.720
+To do this, we need three specific instruments. The new React Native dev tools,
+
+17
+00:01:24.720 --> 00:01:30.800
+the flipper desktop app, and Xcode's time profiler. The following sections will demonstrate how to use
+
+18
+00:01:30.800 --> 00:01:38.320
+this integrated dual stack tool chain to recover the execution path. React Native 0.76 moves away
+
+19
+00:01:38.320 --> 00:01:42.560
+from the legacy flipper-based JavaScript debugger that earlier versions relied on.
+
+20
+00:01:43.120 --> 00:01:48.240
+This architecture diagram shows a first-party React Native dev tools built on the Chrome Dev
+
+21
+00:01:48.240 --> 00:01:55.920
+tools protocol. The Metro Bundler exposes port 8081, creating a direct CDP pipeline into the Hermes
+
+22
+00:01:55.920 --> 00:02:01.200
+engine. This connection lets developers attach a diagnostic interface straight to the active
+
+23
+00:02:01.200 --> 00:02:06.400
+JavaScript runtime. When running development builds, the Metro Bundler automatically inlines
+
+24
+00:02:06.400 --> 00:02:11.040
+source maps directly into the active bundle. This allows you to set breakpoints in your
+
+25
+00:02:11.040 --> 00:02:16.400
+original type script files, rather than fighting to decipher minified output. Note that this modern
+
+26
+00:02:16.400 --> 00:02:22.000
+CDP workflow is distinct from the legacy Safari Web Inspector, which was restricted to the older
+
+27
+00:02:22.000 --> 00:02:27.360
+JavaScript core engine. By utilizing React Native dev tools, you restore stepping and expression
+
+28
+00:02:27.360 --> 00:02:33.440
+evaluation to the JS threat, rebuilding the first half of the execution stack. But React Native dev tools
+
+29
+00:02:33.440 --> 00:02:38.960
+cannot see everything. If a third-party native Swift SDK initiates a network request,
+
+30
+00:02:38.960 --> 00:02:45.440
+that traffic bypasses the central JS hub. These requests utilize native URL session via turbo modules,
+
+31
+00:02:45.440 --> 00:02:49.760
+because they occur outside of JavaScript, they never pass through the Hermes engine for dev tools
+
+32
+00:02:49.760 --> 00:02:57.280
+to inspect. To capture this native HTTP and HTTTS traffic, you must use Flipper's network plug-in as
+
+33
+00:02:57.280 --> 00:03:02.880
+a dedicated interceptor. The second major blind spot lies in the calculation of visual component
+
+34
+00:03:02.880 --> 00:03:09.520
+frames. Look at these parallel wire frames. On one side is the JavaScript yoga-computed layout logic.
+
+35
+00:03:09.520 --> 00:03:15.200
+On the other are the final constraints rendered by the native iOS view hierarchy. When a layout breaks,
+
+36
+00:03:15.440 --> 00:03:21.440
+these two states often fail to align. Flipper's layout inspector serves as the react-specific version
+
+37
+00:03:21.440 --> 00:03:26.560
+of Xcode's view hierarchy debugger, allowing you to compare the yoga calculations against the
+
+38
+00:03:26.560 --> 00:03:32.080
+final native views. Flipper serves as a structural probe for inspecting network states and UI
+
+39
+00:03:32.080 --> 00:03:37.840
+constraints that fall into the gap between Hermes and UI kit. When an application stutters,
+
+40
+00:03:37.840 --> 00:03:43.360
+diagnosing dropped frames requires looking at the entire system at once. This is the Xcode
+
+41
+00:03:43.360 --> 00:03:48.480
+Instruments time-profiler. It is capable of overlaying CPU samples from both the native and
+
+42
+00:03:48.480 --> 00:03:55.600
+JavaScript environment simultaneously. Within the call-tree pane, you isolate two specific timelines,
+
+43
+00:03:55.600 --> 00:04:02.400
+the main thread, where UI kit and fabric operate, and the JS thread, handling your react logic.
+
+44
+00:04:02.400 --> 00:04:09.120
+You can identify exactly which side is saturated. Heavy Swift or Objective-C frames stacking up here
+
+45
+00:04:09.120 --> 00:04:15.040
+will block the main thread and drop frames. Conversely, heavy JavaScript work surfaces as dense
+
+46
+00:04:15.040 --> 00:04:22.640
+blocks of JSContacts.EvaluateScript or Hermes runtime frames on the JS thread. Without post-processing,
+
+47
+00:04:22.640 --> 00:04:28.000
+the Hermes-Git compiled frames will appear in instruments as unreadable byte code markers.
+
+48
+00:04:28.000 --> 00:04:31.920
+If the performance data proves the bottleneck is purely on the JS thread,
+
+49
+00:04:31.920 --> 00:04:36.640
+switch to the Hermes sampling profiler in React Native Dev Tools for readable JavaScript
+
+50
+00:04:36.640 --> 00:04:42.080
+function names. Performance tuning requires proving which thread is saturated before changing any
+
+51
+00:04:42.080 --> 00:04:48.240
+code. Transitioning to production, the JS stack often disappears entirely in crash reports.
+
+52
+00:04:48.240 --> 00:04:55.120
+An uncaught JavaScript exception wraps into an at-rct fatal call, which then terminates the native iOS
+
+53
+00:04:55.120 --> 00:05:01.360
+process. To catch this in development, you can attach LLDB to the running application. Setting
+
+54
+00:05:01.440 --> 00:05:07.680
+a specific symbolic breakpoint for the at-rct fatal flag inside Xcode will catch the error handler
+
+55
+00:05:07.680 --> 00:05:14.480
+just before the process is destroyed. However, in release builds, this local LLDB tactic is unavailable,
+
+56
+00:05:14.480 --> 00:05:19.440
+because minification and ahead of time Hermes compilation fundamentally change the code structure.
+
+57
+00:05:20.160 --> 00:05:25.120
+Since development breakpoints cannot be used in production, recovering the execution path requires
+
+58
+00:05:25.120 --> 00:05:30.640
+rebuilding the stack externally. Production failures require a unified crash reporter integration,
+
+59
+00:05:30.640 --> 00:05:35.680
+such as Sentry or Firebase Crashlytics. This outlines the dual-symbolication requirement.
+
+60
+00:05:36.240 --> 00:05:41.600
+First, the automated upload of Xcode's blue.dcm files. They resolve native frames,
+
+61
+00:05:41.600 --> 00:05:46.480
+turning cryptic hex addresses into readable native functions, leaving JavaScript garbled.
+
+62
+00:05:46.480 --> 00:05:54.640
+Second, Hermes source maps. The yellow.js bundle.map translates the byte code into readable type script.
+
+63
+00:05:55.360 --> 00:06:00.960
+Maintaining this synchronized upload pipeline is necessary for matching raw native crash data
+
+64
+00:06:00.960 --> 00:06:06.720
+with the JavaScript breadcrumbs that led to the failure. Effective react native debugging relies
+
+65
+00:06:06.720 --> 00:06:12.560
+on understanding where the Hermes to iOS boundary lies. Solving these issues requires matching the
+
+66
+00:06:12.560 --> 00:06:18.800
+diagnostic lens, dev tools, flipper, or instruments, to the specific side of the boundary where the logic
+
+67
+00:06:18.800 --> 00:06:20.800
+failed.
+

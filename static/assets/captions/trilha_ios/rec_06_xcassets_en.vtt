@@ -1,0 +1,278 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:07.240
+For native iOS developers, image management is synonymous with x-codes.xcassetscatalog.
+
+2
+00:00:07.240 --> 00:00:15.040
+This system relies on the operating system to compile density-specific variants directly into the application binary at build time.
+
+3
+00:00:15.040 --> 00:00:18.160
+React Native removes this OS-level cataloging.
+
+4
+00:00:18.160 --> 00:00:24.000
+In its place, the JavaScript Bundler Metro handles asset resolution during the bundling process.
+
+5
+00:00:24.080 --> 00:00:32.560
+This shift replaces static, pre-compiled buckets, with a system where assets are sorted and routed dynamically into specific pipelines as they are requested.
+
+6
+00:00:32.560 --> 00:00:34.880
+The core technical difference is timing.
+
+7
+00:00:34.880 --> 00:00:41.520
+While native density inference is an OS-level build time process, React Native's density inference happens at runtime.
+
+8
+00:00:41.520 --> 00:00:47.520
+To navigate this, we can map common x-code UI elements directly to their equivalent metro configurations.
+
+9
+00:00:47.520 --> 00:00:50.160
+This architectural matrix illustrates the difference.
+
+10
+00:00:50.160 --> 00:00:55.440
+On the left, x-code provides a rigid tree structure for 1x, 2x, and 3x slots.
+
+11
+00:00:55.440 --> 00:00:59.440
+On the right, Metro looks at a standard directory of raw PNG files.
+
+12
+00:00:59.440 --> 00:01:03.920
+x-code requires you to manually assign files to specific slots.
+
+13
+00:01:03.920 --> 00:01:12.560
+Metro uses a flat file structure, where variants with at 2x and at 3x suffixes sit alongside the base image in the same folder.
+
+14
+00:01:12.560 --> 00:01:19.760
+When Metro bundles the app, it scans these directory structures and groups the adjacent variants into a unified asset map.
+
+15
+00:01:19.760 --> 00:01:30.320
+Understanding this transition from pre-compilation to runtime resolution is the first step in diagnosing why assets might look blurry or fail to appear in a cross-platform environment.
+
+16
+00:01:30.320 --> 00:01:39.120
+The React Native require function acts as the trigger for Metro's resolution logic, signaling the bundler to find the correct file paths during the build.
+
+17
+00:01:39.120 --> 00:01:45.760
+The actual selection of which file to display occurs later, when the image component is rendered on the physical device.
+
+18
+00:01:45.760 --> 00:01:48.560
+This process starts with the image component code.
+
+19
+00:01:48.560 --> 00:01:56.880
+It queries pixel ratio.get, which identifies the hardware density, in this case a 3, and routes the request to the at 3x file.
+
+20
+00:01:56.880 --> 00:02:01.920
+If the density is 2, the system instantly routes to the at 2x variant.
+
+21
+00:02:01.920 --> 00:02:05.600
+This runtime visibility creates a specific failure mode.
+
+22
+00:02:05.600 --> 00:02:11.760
+Unlike x-code, which warns you about missing density slots at built time, Metro fails silently.
+
+23
+00:02:11.760 --> 00:02:16.240
+If the at 3x file is missing, the app will still build without errors.
+
+24
+00:02:16.240 --> 00:02:25.760
+However, at runtime, the system will find no match for the high density request and fall back to upscaling the 1x asset, leading to visible pixelation.
+
+25
+00:02:25.760 --> 00:02:32.240
+This local resolution logic is distinct from how the framework handles remote assets using the URI format.
+
+26
+00:02:32.240 --> 00:02:38.480
+When you load an image from a remote server, the source bypasses the Metro Bundler's inference engine entirely.
+
+27
+00:02:38.480 --> 00:02:45.680
+Because Metro cannot inspect the metadata of a file that hasn't been fetched yet, you must provide explicit width and height styles.
+
+28
+00:02:45.680 --> 00:02:50.000
+Without them, the image has no calculated size, and will not appear.
+
+29
+00:02:50.000 --> 00:02:53.920
+This code demonstrates a URI source with explicit dimensions.
+
+30
+00:02:53.920 --> 00:03:00.640
+It also shows how to include an authorization header required for fetching assets from protected endpoints.
+
+31
+00:03:00.640 --> 00:03:05.520
+Because the system is dynamic, it requires more active validation from the developer
+
+32
+00:03:05.520 --> 00:03:10.000
+to ensure that every density variant is present before the app is shipped.
+
+33
+00:03:10.000 --> 00:03:18.160
+For app icons in a bare React Native project, you manually update the iOS app icon directory within xcode structure.
+
+34
+00:03:18.160 --> 00:03:26.800
+Expo abstracts this through the app.json configuration file, removing the need to interact with the native asset catalog directly.
+
+35
+00:03:26.880 --> 00:03:36.000
+Instead of managing dozens of files, define a single 1024 by 1024 master icon in app.json.
+
+36
+00:03:36.000 --> 00:03:43.520
+During the build, Expo takes this master file and automatically generates the entire matrix of required iOS point sizes,
+
+37
+00:03:43.520 --> 00:03:45.920
+slotting them into the native catalog.
+
+38
+00:03:45.920 --> 00:03:53.360
+This translation also applies to the native iOS launch screen, which is traditionally a storyboard or an image set in Xcode.
+
+39
+00:03:53.360 --> 00:03:59.920
+In React Native, this is replaced by the Expo splash screen module and its corresponding parameters in app.json.
+
+40
+00:03:59.920 --> 00:04:03.120
+This shifts the responsibility for dismissing the splash screen.
+
+41
+00:04:03.120 --> 00:04:08.800
+Rather than being tied to the native app delegate setup, it is now controlled programmatically through JavaScript.
+
+42
+00:04:08.800 --> 00:04:14.480
+Using the hide async function allows you to keep the splash screen visible until your asynchronous data fetching,
+
+43
+00:04:14.480 --> 00:04:18.240
+like a user profile or configuration is actually complete.
+
+44
+00:04:18.240 --> 00:04:24.640
+Moving this event to the JavaScript thread ensures the splash screen dismisses only when internal logic is ready,
+
+45
+00:04:24.640 --> 00:04:27.440
+rather than relying on native side timing.
+
+46
+00:04:27.440 --> 00:04:35.520
+Native iOS development often uses PDF-based vector sets within X assets to ensure icon scale without losing quality.
+
+47
+00:04:35.520 --> 00:04:38.880
+React Native cannot render these native PDF vectors.
+
+48
+00:04:38.880 --> 00:04:44.000
+To achieve the same effect, we use the SVG format as a cross-platform alternative.
+
+49
+00:04:44.000 --> 00:04:47.520
+We integrate SVGs directly into the asset pipeline.
+
+50
+00:04:47.520 --> 00:04:53.280
+Because Metro doesn't support SVG natively, we use the React Native SVG transformer.
+
+51
+00:04:53.280 --> 00:05:01.120
+It intercepts the raw SVG file and converts it into an executable React component, making it behave like a standard UI element.
+
+52
+00:05:01.120 --> 00:05:07.600
+Custom fonts are another native asset, typically linked through the info.plist using the UI app fonts key.
+
+53
+00:05:07.600 --> 00:05:12.400
+In React Native, you can either load these fonts dynamically at runtime via Expo font,
+
+54
+00:05:12.480 --> 00:05:18.560
+or use the React Native asset CLI to automate native injection into the iOS and Android projects.
+
+55
+00:05:18.560 --> 00:05:26.320
+Finally, Xcode's data sets are used for binary files, like core ML models or AR reference data.
+
+56
+00:05:26.320 --> 00:05:33.280
+To handle these in React Native, you update the asset Xs array in your metro.config.js.
+
+57
+00:05:34.080 --> 00:05:38.640
+This instructs Metro to treat these specific extensions as bundleable assets.
+
+58
+00:05:39.280 --> 00:05:45.280
+Once bundled, Expo asset provides a local URI for the file, which can then be seamlessly
+
+59
+00:05:45.280 --> 00:05:48.640
+passed into native machine learning frameworks, like TensorFlow Lite.
+
+60
+00:05:49.280 --> 00:05:54.240
+This configuration layer allows Metro to replicate the functionality of native data sets
+
+61
+00:05:54.240 --> 00:06:00.160
+for almost any binary file type. The translation from Excode to Metro is now complete.
+
+62
+00:06:00.160 --> 00:06:06.000
+We have mapped density-aware images to require, icons and splash screens to app.json,
+
+63
+00:06:06.080 --> 00:06:11.360
+and fonts and binaries to JavaScript side-loaders. Managing assets this way removes the
+
+64
+00:06:11.360 --> 00:06:17.200
+requirement to manually edit native XML or P list files for every new image or font.
+
+65
+00:06:17.200 --> 00:06:22.400
+Even though we are configuring these through JavaScript and JSON, the end result on the device
+
+66
+00:06:22.400 --> 00:06:26.000
+is an optimized asset utilizing the native hardware efficiently.
+
+67
+00:06:26.720 --> 00:06:31.920
+The primary developer responsibility is to maintain the integrity of file naming conventions
+
+68
+00:06:31.920 --> 00:06:38.080
+to avoid violent fallbacks at runtime. Mastering Metro's resolution logic allows software engineers
+
+69
+00:06:38.080 --> 00:06:48.720
+to maintain a complete asset pipeline without leaving the JavaScript environment.
+

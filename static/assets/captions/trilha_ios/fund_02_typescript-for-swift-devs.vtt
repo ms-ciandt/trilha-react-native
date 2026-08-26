@@ -1,0 +1,306 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:04.000
+Em Swift, você é treinado para nunca confiar em um valor sem tipo (untyped).
+
+2
+00:00:04.000 --> 00:00:09.000
+Você depende da tipagem estática para detectar erros e evitar falhas em tempo de execução.
+
+3
+00:00:09.000 --> 00:00:15.000
+O JavaScript remove tudo isso, permitindo que qualquer variável armazene qualquer valor a qualquer momento.
+
+4
+00:00:15.000 --> 00:00:19.000
+TypeScript é a camada de superconjunto estrito projetada para restaurar a ordem.
+
+5
+00:00:19.000 --> 00:00:24.000
+Ele te devolve o contrato imposto pelo compilador no qual você já confia para escrever código seguro,
+
+6
+00:00:24.000 --> 00:00:29.000
+mas a arquitetura é diferente. Swift incorpora seus tipos diretamente no código de máquina compilado.
+
+7
+00:00:29.000 --> 00:00:33.000
+As anotações de tipo do TypeScript existem apenas durante o desenvolvimento.
+
+8
+00:00:33.000 --> 00:00:38.000
+Antes mesmo de o código rodar no navegador ou no dispositivo, os tipos são completamente removidos.
+
+9
+00:00:38.000 --> 00:00:44.000
+Por causa dessa remoção, toda essa checagem rigorosa de tipos custa exatamente zero de overhead de performance em tempo de execução.
+
+10
+00:00:44.000 --> 00:00:49.000
+O melhor modelo mental é enxergar a supervisão do TypeScript sobre o JavaScript,
+
+11
+00:00:49.000 --> 00:00:54.000
+da mesma forma que você vê o sistema de tipos do Swift operando sobre os padrões antigos e propensos a falhas do objective C.
+
+12
+00:00:54.000 --> 00:00:58.000
+É uma camada analítica que fica em cima de um runtime dinâmico.
+
+13
+00:00:58.000 --> 00:01:02.000
+O TypeScript fornece um modelo de segurança, mas espelha o Swift.
+
+14
+00:01:02.000 --> 00:01:09.000
+No entanto, manter esse modelo exige que você configure limites específicos antes que o código chegue ao compilador.
+
+15
+00:01:09.000 --> 00:01:15.000
+Por padrão, o TypeScript é permissivo para facilitar a migração de bases de código JavaScript antigas.
+
+16
+00:01:15.000 --> 00:01:18.000
+Isso contradiz totalmente a filosofia do Swift.
+
+17
+00:01:18.000 --> 00:01:23.000
+Para corrigir isso, você começa habilitando a flag no implicit any.
+
+18
+00:01:23.000 --> 00:01:29.000
+Isso age diretamente como o compilador do Swift, estabelecendo uma proibição de variáveis sem tipo.
+
+19
+00:01:29.000 --> 00:01:32.000
+Em seguida, você habilita o strict null checks.
+
+20
+00:01:32.000 --> 00:01:34.000
+Essa flag replica o optional do Swift.
+
+21
+00:01:34.000 --> 00:01:39.000
+Isso evita que nulls contornem silenciosamente suas verificações de tipo, causando falhas e problemas em produção.
+
+22
+00:01:39.000 --> 00:01:44.000
+Com o compiler bem configurado, os primitivos básicos se mapeiam de forma limpa.
+
+23
+00:01:44.000 --> 00:01:51.000
+String, int ou double, e bool do Swift traduzem-se diretamente para string, number e boolean do TypeScript.
+
+24
+00:01:51.000 --> 00:01:56.000
+Quando você realmente não sabe o que é um valor, o TypeScript oferece o tipo unknown.
+
+25
+00:01:56.000 --> 00:02:03.000
+Isso te obriga a restringir logicamente o tipo antes de usá-lo, exatamente como você faria com um cast as-question mark no Swift.
+
+26
+00:02:03.000 --> 00:02:12.000
+Você deve evitar a palavra-chave any do TypeScript, usar any desativa o compiler para essa variável, removendo sua rede de segurança.
+
+27
+00:02:12.000 --> 00:02:19.000
+Sem aplicar o strict mode e utilizar unknown para dados ambíguos, o ambiente fica comprometido.
+
+28
+00:02:19.000 --> 00:02:22.000
+Ele não consegue fornecer a segurança em tempo de compilação que você espera.
+
+29
+00:02:22.000 --> 00:02:30.000
+O tipo optional do Swift, T-question mark, é dividido em dois valores distintos no TypeScript, null e undefined.
+
+30
+00:02:30.000 --> 00:02:36.000
+null representa um valor intencionalmente ausente, como um campo de banco de dados que está faltando.
+
+31
+00:02:36.000 --> 00:02:39.000
+Undefined significa que um valor simplesmente ainda não foi definido.
+
+32
+00:02:39.000 --> 00:02:46.000
+Quando o modo estrito está habilitado, o compilador lida com esses dois estados de conhecimento forçando você a desembrulhá-los explicitamente,
+
+33
+00:02:46.000 --> 00:02:49.000
+espelhando como o Swift força você a lidar com nil.
+
+34
+00:02:49.000 --> 00:02:53.000
+Passando para as estruturas, o Swift depende fortemente de struct e class.
+
+35
+00:02:53.000 --> 00:02:57.000
+Em TypeScript, você mapeia isso para interface e type aliases.
+
+36
+00:02:57.000 --> 00:03:02.000
+Mas há uma pegadinha. TypeScript não tem o conceito de um value type struct.
+
+37
+00:03:02.000 --> 00:03:06.000
+Em tempo de execução, toda estrutura complexa que você constrói funciona como um reference type.
+
+38
+00:03:06.000 --> 00:03:12.000
+Então, embora suas definições de tipo estrutural se pareçam com as structs do Swift na superfície,
+
+39
+00:03:12.000 --> 00:03:19.000
+você precisa lembrar que, por baixo da sintaxe, o JavaScript ainda está executando um comportamento baseado em referência.
+
+40
+00:03:19.000 --> 00:03:22.000
+Enums do Swift são tipos de primeira classe.
+
+41
+00:03:22.000 --> 00:03:30.000
+O TypeScript realmente possui uma palavra-chave enum embutida, mas ela gera código de runtime não padronizado que causa comportamento inesperado.
+
+42
+00:03:30.000 --> 00:03:35.000
+Em vez disso, mapeie enums simples do Swift para string unions do TypeScript.
+
+43
+00:03:35.000 --> 00:03:40.000
+Isso representa o estado como uma série de strings literais específicas e aceitáveis.
+
+44
+00:03:40.000 --> 00:03:47.000
+Para replicar a estabilidade do raw value do Swift, você usa um objeto simples mapeado com a assertion as-const.
+
+45
+00:03:47.000 --> 00:03:50.000
+Isso cria uma referência somente leitura estável.
+
+46
+00:03:50.000 --> 00:03:53.000
+Mas para estruturas complexas, precisamos de uma abordagem diferente.
+
+47
+00:03:53.000 --> 00:03:59.000
+Ao traduzir enums do Swift que carregam associated values, use discriminated unions do TypeScript.
+
+48
+00:03:59.000 --> 00:04:03.000
+Crie um campo literal compartilhado, geralmente chamado de status.
+
+49
+00:04:03.000 --> 00:04:08.000
+Esse campo atua como o discriminant, servindo como o ponto de pivô para a union.
+
+50
+00:04:08.000 --> 00:04:13.000
+Ao verificar esse campo discriminant, o compilador automaticamente estreita (narrows) o tipo para aquele branch específico.
+
+51
+00:04:13.000 --> 00:04:19.000
+Esse estreitamento (narrowing) fornece as mesmas garantias de exaustividade que você obtém ao usar uma instrução Swift.
+
+52
+00:04:19.000 --> 00:04:29.000
+Dominar discriminated unions permite modelar estados complexos e mutuamente exclusivos usando a mesma lógica que você aplicaria a uma arquitetura fortemente baseada em enum no Swift.
+
+53
+00:04:29.000 --> 00:04:34.000
+Como o TypeScript apaga todos os tipos em tempo de compilação, ele possui uma vulnerabilidade.
+
+54
+00:04:34.000 --> 00:04:39.000
+Quando um payload JSON chega pela rede, o TypeScript não consegue verificar sua estrutura.
+
+55
+00:04:39.000 --> 00:04:42.000
+Para o runtime, é apenas um objeto unknown.
+
+56
+00:04:42.000 --> 00:04:48.000
+No Swift, você usa codeable para garantir que a decodificação do JSON corresponda aos seus tipos estáticos esperados.
+
+57
+00:04:48.000 --> 00:04:54.000
+Para preencher essa lacuna de validação em tempo de execução no JavaScript, você recorre a uma biblioteca de terceiros chamada ZOD.
+
+58
+00:04:54.000 --> 00:04:57.000
+Com o ZOD, você define seu schema primeiro.
+
+59
+00:04:57.000 --> 00:05:01.000
+Esse schema se torna a fonte da verdade para a estrutura de dados que você espera do servidor.
+
+60
+00:05:01.000 --> 00:05:04.000
+O ZOD faz o parsing do payload recebido em tempo de execução.
+
+61
+00:05:04.000 --> 00:05:11.000
+Se o payload estiver sem um campo obrigatório ou tiver o tipo de dado errado, o ZOD lança um erro antes que esses dados possam chegar ao estado do seu app.
+
+62
+00:05:11.000 --> 00:05:16.000
+A partir desse mesmo schema, o ZOD deriva automaticamente tipos estáticos do TypeScript.
+
+63
+00:05:16.000 --> 00:05:18.000
+Você nunca precisa escrever o tipo duas vezes.
+
+64
+00:05:18.000 --> 00:05:24.000
+Você define a validação uma vez e obtém tanto a checagem em tempo de execução quanto os tipos estáticos em tempo de compilação.
+
+65
+00:05:24.000 --> 00:05:28.000
+É uma replicação próxima da experiência do Codable.
+
+66
+00:05:28.000 --> 00:05:33.000
+Confiar apenas em interfaces do TypeScript para chamadas de API cria uma lacuna na sua TypeSafety.
+
+67
+00:05:33.000 --> 00:05:39.000
+O ZOD preenche essa lacuna validando os dados antes que eles fluam para o restante da sua aplicação.
+
+68
+00:05:39.000 --> 00:05:45.000
+Há uma última utilidade para alinhar o TypeScript com a precisão do Swift, o operador Satisfies.
+
+69
+00:05:45.000 --> 00:05:49.000
+Ele valida formatos de objetos sem perder os tipos literais inferidos.
+
+70
+00:05:49.000 --> 00:05:57.000
+Ao aplicar tipagem genérica a um objeto do TypeScript, o compilador frequentemente amplia valores literais específicos para tipos base mais abrangentes.
+
+71
+00:05:57.000 --> 00:06:03.000
+Mas o Satisfies verifica a forma geral em relação a uma interface, preservando a inferência mais restrita possível internamente.
+
+72
+00:06:03.000 --> 00:06:08.000
+No React Native, esse operador é especialmente útil para validar objetos de style sheet.
+
+73
+00:06:08.000 --> 00:06:14.000
+Você obtém validação do compilador para suas chaves de estilo, enquanto mantém autocomplete preciso para os valores.
+
+74
+00:06:14.000 --> 00:06:23.000
+Desenvolver em React Native permite que você transfira a lógica rigorosa do Swift, traduzindo aqueles padrões de segurança familiares para a sintaxe do TypeScript.
+
+75
+00:06:23.000 --> 00:06:30.000
+Ao impor verificações estritas de null, isolar estados com discriminated unions e usar o ZOD para os limites de rede,
+
+76
+00:06:30.000 --> 00:06:37.000
+você obtém as mesmas proteções funcionais fornecidas pelo compilador do Swift, capturando erros muito antes que cheguem ao usuário.
+

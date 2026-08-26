@@ -1,0 +1,594 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:04.200
+O desenvolvimento cross-platform costuma carregar um estigma de lentidão.
+
+2
+00:00:04.200 --> 00:00:06.100
+Observe estas duas interações.
+
+3
+00:00:06.100 --> 00:00:09.700
+O card à esquerda atualiza a 120 quadros por segundo.
+
+4
+00:00:09.700 --> 00:00:13.100
+O da direita engasga e perde quadros durante o arraste.
+
+5
+00:00:13.100 --> 00:00:15.800
+Ambas as interfaces são construídas em React Native.
+
+6
+00:00:15.800 --> 00:00:18.700
+A diferença está em onde o cálculo acontece.
+
+7
+00:00:18.700 --> 00:00:23.100
+A lógica de interação de alta frequência precisa viver fora da thread do JavaScript.
+
+8
+00:00:23.100 --> 00:00:26.200
+A thread do JavaScript funciona como uma rodovia de uma pista só.
+
+9
+00:00:26.200 --> 00:00:28.800
+Quando ela está processando dados de rede ou lógica de negócio,
+
+10
+00:00:28.800 --> 00:00:32.400
+as atualizações de UI esperam e ficam no trânsito, causando travamentos visíveis.
+
+11
+00:00:32.400 --> 00:00:35.400
+Podemos resolver isso mapeando a arquitetura do React Native
+
+12
+00:00:35.400 --> 00:00:37.900
+para o modelo de core animation do iOS.
+
+13
+00:00:37.900 --> 00:00:40.800
+Isso requer rastrear o pipeline de renderização Native do iOS
+
+14
+00:00:40.800 --> 00:00:43.200
+para encontrar seus equivalentes multiplataforma.
+
+15
+00:00:43.200 --> 00:00:45.300
+Vamos ver como o JavaScript pode ser compilado
+
+16
+00:00:45.300 --> 00:00:47.700
+para rodar junto com componentes Native.
+
+17
+00:00:47.700 --> 00:00:50.700
+A performance em nível Native depende de desacoplar o estado visual
+
+18
+00:00:50.700 --> 00:00:52.500
+da execução na main thread.
+
+19
+00:00:52.500 --> 00:00:55.300
+Este diagrama mostra a divisão de trabalho do iOS.
+
+20
+00:00:55.300 --> 00:00:57.500
+A trilha superior representa a main thread,
+
+21
+00:00:57.600 --> 00:00:59.600
+onde a UI e a lógica vivem.
+
+22
+00:00:59.600 --> 00:01:03.700
+A trilha inferior é o render server dedicado a desenhar pixels.
+
+23
+00:01:03.700 --> 00:01:08.500
+Operações padrão como uiv.animate estão vinculadas à trilha superior.
+
+24
+00:01:08.500 --> 00:01:11.900
+Se a main thread ficar bloqueada, essas animações travam.
+
+25
+00:01:11.900 --> 00:01:13.900
+A core animation opera de forma diferente,
+
+26
+00:01:13.900 --> 00:01:16.100
+passando instruções para o render server
+
+27
+00:01:16.100 --> 00:01:17.900
+onde a animação roda em loop nativamente,
+
+28
+00:01:17.900 --> 00:01:20.100
+sobrevivendo a bloqueios da main thread.
+
+29
+00:01:20.100 --> 00:01:23.600
+No React Native, os desenvolvedores usam a API animated embutida
+
+30
+00:01:23.600 --> 00:01:25.100
+para replicar essa ponte.
+
+31
+00:01:25.100 --> 00:01:27.900
+A flag use native driver acessa a bridge.
+
+32
+00:01:27.900 --> 00:01:29.600
+Antes da renderização do primeiro frame,
+
+33
+00:01:29.600 --> 00:01:33.100
+essa flag serializa um conjunto fixo de instruções de animação
+
+34
+00:01:33.100 --> 00:01:35.000
+e as entrega para o lado nativo.
+
+35
+00:01:35.000 --> 00:01:37.600
+O payload roda independentemente na UI thread,
+
+36
+00:01:37.600 --> 00:01:39.700
+mas essa transferência estática tem um limite.
+
+37
+00:01:39.700 --> 00:01:42.200
+Ela só suporta propriedades independentes de layout.
+
+38
+00:01:42.200 --> 00:01:44.500
+Opacity e transform são aceitas,
+
+39
+00:01:44.500 --> 00:01:46.600
+enquanto width e height são rejeitadas.
+
+40
+00:01:46.600 --> 00:01:50.600
+Modificar a geometria de uma view requer recálculo ativo de layout.
+
+41
+00:01:50.600 --> 00:01:53.700
+Um payload pré-serializado estático não consegue calcular
+
+42
+00:01:53.700 --> 00:01:55.300
+essas mudanças em tempo real.
+
+43
+00:01:55.300 --> 00:01:57.800
+No iOS nativo, a animação básica do cab
+
+44
+00:01:57.800 --> 00:02:00.700
+lida com essas complexidades sem trocar de threads.
+
+45
+00:02:00.700 --> 00:02:05.100
+A API animated integrada funciona como um mecanismo de disparar e esquecer.
+
+46
+00:02:05.100 --> 00:02:06.600
+Ela para de funcionar quando cálculos de layout
+
+47
+00:02:06.600 --> 00:02:09.400
+dinâmicos e contínuos são necessários.
+
+48
+00:02:09.400 --> 00:02:11.900
+O React Native reanimated versão 3 fornece
+
+49
+00:02:11.900 --> 00:02:13.800
+a evolução arquitetural necessária
+
+50
+00:02:13.800 --> 00:02:16.400
+para superar a serialização estática.
+
+51
+00:02:16.400 --> 00:02:18.300
+Este diagrama mostra workloads.
+
+52
+00:02:18.300 --> 00:02:20.300
+Em vez de enviar descrições estáticas,
+
+53
+00:02:20.300 --> 00:02:22.500
+funções JavaScript são compiladas diretamente
+
+54
+00:02:22.500 --> 00:02:24.600
+em lógica nativa da thread US.
+
+55
+00:02:24.600 --> 00:02:27.500
+Um plugin babel detecta workloads e os reescreve.
+
+56
+00:02:27.500 --> 00:02:30.300
+Eles são executados em um loop isolado na faixa inferior,
+
+57
+00:02:30.300 --> 00:02:32.300
+separado do tráfego da main thread.
+
+58
+00:02:32.300 --> 00:02:34.400
+Esse loop é conduzido pelo clock do hardware,
+
+59
+00:02:34.400 --> 00:02:36.300
+sincronizando com os intervalos de atualização.
+
+60
+00:02:36.300 --> 00:02:38.800
+Isso corresponde a um callback do CAD display link,
+
+61
+00:02:38.800 --> 00:02:41.200
+executando lógica Swift no lado da renderização.
+
+62
+00:02:41.200 --> 00:02:43.900
+O desenvolvedor escreve a lógica de animação em JavaScript,
+
+63
+00:02:43.900 --> 00:02:46.600
+mas em tempo de execução, essas instruções são executadas perfeitamente
+
+64
+00:02:46.600 --> 00:02:47.700
+como código nativo.
+
+65
+00:02:47.700 --> 00:02:50.000
+Como a lógica é executada nativamente,
+
+66
+00:02:50.000 --> 00:02:53.300
+recálculos dinâmicos de layout acontecem no local.
+
+67
+00:02:53.300 --> 00:02:55.700
+O sistema não precisa perguntar à thread do JavaScript
+
+68
+00:02:55.700 --> 00:02:57.500
+por novos dados de coordenadas.
+
+69
+00:02:57.500 --> 00:03:00.800
+O Reanimated eleva o JavaScript de um orquestrador distante
+
+70
+00:03:00.800 --> 00:03:04.200
+para um cidadão operando na thread de UI nativa.
+
+71
+00:03:04.200 --> 00:03:05.500
+Para conduzir essas cargas de trabalho,
+
+72
+00:03:05.500 --> 00:03:07.500
+a arquitetura exige um gerenciamento de estado
+
+73
+00:03:07.500 --> 00:03:10.100
+que exista nessa mesma thread nativa.
+
+74
+00:03:10.100 --> 00:03:12.400
+Isso é gerenciado pelo you shared value,
+
+75
+00:03:12.400 --> 00:03:16.400
+o equivalente a uma propriedade at state do iOS no lado de renderização.
+
+76
+00:03:16.400 --> 00:03:19.300
+Leituras e escritas dentro de um workload são síncronas.
+
+77
+00:03:19.300 --> 00:03:21.900
+Se a thread do JavaScript ler esse mesmo valor,
+
+78
+00:03:21.900 --> 00:03:25.400
+a solicitação é tratada de forma assíncrona para evitar bloqueios.
+
+79
+00:03:25.400 --> 00:03:27.400
+Este gráfico visualiza uma curva de física
+
+80
+00:03:27.400 --> 00:03:29.800
+alimentada por esse estado nativo compartilhado.
+
+81
+00:03:29.800 --> 00:03:33.900
+A função withSpring é mapeada para a animação CA spring no iOS,
+
+82
+00:03:33.900 --> 00:03:36.700
+dando a você controle sobre stiffness, damping, mass,
+
+83
+00:03:36.700 --> 00:03:38.500
+e velocidade inicial.
+
+84
+00:03:38.500 --> 00:03:41.000
+Em vez de fazer tweening ao longo de uma duração fixa,
+
+85
+00:03:41.000 --> 00:03:43.100
+o sistema calcula a trajetória física
+
+86
+00:03:43.100 --> 00:03:44.500
+com base nessas características,
+
+87
+00:03:44.500 --> 00:03:46.200
+resolvendo o movimento localmente.
+
+88
+00:03:46.200 --> 00:03:48.600
+Essa velocidade de execução permite que o software
+
+89
+00:03:48.600 --> 00:03:50.700
+utilize o display de alta fidelidade
+
+90
+00:03:50.700 --> 00:03:53.100
+do hardware do iPhone 13 Pro.
+
+91
+00:03:53.100 --> 00:03:54.500
+Em dispositivos ProMotion,
+
+92
+00:03:54.500 --> 00:03:57.600
+o reanimated utiliza a fabric architecture.
+
+93
+00:03:57.600 --> 00:03:59.600
+Worklets sincronizam com o CAD display link
+
+94
+00:03:59.600 --> 00:04:02.300
+para rodar a 120 quadros por segundo.
+
+95
+00:04:02.300 --> 00:04:03.500
+Estado compartilhado síncrono
+
+96
+00:04:03.500 --> 00:04:06.100
+e equações de física localizadas permitem que o react native
+
+97
+00:04:06.100 --> 00:04:09.700
+atinja 120 hertz sem configuração explícita.
+
+98
+00:04:09.700 --> 00:04:11.500
+A interatividade do usuário é capturada
+
+99
+00:04:11.500 --> 00:04:14.300
+usando o sistema React Native gesture handler.
+
+100
+00:04:14.300 --> 00:04:15.400
+Esta biblioteca opera
+
+101
+00:04:15.400 --> 00:04:19.200
+como subclasses de UI gesture recognizer no iOS nativo.
+
+102
+00:04:19.200 --> 00:04:22.400
+Este diagrama rastreia os dados de toque à medida que são processados nativamente,
+
+103
+00:04:22.400 --> 00:04:24.900
+o que permite que o sistema contorne o JavaScript node
+
+104
+00:04:24.900 --> 00:04:28.000
+e envie atualizações para os shared values da UI thread.
+
+105
+00:04:28.000 --> 00:04:30.900
+Os callbacks de interação begin, update e end
+
+106
+00:04:30.900 --> 00:04:32.200
+são workloads.
+
+107
+00:04:32.200 --> 00:04:34.500
+Arrastar um elemento cria um closed update loop
+
+108
+00:04:34.500 --> 00:04:37.300
+que mantém a main JavaScript thread intacta.
+
+109
+00:04:37.300 --> 00:04:39.700
+A renderização frame-by-frame para efeitos visuais complexos
+
+110
+00:04:39.700 --> 00:04:41.800
+requer um acesso gráfico mais profundo.
+
+111
+00:04:41.800 --> 00:04:44.100
+É aqui que entra o React Native Skiya.
+
+112
+00:04:44.100 --> 00:04:45.600
+Ele serve ao mesmo propósito
+
+113
+00:04:45.600 --> 00:04:49.600
+que desenhar em uma subclasse de K-layer via CG context.
+
+114
+00:04:49.600 --> 00:04:52.100
+O Skiya fornece uma interface de desenho 2D
+
+115
+00:04:52.100 --> 00:04:53.600
+que roda na UI thread
+
+116
+00:04:53.600 --> 00:04:56.300
+e se integra com reanimated state.
+
+117
+00:04:56.300 --> 00:05:00.300
+Essa visualização mostra o Skiya Canvas renderizando quadro a quadro,
+
+118
+00:05:00.300 --> 00:05:03.100
+puxando dados de forma síncrona dos native shared values
+
+119
+00:05:03.100 --> 00:05:05.300
+e enviando a saída para o hardware do dispositivo.
+
+120
+00:05:05.300 --> 00:05:07.500
+Paths, gradientes e efeitos de blur
+
+121
+00:05:07.500 --> 00:05:10.500
+são aceleradas por hardware através da Metal Graphics API
+
+122
+00:05:10.500 --> 00:05:13.100
+assim como os pipelines nativos de core image.
+
+123
+00:05:13.100 --> 00:05:16.000
+Ao acoplar gestos nativos a um desenho baseado em metal,
+
+124
+00:05:16.000 --> 00:05:18.900
+você constrói um loop de renderização isolado e de alta performance
+
+125
+00:05:18.900 --> 00:05:21.200
+governado pela sintaxe do JavaScript.
+
+126
+00:05:21.200 --> 00:05:23.300
+A arquitetura teórica precisa ser comprovada
+
+127
+00:05:23.300 --> 00:05:25.100
+através de diagnósticos em tempo de execução.
+
+128
+00:05:25.100 --> 00:05:27.200
+Quando uma migração arquitetural falha,
+
+129
+00:05:27.200 --> 00:05:31.000
+a animação trava quando a lógica de navegação de tela atinge a main thread.
+
+130
+00:05:31.000 --> 00:05:33.900
+Para verificar se uma animação está rodando na UI thread,
+
+131
+00:05:33.900 --> 00:05:35.700
+comparamos o Hermes profiler,
+
+132
+00:05:35.700 --> 00:05:37.500
+que rastreia a atividade JavaScript
+
+133
+00:05:37.500 --> 00:05:41.300
+com o Instruments da Apple, que rastreia as atualizações da core animation layer.
+
+134
+00:05:41.300 --> 00:05:43.900
+Uma implementação otimizada com reanimated
+
+135
+00:05:43.900 --> 00:05:46.100
+mostrará zero atividade JavaScript
+
+136
+00:05:46.100 --> 00:05:48.100
+após o gesture ser iniciado.
+
+137
+00:05:48.100 --> 00:05:52.500
+A carga computacional aparece nativamente no render server trace.
+
+138
+00:05:52.500 --> 00:05:56.200
+Essa matriz sintetiza o ecossistema de tradução.
+
+139
+00:05:56.200 --> 00:06:01.000
+O uiv.animate padrão se traduz para o native driver embutido.
+
+140
+00:06:01.000 --> 00:06:05.200
+CA spring animation se traduz para a função with spring
+
+141
+00:06:05.200 --> 00:06:07.400
+e a sincronização do CA display link
+
+142
+00:06:07.400 --> 00:06:09.500
+é alcançada usando workloads.
+
+143
+00:06:09.600 --> 00:06:13.600
+A propriedade nativa at-state é tratada pelo use-shared value
+
+144
+00:06:13.600 --> 00:06:18.000
+e a renderização do CALA é igualada pelo react native skia.
+
+145
+00:06:18.000 --> 00:06:21.300
+A diferença de performance percebida entre a lógica cross-platform
+
+146
+00:06:21.300 --> 00:06:23.800
+e a renderização nativa é uma ilusão.
+
+147
+00:06:23.800 --> 00:06:26.300
+O Reanimated fornece o compilador necessário
+
+148
+00:06:26.300 --> 00:06:28.800
+para falar a linguagem nativa do render server.
+

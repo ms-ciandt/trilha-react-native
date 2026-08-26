@@ -1,0 +1,214 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:08.000
+Brownfield integration requires a native Swift runtime and a JavaScript runtime to co-exist inside a single iOS process.
+
+2
+00:00:08.000 --> 00:00:11.000
+They run side-by-side, executing logic concurrently.
+
+3
+00:00:11.000 --> 00:00:14.000
+You cannot use Expo's managed workflow for this.
+
+4
+00:00:14.000 --> 00:00:20.000
+A Brownfield host application already owns its Xcode project, its custom dependency graph, and its app delegate.
+
+5
+00:00:20.000 --> 00:00:24.000
+Expo cannot be layered on top of an existing native foundation.
+
+6
+00:00:24.000 --> 00:00:32.000
+Instead, you must use the React Native CLI to manually weave the JavaScript workspace into your existing native iOS project.
+
+7
+00:00:32.000 --> 00:00:42.000
+Success in this environment relies entirely on two technical requirements, configuring static linkage at the build level, and fully utilizing React Native's new architecture.
+
+8
+00:00:42.000 --> 00:00:48.000
+Historically, integrations relied on the asynchronous bridge to pass messages between Swift and JavaScript.
+
+9
+00:00:48.000 --> 00:00:54.000
+This created severe JSON serialization bottlenecks, frequently stalling the main thread during heavy data loads.
+
+10
+00:00:54.000 --> 00:01:00.000
+The new architecture replaces that legacy bridge with the fabric renderer and JSI.
+
+11
+00:01:00.000 --> 00:01:10.000
+JSI allows C++ to act as a shared language between the environments, establishing zero serialization, synchronous communication.
+
+12
+00:01:10.000 --> 00:01:18.000
+The central challenge of successful integration lies in the rigorous management of the C++ boundary between these two active runtimes.
+
+13
+00:01:18.000 --> 00:01:24.000
+The physical integration between Swift and React Native starts at the package manager.
+
+14
+00:01:24.000 --> 00:01:27.000
+Coco Pods routes all the required iOS dependencies.
+
+15
+00:01:27.000 --> 00:01:35.000
+Explicitly set the fabric renderer flag to true in your pod file, routing compilation away from the deprecated paper renderer.
+
+16
+00:01:35.000 --> 00:01:45.000
+Enabling the Hermes engine is also mandatory. It is the only officially supported JavaScript engine for the new architecture and must compile in tandem with fabric.
+
+17
+00:01:45.000 --> 00:01:51.000
+Fabric introduces a strict build constraint. It requires static linkage across your entire dependency graph.
+
+18
+00:01:51.000 --> 00:01:59.000
+If you allow dynamic frameworks into this compilation step, the compiler will inevitably generate duplicate symbol errors at link time.
+
+19
+00:01:59.000 --> 00:02:12.000
+The build will fail unless static linkage is enforced. For the Pods resolution script to locate the required modules, place your package.json at the repository route, exactly one level above the iOS folder.
+
+20
+00:02:12.000 --> 00:02:22.000
+After resolving the pod file, always open the resulting.xc workspace file. The standard.xc project file will no longer compile the new dependencies.
+
+21
+00:02:22.000 --> 00:02:29.000
+This rigid Coco Pods dependency graph is the physical prerequisite that allows the C++ JSI layer to function.
+
+22
+00:02:29.000 --> 00:02:36.000
+Moving from the build step to runtime memory, the anchor of the JavaScript engine is a class called RCT host.
+
+23
+00:02:36.000 --> 00:02:45.000
+An iOS process must instantiate exactly one RCT host. The single host initializes Hermes, manages the bundle, and owns the surface presenter.
+
+24
+00:02:45.000 --> 00:02:52.000
+Violating the singleton rule by creating multiple hosts, wastes, memory limits, and triggers undefined behavior in JSI.
+
+25
+00:02:52.000 --> 00:03:00.000
+The host also controls how the JavaScript bundle is resolved. In development, it connects to the Metro server over port 8081.
+
+26
+00:03:00.000 --> 00:03:05.000
+In production, it reads an offline embedded bundle directly from the device.
+
+27
+00:03:06.000 --> 00:03:15.000
+Never deallocate the RCT host unless all UI surfaces are confirmed unmounted and there is no asynchronous JavaScript work pending.
+
+28
+00:03:15.000 --> 00:03:22.000
+Isolating the JavaScript engine inside a strict singleton prevents the secondary runtime from overwhelming the host device's memory.
+
+29
+00:03:22.000 --> 00:03:30.000
+The legacy RCT root B class used to mount react native views is completely deprecated in react native 0.76.
+
+30
+00:03:30.000 --> 00:03:39.000
+The modern entry point is RCT fabric surface. It operates as a lightweight view controller that receives its rendering coordination directly from the host.
+
+31
+00:03:39.000 --> 00:03:44.000
+Swift passes initial load data to the surface using the initial properties dictionary.
+
+32
+00:03:44.000 --> 00:03:49.000
+Because this relies on JSI, initial properties bypasses async cues entirely.
+
+33
+00:03:49.000 --> 00:03:56.000
+The data serializes synchronously across the boundary before the surface renders its first physical frame.
+
+34
+00:03:56.000 --> 00:04:00.000
+These initial properties are strictly read only at mount time.
+
+35
+00:04:00.000 --> 00:04:12.000
+If your application uses SwiftUI, wrap the native view controller inside a view UI controller representable struct, utilizing the make UI controller method for the initialization.
+
+36
+00:04:12.000 --> 00:04:20.000
+To prevent the surface from overlapping the native navigation bar, apply the .ignores safe area modifier on the SwiftUI side.
+
+37
+00:04:20.000 --> 00:04:25.000
+This explicitly hands control of the insets to react native safe area context.
+
+38
+00:04:25.000 --> 00:04:37.000
+By treating RCT fabric surface as a disposable lightweight child of the RCT host, engineers can embed cross-platform screens without disrupting the native SwiftUI architecture.
+
+39
+00:04:37.000 --> 00:04:46.000
+After a surface mounts, you require ongoing communication between Swift and JavaScript to trigger native behaviors like the iOS keychain or health kit.
+
+40
+00:04:46.000 --> 00:04:51.000
+Turbo modules are the required path for executing these native behaviors under the new architecture.
+
+41
+00:04:51.000 --> 00:05:01.000
+This interoperability relies on Cogen. At build time, a TypeScript specification compiles into C++ glue code, physically linking the environments.
+
+42
+00:05:01.000 --> 00:05:08.000
+This C++ layer leverages JSI to cross into Swift synchronously, eliminating asynchronous round trips entirely.
+
+43
+00:05:08.000 --> 00:05:16.000
+When routing iOS universal links, if the UI surface isn't created yet, Swift must inject the URL directly into initial properties.
+
+44
+00:05:16.000 --> 00:05:23.000
+But if the react native surface is already mounted, Swift must push the URL through a turbo module eventometer for immediate delivery.
+
+45
+00:05:23.000 --> 00:05:30.000
+Turbo modules bridge the runtime boundary, converting the slow asynchronous choke point into a synchronized C++ highway.
+
+46
+00:05:30.000 --> 00:05:42.000
+This is the complete brownfield stack. A static pod file foundation supports the RCT host pillar, which branches out to multiple fabric surface UI layers, all interconnected by synchronous C++ data lines.
+
+47
+00:05:42.000 --> 00:05:47.000
+After integration, a common runtime bug is a prolonged black screen appearing on the first launch.
+
+48
+00:05:47.000 --> 00:05:53.000
+To fix this, observe the stage mounted property on the RCT fabric surface.
+
+49
+00:05:53.000 --> 00:05:59.000
+Use it to trigger a native loading indicator while the JavaScript bundle finishes its evaluation.
+
+50
+00:05:59.000 --> 00:06:06.000
+Another frequent issue occurs when native inputs fail to push react native content upward to avoid the iOS keyboard.
+
+51
+00:06:06.000 --> 00:06:14.000
+React native manages its own keyboard behavior. You must explicitly implement keyboard avoiding view on the JavaScript side to handle the offset.
+
+52
+00:06:14.000 --> 00:06:23.000
+If the app crashes because a turbo module cannot be found, verify that your objective C class names perfectly match the turbo module registry.
+
+53
+00:06:23.000 --> 00:06:34.000
+By strictly respecting the C++ boundaries of these two runtimes, engineering teams can migrate legacy iOS applications screen by screen, maintaining native level responsiveness.
+

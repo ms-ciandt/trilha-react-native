@@ -1,0 +1,362 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:04.000
+Ao compilar um aplicativo React Native em uma máquina de desenvolvedor local,
+
+2
+00:00:04.000 --> 00:00:06.800
+o processo de build geralmente é concluído sem problemas,
+
+3
+00:00:06.800 --> 00:00:11.000
+mas ao implantar esse exato mesmo código em um servidor de integração contínua
+
+4
+00:00:11.000 --> 00:00:15.500
+o pipeline falha completamente, bloqueado por um erro de autenticação.
+
+5
+00:00:15.500 --> 00:00:20.000
+Essa discrepância acontece porque o Xcode usa a assinatura automática por padrão.
+
+6
+00:00:20.000 --> 00:00:24.000
+Essa configuração esconde a complexidade criptográfica do deployment iOS,
+
+7
+00:00:24.000 --> 00:00:28.000
+resolvendo conflitos de certificado nos bastidores em nome do desenvolvedor.
+
+8
+00:00:28.000 --> 00:00:32.000
+A assinatura automática depende de duas dependências locais ocultas para funcionar,
+
+9
+00:00:32.000 --> 00:00:37.000
+o keychain do macOS preenchido do desenvolvedor e uma sessão interativa do Apple ID,
+
+10
+00:00:37.000 --> 00:00:41.000
+capaz de receber solicitações de autenticação de dois fatores,
+
+11
+00:00:41.000 --> 00:00:43.000
+ambientes headless de CI não possuem nenhum dos dois.
+
+12
+00:00:43.000 --> 00:00:48.000
+Ephemeral CI runners inicializam como estados vazios, sem keychains pré-existentes
+
+13
+00:00:48.000 --> 00:00:52.000
+e não conseguem interceptar um código de 2FA enviado ao telefone do desenvolvedor.
+
+14
+00:00:52.000 --> 00:00:56.000
+Para automatizar o deployment do iOS, precisamos eliminar a assinatura automática.
+
+15
+00:00:57.000 --> 00:01:00.000
+Precisamos desacoplar completamente as credenciais criptográficas
+
+16
+00:01:00.000 --> 00:01:04.000
+das máquinas individuais dos desenvolvedores e das sessões interativas de usuário.
+
+17
+00:01:04.000 --> 00:01:06.000
+Para reconstruir esse processo para automação,
+
+18
+00:01:06.000 --> 00:01:09.000
+precisamos observar o componente fundamental do deployment do iOS,
+
+19
+00:01:09.000 --> 00:01:11.000
+o provisioning profile.
+
+20
+00:01:11.000 --> 00:01:14.000
+Esse arquivo mobile provision atua como um envelope assinado
+
+21
+00:01:14.000 --> 00:01:17.000
+unindo três requisitos rígidos.
+
+22
+00:01:17.000 --> 00:01:20.000
+Primeiro, um app ID que define as capacidades autorizadas.
+
+23
+00:01:20.000 --> 00:01:23.000
+Segundo, uma lista de UUIDs de dispositivos permitidos,
+
+24
+00:01:23.000 --> 00:01:25.000
+os iPhones específicos autorizados a rodar o binário.
+
+25
+00:01:25.000 --> 00:01:29.000
+Terceiro, o certificado de assinatura contendo a chave pública autorizada.
+
+26
+00:01:29.000 --> 00:01:32.000
+A Apple emite dois tipos principais de certificados.
+
+27
+00:01:32.000 --> 00:01:36.000
+Um certificado de desenvolvimento está vinculado ao Apple ID de um único usuário para testes locais.
+
+28
+00:01:36.000 --> 00:01:40.000
+Um certificado de distribuição é necessário para compilar binários de release
+
+29
+00:01:40.000 --> 00:01:42.000
+destinados ao test flight ou à app store.
+
+30
+00:01:42.000 --> 00:01:44.000
+Na inicialização, o iOS lê esse envelope.
+
+31
+00:01:44.000 --> 00:01:48.000
+Ele verifica se o certificado usado para compilar o binário corresponde perfeitamente
+
+32
+00:01:48.000 --> 00:01:50.000
+à chave pública incorporada neste profile.
+
+33
+00:01:50.000 --> 00:01:53.000
+Um build válido requer exatamente essa tríade.
+
+34
+00:01:53.000 --> 00:01:57.000
+Se as chaves da máquina não corresponderem perfeitamente ao provisioning profile,
+
+35
+00:01:57.000 --> 00:01:59.000
+toda a compilação falha.
+
+36
+00:01:59.000 --> 00:02:03.000
+A chave privada de um certificado de distribuição é gerada localmente.
+
+37
+00:02:03.000 --> 00:02:08.000
+Ela existe exclusivamente no keychain local do macOS do desenvolvedor específico
+
+38
+00:02:08.000 --> 00:02:11.000
+que a criou, não no repositório do projeto.
+
+39
+00:02:11.000 --> 00:02:15.000
+Se um novo membro da equipe precisar compilar um binário de release e não tiver essa chave privada,
+
+40
+00:02:15.000 --> 00:02:19.000
+o automatic signing do Xcode simplesmente gerará um novo certificado de distribuição
+
+41
+00:02:19.000 --> 00:02:20.000
+para eles.
+
+42
+00:02:20.000 --> 00:02:24.000
+A Apple limita o número de certificados de distribuição ativos por conta.
+
+43
+00:02:24.000 --> 00:02:28.000
+Para emitir o novo certificado, a Apple revoga automaticamente o antigo.
+
+44
+00:02:28.000 --> 00:02:31.000
+Isso cria um modo de falha conhecido como certificate roulette.
+
+45
+00:02:31.000 --> 00:02:35.000
+Revogar o certificado anterior invalida instantaneamente o keychain
+
+46
+00:02:35.000 --> 00:02:38.000
+de todos os outros desenvolvedores e máquinas de CI que dependiam dele.
+
+47
+00:02:38.000 --> 00:02:40.000
+Os builds deles agora vão falhar.
+
+48
+00:02:40.000 --> 00:02:43.000
+Quando as chaves de distribuição ficam isoladas em laptops individuais,
+
+49
+00:02:43.000 --> 00:02:47.000
+a capacidade de toda a equipe de fazer releases fica atrelada ao estado local de uma única máquina.
+
+50
+00:02:48.000 --> 00:02:55.000
+Isso garante que todo build bem-sucedido para um desenvolvedor efetivamente se torne uma breaking change para o resto da equipe.
+
+51
+00:02:55.000 --> 00:02:59.000
+Migrar para um pipeline de CI expõe essa falha imediatamente.
+
+52
+00:02:59.000 --> 00:03:03.000
+Runners de CI efêmeros sempre inicializam em um estado completamente vazio.
+
+53
+00:03:03.000 --> 00:03:08.000
+Eles não possuem keychains pré-preenchidas e não carregam nenhum dado criptográfico histórico.
+
+54
+00:03:08.000 --> 00:03:11.000
+Como o runner de CI é um script automatizado,
+
+55
+00:03:11.000 --> 00:03:15.000
+ele definitivamente não consegue interceptar um prompt de autenticação de dois fatores
+
+56
+00:03:15.000 --> 00:03:20.000
+para fazer login no Apple developer portal e gerar dinamicamente as chaves ausentes.
+
+57
+00:03:20.000 --> 00:03:23.000
+A única solução viável é a assinatura manual.
+
+58
+00:03:23.000 --> 00:03:30.000
+Isso exige que o certificado de distribuição correto seja ativamente injetado em uma keychain temporária no runner
+
+59
+00:03:30.000 --> 00:03:32.000
+antes do início da compilação.
+
+60
+00:03:32.000 --> 00:03:38.000
+Simultaneamente, o provisioning profile correspondente deve ser colocado em um caminho específico e fixo (hard-coded).
+
+61
+00:03:38.000 --> 00:03:42.000
+O diretório mobile/provisioning profiles no runner.
+
+62
+00:03:42.000 --> 00:03:47.000
+O runner se autentica no repositório usando um personal access token,
+
+63
+00:03:47.000 --> 00:03:53.000
+recupera os arquivos e usa a senha secreta para descriptografar e instalar as chaves localmente.
+
+64
+00:03:53.000 --> 00:03:59.000
+Ao utilizar um repositório Git privado e seguro como a autoridade estrita para as credenciais de assinatura,
+
+65
+00:03:59.000 --> 00:04:03.000
+eliminamos completamente o problema da roleta de certificados.
+
+66
+00:04:03.000 --> 00:04:09.000
+Além disso, também eliminamos completamente a necessidade de qualquer login interativo no Apple Developer Portal
+
+67
+00:04:09.000 --> 00:04:12.000
+durante o processo de build de integração contínua.
+
+68
+00:04:12.000 --> 00:04:18.000
+Com o ambiente de assinatura totalmente seguro, usamos o Fastlane Jim para lidar com a compilação em si.
+
+69
+00:04:18.000 --> 00:04:21.000
+O Jim executa um processo de duas etapas.
+
+70
+00:04:21.000 --> 00:04:26.000
+Primeiro, ele compila o binário bruto e os metadados em uma pasta XC archive.
+
+71
+00:04:26.000 --> 00:04:30.000
+Segundo, ele extrai esse arquivo em um arquivo IPA assinado.
+
+72
+00:04:30.000 --> 00:04:37.000
+Em seguida, o Fastlane Pilot se autentica com a API e envia esse payload IPA assinado diretamente para o test flight.
+
+73
+00:04:37.000 --> 00:04:40.000
+O Pilot aceita uma flag de skip waiting for build processing.
+
+74
+00:04:40.000 --> 00:04:44.000
+Isso garante que o comando retorne imediatamente após o upload,
+
+75
+00:04:44.000 --> 00:04:51.000
+evitando que o CI runner fique ocioso e consumindo minutos de execução enquanto a Apple processa o binário no back end deles.
+
+76
+00:04:51.000 --> 00:05:01.000
+O Fastlane deliver então cuida da apresentação final, sincronizando os metadados do app versionados, notas de lançamento e screenshots diretamente para a app store.
+
+77
+00:05:02.000 --> 00:05:08.000
+Essas ferramentas abstraem milhares de linhas de shell scripting frágil em comandos determinísticos e repetíveis.
+
+78
+00:05:08.000 --> 00:05:12.000
+Para orquestrar essas ferramentas, usamos um fast file.
+
+79
+00:05:12.000 --> 00:05:20.000
+Este é um ambiente declarativo em Ruby onde match, Jim, Pilot e deliver são sequenciados em blocos de execução nomeados chamados lanes.
+
+80
+00:05:20.000 --> 00:05:22.000
+Lanes podem executar outras lanes.
+
+81
+00:05:22.000 --> 00:05:30.000
+Essa estrutura composicional permite que você construa apps React Native multi-target, como compilar um app principal e uma extensão de notificação separada.
+
+82
+00:05:31.000 --> 00:05:34.000
+Mantendo a lógica modular e evitando duplicação.
+
+83
+00:05:34.000 --> 00:05:44.000
+A barreira central dessa arquitetura é contornar a autenticação de Apple ID para ações que precisam se comunicar com o AppStore Connect, como Pilot e deliver.
+
+84
+00:05:44.000 --> 00:05:47.000
+A Apple oferece uma alternativa aos logins de usuário padrão.
+
+85
+00:05:47.000 --> 00:05:52.000
+A chave de API do AppStore Connect, baixada como um arquivo .p8.
+
+86
+00:05:52.000 --> 00:05:59.000
+Ao declarar essa chave de API logo no início de uma lane do Fastlane, cria-se um contexto de autenticação compartilhado e headless.
+
+87
+00:05:59.000 --> 00:06:07.000
+Cada ação subsequente do Fastlane utiliza automaticamente essa sessão, executando chamadas de rede para a Apple sem disparar um único prompt de 2FA.
+
+88
+00:06:07.000 --> 00:06:11.000
+Centralizar a criptografia em um repositório Git protege o ambiente de build.
+
+89
+00:06:11.000 --> 00:06:15.000
+Autenticar via API keys elimina o gargalo humano.
+
+90
+00:06:15.000 --> 00:06:24.000
+Juntos, eles transformam o processo de release do iOS de uma tarefa localizada e propensa a erros em uma função escalável e totalmente automatizada do seu pipeline de CI.
+

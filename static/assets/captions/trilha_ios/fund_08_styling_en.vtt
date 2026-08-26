@@ -1,0 +1,382 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:09.500
+Moving from SwiftUI to React Native requires mapping and architecture built on chained modifiers to one built on isolated objects.
+
+2
+00:00:09.500 --> 00:00:14.900
+The logic doesn't transfer one to one because the underlying execution model is different.
+
+3
+00:00:14.900 --> 00:00:21.900
+While it uses CSS-like property names, there is no cascading style inheritance and no class selectors.
+
+4
+00:00:21.900 --> 00:00:27.500
+Each layout property is explicitly declared and every view relies on flexbox by default.
+
+5
+00:00:27.600 --> 00:00:31.500
+The framework also bypasses the sequential view modifier pattern.
+
+6
+00:00:31.500 --> 00:00:36.700
+You cannot chain design methods directly onto a component to build its appearance step by step.
+
+7
+00:00:36.700 --> 00:00:40.400
+Styling instead relies on plain JavaScript object literals.
+
+8
+00:00:40.400 --> 00:00:46.400
+Every component receives its design instructions through a single explicit object containing key value pairs.
+
+9
+00:00:46.400 --> 00:00:50.000
+These objects are injected into the component via the style prop.
+
+10
+00:00:50.000 --> 00:00:53.600
+Because there is no cascade, these definitions are isolated.
+
+11
+00:00:53.700 --> 00:00:57.900
+A style applied to one node has no side effects on its siblings or children.
+
+12
+00:00:57.900 --> 00:01:03.700
+Styling in this environment means mapping these isolated data objects directly to UI nodes,
+
+13
+00:01:03.700 --> 00:01:07.600
+a distinct departure from the fluid chaining found in SwiftUI.
+
+14
+00:01:07.600 --> 00:01:12.500
+The engine that powers the static baseline styling is sheetstyle.create.
+
+15
+00:01:12.500 --> 00:01:15.900
+It wraps your JavaScript objects in a dedicated API.
+
+16
+00:01:15.900 --> 00:01:20.000
+During development, passing objects through this method validates properties.
+
+17
+00:01:20.100 --> 00:01:24.200
+It catches errors before rendering, providing immediate console feedback.
+
+18
+00:01:24.200 --> 00:01:26.600
+At runtime, it's an optimization layer.
+
+19
+00:01:26.600 --> 00:01:32.000
+The engine uses these structures to serialize styles and send them across the bridge to the native thread.
+
+20
+00:01:32.000 --> 00:01:34.700
+Static styles are only half the architecture.
+
+21
+00:01:34.700 --> 00:01:37.600
+Views must respond to dynamic state changes.
+
+22
+00:01:37.600 --> 00:01:44.400
+Exactly like SwiftUI, react native components automatically re-render whenever they're underlying state variables update.
+
+23
+00:01:44.500 --> 00:01:51.600
+When styles depend on continuous numeric values like a scroll position coordinate or a progress bar width,
+
+24
+00:01:51.600 --> 00:01:58.200
+computing those inline style objects directly inside the render cycle provides the necessary responsiveness.
+
+25
+00:01:58.200 --> 00:02:00.800
+This introduces a structural challenge.
+
+26
+00:02:00.800 --> 00:02:07.000
+How do you combine your static validated baseline styles with these conditional dynamic updates?
+
+27
+00:02:07.000 --> 00:02:10.100
+React native achieves composition through arrays.
+
+28
+00:02:10.100 --> 00:02:13.300
+You pass an array of style objects to the style prop.
+
+29
+00:02:13.300 --> 00:02:20.400
+The engine processes them sequentially, and the last item in the array overrides any identical properties to find earlier.
+
+30
+00:02:20.400 --> 00:02:24.300
+To manage this, the framework provides stylesheet.flatten.
+
+31
+00:02:24.300 --> 00:02:29.600
+It resolves these arrays, merging multiple overriding layers into a single object.
+
+32
+00:02:29.600 --> 00:02:34.000
+This is necessary for introspective logic, like checking a background color,
+
+33
+00:02:34.000 --> 00:02:38.400
+or passing styles to external libraries that expect plain objects.
+
+34
+00:02:38.400 --> 00:02:44.500
+Style sheet functions as the primary serialization engine, ensuring predictable property composition,
+
+35
+00:02:44.500 --> 00:02:47.700
+and providing the bridge for performant native rendering.
+
+36
+00:02:47.700 --> 00:02:54.200
+In UI kit, the UI appearance API automatically manages global styling across the application.
+
+37
+00:02:54.200 --> 00:02:57.700
+React native lacks a built-in equivalent for global appearance.
+
+38
+00:02:57.700 --> 00:03:00.600
+The standard approach requires manual wiring.
+
+39
+00:03:00.600 --> 00:03:04.500
+Define your colors and typography in a centralized theme module,
+
+40
+00:03:04.500 --> 00:03:08.300
+wrapping your component tree in a React context provider umbrella.
+
+41
+00:03:08.300 --> 00:03:13.300
+Child components extract this data by hooking into the context to read the global state.
+
+42
+00:03:13.300 --> 00:03:17.800
+This manual environment routing extends to handling OS level user preferences,
+
+43
+00:03:17.800 --> 00:03:19.400
+starting with dark mode.
+
+44
+00:03:19.400 --> 00:03:22.900
+Where SwiftUI uses at environment dot color scheme,
+
+45
+00:03:22.900 --> 00:03:26.600
+the direct react native equivalent is the use color scheme hook.
+
+46
+00:03:26.600 --> 00:03:30.900
+For scalable applications, the best practice is to abstract use color scheme
+
+47
+00:03:30.900 --> 00:03:33.100
+within your global theme context.
+
+48
+00:03:33.100 --> 00:03:37.600
+This ensures individual components simply consume the active theme colors
+
+49
+00:03:37.600 --> 00:03:40.600
+without calculating dark mode logic themselves.
+
+50
+00:03:40.600 --> 00:03:46.400
+Typography requires a similar manual intervention when translating iOS dynamic type.
+
+51
+00:03:46.400 --> 00:03:50.300
+React native text components read the system font scale preferences
+
+52
+00:03:50.300 --> 00:03:55.200
+and adjust their size automatically, utilizing the allow font scaling prop.
+
+53
+00:03:55.200 --> 00:03:59.700
+However, unlike iOS, the semantic layout containers holding that text
+
+54
+00:03:59.700 --> 00:04:03.000
+do not automatically scale to match the increased font size,
+
+55
+00:04:03.000 --> 00:04:06.200
+which can lead to clipped text and broken UI boundaries.
+
+56
+00:04:06.200 --> 00:04:11.500
+The manual workaround for scaling semantic layouts requires the pixel ratio API.
+
+57
+00:04:11.500 --> 00:04:16.200
+You take your base integer size, multiply it by the pixel ratio font scale factor
+
+58
+00:04:16.200 --> 00:04:20.200
+and apply the resulting value to expand the layout containers dynamically.
+
+59
+00:04:20.200 --> 00:04:23.700
+Global styling and react native shifts the architectural burden,
+
+60
+00:04:23.700 --> 00:04:27.300
+moving environment state out of the OS layer and directly into the developer's
+
+61
+00:04:27.300 --> 00:04:31.400
+manual context design, colors and react native are handled plainly.
+
+62
+00:04:31.400 --> 00:04:37.300
+There is no native color struct, everything from hex codes and RGBA values
+
+63
+00:04:37.300 --> 00:04:40.900
+to CSS named colors is passed as a string.
+
+64
+00:04:40.900 --> 00:04:43.700
+Custom fonts are similarly string based.
+
+65
+00:04:43.700 --> 00:04:48.700
+While the native linkage process using info.plist mirrors iOS development,
+
+66
+00:04:48.700 --> 00:04:53.500
+the string passed to the font family prop must match the internal registered name
+
+67
+00:04:53.500 --> 00:04:57.200
+compiled into the native binary, not the local file name.
+
+68
+00:04:57.200 --> 00:05:00.300
+The abstraction breaks down when rendering hardware shadows,
+
+69
+00:05:00.300 --> 00:05:04.200
+as the framework must negotiate two different OS rendering engines.
+
+70
+00:05:04.200 --> 00:05:09.900
+On iOS, shadows are calculated and applied using specific CAL layer properties.
+
+71
+00:05:09.900 --> 00:05:13.600
+React native provides a one-to-one mapping for iOS devices,
+
+72
+00:05:13.600 --> 00:05:18.300
+shadow color, shadow offset, shadow opacity and shadow radius.
+
+73
+00:05:18.300 --> 00:05:21.000
+Android ignores these CAL layer properties.
+
+74
+00:05:21.100 --> 00:05:25.200
+It relies strictly on material design's Z-axis elevation integer,
+
+75
+00:05:25.200 --> 00:05:28.600
+which physically lifts the element to cast a programmatic shadow.
+
+76
+00:05:28.600 --> 00:05:32.700
+Managing this divergence without creating a tangled mess of conditional logic
+
+77
+00:05:32.700 --> 00:05:35.000
+requires platform dot select.
+
+78
+00:05:35.000 --> 00:05:40.600
+This method accepts dictionary keys like iOS, Android and default
+
+79
+00:05:40.600 --> 00:05:45.900
+and routes the correct platform specific style object to the render engine at runtime.
+
+80
+00:05:45.900 --> 00:05:50.700
+Achieving native polish means writing specific definitions for these anomalies
+
+81
+00:05:50.700 --> 00:05:55.400
+rather than relying on a universal, lowest common denominator abstraction.
+
+82
+00:05:55.400 --> 00:06:01.500
+Developers migrating from web backgrounds often use libraries that mimic traditional web paradigms.
+
+83
+00:06:01.500 --> 00:06:04.500
+Libraries like styled components slash native
+
+84
+00:06:04.500 --> 00:06:10.000
+exist to provide identical API parity for teams porting React DOM projects.
+
+85
+00:06:10.000 --> 00:06:17.000
+Similarly, native wind translates the utility class syntax of tailwind CSS into React native logic.
+
+86
+00:06:17.000 --> 00:06:22.400
+Despite these alternatives, the native style sheet remains the standard for mobile applications,
+
+87
+00:06:22.400 --> 00:06:27.300
+avoiding third-party dependency overhead while ensuring direct engine optimization.
+
+88
+00:06:27.300 --> 00:06:30.300
+This split-screen comparison mapped the architecture.
+
+89
+00:06:30.300 --> 00:06:34.800
+First, chained.modifier shifts to the explicit style prop.
+
+90
+00:06:34.800 --> 00:06:39.300
+Next, UI appearance translates to a manual theme context,
+
+91
+00:06:39.300 --> 00:06:43.000
+and at environment moves to the use color scheme hook.
+
+92
+00:06:43.100 --> 00:06:47.100
+Finally, CAL layer routes via platform dot select
+
+93
+00:06:47.100 --> 00:06:52.000
+and iOS dynamic type replicates using pixel ratio multipliers.
+
+94
+00:06:52.000 --> 00:06:56.100
+Mastering React native styling means learning to explicitly serialize
+
+95
+00:06:56.100 --> 00:06:59.600
+and route design data across the JavaScript to native bridge.
+

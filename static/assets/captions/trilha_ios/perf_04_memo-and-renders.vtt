@@ -1,0 +1,686 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:02.340
+Observe estas duas saídas de renderização.
+
+2
+00:00:02.340 --> 00:00:05.440
+À esquerda, um fluxo fluido de elementos de UI.
+
+3
+00:00:05.440 --> 00:00:07.880
+À direita, a mesma interação exata
+
+4
+00:00:07.880 --> 00:00:09.640
+trava e apresenta pausas.
+
+5
+00:00:09.640 --> 00:00:13.000
+Se você é um engenheiro iOS migrando para React Native,
+
+6
+00:00:13.000 --> 00:00:15.640
+provavelmente já encontrou essa exata queda de taxa de quadros
+
+7
+00:00:15.640 --> 00:00:18.880
+ao construir listas complexas ou telas aninhadas.
+
+8
+00:00:18.880 --> 00:00:20.880
+O motor de renderização do React é rápido.
+
+9
+00:00:20.880 --> 00:00:22.280
+A queda de desempenho à direita
+
+10
+00:00:22.280 --> 00:00:24.720
+é causada pela própria arquitetura.
+
+11
+00:00:24.720 --> 00:00:26.680
+Quando os componentes estão profundamente aninhados,
+
+12
+00:00:26.680 --> 00:00:28.920
+uma atualização no topo pode disparar uma cascata
+
+13
+00:00:28.920 --> 00:00:32.240
+de re-renderizações desnecessárias por toda a árvore.
+
+14
+00:00:32.240 --> 00:00:33.840
+Para resolver isso, você não precisa aprender
+
+15
+00:00:33.840 --> 00:00:35.960
+uma forma completamente diferente de pensar.
+
+16
+00:00:35.960 --> 00:00:37.440
+Os princípios de ciência da computação
+
+17
+00:00:37.440 --> 00:00:39.200
+para estabilizar um loop de renderização do React
+
+18
+00:00:39.200 --> 00:00:40.960
+são idênticos ao gerenciamento de memória
+
+19
+00:00:40.960 --> 00:00:44.400
+e à lógica de view e validação que você já usa em Swift.
+
+20
+00:00:44.400 --> 00:00:47.080
+Vamos ignorar os tutoriais genéricos de React.
+
+21
+00:00:47.080 --> 00:00:49.600
+Em vez disso, mapeamos os padrões de otimização que você conhece
+
+22
+00:00:49.600 --> 00:00:52.840
+do Swift UI diretamente para seus equivalentes em React.
+
+23
+00:00:52.840 --> 00:00:55.520
+Alcançar performance em nível nativo no React Native
+
+24
+00:00:55.520 --> 00:00:58.640
+exige traduzir sua intuição já estabelecida em iOS
+
+25
+00:00:58.680 --> 00:01:00.560
+para o ciclo de vida do React.
+
+26
+00:01:00.560 --> 00:01:03.440
+Essa matriz de tradução fornece um mapeamento um-para-um
+
+27
+00:01:03.440 --> 00:01:06.280
+entre paradigmas do iOS e React hooks.
+
+28
+00:01:06.280 --> 00:01:09.600
+Vamos preencher esse quadro, mapeando a validação em Swift UI,
+
+29
+00:01:09.600 --> 00:01:11.680
+propriedades computadas e enums de estado
+
+30
+00:01:11.680 --> 00:01:13.960
+diretamente para seus equivalentes em React.
+
+31
+00:01:13.960 --> 00:01:16.280
+A regra estrita, aplique-as cirurgicamente
+
+32
+00:01:16.280 --> 00:01:17.920
+com base em dados de profiling.
+
+33
+00:01:17.920 --> 00:01:19.360
+Internalizar esse mapa resolve
+
+34
+00:01:19.360 --> 00:01:21.960
+o erro mais comum de iniciantes em React Native.
+
+35
+00:01:21.960 --> 00:01:23.680
+Você para de lutar contra o render engine
+
+36
+00:01:23.680 --> 00:01:25.520
+e começa a cooperar com ele.
+
+37
+00:01:25.520 --> 00:01:27.720
+Em Swift, quando uma view do Swift UI está em conformidade
+
+38
+00:01:27.720 --> 00:01:31.160
+com o protocolo equatable, você dita os recálculos.
+
+39
+00:01:31.160 --> 00:01:34.320
+O compilador verifica os valores específicos dos quais a view depende.
+
+40
+00:01:34.320 --> 00:01:38.160
+Se não houver alteração, o Swift UI ignora completamente a reavaliação do body.
+
+41
+00:01:38.160 --> 00:01:41.160
+O equivalente exato do React é o React.memo.
+
+42
+00:01:41.160 --> 00:01:43.680
+Assim como o Swift UI, ele usa comparação rasa (shallow comparison),
+
+43
+00:01:43.680 --> 00:01:46.040
+verificando se valores primitivos ou referências de memória
+
+44
+00:01:46.040 --> 00:01:47.560
+correspondem à renderização anterior.
+
+45
+00:01:47.560 --> 00:01:50.480
+Se as props permanecerem idênticas, o componente filho pula a renderização.
+
+46
+00:01:50.480 --> 00:01:52.920
+Para estruturas complexas, o React.memo
+
+47
+00:01:52.920 --> 00:01:55.360
+aceita uma função de comparação personalizada,
+
+48
+00:01:55.360 --> 00:01:58.000
+como um duplo igual manual em Swift.
+
+49
+00:01:58.000 --> 00:02:00.120
+Envolver um componente em React.memo
+
+50
+00:02:00.120 --> 00:02:03.320
+é o primeiro passo necessário para armazenar em cache a sua UI,
+
+51
+00:02:03.320 --> 00:02:06.880
+mas isso expõe imediatamente como o React lida com referências de memória
+
+52
+00:02:06.880 --> 00:02:08.560
+de forma diferente do Swift.
+
+53
+00:02:08.560 --> 00:02:11.480
+Observe como o React executa esse componente funcional.
+
+54
+00:02:11.480 --> 00:02:14.520
+Tudo dentro do corpo é recriado do zero,
+
+55
+00:02:14.520 --> 00:02:17.360
+recebendo um novo endereço de memória a cada render.
+
+56
+00:02:17.360 --> 00:02:19.240
+Passar essa função recém-criada
+
+57
+00:02:19.240 --> 00:02:22.800
+para um filho React.memo quebra instantaneamente o cache.
+
+58
+00:02:22.800 --> 00:02:24.520
+O componente filho recebe uma função
+
+59
+00:02:24.520 --> 00:02:26.480
+com uma referência de memória totalmente nova.
+
+60
+00:02:26.480 --> 00:02:28.360
+Ela falha na verificação de igualdade rasa (shallow equality)
+
+61
+00:02:28.360 --> 00:02:31.240
+e aciona uma nova renderização desnecessária.
+
+62
+00:02:31.240 --> 00:02:33.680
+No iOS, você evita esse tipo de trabalho redundante
+
+63
+00:02:33.680 --> 00:02:36.640
+mas usando computed properties, isolando derivações
+
+64
+00:02:36.640 --> 00:02:40.240
+para que elas só recalculem quando seus valores base específicos mudam.
+
+65
+00:02:40.240 --> 00:02:42.320
+O React lida com isso com use memo.
+
+66
+00:02:42.320 --> 00:02:45.520
+Um array de dependências diz ao React para manter o valor anterior,
+
+67
+00:02:45.520 --> 00:02:48.160
+recalculando apenas quando as dependências mudam.
+
+68
+00:02:48.160 --> 00:02:51.560
+Para funções, o equivalente às stored closures do Swift
+
+69
+00:02:51.560 --> 00:02:53.320
+é o use callback.
+
+70
+00:02:53.320 --> 00:02:55.360
+Ele garante estabilidade de referência,
+
+71
+00:02:55.360 --> 00:02:59.320
+garantindo que os componentes filhos vejam exatamente o mesmo endereço de memória.
+
+72
+00:02:59.320 --> 00:03:01.400
+Isso também se aplica a objetos.
+
+73
+00:03:01.400 --> 00:03:05.120
+Um objeto literal vazio cria uma nova referência a cada render.
+
+74
+00:03:05.120 --> 00:03:07.640
+Se você passar um objeto como prop ou injetá-lo
+
+75
+00:03:07.640 --> 00:03:09.680
+em outra lista de dependências de hooks,
+
+76
+00:03:09.680 --> 00:03:11.960
+ele deve ser envolvido em use memo.
+
+77
+00:03:11.960 --> 00:03:15.200
+React.memo, use memo e use callback
+
+78
+00:03:15.200 --> 00:03:17.560
+operam como um trio coordenado.
+
+79
+00:03:17.560 --> 00:03:20.440
+Deixar de estabilizar mesmo uma única referência de prop
+
+80
+00:03:20.440 --> 00:03:22.760
+invalida toda a estratégia de cache
+
+81
+00:03:22.760 --> 00:03:24.400
+para aquele branch de UI.
+
+82
+00:03:24.400 --> 00:03:28.120
+Vamos rastrear uma atualização de estado usando a context API do React.
+
+83
+00:03:28.120 --> 00:03:31.120
+O nó provedor central distribui um objeto de estado.
+
+84
+00:03:31.120 --> 00:03:33.960
+Quando atualizado, ele gera um novo object literal,
+
+85
+00:03:33.960 --> 00:03:37.160
+forçando cada consumer na árvore a fazer re-render,
+
+86
+00:03:37.160 --> 00:03:39.880
+mesmo que seu valor específico não tenha mudado.
+
+87
+00:03:39.880 --> 00:03:43.680
+A solução imediata é envolver o context payload em use memo.
+
+88
+00:03:43.680 --> 00:03:45.640
+Agora, a referência permanece estável,
+
+89
+00:03:45.640 --> 00:03:47.200
+e os consumers só fazem re-render
+
+90
+00:03:47.200 --> 00:03:49.880
+quando os dados subjacentes realmente são atualizados.
+
+91
+00:03:49.880 --> 00:03:53.400
+Mas envolver tudo em use memo é um remendo.
+
+92
+00:03:53.400 --> 00:03:56.920
+A solução arquitetural superior, alinhada com o SwiftUI,
+
+93
+00:03:56.920 --> 00:04:00.280
+é a divisão de componentes para isolar dependências de estado.
+
+94
+00:04:00.280 --> 00:04:01.680
+A regra é simples.
+
+95
+00:04:01.680 --> 00:04:04.600
+Mova o estado para o componente mais próximo que precisa dele.
+
+96
+00:04:04.600 --> 00:04:07.240
+Ao descentralizar o estado para longe da raiz,
+
+97
+00:04:07.240 --> 00:04:09.880
+o React naturalmente invalida e renderiza novamente
+
+98
+00:04:09.880 --> 00:04:12.160
+subviews menores e específicas.
+
+99
+00:04:12.160 --> 00:04:13.800
+Quando você tem múltiplas propriedades de estado
+
+100
+00:04:13.800 --> 00:04:16.360
+que precisam mudar juntas, desenvolvedores Swift
+
+101
+00:04:16.360 --> 00:04:18.600
+modelar essas transições coordenadas usando
+
+102
+00:04:18.600 --> 00:04:22.320
+enums ou structs imutáveis com métodos de transição dedicados.
+
+103
+00:04:22.320 --> 00:04:25.800
+O equivalente direto do React para lógica de estado complexa e isolada
+
+104
+00:04:25.800 --> 00:04:27.280
+é o use reducer.
+
+105
+00:04:27.280 --> 00:04:29.680
+Além de organizar transições complexas,
+
+106
+00:04:29.680 --> 00:04:32.200
+o use reducer tem um recurso de performance oculto.
+
+107
+00:04:32.200 --> 00:04:33.920
+Sua função dispatch mantém, inerentemente,
+
+108
+00:04:33.920 --> 00:04:36.800
+uma referência de memória estável entre renders.
+
+109
+00:04:36.800 --> 00:04:38.840
+Você pode passá-la profundamente pela sua árvore de componentes
+
+110
+00:04:38.840 --> 00:04:40.760
+sem nunca precisar usar o use callback.
+
+111
+00:04:40.760 --> 00:04:43.520
+Confiar em limites arquiteturais e ferramentas
+
+112
+00:04:43.520 --> 00:04:47.120
+como use reducer resolve gargalos de performance por design.
+
+113
+00:04:47.120 --> 00:04:50.320
+Muito antes de você precisar corrigi-los com hooks de memoization,
+
+114
+00:04:50.320 --> 00:04:53.320
+esta linha do tempo horizontal mapeia como os engenheiros de iOS
+
+115
+00:04:53.320 --> 00:04:55.680
+priorizam a responsividade da UI.
+
+116
+00:04:55.680 --> 00:04:57.520
+O trabalho urgente da main thread é estritamente
+
+117
+00:04:57.520 --> 00:05:00.000
+separado do processamento pesado, direcionando
+
+118
+00:05:00.000 --> 00:05:02.800
+as cargas pesadas para uma background dispatch queue.
+
+119
+00:05:02.800 --> 00:05:07.160
+O React 18 introduziu um equivalente concorrente, start transition.
+
+120
+00:05:07.160 --> 00:05:10.280
+Ao marcar uma atualização de estado específica como não urgente,
+
+121
+00:05:10.280 --> 00:05:13.280
+o render engine pode literalmente pausar uma atualização pesada de lista
+
+122
+00:05:13.280 --> 00:05:15.880
+para lidar com entradas de alta prioridade imediata,
+
+123
+00:05:15.880 --> 00:05:17.600
+como digitar em uma barra de busca.
+
+124
+00:05:17.600 --> 00:05:19.840
+Ao utilizar a flag is pending,
+
+125
+00:05:19.840 --> 00:05:21.840
+você pode exibir um loading state e alcançar
+
+126
+00:05:21.840 --> 00:05:25.480
+interações de UI com zero latência enquanto mudanças de estado complexas
+
+127
+00:05:25.480 --> 00:05:27.480
+continuam renderizando em segundo plano.
+
+128
+00:05:27.480 --> 00:05:31.000
+Memoization hooks existem para evitar renders desnecessários.
+
+129
+00:05:31.000 --> 00:05:33.040
+Start transition determina a prioridade
+
+130
+00:05:33.040 --> 00:05:35.160
+dos renders que são necessários, garantindo
+
+131
+00:05:35.160 --> 00:05:38.160
+interações fluidas sem bloquear a thread principal.
+
+132
+00:05:38.160 --> 00:05:41.800
+Você não aplica a palavra-chave lazy em todas as propriedades
+
+133
+00:05:41.800 --> 00:05:43.400
+em uma aplicação Swift.
+
+134
+00:05:43.400 --> 00:05:45.440
+Isso é otimização prematura
+
+135
+00:05:45.480 --> 00:05:48.480
+e a mesma lógica exata se aplica ao React.
+
+136
+00:05:48.480 --> 00:05:51.520
+Observe o tempo de execução de um componente memoizado.
+
+137
+00:05:51.520 --> 00:05:55.800
+React.memo, use memo e use callback não são gratuitos.
+
+138
+00:05:55.800 --> 00:05:58.800
+Eles executam um custo computacional ativo.
+
+139
+00:05:58.800 --> 00:06:02.360
+Por baixo dos panos, o React está ativamente armazenando valores anteriores,
+
+140
+00:06:02.360 --> 00:06:04.600
+iterando por arrays de dependências
+
+141
+00:06:04.600 --> 00:06:08.040
+e gerenciando a memória de cache para cada componente memoizado.
+
+142
+00:06:08.040 --> 00:06:11.440
+Se o seu componente é simples e renderiza apenas elementos primitivos,
+
+143
+00:06:11.440 --> 00:06:13.960
+realizar essa comparação de cache leva mais tempo
+
+144
+00:06:13.960 --> 00:06:17.120
+do que simplesmente deixar o React re-renderizar o componente nativamente.
+
+145
+00:06:17.120 --> 00:06:19.880
+Existem anti-padrões matemáticos rígidos aqui.
+
+146
+00:06:19.880 --> 00:06:22.600
+Não memoize se um componente quase sempre recebe
+
+147
+00:06:22.600 --> 00:06:25.360
+props diferentes de qualquer forma e não use use memo
+
+148
+00:06:25.360 --> 00:06:28.360
+para cálculos triviais como aritmética básica.
+
+149
+00:06:28.360 --> 00:06:31.320
+Memoização generalizada não acelera uma aplicação.
+
+150
+00:06:31.320 --> 00:06:35.240
+Ela transforma uma UI leve em um sistema pesado e inchado de cache
+
+151
+00:06:35.240 --> 00:06:37.680
+lutando ativamente contra seu próprio motor de renderização.
+
+152
+00:06:37.680 --> 00:06:40.720
+A regra de ouro da renderização em todas as plataformas
+
+153
+00:06:40.720 --> 00:06:43.720
+é medir primeiro, otimizar depois.
+
+154
+00:06:43.720 --> 00:06:47.040
+Este flame chart do React dev tools é o equivalente exato
+
+155
+00:06:47.040 --> 00:06:48.480
+ao time profiler.
+
+156
+00:06:48.480 --> 00:06:51.360
+Ele mapeia a hierarquia de componentes durante um commit.
+
+157
+00:06:51.360 --> 00:06:53.960
+Observe o metadata do why did this render?
+
+158
+00:06:53.960 --> 00:06:57.040
+Se ele indicar que o parent re-renderizou com props idênticas
+
+159
+00:06:57.040 --> 00:07:00.400
+isso justifica matematicamente a aplicação do React.memo.
+
+160
+00:07:00.400 --> 00:07:02.720
+Para monitorar isso em escala, você pode implementar
+
+161
+00:07:02.720 --> 00:07:04.560
+a biblioteca why did you render.
+
+162
+00:07:04.560 --> 00:07:07.960
+Ela imprime automaticamente re-renders desnecessários no console,
+
+163
+00:07:07.960 --> 00:07:09.680
+focando especificamente nos componentes que
+
+164
+00:07:09.680 --> 00:07:11.800
+recebem exatamente os mesmos valores armazenados
+
+165
+00:07:11.800 --> 00:07:13.560
+em referências de memória diferentes.
+
+166
+00:07:13.560 --> 00:07:15.880
+Aqui está a matriz de tradução completa.
+
+167
+00:07:15.880 --> 00:07:18.440
+O verdadeiro domínio do React Native para um engenheiro iOS
+
+168
+00:07:18.440 --> 00:07:21.520
+não exige decorar hooks de ciclo de vida arbitrários.
+
+169
+00:07:21.520 --> 00:07:24.440
+Exige projetar sua disciplina arquitetural existente
+
+170
+00:07:24.440 --> 00:07:27.920
+sobre uma nova ferramenta de profiling e só executar otimizações
+
+171
+00:07:27.920 --> 00:07:30.600
+quando os dados exigem isso explicitamente.
+

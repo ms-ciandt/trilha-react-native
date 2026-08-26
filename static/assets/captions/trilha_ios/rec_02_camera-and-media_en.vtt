@@ -1,0 +1,222 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:09.000
+There is a persistent assumption that building a media-heavy application in React Native results in a sluggish, heavily abstracted experience.
+
+2
+00:00:09.000 --> 00:00:18.000
+Modern React Native Media Libraries operate differently. They function as precise, direct interfaces to core iOS native frameworks.
+
+3
+00:00:18.000 --> 00:00:27.000
+When you implement camera and media features today, you are interacting directly with AV Foundation, Photokit, and AV audio session.
+
+4
+00:00:27.000 --> 00:00:36.000
+Historically, high-performance capture tasks were limited by the need to serialize and pass every instruction across the asynchronous React Native Bridge.
+
+5
+00:00:36.000 --> 00:00:48.000
+That architecture has been superseded. By utilizing the fabric renderer and JSI, the JavaScript interface, modern libraries achieve synchronous execution directly on the native capture thread.
+
+6
+00:00:48.000 --> 00:00:55.000
+We are going to map these deep native iOS framework concepts to their optimized React Native implementations.
+
+7
+00:00:55.000 --> 00:01:02.000
+The objective is to understand exactly how those lines of TypeScript translate into native iOS hardware instructions.
+
+8
+00:01:02.000 --> 00:01:11.000
+Before accessing any native media API, iOS requires strict OS-level permissions to be declared in the application bundle.
+
+9
+00:01:11.000 --> 00:01:21.000
+The legacy workflow for this requires developers to manually edit and Xcode info.plist file to insert specific usage description strings.
+
+10
+00:01:21.000 --> 00:01:29.000
+Managed Expo projects replace that manual editing with the config plugin system, a declarative approach to native configuration.
+
+11
+00:01:29.000 --> 00:01:33.000
+This diagram shows how your app.json file feeds the compiler.
+
+12
+00:01:33.000 --> 00:01:41.000
+Plugins automatically inject NS camera usage description and NS microphone usage description into the generated file.
+
+13
+00:01:41.000 --> 00:01:54.000
+The photo library requires distinct security clearance. The compiler maps your configuration to NS photo library usage description for reading files and NS photo library add usage description for saving them.
+
+14
+00:01:54.000 --> 00:02:00.000
+All of this logic executes the moment you run the Expo pre-build command to cleanly regenerate your iOS folders.
+
+15
+00:02:01.000 --> 00:02:09.000
+Crucially, the plugin system handles native configuration while maintaining strict compliance with Apple's permission requirements at compile time.
+
+16
+00:02:09.000 --> 00:02:15.000
+When you need a highly custom camera interface on iOS, you have to build an AV foundation pipeline.
+
+17
+00:02:15.000 --> 00:02:23.000
+In the React Native ecosystem, React Native vision camera acts as the TypeScript wrapper for implementing these AV foundation classes.
+
+18
+00:02:23.000 --> 00:02:26.000
+This side-by-side comparison shows the direct relationship.
+
+19
+00:02:26.000 --> 00:02:32.000
+Mounting the React Native camera component is the equivalent of instantiating an AV capture session in Swift.
+
+20
+00:02:32.000 --> 00:02:40.000
+For hardware input, configuring an AV capture device input translates to resolving the device prop via use camera device.
+
+21
+00:02:40.000 --> 00:02:43.000
+Outputting a still image follows the same pattern.
+
+22
+00:02:43.000 --> 00:02:49.000
+Instantiating an AV capture photo output is handled by setting the photo prop to true and triggering take photo.
+
+23
+00:02:49.000 --> 00:02:53.000
+Video capture maps AV capture movie file output to start recording.
+
+24
+00:02:54.000 --> 00:03:04.000
+To actually display the viewfinder on screen, a native Swift implementation requires you to manually attach an AVC capture video preview layer to a CA layer.
+
+25
+00:03:04.000 --> 00:03:09.000
+Vision camera handles the life cycle of this preview layer natively within the camera component.
+
+26
+00:03:09.000 --> 00:03:20.000
+You retain granular control over the physical hardware, including ultra-wide lenses and lidar sensors, while driving the entire session through a declarative React interface.
+
+27
+00:03:20.000 --> 00:03:31.000
+Real-time AR and barcode scanning require analyzing millions of pixels per second, a data volume that often created severe frame rate bottlenecks over the legacy asynchronous bridge.
+
+28
+00:03:31.000 --> 00:03:34.000
+This pipeline illustrates the failure point.
+
+29
+00:03:34.000 --> 00:03:40.000
+Serializing heavy camera frames to JSON and sending them over a bridge causes significant latency.
+
+30
+00:03:40.000 --> 00:03:46.000
+Vision camera version 4 addresses this with frame processors, architected on fabric and JSI.
+
+31
+00:03:46.000 --> 00:03:53.000
+Frame processors are JavaScript functions engineered to run synchronously on every single camera frame as it is captured.
+
+32
+00:03:53.000 --> 00:03:59.000
+In this updated data flow, a frame hits the capture thread and immediately executes via JSI.
+
+33
+00:03:59.000 --> 00:04:04.000
+There is no serialization, no bridge round trip, and no React re-rendering involved in this loop.
+
+34
+00:04:04.000 --> 00:04:10.000
+This is conceptually identical to a CM sample buffer callback in native iOS development.
+
+35
+00:04:10.000 --> 00:04:17.000
+It utilizes the same execution model as a native AV capture video data output sample buffer delegate.
+
+36
+00:04:17.000 --> 00:04:23.000
+You write the analytical logic in JavaScript, but it runs via the Hermes engine on a dedicated isolated worklet.
+
+37
+00:04:23.000 --> 00:04:28.000
+But sheaves the same synchronous execution speed as pure Swift code on the capture thread.
+
+38
+00:04:28.000 --> 00:04:33.000
+Not every application requires the low-level control of a custom AV capture session pipeline.
+
+39
+00:04:34.000 --> 00:04:40.000
+Often, you simply need to present the user with the standard iOS system interface for selecting an existing photo.
+
+40
+00:04:40.000 --> 00:04:44.000
+This matrix shows the native mappings for higher-level tasks.
+
+41
+00:04:44.000 --> 00:04:51.000
+Expo Image Picker is a direct interface to PH Picker View Controller, the modern framework introduced in iOS 14.
+
+42
+00:04:51.000 --> 00:04:59.000
+Using this library allows you to skip custom armor construction and hand control over to the secure native Apple Picker sheet.
+
+43
+00:04:59.000 --> 00:05:07.000
+Beyond the UI, apps frequently need to execute background tasks, like reading or writing assets directly to the user's camera roll.
+
+44
+00:05:07.000 --> 00:05:13.000
+Here, Expo Media Library maps to the native PH Photo Library API.
+
+45
+00:05:13.000 --> 00:05:22.000
+Instead of writing verbose PH asset change request perform blocks in Swift, you execute asynchronous TypeScript functions to manage the assets.
+
+46
+00:05:22.000 --> 00:05:27.000
+Finally, media applications require precise sound management and hardware routing.
+
+47
+00:05:27.000 --> 00:05:32.000
+Expo AV provides a JavaScript API for the iOS AVO session.
+
+48
+00:05:32.000 --> 00:05:39.000
+Passing the plays in silent mode iOS flag in your code sets avosession.category.playback under the hood.
+
+49
+00:05:39.000 --> 00:05:46.000
+Selecting the right library depends on knowing which underlying iOS system framework is best suited for the task.
+
+50
+00:05:46.000 --> 00:05:50.000
+We can synthesize these tools into a final decision matrix.
+
+51
+00:05:50.000 --> 00:05:59.000
+If the application demands real-time processing or custom capture parameters, vision camera with a JSI frame processor is the correct path.
+
+52
+00:05:59.000 --> 00:06:06.000
+If the app just needs a basic file upload, default to the system UI via Expo Dash Image Picker.
+
+53
+00:06:06.000 --> 00:06:11.000
+React Native's media ecosystem has moved beyond high latency abstractions.
+
+54
+00:06:11.000 --> 00:06:17.000
+By utilizing JSI, the JavaScript and native layers now share a direct execution path.
+
+55
+00:06:17.000 --> 00:06:27.000
+To build high performance media applications, you must look past the JavaScript syntax and architect your pipeline like a native iOS engineer.
+

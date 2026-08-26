@@ -8,6 +8,7 @@ title: Fabric on iOS — Shadow Tree, CALayer and Custom Components
 
 <video width="100%" controls>
   <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/na_03_fabric-ios.mp4" type="video/mp4">
+  <track kind="captions" src="/trilha-react-native/assets/captions/trilha_ios/na_03_fabric-ios_en.vtt" srclang="en" label="English" default>
   Your browser does not support the video tag.
 </video>
 

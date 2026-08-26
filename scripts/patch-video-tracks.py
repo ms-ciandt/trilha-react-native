@@ -5,6 +5,10 @@ Insert <track> elements into markdown/mdx files that have <video> tags but no ca
 For EN docs (docs/):   inserts srclang="en" pointing to {stem}_en.vtt
 For PT docs (i18n/pt/): inserts srclang="pt" pointing to {stem}.vtt
 
+Only inserts a <track> when the corresponding .vtt file already exists under
+static/assets/captions/<trilha_dir>/ — videos without generated captions yet
+are left untouched.
+
 Usage:
     python scripts/patch-video-tracks.py
 """
@@ -14,26 +18,29 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
+CAPTIONS_ROOT = ROOT / "static" / "assets" / "captions"
 
 EN_DOCS_ROOTS = [
     ROOT / "docs" / "trilha-android",
     ROOT / "docs" / "trilha-web",
     ROOT / "docs" / "trilha-masterclass",
+    ROOT / "docs" / "trilha-ios",
 ]
 
 PT_DOCS_ROOTS = [
     ROOT / "i18n" / "pt" / "docusaurus-plugin-content-docs" / "current" / "trilha-android",
     ROOT / "i18n" / "pt" / "docusaurus-plugin-content-docs" / "current" / "trilha-web",
     ROOT / "i18n" / "pt" / "docusaurus-plugin-content-docs" / "current" / "trilha-masterclass",
+    ROOT / "i18n" / "pt" / "docusaurus-plugin-content-docs" / "current" / "trilha-ios",
 ]
 
 SOURCE_RE = re.compile(
-    r'(<source src="/trilha-react-native/assets/videos/(trilha_[^/]+)/([^"]+)\.mp4" type="video/mp4">)'
+    r'(<source src="https://github\.com/ms-ciandt/trilha-react-native/releases/download/[^/]+/([^"]+)\.mp4" type="video/mp4">)'
 )
 TRACK_RE = re.compile(r'<track\s')
 
 
-def patch_file(path: Path, lang: str) -> bool:
+def patch_file(path: Path, lang: str, trilha_dir: str) -> bool:
     text = path.read_text(encoding="utf-8")
     lines = text.splitlines(keepends=True)
     changed = False
@@ -50,22 +57,24 @@ def patch_file(path: Path, lang: str) -> bool:
             already_has_track = next_i < len(lines) and TRACK_RE.search(lines[next_i])
 
             if not already_has_track:
-                trilha_dir = m.group(2)   # e.g. trilha_android
-                stem = m.group(3)          # e.g. fund_01_javascript
+                stem = m.group(2)          # e.g. fund_01_javascript
 
-                indent = "  "
                 if lang == "en":
-                    vtt_path = f"/trilha-react-native/assets/captions/{trilha_dir}/{stem}_en.vtt"
-                    track_line = f'{indent}<track kind="captions" src="{vtt_path}" srclang="en" label="English" default>\n'
+                    vtt_name = f"{stem}_en.vtt"
+                    vtt_path = f"/trilha-react-native/assets/captions/{trilha_dir}/{vtt_name}"
+                    track_line = f'  <track kind="captions" src="{vtt_path}" srclang="en" label="English" default>\n'
                 else:
-                    vtt_path = f"/trilha-react-native/assets/captions/{trilha_dir}/{stem}.vtt"
-                    track_line = f'{indent}<track kind="captions" src="{vtt_path}" srclang="pt" label="Português" default>\n'
+                    vtt_name = f"{stem}.vtt"
+                    vtt_path = f"/trilha-react-native/assets/captions/{trilha_dir}/{vtt_name}"
+                    track_line = f'  <track kind="captions" src="{vtt_path}" srclang="pt" label="Português" default>\n'
 
-                out.append(line)
-                out.append(track_line)
-                changed = True
-                i += 1
-                continue
+                vtt_on_disk = CAPTIONS_ROOT / trilha_dir / vtt_name
+                if vtt_on_disk.exists():
+                    out.append(line)
+                    out.append(track_line)
+                    changed = True
+                    i += 1
+                    continue
 
         out.append(line)
         i += 1
@@ -82,8 +91,9 @@ def patch_roots(roots, lang):
         if not root.exists():
             print(f"  [skip] {root} — not found")
             continue
+        trilha_dir = root.name.replace("-", "_")   # e.g. trilha-ios -> trilha_ios
         for f in sorted(root.rglob("*.md")) + sorted(root.rglob("*.mdx")):
-            if patch_file(f, lang):
+            if patch_file(f, lang, trilha_dir):
                 total += 1
     return total
 

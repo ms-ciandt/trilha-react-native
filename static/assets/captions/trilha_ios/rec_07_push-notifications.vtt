@@ -1,0 +1,318 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:03.200
+Quando uma notificação aparece em uma tela iOS,
+
+2
+00:00:03.200 --> 00:00:08.440
+o sistema operacional já processou uma sequência específica de portas lógicas em segundo plano.
+
+3
+00:00:08.440 --> 00:00:13.000
+Dentro do ecossistema Expo, o Expo notifications gerencia esses eventos.
+
+4
+00:00:13.000 --> 00:00:17.440
+No entanto, o Expo não usa um mecanismo de push proprietário para fazer isso.
+
+5
+00:00:17.440 --> 00:00:22.040
+O framework subjacente que determina todo o comportamento de notificação em um dispositivo Apple
+
+6
+00:00:22.040 --> 00:00:25.240
+é o UN notification center nativo do iOS.
+
+7
+00:00:25.240 --> 00:00:28.240
+O Expo atua como um wrapper transparente em JavaScript,
+
+8
+00:00:28.240 --> 00:00:30.960
+fornecendo uma ponte direta para esse sistema nativo.
+
+9
+00:00:30.960 --> 00:00:33.680
+Esse wrapper unifica três áreas principais,
+
+10
+00:00:33.680 --> 00:00:35.680
+solicitações de permissão em nível de sistema operacional,
+
+11
+00:00:35.680 --> 00:00:37.440
+agendamento local no dispositivo,
+
+12
+00:00:37.440 --> 00:00:41.000
+e entrega remota via Apple Push notification service.
+
+13
+00:00:41.000 --> 00:00:46.680
+Essa arquitetura significa que os desenvolvedores podem interagir com esses sistemas sem escrever código em Swift ou Objective C.
+
+14
+00:00:46.680 --> 00:00:49.640
+Ao entender como o iOS lida com essas primitivas,
+
+15
+00:00:49.640 --> 00:00:54.640
+você pode garantir que a thread JavaScript produza exatamente o comportamento nativo que sua aplicação requer.
+
+16
+00:00:54.800 --> 00:00:58.400
+O primeiro requisito do modelo do iOS é um estado de permissão compartilhado.
+
+17
+00:00:58.400 --> 00:01:03.480
+A Apple não fornece prompts separados para notificações locais e notificações push remotas.
+
+18
+00:01:03.480 --> 00:01:09.440
+Isso é controlado pela função nativa UN notification center.request authorization.
+
+19
+00:01:09.440 --> 00:01:15.200
+Neste diagrama, podemos ver que tanto o caminho de dados local quanto o remoto são bloqueados por esse único portão.
+
+20
+00:01:15.200 --> 00:01:20.000
+A arquitetura do iOS exige que a autorização seja explicitamente solicitada e concedida
+
+21
+00:01:20.000 --> 00:01:23.240
+antes que qualquer notificação possa ser agendada ou recebida.
+
+22
+00:01:23.320 --> 00:01:27.160
+Esse diálogo do sistema só aparecerá uma vez por instalação do aplicativo.
+
+23
+00:01:27.160 --> 00:01:29.160
+Se um usuário negar esse prompt inicial,
+
+24
+00:01:29.160 --> 00:01:33.080
+o sistema operacional registra um status permanente de negado para o app.
+
+25
+00:01:33.080 --> 00:01:38.680
+Todas as solicitações de permissão subsequentes do JavaScript retornarão "denied" imediatamente, sem exibir um diálogo.
+
+26
+00:01:38.680 --> 00:01:43.400
+Isso exige que os desenvolvedores implementem uma UI personalizada para guiar os usuários até o app de configurações do iOS
+
+27
+00:01:43.400 --> 00:01:45.960
+para reativar manualmente as notificações.
+
+28
+00:01:45.960 --> 00:01:49.640
+Como essa única ação determina todo o ciclo de vida da notificação,
+
+29
+00:01:49.640 --> 00:01:53.720
+gerenciar o estado da permissão é o primeiro passo necessário da arquitetura do sistema.
+
+30
+00:01:53.720 --> 00:01:56.600
+As notificações locais funcionam de forma diferente.
+
+31
+00:01:56.600 --> 00:02:02.040
+Eles não exigem interação com o servidor e não se comunicam com o Apple Push notification service.
+
+32
+00:02:02.760 --> 00:02:06.120
+Esses eventos são mapeados para o UN notification trigger
+
+33
+00:02:06.120 --> 00:02:09.480
+e processados inteiramente dentro do ambiente interno do dispositivo.
+
+34
+00:02:10.200 --> 00:02:13.720
+A API oferece dois triggers principais para esses eventos,
+
+35
+00:02:13.720 --> 00:02:18.200
+um time interval para atrasos e um calendar trigger para datas e horários específicos.
+
+36
+00:02:18.840 --> 00:02:22.920
+Esta é a mesma API subjacente usada por aplicações iOS nativas,
+
+37
+00:02:22.920 --> 00:02:24.440
+como alarmes ou lembretes.
+
+38
+00:02:25.480 --> 00:02:30.440
+No entanto, a visibilidade das notificações muda quando a aplicação está sendo executada ativamente
+
+39
+00:02:30.440 --> 00:02:35.800
+em foreground. Por padrão, o iOS não exibe banners visuais de notificação,
+
+40
+00:02:35.800 --> 00:02:38.760
+se a aplicação for atualmente a janela ativa na tela.
+
+41
+00:02:39.400 --> 00:02:43.400
+Para mudar isso, o Expo usa a função set notification handler.
+
+42
+00:02:43.960 --> 00:02:46.920
+Isso permite que o aplicativo contorne a supressão visual padrão.
+
+43
+00:02:47.560 --> 00:02:52.040
+Essa função JavaScript mapeia diretamente para o delegate will present no iOS nativo
+
+44
+00:02:52.040 --> 00:02:56.680
+framework. Isso dá à thread JavaScript a capacidade de determinar se um banner deve
+
+45
+00:02:56.680 --> 00:03:02.200
+ser exibido mesmo enquanto o usuário está usando ativamente o aplicativo. Esses triggers e handlers permitem
+
+46
+00:03:02.200 --> 00:03:07.800
+que a thread JavaScript gerencie o ciclo de vida da notificação em tempo real, esteja o aplicativo ativo
+
+47
+00:03:07.800 --> 00:03:12.600
+ou em segundo plano. Ao passar de alertas locais para push notifications remotas,
+
+48
+00:03:12.600 --> 00:03:17.160
+é necessário fazer a transição do ambiente interno do dispositivo para uma rede externa.
+
+49
+00:03:17.800 --> 00:03:22.680
+Essa camada de rede introduz pré-requisitos nativos que devem ser configurados dentro do build
+
+50
+00:03:22.680 --> 00:03:27.720
+da aplicação. Nesta representação do menu de signing and capabilities do Xcode,
+
+51
+00:03:27.720 --> 00:03:32.120
+podemos ver as entitlements específicas necessárias para autorizar conexões de rede em segundo plano.
+
+52
+00:03:32.680 --> 00:03:37.400
+O background mode de remote notifications deve estar habilitado para que a aplicação receba
+
+53
+00:03:37.400 --> 00:03:42.360
+e processe payloads enquanto está ativa. Essas entitlements atuam como assinaturas digitais,
+
+54
+00:03:42.680 --> 00:03:47.480
+verificando o direito da aplicação de acessar os serviços de rede da Apple sob uma identidade
+
+55
+00:03:47.480 --> 00:03:52.920
+de desenvolvedor específica. Se essas entitlements estiverem ausentes, o sistema operacional descartará os payloads de rede recebidos
+
+56
+00:03:52.920 --> 00:03:58.920
+na fronteira do dispositivo antes que o app possa vê-los. Remote notifications só são possíveis
+
+57
+00:03:58.920 --> 00:04:03.800
+quando essas permissões em nível de OS estão corretamente vinculadas ao provisioning profile da aplicação.
+
+58
+00:04:04.680 --> 00:04:09.880
+Uma vez que a fronteira de rede esteja aberta, você deve escolher como seu back end irá identificar e endereçar
+
+59
+00:04:09.880 --> 00:04:16.600
+o dispositivo alvo. O Path A é a abordagem de roteamento gerenciado. Isso começa com a função JavaScript
+
+60
+00:04:16.600 --> 00:04:23.480
+GetExpo PushTokenAsync. Usando esse método, o token identifica o dispositivo para o serviço de push da Expo.
+
+61
+00:04:24.360 --> 00:04:30.280
+Os payloads são enviados aos servidores expose, que então os encaminham para a Apple. Este é o método padrão
+
+62
+00:04:30.280 --> 00:04:35.960
+para aplicações que usam o ecossistema gerenciado Expo. O Path B é o método de entrega direto.
+
+63
+00:04:36.760 --> 00:04:42.760
+Chamar GetDevicePushTokenAsync retorna uma string hexadecimal bruta em vez de um token específico do Expo.
+
+64
+00:04:43.560 --> 00:04:48.920
+Este caminho ignora completamente os servidores expose. Seu backend personalizado se comunica diretamente
+
+65
+00:04:48.920 --> 00:04:54.600
+com o Apple Push notification service. O Path B é necessário para infraestruturas que já
+
+66
+00:04:54.600 --> 00:05:00.840
+possuem um pipeline dedicado para integração direta com o APNS. Essa decisão cria uma distinção entre
+
+67
+00:05:00.840 --> 00:05:07.560
+usar um serviço de nuvem gerenciado e manter um pipeline de entrega auto-hospedado. Quando um payload é entregue com sucesso
+
+68
+00:05:07.560 --> 00:05:13.960
+ao dispositivo, ele é apresentado ao usuário como um alerta visível. Desenvolvedores usam UN notification
+
+69
+00:05:13.960 --> 00:05:19.800
+category para adicionar botões interativos a esses alertas, permitindo que os usuários tomem ações sem digitar.
+
+70
+00:05:20.280 --> 00:05:25.400
+Essas categories devem ser registradas dentro da lógica da aplicação antes da notificação chegar
+
+71
+00:05:25.400 --> 00:05:31.160
+para serem exibidos corretamente. Quando o usuário toca na notificação, o sistema operacional inicia ou
+
+72
+00:05:31.160 --> 00:05:37.080
+retoma a aplicação para tratar a interação. Um cold start ocorre se a aplicação não estava
+
+73
+00:05:37.080 --> 00:05:42.920
+em execução na memória quando o toque aconteceu. Nesse caso, o app precisa inicializar e então recuperar a
+
+74
+00:05:42.920 --> 00:05:49.000
+interação. Durante a sequência de inicialização, o iOS mantém o payload da notificação nas opções
+
+75
+00:05:49.800 --> 00:05:55.720
+iniciais de lançamento da aplicação. Para acessar isso no JavaScript, o Expo fornece o Get Last notification response async.
+
+76
+00:05:55.720 --> 00:06:00.200
+Essa função recupera o payload em cache que disparou o lançamento. Isso é o equivalente em JavaScript
+
+77
+00:06:00.200 --> 00:06:05.640
+de ler os dados de notificação a partir das launch options em um app delegate nativo. Ao usar a
+
+78
+00:06:05.640 --> 00:06:11.640
+API do Expo como uma ponte para o UN notification center, você pode construir um tratamento de notificações com qualidade nativa
+
+79
+00:06:11.640 --> 00:06:13.880
+inteiramente dentro do ambiente JavaScript.
+

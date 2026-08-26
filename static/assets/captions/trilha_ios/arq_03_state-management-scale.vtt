@@ -1,0 +1,366 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:05.520
+Quando um arranha-céu físico é erguido, pontos de carga estrutural específicos determinam o quão alto o
+
+2
+00:00:05.520 --> 00:00:08.720
+prédio pode ficar com segurança antes de desabar.
+
+3
+00:00:08.720 --> 00:00:13.680
+À medida que uma aplicação React Native cresce além de um punhado de telas, suas decisões de
+
+4
+00:00:13.680 --> 00:00:17.120
+gerenciamento de estado carregam o peso de toda a sua arquitetura.
+
+5
+00:00:17.120 --> 00:00:23.080
+No nível mais básico você tem o useState, que é local, invisível para o resto da aplicação,
+
+6
+00:00:23.080 --> 00:00:27.920
+e funciona perfeitamente para dados isolados como um campo de texto ou um toggle switch.
+
+7
+00:00:27.920 --> 00:00:33.120
+Este fluxograma acompanha o primeiro grande ponto de falha do estado local, o prop drilling.
+
+8
+00:00:33.120 --> 00:00:37.440
+No exato momento em que você precisa passar o mesmo dado através de uma terceira camada
+
+9
+00:00:37.440 --> 00:00:41.280
+de componentes, o atrito começa a prejudicar sua performance.
+
+10
+00:00:41.280 --> 00:00:46.320
+Esse atrito se multiplica quando duas telas completamente não relacionadas precisam reagir ao exato
+
+11
+00:00:46.320 --> 00:00:49.120
+o mesmo dado simultaneamente.
+
+12
+00:00:49.120 --> 00:00:51.520
+Estados locais simplesmente não conseguem preencher essa lacuna.
+
+13
+00:00:51.520 --> 00:00:57.880
+Por fim, componentes de nível superior começam a recalcular subárvores custosas a cada pequena atualização.
+
+14
+00:00:57.880 --> 00:01:02.920
+E seus dados são apagados permanentemente quando transições de navegação desmontam a tela.
+
+15
+00:01:02.920 --> 00:01:06.120
+Você é forçado a buscar externamente um container global.
+
+16
+00:01:06.120 --> 00:01:10.440
+O ecossistema React tem dezenas de ferramentas concorrentes para resolver esse problema.
+
+17
+00:01:10.440 --> 00:01:15.320
+Se você escolher a errada para sua escala específica, sua base de código vai sufocar sob boilerplate pesado
+
+18
+00:01:15.320 --> 00:01:19.640
+ou degenerar em uma bagunça rastreável de spaghetti code.
+
+19
+00:01:19.640 --> 00:01:25.000
+Para evitar dívida técnica de longo prazo, precisamos mapear quais ferramentas de estado pertencem a qual
+
+20
+00:01:25.000 --> 00:01:27.240
+escala exata de aplicação.
+
+21
+00:01:27.240 --> 00:01:31.880
+O maior avanço arquitetural acontece antes mesmo de você instalar qualquer biblioteca.
+
+22
+00:01:31.880 --> 00:01:36.040
+Você precisa separar explicitamente seus dados em duas categorias distintas.
+
+23
+00:01:36.040 --> 00:01:37.720
+A primeira é o client state.
+
+24
+00:01:37.720 --> 00:01:41.400
+São dados que seu app possui e controla completamente em memória.
+
+25
+00:01:41.400 --> 00:01:46.360
+Coisas como um modal estar aberto, valores de um formulário em rascunho, ou o histórico local de navegação do usuário.
+
+26
+00:01:46.360 --> 00:01:48.360
+Essa matriz evidencia essa divisão.
+
+27
+00:01:48.360 --> 00:01:50.520
+À direita está o server state.
+
+28
+00:01:50.520 --> 00:01:54.360
+Dados remotos armazenados temporariamente em cache, como o histórico de pedidos.
+
+29
+00:01:54.440 --> 00:01:59.800
+Forçar esses dados, que precisam de atualização em segundo plano, a ficarem no mesmo container que os toggles
+
+30
+00:01:59.800 --> 00:02:05.160
+de UI local cria um conflito. Um ciclo de vida é previsível, o outro é assíncrono.
+
+31
+00:02:05.800 --> 00:02:11.320
+Separá-los mantém a lógica da aplicação limpa, mas isso introduz um trade-off específico.
+
+32
+00:02:11.320 --> 00:02:15.000
+Seus desenvolvedores agora precisam aprender e manter duas bibliotecas distintas.
+
+33
+00:02:15.640 --> 00:02:18.600
+Para gerenciar o ciclo de vida complexo de dados remotos,
+
+34
+00:02:18.600 --> 00:02:21.480
+o TanStack Query é o padrão desenvolvido especificamente para isso.
+
+35
+00:02:21.480 --> 00:02:25.800
+Se dois componentes diferentes solicitarem exatamente os mesmos dados ao mesmo tempo,
+
+36
+00:02:25.800 --> 00:02:29.160
+o TanStack Query automaticamente elimina a duplicação da requisição.
+
+37
+00:02:29.160 --> 00:02:31.000
+A chamada de rede acontece apenas uma vez.
+
+38
+00:02:31.640 --> 00:02:34.920
+Essa linha do tempo mostra o padrão stale-while-revalidate.
+
+39
+00:02:34.920 --> 00:02:38.520
+Os usuários veem instantaneamente os dados em cache, evitando spinners de carregamento,
+
+40
+00:02:38.520 --> 00:02:41.400
+enquanto uma busca em segundo plano substitui pelas versões mais recentes.
+
+41
+00:02:41.400 --> 00:02:43.800
+Ele também gerencia atualizações otimistas.
+
+42
+00:02:43.800 --> 00:02:45.880
+As alterações na UI são aplicadas imediatamente.
+
+43
+00:02:45.960 --> 00:02:49.960
+Se o servidor gerar um erro, a biblioteca reverte automaticamente para o estado anterior.
+
+44
+00:02:49.960 --> 00:02:51.800
+À medida que você busca mais endpoints,
+
+45
+00:02:51.800 --> 00:02:58.040
+manter um padrão central de query key factory se torna um requisito rígido para manter seu cache organizado.
+
+46
+00:02:58.040 --> 00:03:02.600
+Escrever esse código organizacional extra é o custo necessário de se fazer negócio.
+
+47
+00:03:02.600 --> 00:03:07.560
+Isso previne bugs sutis e difíceis de rastrear de colisão de cache em uma aplicação de grande porte.
+
+48
+00:03:07.560 --> 00:03:11.720
+Com o estado do servidor tratado, precisamos de uma ferramenta leve para o estado do cliente que resolva
+
+49
+00:03:11.720 --> 00:03:15.400
+o prop drilling e a persistência de dados sem adicionar muita cerimônia.
+
+50
+00:03:15.400 --> 00:03:18.120
+Este diagrama demonstra o ZewStand.
+
+51
+00:03:18.120 --> 00:03:19.960
+Em vez de um único objeto gigante,
+
+52
+00:03:19.960 --> 00:03:24.680
+os desenvolvedores criam fatias coesas e independentes de dados específicos de domínio.
+
+53
+00:03:24.680 --> 00:03:27.480
+Ao direcionar os selectors para fatias específicas,
+
+54
+00:03:27.480 --> 00:03:31.160
+os componentes de UI se inscrevem apenas nos dados exatos de que precisam.
+
+55
+00:03:31.160 --> 00:03:35.400
+Se um carrinho é atualizado, o perfil do usuário não vai re-renderizar desnecessariamente.
+
+56
+00:03:35.400 --> 00:03:38.040
+O principal trade-off aqui é o erro humano.
+
+57
+00:03:38.040 --> 00:03:41.080
+O Zustand não impõe regras rígidas de arquitetura,
+
+58
+00:03:41.080 --> 00:03:44.200
+o que significa que sua equipe precisa de disciplina rigorosa para manter os arquivos pequenos
+
+59
+00:03:44.200 --> 00:03:47.080
+e evitar acabar construindo um monólito acidentalmente.
+
+60
+00:03:47.080 --> 00:03:49.400
+Se você precisar de precisão extrema,
+
+61
+00:03:49.400 --> 00:03:51.240
+Jotai é a alternativa.
+
+62
+00:03:51.240 --> 00:03:53.000
+Ele se baseia em atoms,
+
+63
+00:03:53.000 --> 00:03:58.040
+pequenas unidades individuais de estado que se encaixam perfeitamente em partes granulares da UI.
+
+64
+00:03:58.040 --> 00:04:03.400
+Isso garante que uma re-renderização seja limitada apenas ao componente que lê aquele atom específico.
+
+65
+00:04:03.400 --> 00:04:05.720
+Embora o Jotai minimize as re-renderizações,
+
+66
+00:04:05.720 --> 00:04:10.840
+criar um atom individual para cada variável gera uma proliferação de atoms,
+
+67
+00:04:11.000 --> 00:04:15.640
+em um app grande, gerenciar o volume imenso deles se torna um pesado fardo organizacional.
+
+68
+00:04:16.280 --> 00:04:19.560
+Essa linha do tempo de rolagem representa a opção pesada,
+
+69
+00:04:19.560 --> 00:04:21.000
+Redux Toolkit.
+
+70
+00:04:21.000 --> 00:04:24.600
+Ele é feito para aplicações massivas que precisam de observabilidade intensa
+
+71
+00:04:24.600 --> 00:04:27.400
+sobre um fluxo incessante de eventos complexos.
+
+72
+00:04:27.400 --> 00:04:31.240
+O Redux Toolkit oferece depuração com viagem no tempo (time-travel debugging) e uma trilha de auditoria rigorosa,
+
+73
+00:04:31.240 --> 00:04:35.080
+registrando o histórico exato e a sequência de cada mutação de estado no seu app.
+
+74
+00:04:35.720 --> 00:04:39.560
+Esta tabela de consulta mostra como o RTK query lida com a normalização.
+
+75
+00:04:39.560 --> 00:04:44.040
+Em vez de duplicar dados, as entidades são armazenadas exatamente uma vez por ID.
+
+76
+00:04:44.040 --> 00:04:45.880
+Com uma única fonte de verdade,
+
+77
+00:04:45.880 --> 00:04:49.800
+atualizar uma foto de perfil sincroniza instantaneamente em uma thread de comentários,
+
+78
+00:04:49.800 --> 00:04:52.920
+lista de amigos e página de configurações sem deixar dados desatualizados.
+
+79
+00:04:53.480 --> 00:04:57.400
+Você paga um alto preço e boiler code para obter essa arquitetura.
+
+80
+00:04:57.400 --> 00:04:59.960
+Só vale o custo se em tempo real,
+
+81
+00:04:59.960 --> 00:05:04.440
+sincronização multi-fonte e previsibilidade estrita são requisitos de negócio inegociáveis.
+
+82
+00:05:05.160 --> 00:05:06.360
+Nós temos as ferramentas.
+
+83
+00:05:06.360 --> 00:05:09.000
+Agora precisamos de um framework concreto para tomar a decisão.
+
+84
+00:05:09.560 --> 00:05:10.920
+Essa matriz é o modelo.
+
+85
+00:05:11.560 --> 00:05:16.200
+Para a maioria dos apps, use TANstack para estado de servidor e Zustand para estado de cliente.
+
+86
+00:05:16.200 --> 00:05:17.560
+Desenvolvedores solo ficam com o Zustand.
+
+87
+00:05:18.120 --> 00:05:22.120
+Equipes de nível intermediário usam o híbrido TANstack Zustand para dados desnormalizados.
+
+88
+00:05:22.680 --> 00:05:27.240
+Arquitetos enterprise adotam Redux Toolkit para auditorias complexas e normalização estrita.
+
+89
+00:05:27.960 --> 00:05:31.960
+Uma arquitetura sólida nunca é sobre buscar uma bala de prata universal.
+
+90
+00:05:31.960 --> 00:05:35.400
+É sobre observar o custo operacional de uma ferramenta específica
+
+91
+00:05:35.400 --> 00:05:38.040
+e ajustá-lo com precisão à escala da sua aplicação.
+

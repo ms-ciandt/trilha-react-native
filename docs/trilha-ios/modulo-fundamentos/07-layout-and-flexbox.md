@@ -8,6 +8,7 @@ title: Layout and Flexbox — SwiftUI and Auto Layout Mapping
 
 <video width="100%" controls>
   <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/fund_07_layout-and-flexbox.mp4" type="video/mp4">
+  <track kind="captions" src="/trilha-react-native/assets/captions/trilha_ios/fund_07_layout-and-flexbox_en.vtt" srclang="en" label="English" default>
   Your browser does not support the video tag.
 </video>
 

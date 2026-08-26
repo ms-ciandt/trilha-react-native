@@ -1,0 +1,618 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:02.760
+Migrando de Swift para React Native,
+
+2
+00:00:02.760 --> 00:00:06.000
+remove-se a certeza absoluta em tempo de compilação
+
+3
+00:00:06.000 --> 00:00:08.200
+na qual os desenvolvedores iOS confiam.
+
+4
+00:00:08.200 --> 00:00:10.800
+De repente, a execução acontece em tempo real
+
+5
+00:00:10.800 --> 00:00:13.960
+e os problemas surgem ao vivo, nas mãos do usuário.
+
+6
+00:00:13.960 --> 00:00:17.320
+Observando este diagrama, vemos a divisão arquitetural.
+
+7
+00:00:17.320 --> 00:00:20.840
+Do lado esquerdo, o Swift usa strict throws e result types
+
+8
+00:00:20.840 --> 00:00:23.800
+para capturar erros de forma agressiva antes da compilação.
+
+9
+00:00:23.800 --> 00:00:28.040
+Do lado direito, o JavaScript padrão depende de blocos try-catch mais soltos,
+
+10
+00:00:28.040 --> 00:00:30.560
+deixando escapar facilmente exceções inesperadas em tempo de execução
+
+11
+00:00:30.560 --> 00:00:32.240
+e travando a UI.
+
+12
+00:00:32.240 --> 00:00:34.880
+Para um engenheiro iOS, acostumado com o compilador
+
+13
+00:00:34.880 --> 00:00:37.880
+impondo sua lógica de erro, entrar nesse ambiente
+
+14
+00:00:37.880 --> 00:00:41.360
+parece andar na corda bamba sem uma rede de segurança estrutural.
+
+15
+00:00:41.360 --> 00:00:43.720
+Mas a rede de segurança não se foi permanentemente.
+
+16
+00:00:43.720 --> 00:00:46.000
+Ela simplesmente precisa ser reconstruída manualmente.
+
+17
+00:00:46.000 --> 00:00:49.240
+Podemos conectar paradigmas nativos de resiliência do iOS diretamente
+
+18
+00:00:49.240 --> 00:00:51.080
+ao TypeScript e ao React.
+
+19
+00:00:51.080 --> 00:00:54.640
+Fazer isso exige abandonar completamente os comportamentos do JavaScript.
+
+20
+00:00:54.640 --> 00:00:58.200
+Nós os substituímos por uma disciplina de engenharia rigorosa e em camadas.
+
+21
+00:00:58.200 --> 00:01:01.000
+Este diagrama ilustra a solução,
+
+22
+00:01:01.000 --> 00:01:02.960
+uma rede de segurança multicamadas.
+
+23
+00:01:02.960 --> 00:01:05.920
+Ela opera em quatro domínios distintos.
+
+24
+00:01:05.920 --> 00:01:09.040
+A camada mais interna é o TypeScript em tempo de compilação,
+
+25
+00:01:09.040 --> 00:01:12.280
+cercada pela UI em tempo de execução, lógica de rede,
+
+26
+00:01:12.280 --> 00:01:14.840
+e um anel mais externo para telemetria.
+
+27
+00:01:14.840 --> 00:01:16.920
+Ao estruturar a aplicação dessa forma,
+
+28
+00:01:16.920 --> 00:01:20.560
+capturamos falhas o mais cedo possível na pilha de execução,
+
+29
+00:01:20.560 --> 00:01:23.520
+imitando de forma eficaz a estabilidade do código nativo.
+
+30
+00:01:23.520 --> 00:01:26.280
+Vamos construir esse sistema de dentro para fora,
+
+31
+00:01:26.280 --> 00:01:28.880
+começando pelo alicerce da modelagem de dados.
+
+32
+00:01:28.880 --> 00:01:31.240
+Resiliência de nível nativo em um aplicativo híbrido
+
+33
+00:01:31.240 --> 00:01:33.880
+requer aplicar uma disciplina arquitetural específica
+
+34
+00:01:33.880 --> 00:01:36.120
+nessas quatro camadas da aplicação.
+
+35
+00:01:36.120 --> 00:01:38.120
+A camada mais interna da nossa rede de segurança
+
+36
+00:01:38.120 --> 00:01:40.520
+precisa replicar o result type do Swift,
+
+37
+00:01:40.520 --> 00:01:42.440
+nos forçando a tratar possíveis erros
+
+38
+00:01:42.440 --> 00:01:45.040
+antes mesmo de o código poder ser executado.
+
+39
+00:01:45.040 --> 00:01:47.000
+Nós esbarramos em uma limitação imediata.
+
+40
+00:01:47.000 --> 00:01:50.360
+O TypeScript não possui alguns tipos nativos como o Swift possui.
+
+41
+00:01:50.360 --> 00:01:52.160
+Traduzimos o padrão de resultado do Swift
+
+42
+00:01:52.160 --> 00:01:54.640
+para uma union discriminada do TypeScript.
+
+43
+00:01:54.640 --> 00:01:59.280
+Ao declarar uma propriedade status restrita a success ou error,
+
+44
+00:01:59.280 --> 00:02:01.520
+o compilador rastreia o discriminante.
+
+45
+00:02:01.520 --> 00:02:05.080
+Consumir isso com segurança exige uma instrução switch exaustiva.
+
+46
+00:02:05.080 --> 00:02:08.120
+Esquecer o estado de erro aciona um alerta do compilador.
+
+47
+00:02:08.120 --> 00:02:12.000
+Para finalizar essa defesa, você habilita a flag no implicit returns
+
+48
+00:02:12.000 --> 00:02:14.800
+na sua configuração, bloqueando fisicamente o build
+
+49
+00:02:14.800 --> 00:02:17.240
+caso algum desses estados permaneça sem tratamento.
+
+50
+00:02:17.240 --> 00:02:20.440
+Forçar verificações exaustivas substitui a adivinhação em tempo de execução
+
+51
+00:02:20.440 --> 00:02:22.280
+com certeza em tempo de compilação.
+
+52
+00:02:22.280 --> 00:02:25.600
+Isso estabelece a primeira linha de defesa mais barata e confiável.
+
+53
+00:02:25.600 --> 00:02:26.720
+de defesa.
+
+54
+00:02:26.720 --> 00:02:28.920
+A camada dois trata do inevitável.
+
+55
+00:02:28.920 --> 00:02:31.520
+Dados inesperados que escapam do TypeScript,
+
+56
+00:02:31.520 --> 00:02:33.960
+ameaçando diretamente o ciclo de renderização.
+
+57
+00:02:33.960 --> 00:02:37.320
+Frameworks nativos de UI como UIKit e Swift UI
+
+58
+00:02:37.320 --> 00:02:40.440
+não expõem mecanismos integrados para falhas localizadas
+
+59
+00:02:40.440 --> 00:02:41.920
+dentro da árvore de componentes.
+
+60
+00:02:41.920 --> 00:02:45.920
+Um erro de UI não tratado geralmente derruba todo o processo.
+
+61
+00:02:45.920 --> 00:02:48.160
+O React Native oferece uma alternativa.
+
+62
+00:02:48.160 --> 00:02:50.560
+Normalmente, um erro em um componente filho profundo
+
+63
+00:02:50.560 --> 00:02:53.480
+se espalha para fora, derrubando a tela inteira.
+
+64
+00:02:53.480 --> 00:02:57.000
+Ao envolver módulos de funcionalidades em um componente error boundary,
+
+65
+00:02:57.000 --> 00:02:58.760
+estabelecemos um firewall.
+
+66
+00:02:58.760 --> 00:03:01.360
+O erro agora fica retido na linha de fronteira.
+
+67
+00:03:01.360 --> 00:03:04.720
+Como o erro fica contido, o app continua rodando.
+
+68
+00:03:04.720 --> 00:03:07.560
+O boundary simplesmente renderiza uma fallback UI direcionada
+
+69
+00:03:07.560 --> 00:03:10.480
+para aquele módulo específico, mantendo o resto da tela
+
+70
+00:03:10.480 --> 00:03:12.440
+intacto e interativo.
+
+71
+00:03:12.440 --> 00:03:15.400
+Este mecanismo se limita estritamente ao ciclo de renderização.
+
+72
+00:03:15.400 --> 00:03:18.160
+Ele vai ignorar completamente falhas em código assíncrono
+
+73
+00:03:18.160 --> 00:03:20.040
+ou falhas de módulos nativos.
+
+74
+00:03:20.040 --> 00:03:22.600
+Error boundaries funcionam como anteparos internos.
+
+75
+00:03:22.600 --> 00:03:25.240
+Eles garantem que uma falha de lógica de UI localizada
+
+76
+00:03:25.240 --> 00:03:27.880
+não consiga comprometer o estado geral da aplicação.
+
+77
+00:03:27.880 --> 00:03:30.600
+A camada três atua fora do ciclo de renderização
+
+78
+00:03:30.600 --> 00:03:34.720
+para lidar com a instabilidade externa de condições de rede instáveis.
+
+79
+00:03:34.720 --> 00:03:37.640
+Implementar retentativas de rede seguras em Swift nativo
+
+80
+00:03:37.640 --> 00:03:40.720
+exige muito código repetitivo, obrigando os desenvolvedores
+
+81
+00:03:40.720 --> 00:03:43.440
+orquestrar manualmente o OS no Fairlock
+
+82
+00:03:43.440 --> 00:03:45.800
+e filas do Grand Central Dispatch.
+
+83
+00:03:45.800 --> 00:03:49.840
+Este diagrama mostra como o React Native remove essa complexidade.
+
+84
+00:03:49.840 --> 00:03:51.920
+A densa lógica de sincronização em Swift
+
+85
+00:03:51.920 --> 00:03:55.240
+se dissolve em um bloco de configuração declarativo de três linhas
+
+86
+00:03:55.240 --> 00:03:57.120
+usando TANstack Query.
+
+87
+00:03:57.120 --> 00:04:00.360
+Você define um parâmetro de retry delay, que automaticamente
+
+88
+00:04:00.360 --> 00:04:02.600
+implementa uma estratégia de exponential back-off
+
+89
+00:04:02.600 --> 00:04:05.560
+sem depender de gerenciamento manual de timers.
+
+90
+00:04:05.560 --> 00:04:09.360
+Limitando essa configuração a um máximo, como três tentativas
+
+91
+00:04:09.360 --> 00:04:12.680
+garante que a aplicação não entrará em um loop de retry descontrolado
+
+92
+00:04:12.680 --> 00:04:14.400
+se a conexão estiver morta.
+
+93
+00:04:14.400 --> 00:04:16.320
+A regra vital aqui é que os retries
+
+94
+00:04:16.320 --> 00:04:19.680
+devem ser aplicados apenas a operações de leitura idempotentes.
+
+95
+00:04:19.680 --> 00:04:22.760
+Você nunca deve tentar novamente uma mutação de dados às cegas.
+
+96
+00:04:22.760 --> 00:04:25.280
+Migrar de locks nativos imperativos
+
+97
+00:04:25.280 --> 00:04:28.840
+para configurações declarativas elimina grandes quantidades
+
+98
+00:04:28.840 --> 00:04:32.240
+de boilerplate e reduz drasticamente a área de superfície
+
+99
+00:04:32.240 --> 00:04:34.680
+para bugs de sincronização manual.
+
+100
+00:04:34.680 --> 00:04:37.920
+Por fim, a camada quatro cobre falhas catastróficas.
+
+101
+00:04:37.920 --> 00:04:40.880
+Erros nativos de falta de memória e exceções JavaScript não tratadas
+
+102
+00:04:40.880 --> 00:04:44.200
+que ultrapassam todas as redes anteriores.
+
+103
+00:04:44.200 --> 00:04:48.080
+A telemetria em uma aplicação híbrida é fragmentada por padrão.
+
+104
+00:04:48.080 --> 00:04:50.680
+O engine Hermes compila seu código JavaScript
+
+105
+00:04:50.680 --> 00:04:53.400
+em bytecode otimizado durante o build.
+
+106
+00:04:53.400 --> 00:04:55.560
+Este log ilustra o resultado.
+
+107
+00:04:55.560 --> 00:04:58.840
+A metade superior exibe frames nativos padrão do iOS
+
+108
+00:04:58.840 --> 00:05:01.960
+enquanto a metade inferior contém traces ilegíveis do Hermes
+
+109
+00:05:01.960 --> 00:05:04.560
+referenciando offsets de bytecode sem sentido.
+
+110
+00:05:04.560 --> 00:05:07.480
+Traduzir esses offsets de volta para o TypeScript original
+
+111
+00:05:07.520 --> 00:05:09.240
+é chamado de symbolication.
+
+112
+00:05:09.240 --> 00:05:12.160
+A interface de linha de comando envia dois artifacts.
+
+113
+00:05:12.160 --> 00:05:15.840
+Primeiro, o pacote dot DSYM resolve a metade superior da stack
+
+114
+00:05:15.840 --> 00:05:18.120
+em frames nativos iOS claros.
+
+115
+00:05:18.120 --> 00:05:20.360
+Segundo, o JavaScript source map traduz
+
+116
+00:05:20.360 --> 00:05:23.160
+a metade inferior do bytecode de volta para o número exato de linha do TypeScript
+
+117
+00:05:23.160 --> 00:05:24.160
+numbers.
+
+118
+00:05:24.160 --> 00:05:27.360
+Ao configurar plataformas como Sentry ou Crashlytics
+
+119
+00:05:27.360 --> 00:05:29.600
+com um data source name compartilhado, você
+
+120
+00:05:29.600 --> 00:05:32.040
+mescla esses streams de execução distintos
+
+121
+00:05:32.040 --> 00:05:34.200
+em um dashboard coeso.
+
+122
+00:05:34.200 --> 00:05:36.840
+Sem mapear o contexto nativo e o JavaScript
+
+123
+00:05:36.840 --> 00:05:39.840
+simultaneamente, um crash híbrido
+
+124
+00:05:39.840 --> 00:05:42.400
+é praticamente impossível de depurar.
+
+125
+00:05:42.400 --> 00:05:45.560
+A telemetria unificada é seu failsafe definitivo.
+
+126
+00:05:45.560 --> 00:05:47.560
+Implementar essas quatro camadas só
+
+127
+00:05:47.560 --> 00:05:50.040
+funciona se você classificar corretamente seus erros
+
+128
+00:05:50.040 --> 00:05:52.360
+para determinar qual camada deve tratá-los.
+
+129
+00:05:52.360 --> 00:05:54.440
+Aqui está a matriz operacional.
+
+130
+00:05:54.440 --> 00:05:58.240
+Dividimos os erros em três categorias rígidas, non-fatal,
+
+131
+00:05:58.240 --> 00:06:01.640
+JS fatal e native fatal, mapeando cada um diretamente
+
+132
+00:06:01.640 --> 00:06:03.320
+para uma camada arquitetural.
+
+133
+00:06:03.320 --> 00:06:05.520
+Erros não fatais, como timeouts de rede
+
+134
+00:06:05.520 --> 00:06:08.160
+ou falhas de validação de dados, são explicitamente
+
+135
+00:06:08.160 --> 00:06:11.320
+capturados pelas camadas internas de TypeScript e TANstack query,
+
+136
+00:06:11.320 --> 00:06:14.720
+permitindo que você os registre e exiba avisos de UI inline.
+
+137
+00:06:14.720 --> 00:06:17.000
+JS fatals, como exceções de renderização,
+
+138
+00:06:17.000 --> 00:06:18.640
+se propagam para a camada intermediária.
+
+139
+00:06:18.640 --> 00:06:21.360
+Eles atingem os react-air boundaries contendo o crash
+
+140
+00:06:21.360 --> 00:06:23.960
+e preservando o estado geral da aplicação.
+
+141
+00:06:23.960 --> 00:06:26.280
+Falhas fatais nativas, como vazamentos de memória,
+
+142
+00:06:26.280 --> 00:06:28.880
+ignoram completamente a lógica de UI.
+
+143
+00:06:28.880 --> 00:06:30.960
+Elas atingem a camada de telemetria mais externa,
+
+144
+00:06:30.960 --> 00:06:35.400
+acionando a simbolização .DSYM para análise post-mortem.
+
+145
+00:06:35.400 --> 00:06:37.600
+Essa arquitetura inteira se relaciona diretamente
+
+146
+00:06:37.600 --> 00:06:39.920
+com a filosofia rígida do Swift.
+
+147
+00:06:39.920 --> 00:06:42.200
+Você empurra o tratamento de erros para o limite exato
+
+148
+00:06:42.200 --> 00:06:44.400
+onde você possui o contexto para responder de forma significativa
+
+149
+00:06:44.400 --> 00:06:47.240
+a ele, evitando falhas silenciosas e impossíveis de rastrear
+
+150
+00:06:47.240 --> 00:06:49.440
+no meio da sua pilha de execução.
+
+151
+00:06:49.440 --> 00:06:51.880
+O React Native não remove a rede de segurança rígida
+
+152
+00:06:51.880 --> 00:06:53.240
+da engenharia nativa.
+
+153
+00:06:53.240 --> 00:06:55.960
+Ele te entrega exatamente as ferramentas que você precisa para arquitetar uma
+
+154
+00:06:55.960 --> 00:06:59.480
+que é feita sob medida para um ambiente híbrido.
+

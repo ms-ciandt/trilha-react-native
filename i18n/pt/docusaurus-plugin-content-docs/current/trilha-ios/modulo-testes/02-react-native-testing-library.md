@@ -8,6 +8,7 @@ title: React Native Testing Library
 
 <video width="100%" controls>
   <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/test_02_react-native-testing-library.mp4" type="video/mp4">
+  <track kind="captions" src="/trilha-react-native/assets/captions/trilha_ios/test_02_react-native-testing-library.vtt" srclang="pt" label="Português" default>
   Your browser does not support the video tag.
 </video>
 

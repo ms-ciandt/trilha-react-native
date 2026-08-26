@@ -1,0 +1,270 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:07.280
+Bootstrapping a pure Swift application yields a clean, linear environment that compiles almost instantly.
+
+2
+00:00:07.280 --> 00:00:12.880
+Generating a React Native iOS project produces an entirely different structure.
+
+3
+00:00:12.880 --> 00:00:19.320
+Running the initialization command generates an iOS directory packed with specific configuration files.
+
+4
+00:00:19.320 --> 00:00:26.640
+Most notably, it produces both an Xcode project file and a CocoaPods workspace file, sitting right next to each other.
+
+5
+00:00:26.880 --> 00:00:33.120
+Modern iOS developers are trained to reach for Swift package manager and pure.swift entry points.
+
+6
+00:00:33.120 --> 00:00:39.040
+They expect to manage dependencies and application logic natively through Apple's first party tool chain.
+
+7
+00:00:39.040 --> 00:00:45.440
+Forcing those standard tools onto a React Native code base leads directly to day one build failures.
+
+8
+00:00:45.440 --> 00:00:50.560
+The compiler will immediately throw missing module errors and refuse to build the app.
+
+9
+00:00:50.560 --> 00:00:54.560
+React Native's underlying architecture requires this specific tooling
+
+10
+00:00:54.640 --> 00:01:00.160
+because its core is built in C++ and Objective C++ rather than pure Swift.
+
+11
+00:01:00.160 --> 00:01:05.520
+Treating these CocoaCods and workspace requirements as structural necessities is the baseline for
+
+12
+00:01:05.520 --> 00:01:10.960
+preventing the build errors we're about to deconstruct. Inside the generated iOS folder,
+
+13
+00:01:10.960 --> 00:01:15.440
+you are presented with two distinct options to open the completely new code base,
+
+14
+00:01:15.440 --> 00:01:23.280
+MyApp.xcode project and MyApp.xcode workspace. This diagram maps the Xcode project boundaries.
+
+15
+00:01:23.280 --> 00:01:27.680
+It isolates application targets without awareness of external dependencies.
+
+16
+00:01:27.680 --> 00:01:33.440
+Opening the project file fails immediately with a no such module React error, lacking a dependency map.
+
+17
+00:01:34.000 --> 00:01:38.480
+The workspace file physically links your main target with the CocoaPods project.
+
+18
+00:01:38.480 --> 00:01:41.440
+With the workspace open, the compiler resolves paths.
+
+19
+00:01:41.440 --> 00:01:44.960
+It maps your application code to the necessary react native modules,
+
+20
+00:01:44.960 --> 00:01:50.480
+sitting in the adjacent pod's target. The Xcode workspace file is the mandatory structural glue
+
+21
+00:01:50.480 --> 00:01:55.200
+required to compile native dependencies alongside your code. Inside the workspace,
+
+22
+00:01:55.200 --> 00:02:02.320
+the initialization entry point is app.mm. The .mm extension denotes Objective C++,
+
+23
+00:02:02.320 --> 00:02:08.080
+rather than the standard .swift extension used in modern iOS apps. This maps the react native
+
+24
+00:02:08.080 --> 00:02:14.960
+runtime. JSI, fabric, and turbo modules are heavy C++ components emitting C++ headers.
+
+25
+00:02:15.440 --> 00:02:20.000
+A .swift file cannot interact directly. Objective C++ translates.
+
+26
+00:02:20.560 --> 00:02:24.640
+AppDelegate.mm imports these headers, bootstrapping the runtime,
+
+27
+00:02:24.640 --> 00:02:27.520
+and exposing a clean upward interface for your Swift code.
+
+28
+00:02:28.000 --> 00:02:31.200
+If you need to execute Swift logic during the initial bootstrap,
+
+29
+00:02:31.200 --> 00:02:33.520
+you can route a helper file through a bridging header,
+
+30
+00:02:33.520 --> 00:02:37.840
+but the entry file executing the startup sequence must stay in Objective C++.
+
+31
+00:02:38.400 --> 00:02:42.960
+The .mm entry point is a rigid boundary isolating the C++ runtime.
+
+32
+00:02:42.960 --> 00:02:46.880
+Relying on this C++ architecture heavily restricts how dependencies are managed.
+
+33
+00:02:47.440 --> 00:02:53.600
+This matrix compares Coco Pods to SPM. SPM lacks mechanisms for complex C++ flags.
+
+34
+00:02:53.600 --> 00:02:58.720
+Coco Pods uses pod target X config to inject C++ requirements directly into the compiler,
+
+35
+00:02:58.720 --> 00:03:05.200
+a future SPM lacks entirely. Additionally, the react native post-install macro sweeps across
+
+36
+00:03:05.200 --> 00:03:12.640
+resolved pods, standardizing build settings uniformly in one pass. Furthermore, Coco Pods utilizes
+
+37
+00:03:12.640 --> 00:03:18.240
+the use native modules macro to scan your node modules directory, automatically detecting and
+
+38
+00:03:18.240 --> 00:03:25.600
+linking the native code for any installed NPM package. React native 0.76 ships experimental SPM
+
+39
+00:03:25.600 --> 00:03:30.800
+support for a small subset of core packages, but compiling the full runtime stack,
+
+40
+00:03:30.800 --> 00:03:35.120
+turbo modules, fabric, and hermys still demands Coco Pods completely.
+
+41
+00:03:35.760 --> 00:03:40.560
+You can still add pure Swift utility libraries through X codes native SPM integration.
+
+42
+00:03:41.120 --> 00:03:44.080
+The two package managers can coexist in the same project.
+
+43
+00:03:44.640 --> 00:03:49.200
+For the react native full stack, Coco Pods is a first class structural requirement.
+
+44
+00:03:49.760 --> 00:03:53.600
+Bypassing it completely breaks the C++ tool chain and halts builds.
+
+45
+00:03:54.240 --> 00:03:57.520
+Because the build depends entirely on these linked packages,
+
+46
+00:03:57.520 --> 00:04:02.400
+the exact version of every dependency must be strictly enforced across all environments.
+
+47
+00:04:03.040 --> 00:04:08.240
+This flow mapping shows version control. Running pod install evaluates your project
+
+48
+00:04:08.240 --> 00:04:14.000
+and pins dependencies to the exact version in the lock file. Running pod update breaks that lock,
+
+49
+00:04:14.000 --> 00:04:19.200
+deliberately seeking newer, potentially breaking versions. Use it only when actively upgrading
+
+50
+00:04:19.200 --> 00:04:25.360
+react native. The pod file dot lock is the single source of truth for the entire native iOS layer.
+
+51
+00:04:25.360 --> 00:04:30.320
+It must absolutely always be committed to your version control system to ensure all developers run
+
+52
+00:04:30.320 --> 00:04:35.840
+the exact same code. In contrast, the massive pods directory should be ignored by version control.
+
+53
+00:04:36.320 --> 00:04:42.000
+Because the lock file is perfectly deterministic, the entire directory can be reproduced flawlessly.
+
+54
+00:04:42.000 --> 00:04:45.360
+If your project includes a gem file to manage Ruby environments,
+
+55
+00:04:45.360 --> 00:04:50.240
+you must run the bundle exact pod install command to maintain absolute control.
+
+56
+00:04:50.240 --> 00:04:54.240
+This forces the system to use the local isolated version of Coco Pods,
+
+57
+00:04:54.240 --> 00:04:57.200
+avoiding conflicts with globally installed versions on a CI server.
+
+58
+00:04:57.840 --> 00:05:02.320
+Strict adherence to the lock file and perfectly localized Ruby environments
+
+59
+00:05:02.320 --> 00:05:08.560
+eliminates the works on my machine class of build divergence. This pipeline traces the sequence.
+
+60
+00:05:08.560 --> 00:05:12.800
+NPM installs dependencies, Coco Pods links native code,
+
+61
+00:05:12.800 --> 00:05:19.200
+and the runtime is bridged through objective C++. For a no such module react error,
+
+62
+00:05:19.200 --> 00:05:26.400
+you opened .xc project instead of .xc workspace. For undefined symbols, you installed the NPM
+
+63
+00:05:26.400 --> 00:05:31.840
+module but skipped pod install. If you hit a non-modular header error, trace it back to the
+
+64
+00:05:31.840 --> 00:05:38.320
+dependency configuration. The required react native post install block is missing from your pod file,
+
+65
+00:05:38.320 --> 00:05:44.880
+preventing the compiler from applying the necessary C++ flags. Internalizing these C++ constraints and
+
+66
+00:05:44.880 --> 00:05:50.880
+the Coco Pods sequence makes the underlying iOS build tooling a predictable invisible part of the
+
+67
+00:05:50.880 --> 00:06:00.880
+development cycle.
+

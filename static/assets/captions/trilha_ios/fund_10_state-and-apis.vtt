@@ -1,0 +1,482 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:03.640
+Em Swift, você tem uma stack nativa bem definida.
+
+2
+00:00:03.640 --> 00:00:05.840
+URL Session cuida da rede.
+
+3
+00:00:05.840 --> 00:00:08.120
+Combine gerencia o estado reativo.
+
+4
+00:00:08.120 --> 00:00:10.160
+Core Data cuida da persistência.
+
+5
+00:00:10.160 --> 00:00:13.400
+A Apple te dá as ferramentas e elas se encaixam por design.
+
+6
+00:00:13.400 --> 00:00:16.920
+O React Native não vem com uma stack monolítica equivalente.
+
+7
+00:00:16.920 --> 00:00:22.080
+Em vez disso, os blocos nativos se fragmentam em um ecossistema fragmentado de pacotes de terceiros.
+
+8
+00:00:22.080 --> 00:00:26.400
+De cara, você não vai encontrar um substituto nativo direto para URL Session,
+
+9
+00:00:26.400 --> 00:00:28.080
+Combine, ou Core Data.
+
+10
+00:00:28.240 --> 00:00:30.360
+Mas essa fragmentação é enganosa.
+
+11
+00:00:30.360 --> 00:00:35.120
+Com o tempo, a comunidade do React Native convergiu para um conjunto muito específico de bibliotecas
+
+12
+00:00:35.120 --> 00:00:38.760
+que mapeiam quase um a um com as ferramentas de iOS que você já conhece.
+
+13
+00:00:38.760 --> 00:00:43.560
+Vamos mapear o stack padrão do React Native diretamente contra a arquitetura Swift.
+
+14
+00:00:43.560 --> 00:00:48.760
+Vamos preencher essas lacunas com Axios, TanStack Query, ZooStand e MMKV.
+
+15
+00:00:48.760 --> 00:00:54.000
+O rigor arquitetural no React Native vem da composição intencional desses equivalentes de terceiros,
+
+16
+00:00:54.000 --> 00:00:57.480
+recriando o fluxo de dados previsível encontrado em um stack nativo.
+
+17
+00:00:57.520 --> 00:00:59.720
+Vamos começar pela camada de rede.
+
+18
+00:00:59.720 --> 00:01:03.560
+Axios é a biblioteca padrão de fetch no React Native,
+
+19
+00:01:03.560 --> 00:01:07.640
+preenchendo exatamente o papel do URL Session e do AlamoFire.
+
+20
+00:01:07.640 --> 00:01:13.120
+Assim como o AlamoFire, o Axios suporta um pipeline de requisições estruturado por meio de interceptors,
+
+21
+00:01:13.120 --> 00:01:16.720
+mapeando perfeitamente para o request interceptor do AlamoFire.
+
+22
+00:01:16.720 --> 00:01:19.440
+A etapa Adapt, seu request interceptor,
+
+23
+00:01:19.440 --> 00:01:24.480
+é exatamente onde você anexa os authorization headers antes da requisição chegar à rede.
+
+24
+00:01:24.520 --> 00:01:28.800
+Este diagrama mostra como o response interceptor lida com a etapa de retry.
+
+25
+00:01:28.800 --> 00:01:32.200
+Observe a token refresh queue do lado do Axios.
+
+26
+00:01:32.200 --> 00:01:36.360
+Esse gate segura as requisições de saída enquanto um novo token é buscado,
+
+27
+00:01:36.360 --> 00:01:39.120
+evitando múltiplas chamadas de refresh simultâneas,
+
+28
+00:01:39.120 --> 00:01:42.000
+a mesma race condition contra a qual você se protege em Swift.
+
+29
+00:01:42.000 --> 00:01:45.680
+Subindo do networking bruto, chegamos ao server-state management.
+
+30
+00:01:45.680 --> 00:01:50.000
+No SwiftUI, você recorreria a um combined publisher em um observable object.
+
+31
+00:01:50.000 --> 00:01:52.760
+No React Native, você usa o TanStack Query.
+
+32
+00:01:52.800 --> 00:01:57.560
+Muitos iniciantes tentam ler dados do servidor chamando um fetch puro do JavaScript
+
+33
+00:01:57.560 --> 00:02:01.760
+diretamente dentro de um componente de UI usando o hook use effect.
+
+34
+00:02:01.760 --> 00:02:08.080
+Chamar o Async Pode assim é exatamente o equivalente a disparar uma tarefa não gerenciada em Swift.
+
+35
+00:02:08.080 --> 00:02:14.240
+Você não tem cancelamento estruturado, nenhuma lógica de retry e nenhum gerenciamento de refetch em background.
+
+36
+00:02:14.240 --> 00:02:17.880
+O TanStack Query assume todo esse gerenciamento de ciclo de vida.
+
+37
+00:02:17.880 --> 00:02:23.840
+Você entrega a ele sua função Async e a biblioteca cuida automaticamente dos estados de loading, captura de erros,
+
+38
+00:02:23.840 --> 00:02:27.200
+do caching e dos protocolos de stale while revalidate.
+
+39
+00:02:27.200 --> 00:02:30.880
+Para manter o cache organizado, você usa uma query key factory,
+
+40
+00:02:30.880 --> 00:02:34.320
+um registro centralizado para todas as suas requisições de rede.
+
+41
+00:02:34.320 --> 00:02:37.880
+Ao centralizar as chaves de consulta e conectá-las ao use query,
+
+42
+00:02:37.880 --> 00:02:42.800
+você mapeia exatamente para o padrão iOS de agrupar publishers combinados por domínio.
+
+43
+00:02:42.800 --> 00:02:46.960
+Isso evita erros de digitação e torna a invalidação de cache altamente previsível.
+
+44
+00:02:47.000 --> 00:02:51.440
+O TanStack Query abstrai completamente o estado do servidor da camada de view.
+
+45
+00:02:51.440 --> 00:02:55.480
+Ele restaura o desacoplamento limpo que os engenheiros iOS esperam do combined,
+
+46
+00:02:55.480 --> 00:02:57.920
+sem que você precise escrever o boilerplate você mesmo.
+
+47
+00:02:57.920 --> 00:03:01.280
+Agora chegamos à divergência arquitetural mais óbvia.
+
+48
+00:03:01.280 --> 00:03:05.440
+O React Native não possui uma camada de persistência offline first embutida.
+
+49
+00:03:05.440 --> 00:03:09.680
+Não existe um equivalente nativo pronto ao core data ou Swift data.
+
+50
+00:03:09.680 --> 00:03:13.640
+Para resolver isso, a comunidade divide o problema estritamente em dois,
+
+51
+00:03:13.640 --> 00:03:18.120
+server state para dados de backend e local client state para dados de UI.
+
+52
+00:03:18.120 --> 00:03:20.560
+O TanStack Query é o dono do server state.
+
+53
+00:03:20.560 --> 00:03:26.480
+Seu cache serve efetivamente como o equivalente em memória de um core data NS-managed object context.
+
+54
+00:03:26.480 --> 00:03:29.160
+Para o local client state, você usa o ZewStand.
+
+55
+00:03:29.160 --> 00:03:33.840
+Pense nele como um objeto observável leve que mantém estado e expõe ações,
+
+56
+00:03:33.840 --> 00:03:36.320
+eliminando completamente o boilerplate combinado.
+
+57
+00:03:36.320 --> 00:03:40.800
+Você frequentemente verá a context API nativa do React sendo usada para estado local,
+
+58
+00:03:40.840 --> 00:03:44.920
+mas você precisa saber exatamente quando escolher context em vez de ZewStand.
+
+59
+00:03:44.920 --> 00:03:47.000
+Context é um instrumento bruto.
+
+60
+00:03:47.000 --> 00:03:49.280
+Sempre que qualquer parte do seu valor muda,
+
+61
+00:03:49.280 --> 00:03:54.160
+isso força uma nova renderização completa de todo componente consumidor que estiver ouvindo ele.
+
+62
+00:03:54.160 --> 00:03:58.320
+Quando o contexto global é atualizado, toda a árvore de componentes filhos é renderizada novamente.
+
+63
+00:03:58.320 --> 00:04:01.800
+O padrão de seletor do ZewStand assina duas fatias específicas,
+
+64
+00:04:01.800 --> 00:04:04.840
+renderizando novamente apenas quando esse valor exato muda.
+
+65
+00:04:04.840 --> 00:04:08.680
+Essa precisão lida com mudanças rápidas em tempo de execução, como carrinhos ativos.
+
+66
+00:04:08.680 --> 00:04:14.040
+Reserve o context para dados estáticos e de baixa frequência, como objetos de tema ou instâncias de roteamento.
+
+67
+00:04:14.040 --> 00:04:16.000
+Lá embaixo, na camada leve de persistência,
+
+68
+00:04:16.000 --> 00:04:20.200
+user defaults mapeia diretamente para o pacote React Native MMKV.
+
+69
+00:04:20.200 --> 00:04:24.960
+o MMKV oferece exatamente a mesma API síncrona de leitura e escrita que o user defaults,
+
+70
+00:04:24.960 --> 00:04:27.720
+mas ele usa arquivos mapeados em memória em vez de SQLite.
+
+71
+00:04:27.720 --> 00:04:29.600
+É excepcionalmente rápido.
+
+72
+00:04:29.600 --> 00:04:31.640
+Para segredos e armazenamento de bundle criptografado,
+
+73
+00:04:31.640 --> 00:04:34.560
+o iOS keychain mapeia para o expo secure store.
+
+74
+00:04:34.560 --> 00:04:36.720
+Existe um cache operacional.
+
+75
+00:04:36.720 --> 00:04:39.360
+O secure store é síncrono no lado nativo,
+
+76
+00:04:39.360 --> 00:04:42.760
+mas para atravessar a bridge do JavaScript, ele retorna promises.
+
+77
+00:04:42.760 --> 00:04:44.760
+Você deve sempre usar await nele.
+
+78
+00:04:44.760 --> 00:04:49.440
+Ao compor o cache do tan stack, slices do ZewStand e MMKV,
+
+79
+00:04:49.440 --> 00:04:52.320
+você alcança uma arquitetura de estado altamente modular
+
+80
+00:04:52.320 --> 00:04:57.280
+que lida com fluxos de dados complexos sem a sobrecarga pesada de um ORM tradicional.
+
+81
+00:04:57.280 --> 00:04:59.680
+Agora vamos analisar a estabilidade da aplicação.
+
+82
+00:04:59.680 --> 00:05:04.400
+Swift torna os erros explícitos no nível de tipo com result success failure.
+
+83
+00:05:04.400 --> 00:05:06.200
+JavaScript não tem equivalente.
+
+84
+00:05:06.200 --> 00:05:09.600
+Os erros simplesmente se propagam como exceções implícitas.
+
+85
+00:05:09.600 --> 00:05:13.280
+TanStack Query normaliza de forma clara essas exceções implícitas.
+
+86
+00:05:13.280 --> 00:05:17.320
+Falhas de rede aparecem através de uma simples propriedade is error na sua query,
+
+87
+00:05:17.320 --> 00:05:19.520
+capturando e roteando-as de forma crítica.
+
+88
+00:05:19.520 --> 00:05:22.680
+Para exceções inesperadas de UI que ocorrem durante uma renderização,
+
+89
+00:05:22.680 --> 00:05:24.800
+o React fornece error boundaries.
+
+90
+00:05:24.800 --> 00:05:29.400
+Elas atuam como uma rede de segurança para capturar falhas não tratadas na sua árvore de componentes.
+
+91
+00:05:29.400 --> 00:05:33.600
+Você deve posicionar esses error boundaries estritamente nas bordas das suas telas de navegação.
+
+92
+00:05:33.640 --> 00:05:37.800
+Isso isola a falha, garantindo que um crash em um componente menor
+
+93
+00:05:37.800 --> 00:05:41.000
+não derrube toda a estrutura da aplicação.
+
+94
+00:05:41.000 --> 00:05:46.800
+Uma vez que a estabilidade esteja garantida, você pode implementar interações avançadas como optimistic updates.
+
+95
+00:05:46.800 --> 00:05:50.720
+O TanStack Query automatiza isso através de um padrão de três callbacks,
+
+96
+00:05:50.720 --> 00:05:53.960
+on mutate, on error e on settled.
+
+97
+00:05:53.960 --> 00:05:55.520
+Aqui está o fluxo.
+
+98
+00:05:55.520 --> 00:05:58.280
+On mutate atualiza instantaneamente o estado local,
+
+99
+00:05:58.280 --> 00:06:01.120
+então a UI parece perfeitamente responsiva.
+
+100
+00:06:01.160 --> 00:06:05.840
+Se a rede falhar, on error automaticamente aciona um rollback do estado.
+
+101
+00:06:05.840 --> 00:06:10.840
+Finalmente, em settled, reconcilia o cache local com o verdadeiro estado do servidor.
+
+102
+00:06:10.840 --> 00:06:14.160
+Esse padrão embutido automatiza a lógica de consistência de cache
+
+103
+00:06:14.160 --> 00:06:16.840
+que normalmente exige coordenação manual
+
+104
+00:06:16.840 --> 00:06:20.800
+ao construir atualizações otimistas do zero no iOS.
+
+105
+00:06:20.800 --> 00:06:24.560
+Vamos dar um passo atrás e olhar para o módulo de funcionalidade totalmente construído.
+
+106
+00:06:24.560 --> 00:06:26.800
+A arquitetura se organiza de forma clara.
+
+107
+00:06:26.800 --> 00:06:31.080
+Seu arquivo API.ts abriga a instância de rede do Axios.
+
+108
+00:06:31.080 --> 00:06:33.920
+O TanStack Query gerencia o cache do servidor.
+
+109
+00:06:33.920 --> 00:06:36.840
+O ZooStand mantém o estado transitório da UI
+
+110
+00:06:36.840 --> 00:06:41.200
+e o MMKV e o secure store protegem as preferências locais.
+
+111
+00:06:41.200 --> 00:06:45.480
+Essa separação de lógica reflete exatamente os limites que você estabelece
+
+112
+00:06:45.480 --> 00:06:51.080
+ao compor URL session, combine, core data e user defaults.
+
+113
+00:06:51.080 --> 00:06:54.400
+Cada ferramenta tem uma responsabilidade estritamente delimitada.
+
+114
+00:06:54.400 --> 00:06:56.840
+Os dados se movem de forma previsível pelo pipeline,
+
+115
+00:06:56.840 --> 00:07:00.560
+evitando completamente um container de estado monolítico e emaranhado.
+
+116
+00:07:00.560 --> 00:07:03.680
+O choque de framework geralmente é só superficial, na sintaxe.
+
+117
+00:07:03.680 --> 00:07:07.280
+Assim que você entende como o ecossistema do React Native converge,
+
+118
+00:07:07.280 --> 00:07:09.640
+você pode aplicar exatamente o mesmo rigor estrutural
+
+119
+00:07:09.640 --> 00:07:12.360
+que você já usa em iOS diretamente
+
+120
+00:07:12.360 --> 00:07:14.760
+na sua arquitetura JavaScript.
+

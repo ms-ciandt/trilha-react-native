@@ -1,0 +1,362 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:06.000
+Se você já lançou apps com UI kit ou Swift UI, você carrega um modelo mental forte de threading.
+
+2
+00:00:06.000 --> 00:00:09.600
+A arquitetura do React Native é construída sobre essas mesmas primitivas,
+
+3
+00:00:09.600 --> 00:00:15.600
+o que significa que seu conhecimento existente do iOS Run Loop é a chave para diagnosticar problemas de performance.
+
+4
+00:00:15.600 --> 00:00:20.400
+Este gráfico mostra como conceitos familiares do Swift se mapeiam para o React Native engine.
+
+5
+00:00:20.400 --> 00:00:26.400
+Onde você depende do dispatchq.main e Swift, o React Native usa a UI thread.
+
+6
+00:00:26.400 --> 00:00:31.600
+Onde você usa um background dispatchq, o React Native usa a JS thread.
+
+7
+00:00:31.600 --> 00:00:36.000
+Uma aplicação React Native em execução mantém três threads principais.
+
+8
+00:00:36.000 --> 00:00:40.600
+A main thread é exatamente o mesmo UI run loop que você conhece do iOS.
+
+9
+00:00:40.600 --> 00:00:47.200
+Todas as mutações de UI view, callbacks de gesture recognizer e atualizações de core animation acontecem aqui.
+
+10
+00:00:47.200 --> 00:00:53.200
+A JS thread é uma backgroundq dedicada, gerenciada pelo Hermes, o JavaScript engine embutido.
+
+11
+00:00:53.200 --> 00:00:57.200
+É aqui que as funções de renderização do seu componente e a lógica de negócio são executadas.
+
+12
+00:00:57.200 --> 00:01:01.600
+Pense na JS thread como uma dispatch queue central interativa para o usuário
+
+13
+00:01:01.600 --> 00:01:04.400
+com a qual você não pode interagir diretamente a partir do Swift.
+
+14
+00:01:04.400 --> 00:01:09.600
+O contrato fundamental do desenvolvimento iOS permanece inalterado através dessa fronteira.
+
+15
+00:01:09.600 --> 00:01:14.800
+Bloqueie qualquer uma dessas threads primárias e você perde frames ou trava o processo.
+
+16
+00:01:14.800 --> 00:01:20.000
+O Fabric, o sistema de renderização moderno do React Native, gerencia o terceiro pilar arquitetural,
+
+17
+00:01:20.000 --> 00:01:26.800
+a shadow thread. Esta é uma C++ thread dedicada, projetada especificamente para calcular os layouts de yoga flex box
+
+18
+00:01:26.800 --> 00:01:29.200
+toda vez que sua árvore de componentes muda.
+
+19
+00:01:29.200 --> 00:01:33.800
+Em termos de UI kit, isso funciona de forma idêntica a executar uma tarefa em segundo plano no GCD
+
+20
+00:01:33.800 --> 00:01:38.600
+que calcula os CRECT frames para toda uma hierarquia de views antes de tocar na tela.
+
+21
+00:01:38.600 --> 00:01:41.600
+O Fabric calcula esses cálculos de layout na shadow thread
+
+22
+00:01:41.600 --> 00:01:45.400
+e os entrega à main thread em uma única transação atômica.
+
+23
+00:01:45.400 --> 00:01:48.800
+Ao transferir o cálculo de layout para uma thread de background em C++,
+
+24
+00:01:48.800 --> 00:01:52.600
+a main thread permanece totalmente livre da sobrecarga de medições pesadas de views.
+
+25
+00:01:52.600 --> 00:01:56.400
+Historicamente, o React Native sofria com um atraso persistente de um frame.
+
+26
+00:01:56.400 --> 00:02:02.200
+Os gestos pareciam levemente desconectados e a rolagem rápida podia expor células em branco antes que o layout se atualizasse.
+
+27
+00:02:02.200 --> 00:02:06.600
+Esta linha do tempo mostra a causa, a arquitetura legada da bridge.
+
+28
+00:02:06.600 --> 00:02:13.000
+A passagem de dados entre as threads de JS e main dependia de serialização JSON assíncrona,
+
+29
+00:02:13.000 --> 00:02:18.400
+garantindo que os cálculos de layout estivessem sempre pelo menos um frame atrás do ciclo de eventos.
+
+30
+00:02:18.600 --> 00:02:24.000
+A arquitetura moderna substitui essa bridge pela JavaScript interface, ou JSI.
+
+31
+00:02:24.000 --> 00:02:29.200
+JSI permite chamadas síncronas em C++ entre a JS thread e a shadow thread,
+
+32
+00:02:29.200 --> 00:02:31.400
+eliminando a etapa de serialização.
+
+33
+00:02:31.400 --> 00:02:34.200
+Os cálculos de layout agora acontecem de forma síncrona
+
+34
+00:02:34.200 --> 00:02:37.800
+e as mutações de view resultantes são commitadas diretamente na main thread.
+
+35
+00:02:37.800 --> 00:02:42.400
+Para um desenvolvedor iOS, essa é exatamente a mesma redução de latência que você experimenta
+
+36
+00:02:42.400 --> 00:02:47.000
+ao migrar de broadcasts cross-thread do notification center para chamadas de método diretas.
+
+37
+00:02:47.200 --> 00:02:51.200
+Eliminar a bridge assíncrona baseada em JSON é a mudança técnica específica
+
+38
+00:02:51.200 --> 00:02:55.600
+que permite que as animações do React Native atinjam 120 quadros por segundo.
+
+39
+00:02:55.600 --> 00:03:00.600
+A transição de Swift para React Native exige uma mudança na forma como você lida com thread safety.
+
+40
+00:03:00.600 --> 00:03:03.000
+Chamamos isso de inversão de concorrência.
+
+41
+00:03:03.000 --> 00:03:06.200
+Este diagrama ilustra o paradigma do Swift.
+
+42
+00:03:06.200 --> 00:03:12.600
+A concorrência do Swift usa at main actor para trazer explicitamente o trabalho em segundo plano para a UI thread.
+
+43
+00:03:12.600 --> 00:03:15.200
+No React Native, o fluxo é invertido.
+
+44
+00:03:15.200 --> 00:03:17.800
+JavaScript é single threaded por design.
+
+45
+00:03:17.800 --> 00:03:23.400
+Todo o state, reducers e render paths dos componentes são executados inerentemente na JS thread.
+
+46
+00:03:23.400 --> 00:03:25.800
+O desafio funciona na direção oposta.
+
+47
+00:03:25.800 --> 00:03:31.000
+Você precisa ativamente tirar computações pesadas da JS thread e movê-las para native worker threads
+
+48
+00:03:31.000 --> 00:03:33.200
+para proteger seu orçamento de execução.
+
+49
+00:03:33.200 --> 00:03:36.000
+Quando você precisa atualizar uma propriedade de view a partir do background,
+
+50
+00:03:36.000 --> 00:03:43.200
+você mapeia o dispatchq.main.async do Swift para a diretiva run on UI worklet do react native reanimated.
+
+51
+00:03:43.200 --> 00:03:47.000
+Para animações padrão, definir use native driver como true,
+
+52
+00:03:47.000 --> 00:03:50.000
+funciona exatamente como o CA basic animation.
+
+53
+00:03:50.000 --> 00:03:55.400
+Ele move a interpolação inteiramente para o domínio nativo, contornando completamente a thread JS.
+
+54
+00:03:55.400 --> 00:03:58.600
+O compilador do Swift vai avisar se você usar main actor incorretamente.
+
+55
+00:03:58.600 --> 00:04:01.600
+O React Native não oferece esse tipo de segurança em tempo de compilação.
+
+56
+00:04:01.600 --> 00:04:06.800
+Chamar uma operação síncrona custosa, como ordenar um array enorme,
+
+57
+00:04:06.800 --> 00:04:11.600
+ou fazer parsing de uma string JSON grande, trava silenciosamente a thread JS.
+
+58
+00:04:11.800 --> 00:04:16.400
+Dominar concorrência aqui significa tratar a thread JS como um gargalo rígido
+
+59
+00:04:16.400 --> 00:04:21.000
+que exige descarregamento constante, em vez de ser um destino para suas tarefas.
+
+60
+00:04:21.000 --> 00:04:22.800
+Vamos ver o gerenciamento de memória.
+
+61
+00:04:22.800 --> 00:04:26.600
+Swift usa contagem automática de referências ou ARC.
+
+62
+00:04:26.600 --> 00:04:30.000
+O motor Hermes usa um garbage collector geracional.
+
+63
+00:04:30.000 --> 00:04:35.600
+O ARC distribui a sobrecarga de memória de forma determinística entre chamadas de retain e release.
+
+64
+00:04:35.600 --> 00:04:39.800
+O Hermes, no entanto, depende de uma fase de compactação que para o mundo.
+
+65
+00:04:39.800 --> 00:04:43.000
+Quando o JavaScript retém grafos de objetos ilimitados,
+
+66
+00:04:43.000 --> 00:04:46.800
+como stores redux enormes ou descritores de imagem não armazenados em cache,
+
+67
+00:04:46.800 --> 00:04:50.800
+o heap incha e a fase de compactação leva mais tempo para ser executada.
+
+68
+00:04:50.800 --> 00:04:55.600
+Uma fase de compactação do garbage collection prolongada pausa completamente a thread do JS.
+
+69
+00:04:55.600 --> 00:04:59.200
+Quando a thread do JS para completamente, as passagens de layout são puladas.
+
+70
+00:04:59.200 --> 00:05:04.600
+Se uma tela apresenta jank visual intermitente sem nenhuma carga de CPU aparente,
+
+71
+00:05:04.600 --> 00:05:08.800
+uma pausa de garbage collection do Hermes é quase certamente a causa.
+
+72
+00:05:08.800 --> 00:05:12.800
+O hardware moderno da iOS introduz uma restrição de tempo rigorosa.
+
+73
+00:05:12.800 --> 00:05:17.200
+A 60 quadros por segundo, você tem 16 milissegundos para renderizar um quadro.
+
+74
+00:05:17.200 --> 00:05:23.000
+Em uma tela ProMotion de 120 hertz, esse orçamento diminui para exatamente 8 milissegundos.
+
+75
+00:05:23.000 --> 00:05:28.200
+Uma tarefa de 10 milissegundos na thread JS passa completamente despercebida em um dispositivo mais antigo.
+
+76
+00:05:28.200 --> 00:05:32.400
+No entanto, em um iPhone 15 Pro moderno, isso garante um quadro perdido
+
+77
+00:05:32.400 --> 00:05:36.000
+porque o prazo rigoroso chega antes que o trabalho seja concluído.
+
+78
+00:05:36.000 --> 00:05:40.800
+Esta representação do time profiler do Xcode ajuda a diagnosticar sobrecargas.
+
+79
+00:05:40.800 --> 00:05:45.000
+Isole a thread rotulada com.facebook.react.javascript.
+
+80
+00:05:45.000 --> 00:05:48.200
+Um trace problemático revela um pico vertical massivo,
+
+81
+00:05:48.200 --> 00:05:51.200
+ultrapassando o limite de 8 milissegundos durante o tempo ocioso.
+
+82
+00:05:51.200 --> 00:05:54.000
+Para evitar quedas de frame durante transições complexas,
+
+83
+00:05:54.000 --> 00:05:57.400
+os desenvolvedores do UI kit adiam o trabalho com async after.
+
+84
+00:05:57.400 --> 00:06:02.200
+O equivalente em react native é interaction manager.runafter interactions.
+
+85
+00:06:02.200 --> 00:06:07.200
+Ao enfileirar buscas de dados não críticas até depois das transições de navegação
+
+86
+00:06:07.200 --> 00:06:09.600
+limpe o registro de interações ativas,
+
+87
+00:06:09.600 --> 00:06:13.000
+você protege esse orçamento apertado de 8 milissegundos por frame.
+
+88
+00:06:13.000 --> 00:06:19.000
+O sistema operacional subjacente aplica exatamente as mesmas regras para UI kit e react native.
+
+89
+00:06:19.000 --> 00:06:23.000
+O sucesso depende inteiramente de manter as threads desobstruídas
+
+90
+00:06:23.000 --> 00:06:26.000
+e medir os resultados no instruments.
+

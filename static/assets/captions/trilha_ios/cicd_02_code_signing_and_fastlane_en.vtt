@@ -1,0 +1,362 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:04.000
+When compiling a React native app on a local developer machine,
+
+2
+00:00:04.000 --> 00:00:06.800
+the build process often completes without issue,
+
+3
+00:00:06.800 --> 00:00:11.000
+but deploy that exact same code to a continuous integration server
+
+4
+00:00:11.000 --> 00:00:15.500
+and the pipeline fails entirely, blocked by an authentication error.
+
+5
+00:00:15.500 --> 00:00:20.000
+This discrepancy happens because Xcode defaults to automatic signing.
+
+6
+00:00:20.000 --> 00:00:24.000
+This setting hides the cryptographic complexity of iOS deployment,
+
+7
+00:00:24.000 --> 00:00:28.000
+resolving certificate conflicts behind the scenes on behalf of the developer.
+
+8
+00:00:28.000 --> 00:00:32.000
+Automatic signing relies on two hidden local dependencies to function,
+
+9
+00:00:32.000 --> 00:00:37.000
+the developer's populated macOS keychain and an interactive Apple ID session,
+
+10
+00:00:37.000 --> 00:00:41.000
+capable of receiving two-factor authentication prompts,
+
+11
+00:00:41.000 --> 00:00:43.000
+headless CI environments lack both.
+
+12
+00:00:43.000 --> 00:00:48.000
+Ephemeral CI runners boot as blank slates without pre-existing keychains
+
+13
+00:00:48.000 --> 00:00:52.000
+and they cannot intercept a 2FA code sent to a developer's phone.
+
+14
+00:00:52.000 --> 00:00:56.000
+To automate iOS deployment, we have to strip away automatic signing.
+
+15
+00:00:57.000 --> 00:01:00.000
+We must entirely decouple cryptographic credentials
+
+16
+00:01:00.000 --> 00:01:04.000
+from individual developer's machines and interactive user sessions.
+
+17
+00:01:04.000 --> 00:01:06.000
+To rebuild this process for automation,
+
+18
+00:01:06.000 --> 00:01:09.000
+we have to look at the foundational component of iOS deployment,
+
+19
+00:01:09.000 --> 00:01:11.000
+the provisioning profile.
+
+20
+00:01:11.000 --> 00:01:14.000
+This mobile provision file acts as a signed envelope
+
+21
+00:01:14.000 --> 00:01:17.000
+tying together three strict requirements.
+
+22
+00:01:17.000 --> 00:01:20.000
+First, an app ID defining authorized capabilities.
+
+23
+00:01:20.000 --> 00:01:23.000
+Second, a list of allowed device UUIDs,
+
+24
+00:01:23.000 --> 00:01:25.000
+the specific iPhones permitted to run the binary.
+
+25
+00:01:25.000 --> 00:01:29.000
+Third, the signing certificate containing the authorized public key.
+
+26
+00:01:29.000 --> 00:01:32.000
+Apple issues two main types of certificates.
+
+27
+00:01:32.000 --> 00:01:36.000
+A development certificate is tied to a single user's Apple ID for local testing.
+
+28
+00:01:36.000 --> 00:01:40.000
+A distribution certificate is required for compiling release binaries
+
+29
+00:01:40.000 --> 00:01:42.000
+intended for test flight or the app store.
+
+30
+00:01:42.000 --> 00:01:44.000
+At launch, iOS reads this envelope.
+
+31
+00:01:44.000 --> 00:01:48.000
+It verifies that the certificate used to compile the binary perfectly matches
+
+32
+00:01:48.000 --> 00:01:50.000
+the public key embedded in this profile.
+
+33
+00:01:50.000 --> 00:01:53.000
+A valid build requires this exact triad.
+
+34
+00:01:53.000 --> 00:01:57.000
+If the machine's keys do not perfectly match the provisioning profile,
+
+35
+00:01:57.000 --> 00:01:59.000
+the entire compilation fails.
+
+36
+00:01:59.000 --> 00:02:03.000
+The private key for a distribution certificate is generated locally.
+
+37
+00:02:03.000 --> 00:02:08.000
+It lives exclusively in the local macOS keychain of the specific developer
+
+38
+00:02:08.000 --> 00:02:11.000
+who created it, not in the project repository.
+
+39
+00:02:11.000 --> 00:02:15.000
+If a new team member needs to build a release binary and lacks that private key,
+
+40
+00:02:15.000 --> 00:02:19.000
+Xcode's automatic signing will simply generate a brand new distribution certificate
+
+41
+00:02:19.000 --> 00:02:20.000
+for them.
+
+42
+00:02:20.000 --> 00:02:24.000
+Apple limits the number of active distribution certificates per account.
+
+43
+00:02:24.000 --> 00:02:28.000
+To issue the new certificate, Apple automatically revokes the old one.
+
+44
+00:02:28.000 --> 00:02:31.000
+This creates a failure mode known as certificate roulette.
+
+45
+00:02:31.000 --> 00:02:35.000
+Revoking the previous certificate instantly invalidates the keychain
+
+46
+00:02:35.000 --> 00:02:38.000
+of every other developer and CI machine that relied on it.
+
+47
+00:02:38.000 --> 00:02:40.000
+Their builds will now fail.
+
+48
+00:02:40.000 --> 00:02:43.000
+When distribution keys are siloed on individual laptops,
+
+49
+00:02:43.000 --> 00:02:47.000
+the entire team's ability to release is tied to a single machine's local state.
+
+50
+00:02:48.000 --> 00:02:55.000
+This ensures that every successful build for one developer effectively becomes a breaking change for the rest of the team.
+
+51
+00:02:55.000 --> 00:02:59.000
+Moving to a CI pipeline exposes this flaw immediately.
+
+52
+00:02:59.000 --> 00:03:03.000
+Ephemeral CI runners always boot in a completely blank state.
+
+53
+00:03:03.000 --> 00:03:08.000
+They possess no pre-populated keychains and carry no historical cryptographic data.
+
+54
+00:03:08.000 --> 00:03:11.000
+Because the CI runner is an automated script,
+
+55
+00:03:11.000 --> 00:03:15.000
+it absolutely cannot intercept a two-factor authentication prompt
+
+56
+00:03:15.000 --> 00:03:20.000
+to log into the Apple developer portal and dynamically generate missing keys.
+
+57
+00:03:20.000 --> 00:03:23.000
+The only viable solution is manual signing.
+
+58
+00:03:23.000 --> 00:03:30.000
+This requires that the precise distribution certificate is actively injected into a temporary keychain on the runner
+
+59
+00:03:30.000 --> 00:03:32.000
+before compilation begins.
+
+60
+00:03:32.000 --> 00:03:38.000
+Simultaneously, the matching provisioning profile must be placed into a specific hard-coded path.
+
+61
+00:03:38.000 --> 00:03:42.000
+The mobile device slash provisioning profiles directory on the runner.
+
+62
+00:03:42.000 --> 00:03:47.000
+The runner authenticates with the repository using a personal access token,
+
+63
+00:03:47.000 --> 00:03:53.000
+retrieves the files, and uses the secret passphrase to decrypt and install the keys locally.
+
+64
+00:03:53.000 --> 00:03:59.000
+By utilizing a private secure Git repository as the strict authority for signing credentials,
+
+65
+00:03:59.000 --> 00:04:03.000
+we eliminate the certificate roulette problem entirely.
+
+66
+00:04:03.000 --> 00:04:09.000
+Furthermore, we also completely remove the need for any interactive Apple developer portal logins
+
+67
+00:04:09.000 --> 00:04:12.000
+during the continuous integration build process.
+
+68
+00:04:12.000 --> 00:04:18.000
+With the signing environment fully secured, we use Fastlane Jim to handle the actual compilation.
+
+69
+00:04:18.000 --> 00:04:21.000
+Jim executes a two-step process.
+
+70
+00:04:21.000 --> 00:04:26.000
+First, it compiles raw binary and metadata into an XC archive folder.
+
+71
+00:04:26.000 --> 00:04:30.000
+Second, it extracts that archive into a signed IPA file.
+
+72
+00:04:30.000 --> 00:04:37.000
+Next, Fastlane Pilot authenticates with the API and uploads that signed IPA payload directly to test flight.
+
+73
+00:04:37.000 --> 00:04:40.000
+Pilot accepts a skip waiting for build processing flag.
+
+74
+00:04:40.000 --> 00:04:44.000
+This ensures the command returns immediately upon upload,
+
+75
+00:04:44.000 --> 00:04:51.000
+preventing the CI runner from idling and burning execution minutes while Apple processes the binary on their back end.
+
+76
+00:04:51.000 --> 00:05:01.000
+Fastlane deliver then handles the final presentation, synchronizing your version-controlled app metadata, release notes, and screenshots directly to the app store.
+
+77
+00:05:02.000 --> 00:05:08.000
+These tools abstract thousands of lines of fragile shell scripting into deterministic repeatable commands.
+
+78
+00:05:08.000 --> 00:05:12.000
+To orchestrate these tools, we use a fast file.
+
+79
+00:05:12.000 --> 00:05:20.000
+This is a declarative Ruby environment where match, Jim, Pilot, and deliver are sequenced into named execution blocks called lanes.
+
+80
+00:05:20.000 --> 00:05:22.000
+Lanes can execute other lanes.
+
+81
+00:05:22.000 --> 00:05:30.000
+This compositional structure allows you to build multi-target react native apps like compiling a main app and a separate notification extension.
+
+82
+00:05:31.000 --> 00:05:34.000
+While keeping the logic modular and avoiding duplication.
+
+83
+00:05:34.000 --> 00:05:44.000
+The file barrier to this architecture is bypassing Apple ID authentication for actions that must communicate with AppStore Connect like Pilot and deliver.
+
+84
+00:05:44.000 --> 00:05:47.000
+Apple provides an alternative to standard user logins.
+
+85
+00:05:47.000 --> 00:05:52.000
+The AppStore Connect API key, downloaded as a .p8 file.
+
+86
+00:05:52.000 --> 00:05:59.000
+By declaring this API key at the very start of a Fastlane lane, it creates a shared, headless authentication context.
+
+87
+00:05:59.000 --> 00:06:07.000
+Every subsequent Fastlane action automatically utilizes this session, executing network calls to Apple without triggering a single 2FA prompt.
+
+88
+00:06:07.000 --> 00:06:11.000
+Centralizing cryptography in a Git repository secures the build environment.
+
+89
+00:06:11.000 --> 00:06:15.000
+Authenticating via API keys removes the human bottleneck.
+
+90
+00:06:15.000 --> 00:06:24.000
+Together, they transition the iOS release process from an error-prone, localized chore into a scalable, fully automated function of your CI pipeline.
+

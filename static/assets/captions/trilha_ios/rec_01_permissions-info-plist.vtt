@@ -1,0 +1,590 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:04.320
+Um usuário toca no ícone da câmera dentro de um aplicativo React Native.
+
+2
+00:00:04.320 --> 00:00:08.160
+Em vez de um visor, a tela fica completamente preta.
+
+3
+00:00:08.160 --> 00:00:10.320
+O aplicativo travou.
+
+4
+00:00:10.320 --> 00:00:15.920
+Acessar o hardware do dispositivo no iOS requer que dois sistemas distintos estejam de acordo.
+
+5
+00:00:15.920 --> 00:00:20.320
+O aplicativo deve declarar sua intenção de forma estática antes de ser compilado,
+
+6
+00:00:20.320 --> 00:00:24.880
+e somente então a camada JavaScript pode executar a solicitação em tempo de execução.
+
+7
+00:00:24.880 --> 00:00:28.320
+Se o código JavaScript aciona uma API como a câmera,
+
+8
+00:00:28.320 --> 00:00:32.640
+mas o build Native não possui a chave XML correspondente autorizando esse hardware,
+
+9
+00:00:32.640 --> 00:00:34.960
+o kernel do iOS intervém.
+
+10
+00:00:34.960 --> 00:00:39.040
+Ele força um crash imediato e irreversível para proteger a privacidade do usuário.
+
+11
+00:00:39.680 --> 00:00:42.640
+Às vezes a aplicação sobrevive aos testes locais,
+
+12
+00:00:42.640 --> 00:00:44.000
+só para falhar na revisão.
+
+13
+00:00:44.560 --> 00:00:48.000
+Se o build funciona localmente mas falha na análise estática da Apple
+
+14
+00:00:48.000 --> 00:00:50.480
+por causa de strings de permissão vagas ou ausentes,
+
+15
+00:00:50.480 --> 00:00:54.720
+o binário é automaticamente rejeitado sob a diretriz 5.1.1.
+
+16
+00:00:55.360 --> 00:00:58.480
+Corrigir essas falhas requer um pipeline preciso.
+
+17
+00:00:58.480 --> 00:01:03.600
+Os desenvolvedores devem mapear sua configuração JavaScript até a etapa de compilação nativa,
+
+18
+00:01:03.600 --> 00:01:07.360
+que então determina como a máquina de estados do runtime da aplicação opera.
+
+19
+00:01:08.080 --> 00:01:13.440
+Desenvolvedores vindos da web ou do Android costumam assumir que as permissões são tratadas totalmente em tempo real,
+
+20
+00:01:14.000 --> 00:01:18.560
+aplicar essa lógica puramente dinâmica em plataformas Apple garante falhas estruturais.
+
+21
+00:01:19.120 --> 00:01:21.840
+A Apple impõe um perímetro de segurança rigoroso,
+
+22
+00:01:21.840 --> 00:01:24.880
+antes que um dispositivo execute uma solicitação de permissão em tempo de execução.
+
+23
+00:01:24.880 --> 00:01:28.400
+O sistema operacional verifica se o app declarou uma string de propósito específica
+
+24
+00:01:28.400 --> 00:01:30.080
+para aquela categoria de recurso protegido.
+
+25
+00:01:30.640 --> 00:01:33.680
+Essas strings de propósito são armazenadas dentro do pacote da aplicação
+
+26
+00:01:33.680 --> 00:01:35.840
+em um arquivo chamado info.plist.
+
+27
+00:01:35.840 --> 00:01:37.920
+Ele atua como um manifesto estático de intenção.
+
+28
+00:01:38.560 --> 00:01:42.240
+Este diagrama mostra uma comparação lado a lado de strings de uso.
+
+29
+00:01:42.240 --> 00:01:44.800
+Escrever "app needs camera" como sua string de propósito
+
+30
+00:01:44.800 --> 00:01:47.120
+fará com que seu binário seja automaticamente rejeitado.
+
+31
+00:01:47.120 --> 00:01:50.880
+O processo de revisão da Apple exige que o texto detalhe explicitamente
+
+32
+00:01:50.880 --> 00:01:53.680
+o recurso exato que o usuário recebe em troca,
+
+33
+00:01:53.680 --> 00:01:56.320
+como escanear códigos de barras de produtos para o seu pedido.
+
+34
+00:01:56.960 --> 00:02:00.640
+O iOS moderno divide o acesso em categorias granulares.
+
+35
+00:02:00.640 --> 00:02:03.200
+Se um app só precisa salvar uma imagem baixada,
+
+36
+00:02:03.200 --> 00:02:04.720
+ele só requer acesso de escrita.
+
+37
+00:02:05.280 --> 00:02:08.480
+Pedir acesso total de leitura à biblioteca de fotos inteira
+
+38
+00:02:08.480 --> 00:02:11.760
+quando o app só salva mídia é um caminho direto para a rejeição.
+
+39
+00:02:12.320 --> 00:02:15.440
+O rastreamento de localização exige uma configuração ainda mais rigorosa.
+
+40
+00:02:15.440 --> 00:02:17.120
+Para rastrear um usuário em segundo plano,
+
+41
+00:02:17.120 --> 00:02:20.080
+o manifest deve conter tanto a chave de uso em background
+
+42
+00:02:20.080 --> 00:02:21.600
+quanto a chave de uso em foreground.
+
+43
+00:02:21.600 --> 00:02:22.640
+Elas devem coexistir.
+
+44
+00:02:23.280 --> 00:02:26.320
+Até frameworks que rodam silenciosamente, como o Core Bluetooth,
+
+45
+00:02:26.320 --> 00:02:28.800
+agora exigem suas próprias descrições explícitas de uso.
+
+46
+00:02:29.360 --> 00:02:31.280
+Qualquer inicialização dessas bibliotecas,
+
+47
+00:02:31.280 --> 00:02:32.800
+mesmo que apenas em foreground,
+
+48
+00:02:32.800 --> 00:02:34.960
+verifica primeiro o manifest estático.
+
+49
+00:02:34.960 --> 00:02:38.640
+Os bots de revisão automatizados da Apple não executam sua lógica em JavaScript.
+
+50
+00:02:38.640 --> 00:02:40.800
+Eles apenas leem essas strings estáticas.
+
+51
+00:02:40.800 --> 00:02:44.160
+Garantir que este arquivo corresponda perfeitamente às capacidades do seu código
+
+52
+00:02:44.160 --> 00:02:46.880
+é a principal defesa contra a rejeição do binário.
+
+53
+00:02:47.440 --> 00:02:49.440
+A partir do iOS 17,
+
+54
+00:02:49.440 --> 00:02:52.800
+a Apple expandiu sua análise estática para focar no rastreamento oculto.
+
+55
+00:02:53.440 --> 00:02:57.840
+Apps e SDKs de terceiros agora devem declarar práticas específicas de dados
+
+56
+00:02:57.840 --> 00:03:01.280
+em um novo manifesto chamado privacyinfo.x privacy.
+
+57
+00:03:01.920 --> 00:03:06.400
+Este arquivo rastreia APIs de motivo obrigatório, funções que parecem inofensivas
+
+58
+00:03:06.400 --> 00:03:08.480
+mas que podem ser usadas como arma para fingerprinting de dispositivos.
+
+59
+00:03:09.040 --> 00:03:10.880
+Verificar a quantidade de espaço livre em disco
+
+60
+00:03:10.880 --> 00:03:12.720
+ou ler timestamps do sistema de arquivos
+
+61
+00:03:12.800 --> 00:03:14.560
+agora requer documentação formal.
+
+62
+00:03:15.120 --> 00:03:16.160
+Para builds padrão,
+
+63
+00:03:16.160 --> 00:03:20.080
+o React Native e os Expo SDKs modernos lidam com esse requisito internamente.
+
+64
+00:03:20.560 --> 00:03:23.120
+Os módulos principais empacotam seus próprios privacy manifests
+
+65
+00:03:23.120 --> 00:03:25.120
+que se integram perfeitamente durante o processo de build.
+
+66
+00:03:25.680 --> 00:03:27.920
+A lacuna aparece quando desenvolvedores adicionam bibliotecas nativas de terceiros mais antigas
+
+67
+00:03:27.920 --> 00:03:30.480
+ou não mantidas.
+
+68
+00:03:30.480 --> 00:03:34.640
+Se um SDK externo usa uma API restrita e não possui seu próprio manifest,
+
+69
+00:03:34.640 --> 00:03:37.920
+o desenvolvedor deve complementar manualmente o arquivo principal da aplicação.
+
+70
+00:03:37.920 --> 00:03:41.520
+Esta tabela de mapeamento mostra como cada chamada de API restrita
+
+71
+00:03:41.520 --> 00:03:44.560
+feitas por essas dependências devem ser mapeadas diretamente
+
+72
+00:03:44.560 --> 00:03:48.800
+para códigos de motivo estritamente alfanuméricos fornecidos pela documentação da Apple.
+
+73
+00:03:49.280 --> 00:03:52.560
+A ausência de um único código de motivo para uma dependência oculta
+
+74
+00:03:52.560 --> 00:03:55.200
+dispara uma falha automática no AppStore Connect.
+
+75
+00:03:55.760 --> 00:03:58.400
+Isso transfere o trabalho pesado de auditoria de dependências
+
+76
+00:03:58.400 --> 00:04:00.480
+diretamente para o desenvolvedor React Native.
+
+77
+00:04:01.120 --> 00:04:05.040
+Escrever arquivos XML brutos manualmente introduz riscos de sintaxe.
+
+78
+00:04:05.040 --> 00:04:06.800
+Em um workflow gerenciado pelo Expo,
+
+79
+00:04:06.800 --> 00:04:09.920
+o arquivo app.json serve como a verdadeira fonte da verdade
+
+80
+00:04:09.920 --> 00:04:11.120
+para toda a aplicação.
+
+81
+00:04:11.760 --> 00:04:14.320
+As bibliotecas expõem Expo-config plugins,
+
+82
+00:04:14.320 --> 00:04:16.800
+especificamente um modificador chamado com info-lisp.
+
+83
+00:04:17.360 --> 00:04:19.920
+Esta função pega os arrays de configuração JavaScript
+
+84
+00:04:19.920 --> 00:04:22.400
+e os traduz em constraints nativas do iOS.
+
+85
+00:04:22.960 --> 00:04:25.360
+Este fluxograma ilustra a execução do pre-build.
+
+86
+00:04:25.840 --> 00:04:28.080
+Executar o comando executa esses plugins,
+
+87
+00:04:28.080 --> 00:04:30.640
+consumindo os dados JSON e gerando dinamicamente
+
+88
+00:04:30.640 --> 00:04:32.320
+a estrutura nativa do projeto Xcode.
+
+89
+00:04:32.720 --> 00:04:34.640
+O plugin lê os arrays de texto simples
+
+90
+00:04:34.640 --> 00:04:37.600
+e os estrutura automaticamente nas chaves XML corretas
+
+91
+00:04:37.680 --> 00:04:39.840
+e valores de string exigidos pelo sistema operacional.
+
+92
+00:04:40.400 --> 00:04:43.920
+Nessa arquitetura, abrir o Xcode e modificar o manifest manualmente
+
+93
+00:04:43.920 --> 00:04:45.040
+é ativamente destrutivo.
+
+94
+00:04:45.520 --> 00:04:47.520
+Na próxima vez que o projeto for compilado,
+
+95
+00:04:47.520 --> 00:04:51.760
+o comando de pre-build irá sobrescrever completamente qualquer edição manual.
+
+96
+00:04:51.760 --> 00:04:54.400
+Para manter a estabilidade em um managed workflow,
+
+97
+00:04:54.400 --> 00:04:57.200
+os desenvolvedores devem se afastar completamente do Xcode.
+
+98
+00:04:57.680 --> 00:05:00.960
+Permissions exigem tratamento como configuration as code,
+
+99
+00:05:00.960 --> 00:05:03.520
+residindo firmemente dentro do pipeline JavaScript.
+
+100
+00:05:04.000 --> 00:05:06.400
+Uma vez que a compilação estática esteja segura,
+
+101
+00:05:06.400 --> 00:05:08.320
+o foco se move para a execução em tempo de execução (runtime).
+
+102
+00:05:08.880 --> 00:05:11.120
+Este é o momento exato em que um usuário tenta
+
+103
+00:05:11.120 --> 00:05:13.840
+acessar um recurso protegido pela primeiríssima vez.
+
+104
+00:05:14.400 --> 00:05:17.120
+No Android, os aplicativos podem solicitar programaticamente
+
+105
+00:05:17.120 --> 00:05:19.040
+a permissão do usuário várias vezes.
+
+106
+00:05:19.440 --> 00:05:22.640
+O iOS opera sob uma filosofia muito mais restritiva.
+
+107
+00:05:23.120 --> 00:05:26.320
+Este fluxograma mapeia a máquina de estados de tentativa única (one-shot) do iOS.
+
+108
+00:05:26.880 --> 00:05:29.600
+A caixa de diálogo do sistema aparece exatamente uma vez
+
+109
+00:05:29.600 --> 00:05:32.080
+e a resposta do usuário cria uma ramificação permanente
+
+110
+00:05:32.080 --> 00:05:33.600
+na funcionalidade do aplicativo.
+
+111
+00:05:34.080 --> 00:05:35.840
+Se o usuário selecionar concedido,
+
+112
+00:05:35.840 --> 00:05:38.080
+a máquina de estados registra a autorização
+
+113
+00:05:38.080 --> 00:05:41.280
+e a API é executada normalmente em todas as sessões futuras.
+
+114
+00:05:41.600 --> 00:05:44.560
+Se o usuário selecionar negado, ele esbarra em uma parede sólida.
+
+115
+00:05:44.880 --> 00:05:48.000
+O aplicativo nunca mais pode acionar aquele prompt nativo novamente.
+
+116
+00:05:48.480 --> 00:05:53.200
+Sobreviver a essa arquitetura rígida exige uma estratégia específica de experiência do usuário.
+
+117
+00:05:53.520 --> 00:05:56.480
+Os desenvolvedores criam telas personalizadas de pré-autorização.
+
+118
+00:05:56.960 --> 00:06:00.800
+Ao renderizar uma UI personalizada que explica claramente o valor da funcionalidade
+
+119
+00:06:00.800 --> 00:06:03.200
+antes que o diálogo nativo seja invocado,
+
+120
+00:06:03.200 --> 00:06:06.160
+a probabilidade de uma concessão inicial aumenta significativamente.
+
+121
+00:06:06.640 --> 00:06:08.880
+Se o aplicativo acabar em um estado negado,
+
+122
+00:06:08.880 --> 00:06:10.560
+o código precisa capturar esse status
+
+123
+00:06:10.560 --> 00:06:13.840
+e redirecionar o usuário graciosamente para fora do aplicativo
+
+124
+00:06:13.840 --> 00:06:15.840
+e para o menu global de configurações do iOS.
+
+125
+00:06:16.320 --> 00:06:18.960
+Como a mudança de autorização acontece externamente,
+
+126
+00:06:18.960 --> 00:06:22.000
+o aplicativo precisa de um listener de evento de estado do app ativo.
+
+127
+00:06:22.240 --> 00:06:24.080
+Quando o usuário volta para o aplicativo,
+
+128
+00:06:24.080 --> 00:06:25.680
+esse listener detecta o retorno
+
+129
+00:06:25.680 --> 00:06:27.920
+e verifica se o status da permissão foi atualizado.
+
+130
+00:06:28.160 --> 00:06:30.720
+A experiência do usuário no front-end é fortemente ditada
+
+131
+00:06:30.800 --> 00:06:32.480
+pela arquitetura de segurança nativa
+
+132
+00:06:32.480 --> 00:06:33.920
+e imposta pelo kernel do iOS.
+
+133
+00:06:34.480 --> 00:06:37.680
+A arquitetura de permissões do iOS e do react native
+
+134
+00:06:37.680 --> 00:06:40.000
+abrange desde um arquivo JSON localizado
+
+135
+00:06:40.000 --> 00:06:43.360
+até uma única interação irrepetível com o usuário.
+
+136
+00:06:43.840 --> 00:06:45.600
+Uma auditoria de três etapas é necessária.
+
+137
+00:06:46.000 --> 00:06:48.000
+Verifique as strings de uso explícitas,
+
+138
+00:06:48.240 --> 00:06:50.960
+audite as dependências em relação aos privacy manifests,
+
+139
+00:06:50.960 --> 00:06:53.200
+e verifique a UX de pré-autorização.
+
+140
+00:06:53.760 --> 00:06:57.440
+Os revisores automatizados da Apple avaliam cegamente as declarações estáticas
+
+141
+00:06:57.440 --> 00:06:58.640
+nos dois primeiros passos.
+
+142
+00:06:58.880 --> 00:07:01.680
+Em produção, o passo três se torna sua única defesa
+
+143
+00:07:01.680 --> 00:07:03.200
+contra o bloqueio permanente de recursos.
+
+144
+00:07:03.760 --> 00:07:06.080
+Ao garantir que os arquivos de configuração estática
+
+145
+00:07:06.080 --> 00:07:09.520
+estejam precisamente alinhados com uma experiência de usuário dinâmica e resiliente,
+
+146
+00:07:09.520 --> 00:07:11.680
+os desenvolvedores eliminam os principais vetores
+
+147
+00:07:11.680 --> 00:07:14.320
+de falhas locais e rejeições automatizadas.
+

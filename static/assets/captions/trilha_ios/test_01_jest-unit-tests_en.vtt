@@ -1,0 +1,314 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:05.000
+If you have been writing tests in Xcode 16 using modern Swift testing macros,
+
+2
+00:00:05.000 --> 00:00:09.000
+you already possess the exact mental model required for JavaScript testing.
+
+3
+00:00:09.000 --> 00:00:13.000
+At first glance, moving from the compiled environment of Swift
+
+4
+00:00:13.000 --> 00:00:18.000
+to the interpreted world of JavaScript feels like a disconnect in how logic is processed.
+
+5
+00:00:18.000 --> 00:00:22.000
+But beneath the surface tooling, the structural logic remains the same.
+
+6
+00:00:22.000 --> 00:00:27.000
+You isolate a piece of behavior, assert that it produces a specific result, and repeat.
+
+7
+00:00:27.000 --> 00:00:32.000
+We are going to map your existing iOS knowledge directly onto this new environment
+
+8
+00:00:32.000 --> 00:00:34.000
+using a translation matrix.
+
+9
+00:00:34.000 --> 00:00:37.000
+We will start by resolving this simplest friction point,
+
+10
+00:00:37.000 --> 00:00:41.000
+the superficial vocabulary differences, and how tests are structured and grouped.
+
+11
+00:00:41.000 --> 00:00:44.000
+Then we will tackle the core architectural difference,
+
+12
+00:00:44.000 --> 00:00:50.000
+moving from Swift's compile time dependency injection to just runtime module interception.
+
+13
+00:00:50.000 --> 00:00:55.000
+Finally, we will expose the invisible engine divide between the node JS test environment
+
+14
+00:00:55.000 --> 00:00:58.000
+and the actual Hermes mobile runtime.
+
+15
+00:00:58.000 --> 00:01:02.000
+Your existing iOS testing intuition is your greatest asset.
+
+16
+00:01:02.000 --> 00:01:07.000
+Once you map it to this matrix, you will be able to contribute to a react native test suite
+
+17
+00:01:07.000 --> 00:01:10.000
+with the same rigor you use in Xcode.
+
+18
+00:01:10.000 --> 00:01:15.000
+Both ecosystems require you to organize isolated behaviors into logical groups,
+
+19
+00:01:15.000 --> 00:01:18.000
+abandoning classes on the JavaScript side.
+
+20
+00:01:18.000 --> 00:01:22.000
+The Swift at Suite annotation maps directly to Jests described block.
+
+21
+00:01:23.000 --> 00:01:28.000
+Inside, the Swift at test function is identical to Jests it or test function.
+
+22
+00:01:28.000 --> 00:01:32.000
+In Swift, state isolation is handled automatically.
+
+23
+00:01:32.000 --> 00:01:39.000
+Because at Suite structs get a fresh instance per test, placing your setup logic in the init method guarantees a clean slate.
+
+24
+00:01:39.000 --> 00:01:42.000
+Jests does not have this struct lifecycle.
+
+25
+00:01:42.000 --> 00:01:48.000
+To achieve that same state isolation, you must pass explicit setup logic into the before each hook.
+
+26
+00:01:48.000 --> 00:01:51.000
+The tear down process follows the same logic.
+
+27
+00:01:51.000 --> 00:01:56.000
+A Swift at Suite class DNit method maps directly to Jests after each hook.
+
+28
+00:01:56.000 --> 00:02:03.000
+And just like nesting at suite types for specific sub scenarios, you can nest describe blocks and Jests.
+
+29
+00:02:03.000 --> 00:02:09.000
+The setup and tear down hooks will respect these nested scopes running from the outside in.
+
+30
+00:02:09.000 --> 00:02:17.000
+So while just lack Swift's object-oriented containers, it sculpt hooks provide identical lifecycle control and state isolation.
+
+31
+00:02:17.000 --> 00:02:21.000
+Swift testing replaces the old access cert family with macros.
+
+32
+00:02:21.000 --> 00:02:28.000
+Just centralizes everything into a single expect function, which is then chained to specific matcher methods.
+
+33
+00:02:28.000 --> 00:02:31.000
+Equality checking is where precision matters.
+
+34
+00:02:31.000 --> 00:02:38.000
+To mirror a primitive comparison in Swift, use .2b. This enforces strict reference equality.
+
+35
+00:02:38.000 --> 00:02:42.000
+But if comparing arrays or complex objects, .2b will fail.
+
+36
+00:02:42.000 --> 00:02:47.000
+You must use .2 for a deep structural comparison of the nested data.
+
+37
+00:02:47.000 --> 00:02:55.000
+When an API returns a massive payload and you only care about three specific fields, use .2b match object for a partial match.
+
+38
+00:02:55.000 --> 00:03:01.000
+Now a critical warning. Just has no equivalent to Swift's hash-require macro.
+
+39
+00:03:01.000 --> 00:03:07.000
+There are no hard stops. If an assertion fails, just does not halt the test.
+
+40
+00:03:07.000 --> 00:03:10.000
+Execution will continue through the rest of the block.
+
+41
+00:03:10.000 --> 00:03:14.000
+Moving to asynchronous execution, the mapping is seamless.
+
+42
+00:03:14.000 --> 00:03:20.000
+Swift's native concurrency model shares the same architecture as modern JavaScript promises.
+
+43
+00:03:20.000 --> 00:03:30.000
+A at-test async-throws signature translates perfectly to appending the async keyword to the just test function and awaiting the async calls inside.
+
+44
+00:03:30.000 --> 00:03:36.000
+If you encounter legacy just code utilizing the done callback pattern, avoid it entirely.
+
+45
+00:03:36.000 --> 00:03:39.000
+Do not mix it with modern syntax.
+
+46
+00:03:39.000 --> 00:03:44.000
+The done callback is the JavaScript equivalent of the outdated X-test expectation.
+
+47
+00:03:44.000 --> 00:03:48.000
+Modern just relies entirely on async and await.
+
+48
+00:03:48.000 --> 00:03:55.000
+Here is the most significant architectural divergence between the two ecosystems, how they handle dependencies.
+
+49
+00:03:55.000 --> 00:04:04.000
+Swift achieves testability at compile time. You define a protocol, implement a lightweight struct to act as a mock, and inject it into the type you are testing.
+
+50
+00:04:05.000 --> 00:04:12.000
+Just operates at runtime. Instead of injecting dependencies, it intercepts the module system using just.mock.
+
+51
+00:04:12.000 --> 00:04:22.000
+This relies on hoisting. Just physically relocates your mock to the top of the evaluation chain, replacing the module before any other code is read.
+
+52
+00:04:22.000 --> 00:04:27.000
+If replacing the entire file is too destructive, you can use just.spyon.
+
+53
+00:04:27.000 --> 00:04:33.000
+This is a precision tool that wraps a single specific method while leaving the rest of the module intact.
+
+54
+00:04:33.000 --> 00:04:39.000
+To evaluate the intercepted calls, you use just.fn to create a standalone mock function.
+
+55
+00:04:39.000 --> 00:04:43.000
+This acts exactly like a lightweight Swift mock struct.
+
+56
+00:04:43.000 --> 00:04:50.000
+Every time the mock is invoked, it records the artimates and stores them inside its.mock.calls property for you to assert against.
+
+57
+00:04:50.000 --> 00:04:58.000
+To succeed in just, you must stop trying to inject dependencies through protocols and learn to intercept imports at the module level.
+
+58
+00:04:58.000 --> 00:05:05.000
+When evaluating UI logic, React imposes a strict technical constraint. Custom hooks cannot be evaluated in a vacuum.
+
+59
+00:05:05.000 --> 00:05:09.000
+They require a React runtime context to exist.
+
+60
+00:05:09.000 --> 00:05:17.000
+To handle this, at testing library slash React Native package provides render hook, the designated tool to execute and track state updates.
+
+61
+00:05:17.000 --> 00:05:24.000
+The single most common cause of false test failures in React Native is forgetting to flush react effects before your assertions run.
+
+62
+00:05:25.000 --> 00:05:30.000
+Every single action that triggers a state update must be wrapped inside an act function.
+
+63
+00:05:30.000 --> 00:05:34.000
+This forces React to process the queue before just evaluates the result.
+
+64
+00:05:34.000 --> 00:05:42.000
+For visual output validation, just utilizes snapshot testing. This maps directly to iOS UI test baseline images.
+
+65
+00:05:42.000 --> 00:05:49.000
+The component renders, serializes the output to a text file, and fails the test if that text file changes on the next run.
+
+66
+00:05:49.000 --> 00:05:53.000
+But snapshots carry a severe risk of snapshot blindness.
+
+67
+00:05:53.000 --> 00:06:05.000
+If a component receives dynamic data, like timestamps or API responses, the snapshot will break constantly, generating low information failures that developers quickly learn to ignore.
+
+68
+00:06:05.000 --> 00:06:16.000
+Restrict snapshot tests exclusively to leaf components with pure, logicalist presentation. This protects your test suite from accidental regressions without generating daily false positives.
+
+69
+00:06:17.000 --> 00:06:23.000
+There is one final complexity to testing in React Native, and it concerns the execution engine itself.
+
+70
+00:06:23.000 --> 00:06:29.000
+Production React Native executes JavaScript via the Hermes engine, but chest doesn't run inside Hermes.
+
+71
+00:06:29.000 --> 00:06:36.000
+It executes your tests strictly inside a Node.js V8 environment. This split creates practical dangers.
+
+72
+00:06:36.000 --> 00:06:41.000
+Hermes has specific runtime behaviors for dates and regular expressions that V8 doesn't share.
+
+73
+00:06:41.000 --> 00:06:50.000
+Because of this engine disparity, any performance benchmarks written as chest tests are invalid for predicting production speeds.
+
+74
+00:06:50.000 --> 00:06:56.000
+Furthermore, Hermes deliberately disables certain JavaScript introspection features for security.
+
+75
+00:06:56.000 --> 00:07:02.000
+Code relying on those features will pass in your chest test suite, and then crash on a physical device.
+
+76
+00:07:02.000 --> 00:07:11.000
+We have mapped the architecture, the assertions, the async life cycles, and the mocking patterns. The matrix is complete.
+
+77
+00:07:11.000 --> 00:07:18.000
+Just provides absolute confidence in your architectural logic and behavior, but remember the engine divide.
+
+78
+00:07:18.000 --> 00:07:24.000
+True operational fidelity still requires manual verification on a physical device.
+

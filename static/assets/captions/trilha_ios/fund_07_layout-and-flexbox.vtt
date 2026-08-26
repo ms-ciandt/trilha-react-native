@@ -1,0 +1,430 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:04.000
+Se você está migrando do desenvolvimento iOS tradicional para o React Native,
+
+2
+00:00:04.000 --> 00:00:07.000
+a mecânica relacional que você usava para construir interfaces
+
+3
+00:00:07.000 --> 00:00:09.000
+desaparece no momento em que você começa a escrever código.
+
+4
+00:00:09.000 --> 00:00:12.000
+Auto Layout é um sistema de equações.
+
+5
+00:00:12.000 --> 00:00:16.000
+Você declara que a borda inicial de uma view está a 16 pontos de sua superview,
+
+6
+00:00:16.000 --> 00:00:19.000
+ou que sua largura é igual a 50% do seu container.
+
+7
+00:00:19.000 --> 00:00:22.000
+No momento da renderização, um solucionador de restrições resolve cada relação
+
+8
+00:00:22.000 --> 00:00:24.000
+para calcular os frames finais.
+
+9
+00:00:24.000 --> 00:00:27.000
+O React Native substitui o solucionador pelo yoga,
+
+10
+00:00:27.000 --> 00:00:31.000
+um mecanismo de flexbox construído sobre fluxo direcional em vez de equações relacionais.
+
+11
+00:00:31.000 --> 00:00:35.000
+Cada contêiner determina como os filhos imediatos se organizam ao longo de um eixo principal
+
+12
+00:00:35.000 --> 00:00:37.000
+e distribuem o espaço.
+
+13
+00:00:37.000 --> 00:00:39.000
+Ele rege apenas os filhos diretos.
+
+14
+00:00:39.000 --> 00:00:41.000
+Dependências entre views cruzadas não existem.
+
+15
+00:00:41.000 --> 00:00:45.000
+O layout do React Native aplica a mesma lógica declarativa encontrada nas stacks do Swift UI.
+
+16
+00:00:45.000 --> 00:00:49.000
+Você está mapeando seu modelo mental existente de contêineres e modificadores
+
+17
+00:00:49.000 --> 00:00:51.000
+diretamente para o yoga engine.
+
+18
+00:00:51.000 --> 00:00:55.000
+A mecânica em ação aqui é que os contêineres controlam o layout de seus filhos diretos.
+
+19
+00:00:55.000 --> 00:00:59.000
+Essa mudança de responsabilidade é o conceito central necessário
+
+20
+00:00:59.000 --> 00:01:03.000
+para fazer a transição de restrições baseadas em coordenadas para uma arquitetura baseada em fluxo.
+
+21
+00:01:03.000 --> 00:01:07.000
+Embora o React Native use o vocabulário CSS da web,
+
+22
+00:01:07.000 --> 00:01:11.000
+ele modifica os padrões fundamentais para se adequar à renderização mobile.
+
+23
+00:01:11.000 --> 00:01:14.000
+Na web, o flex direction tem como padrão row.
+
+24
+00:01:14.000 --> 00:01:16.000
+No React Native, o padrão é column.
+
+25
+00:01:16.000 --> 00:01:20.000
+Uma view padrão empilha os filhos verticalmente,
+
+26
+00:01:20.000 --> 00:01:22.000
+exatamente como uma v stack do Swift UI.
+
+27
+00:01:22.000 --> 00:01:26.000
+O Yoga também diverge da web em relação à compressão.
+
+28
+00:01:26.000 --> 00:01:30.000
+No flexbox baseado em navegador, os elementos podem encolher para caber em seus containers por padrão.
+
+29
+00:01:30.000 --> 00:01:34.000
+No React Native, a propriedade flex shrink tem como padrão zero.
+
+30
+00:01:34.000 --> 00:01:36.000
+Com um flex shrink igual a zero,
+
+31
+00:01:36.000 --> 00:01:39.000
+os componentes filhos mantêm seu tamanho intrínseco,
+
+32
+00:01:39.000 --> 00:01:41.000
+mesmo quando o container fica sem espaço.
+
+33
+00:01:41.000 --> 00:01:46.000
+Esse comportamento está alinhado com as expectativas de renderização encontradas no desenvolvimento nativo para iOS.
+
+34
+00:01:46.000 --> 00:01:51.000
+Engenheiros que presumem que o yoga se comporta exatamente como o flexbox baseado em navegador,
+
+35
+00:01:51.000 --> 00:01:54.000
+frequentemente encontram resultados inesperados de layout.
+
+36
+00:01:54.000 --> 00:02:00.000
+Identificar esses padrões mobile first torna o comportamento do layout engine previsível desde o início.
+
+37
+00:02:00.000 --> 00:02:02.000
+Uma linha de configurações apresenta um ícone,
+
+38
+00:02:02.000 --> 00:02:04.000
+labels empilhadas, e um chevron.
+
+39
+00:02:04.000 --> 00:02:08.000
+O SwiftUI usa um h stack com um v stack aninhado e um spacer.
+
+40
+00:02:08.000 --> 00:02:12.000
+No React Native, o container externo é uma view com flex direction row.
+
+41
+00:02:12.000 --> 00:02:16.000
+A view interna assume column por padrão, empilhando o texto verticalmente.
+
+42
+00:02:16.000 --> 00:02:18.000
+O parâmetro de spacing da stack do SwiftUI,
+
+43
+00:02:18.000 --> 00:02:21.000
+que aplica uma distância uniforme entre os filhos,
+
+44
+00:02:21.000 --> 00:02:24.000
+é tratado no React Native através de uma propriedade gap.
+
+45
+00:02:24.000 --> 00:02:28.000
+O spacer do SwiftUI consome o espaço disponível para separar os vizinhos.
+
+46
+00:02:28.000 --> 00:02:30.000
+O React Native faz isso de duas formas.
+
+47
+00:02:30.000 --> 00:02:34.000
+Primeiro, aplicar flex one a um container filho dá a ele todo o espaço restante,
+
+48
+00:02:34.000 --> 00:02:36.000
+empurrando o chevron para fora.
+
+49
+00:02:36.000 --> 00:02:39.000
+Alternativamente, justify content space between no parent
+
+50
+00:02:39.000 --> 00:02:41.000
+fixa os elementos externos nas bordas.
+
+51
+00:02:41.000 --> 00:02:47.000
+Para alinhamento no eixo cruzado, o alignment de stack do SwiftUI corresponde ao align items no parent.
+
+52
+00:02:47.000 --> 00:02:50.000
+Se você precisar que um único child se destaque do grupo,
+
+53
+00:02:50.000 --> 00:02:53.000
+você usa um align self nesse child específico.
+
+54
+00:02:53.000 --> 00:02:57.000
+Combinar essas direções de flow com a distribuição de space
+
+55
+00:02:57.000 --> 00:03:00.000
+permite recriar geometrias de listas nativas
+
+56
+00:03:00.000 --> 00:03:04.000
+sem precisar calcular manualmente a posição de um único elemento.
+
+57
+00:03:04.000 --> 00:03:07.000
+Enquanto as stacks lidam com os eixos X e Y,
+
+58
+00:03:07.000 --> 00:03:11.000
+o layering ao longo do eixo Z, como um status badge sobre uma foto de perfil,
+
+59
+00:03:11.000 --> 00:03:13.000
+requer ferramentas diferentes.
+
+60
+00:03:13.000 --> 00:03:17.000
+O SwiftUI usa um Z stack ou .overlay.
+
+61
+00:03:17.000 --> 00:03:19.000
+Yoga não possui uma Z stack.
+
+62
+00:03:19.000 --> 00:03:23.000
+Em vez disso, definir position absolute remove um filho
+
+63
+00:03:23.000 --> 00:03:25.000
+do fluxo padrão de layout.
+
+64
+00:03:25.000 --> 00:03:30.000
+Um filho absoluto determina suas coordenadas em relação ao ancestral mais próximo
+
+65
+00:03:30.000 --> 00:03:33.000
+que também esteja posicionado como absolute ou relative.
+
+66
+00:03:33.000 --> 00:03:36.000
+Esse é o mesmo mecanismo usado ao posicionar uma UI view
+
+67
+00:03:36.000 --> 00:03:40.000
+com translates auto resizing constraints definido como false
+
+68
+00:03:40.000 --> 00:03:42.000
+sem fornecer nenhuma constraint.
+
+69
+00:03:42.000 --> 00:03:45.000
+Dominar esse mecanismo de remoção do fluxo
+
+70
+00:03:45.000 --> 00:03:48.000
+permite que você construa barras de navegação personalizadas,
+
+71
+00:03:48.000 --> 00:03:51.000
+badges e floating action buttons
+
+72
+00:03:51.000 --> 00:03:54.000
+sem afetar o layout dos containers de conteúdo primário.
+
+73
+00:03:54.000 --> 00:03:58.000
+Para dimensionamento estático, os frame modifiers do SwiftUI
+
+74
+00:03:58.000 --> 00:04:01.000
+mapeiam para width e height em points.
+
+75
+00:04:01.000 --> 00:04:06.000
+.frame maxwith.infinity equivale a uma width de 100%.
+
+76
+00:04:06.000 --> 00:04:08.000
+Observe a diferença.
+
+77
+00:04:08.000 --> 00:04:11.000
+Percentage width é um cálculo absoluto do parent
+
+78
+00:04:11.000 --> 00:04:15.000
+enquanto Flex1 ocupa uma parte do espaço restante.
+
+79
+00:04:15.000 --> 00:04:17.000
+Adaptive layout às vezes exige que um child
+
+80
+00:04:17.000 --> 00:04:20.000
+saiba as dimensões exatas do seu environment.
+
+81
+00:04:20.000 --> 00:04:24.000
+No SwiftUI, esse é o papel do geometry reader.
+
+82
+00:04:24.000 --> 00:04:27.000
+O React Native oferece duas soluções.
+
+83
+00:04:27.000 --> 00:04:30.000
+A dimensions API permite obter os limites estáticos
+
+84
+00:04:30.000 --> 00:04:33.000
+da tela do hardware ou da janela da aplicação.
+
+85
+00:04:33.000 --> 00:04:35.000
+Para o tamanho de um componente específico,
+
+86
+00:04:35.000 --> 00:04:37.000
+você usa a prop on layout.
+
+87
+00:04:37.000 --> 00:04:40.000
+Esse callback é acionado assim que a view é medida
+
+88
+00:04:40.000 --> 00:04:43.000
+e posicionada pela engine, fornecendo largura exata,
+
+89
+00:04:43.000 --> 00:04:45.000
+altura e coordenadas locais.
+
+90
+00:04:45.000 --> 00:04:48.000
+Usar on layout fornece os dados dimensionais necessários
+
+91
+00:04:48.000 --> 00:04:51.000
+para construir interfaces que respondem ao seu próprio tamanho renderizado,
+
+92
+00:04:51.000 --> 00:04:55.000
+permitindo lógica complexa que modificadores estáticos não conseguem suportar.
+
+93
+00:04:55.000 --> 00:04:59.000
+Podemos sintetizar essas regras observando um card de conteúdo complexo,
+
+94
+00:04:59.000 --> 00:05:03.000
+apresentando uma imagem de capa, um overlay absoluto e uma nuvem de tags com wrap.
+
+95
+00:05:03.000 --> 00:05:06.000
+O container raiz usa o fluxo de coluna padrão
+
+96
+00:05:06.000 --> 00:05:08.000
+para empilhar as seções.
+
+97
+00:05:08.000 --> 00:05:12.000
+Dentro, o FlexRap força as tags que excedem o espaço a irem para a próxima linha,
+
+98
+00:05:12.000 --> 00:05:14.000
+um comportamento nativo do FlexBox.
+
+99
+00:05:14.000 --> 00:05:17.000
+Abaixo, a linha de ação usa FlexDirectionRow e GAP
+
+100
+00:05:17.000 --> 00:05:20.000
+para um espaçamento consistente entre botões sem margens manuais.
+
+101
+00:05:20.000 --> 00:05:23.000
+Esta arquitetura é regida por três princípios.
+
+102
+00:05:23.000 --> 00:05:26.000
+Containers possuem seus filhos, o fluxo direcional substitui
+
+103
+00:05:26.000 --> 00:05:30.000
+equações relacionais, e é otimizado para pilhas verticais.
+
+104
+00:05:30.000 --> 00:05:33.000
+O motor de layout do React Native é um modelo de fluxo previsível.
+
+105
+00:05:33.000 --> 00:05:36.000
+Ao traduzir sua experiência com stacks do SwiftUI
+
+106
+00:05:36.000 --> 00:05:40.000
+modifiers para propriedades do yoga, você pode construir interfaces com qualidade nativa
+
+107
+00:05:40.000 --> 00:05:43.000
+usando a lógica que você já entende.
+

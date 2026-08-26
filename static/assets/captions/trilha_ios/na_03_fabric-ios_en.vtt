@@ -1,0 +1,614 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:03.840
+When users interact with a premium iOS application,
+
+2
+00:00:03.840 --> 00:00:09.840
+they expect an uninterrupted, perfectly synchronized 60 to 120 frames per second.
+
+3
+00:00:09.840 --> 00:00:14.240
+Visual consistency is the absolute baseline for native development.
+
+4
+00:00:14.240 --> 00:00:16.640
+But historically in React native,
+
+5
+00:00:16.640 --> 00:00:20.880
+those mechanisms could slip out of phase, resulting in UI tearing.
+
+6
+00:00:20.880 --> 00:00:24.480
+You would see a frame where half of you updated to a new state,
+
+7
+00:00:24.480 --> 00:00:28.800
+while the rest lagged behind, creating a visually broken experience.
+
+8
+00:00:28.960 --> 00:00:31.600
+The root cause of this tearing was structural.
+
+9
+00:00:31.600 --> 00:00:35.680
+React native state updates and native iOS UI animations
+
+10
+00:00:35.680 --> 00:00:38.320
+were completely decoupled from one another.
+
+11
+00:00:38.320 --> 00:00:41.200
+To render a single frame in the old architecture,
+
+12
+00:00:41.200 --> 00:00:45.360
+data had to travel across three isolated computing territories.
+
+13
+00:00:45.360 --> 00:00:49.040
+First, the JavaScript thread, which described the component tree.
+
+14
+00:00:49.040 --> 00:00:52.560
+Second, a background C++ shadow thread running yoga,
+
+15
+00:00:52.560 --> 00:00:54.240
+which calculated the layout.
+
+16
+00:00:54.240 --> 00:00:58.320
+And finally, the iOS main thread, which actually painted the UI.
+
+17
+00:00:58.400 --> 00:01:01.680
+This diagram shows the specific point of failure,
+
+18
+00:01:01.680 --> 00:01:04.320
+the boundary between those territories.
+
+19
+00:01:04.320 --> 00:01:06.720
+To pass data from one thread to the next,
+
+20
+00:01:06.720 --> 00:01:11.200
+it had to be packed into an asynchronous serialized JSON bridge.
+
+21
+00:01:11.200 --> 00:01:15.360
+For an iOS engineer, this created a persistent race condition.
+
+22
+00:01:15.360 --> 00:01:19.520
+A user could touch the screen, and that touch event would arrive on the main thread
+
+23
+00:01:19.520 --> 00:01:22.960
+while the view tree was still rendering a stale pre-update state
+
+24
+00:01:22.960 --> 00:01:24.720
+stuck somewhere in the queue.
+
+25
+00:01:24.720 --> 00:01:28.240
+Because every single boundary in this pipeline was asynchronous,
+
+26
+00:01:28.240 --> 00:01:30.480
+guaranteeing that a React native view update
+
+27
+00:01:30.480 --> 00:01:34.720
+and an animation frame committed in the exact same core animation transaction
+
+28
+00:01:34.720 --> 00:01:36.160
+was mathematically impossible.
+
+29
+00:01:36.880 --> 00:01:40.400
+React native's new architecture addresses this by entirely discarding
+
+30
+00:01:40.400 --> 00:01:44.160
+the old rendering pipeline in favor of a system called fabric.
+
+31
+00:01:44.160 --> 00:01:46.960
+The foundational thesis of fabric is the complete removal
+
+32
+00:01:46.960 --> 00:01:49.120
+of the JSON serialization bridge.
+
+33
+00:01:49.120 --> 00:01:53.840
+The bridge is replaced by a shared synchronous C++ shadow tree,
+
+34
+00:01:53.840 --> 00:01:57.280
+which operates on top of the JavaScript interface, or JSI.
+
+35
+00:01:58.000 --> 00:02:02.400
+JSI gives both the JavaScript runtime and the iOS main thread
+
+36
+00:02:02.400 --> 00:02:06.400
+the ability to read and write to the exact same memory space instantly.
+
+37
+00:02:06.960 --> 00:02:10.640
+By tracing how this shared memory model executes a render frame,
+
+38
+00:02:10.640 --> 00:02:14.800
+we can see exactly how fabric guarantees atomic UI updates
+
+39
+00:02:14.800 --> 00:02:17.680
+and how developers map those updates to native elements
+
+40
+00:02:17.680 --> 00:02:19.840
+using RCT view component view.
+
+41
+00:02:20.560 --> 00:02:23.120
+To understand the efficiency of the new model,
+
+42
+00:02:23.120 --> 00:02:26.400
+we have to look closely at the exact failure points of the old one.
+
+43
+00:02:26.960 --> 00:02:31.200
+A legacy render begins when JavaScript produces a description of the component tree.
+
+44
+00:02:31.760 --> 00:02:33.760
+This diagram maps the legacy pipeline.
+
+45
+00:02:34.320 --> 00:02:36.560
+To cross into the background shadow thread,
+
+46
+00:02:36.560 --> 00:02:38.960
+that component tree is translated into JSON.
+
+47
+00:02:39.440 --> 00:02:41.840
+This is the first serialization step.
+
+48
+00:02:41.840 --> 00:02:43.920
+Once it arrives in the background red,
+
+49
+00:02:43.920 --> 00:02:46.240
+the yoga engine calculates the layout
+
+50
+00:02:46.240 --> 00:02:49.040
+and generates a list of mutation operations,
+
+51
+00:02:49.040 --> 00:02:51.920
+the specific instructions for what the UI needs to do,
+
+52
+00:02:52.560 --> 00:02:55.120
+then comes the fatal second serialization.
+
+53
+00:02:55.760 --> 00:02:58.000
+Those mutations are packed up again
+
+54
+00:02:58.000 --> 00:03:01.280
+and pushed asynchronously into a queue waiting for the main thread.
+
+55
+00:03:01.840 --> 00:03:05.680
+The main thread has no idea a UI change has even been requested
+
+56
+00:03:05.680 --> 00:03:08.240
+until every packet finishes traversing that queue.
+
+57
+00:03:08.880 --> 00:03:11.600
+Engineers had to write workarounds to manage this delay,
+
+58
+00:03:12.160 --> 00:03:15.280
+coordinating native animations with react transitions,
+
+59
+00:03:15.280 --> 00:03:18.000
+required wrapping logic in interaction manager,
+
+60
+00:03:18.000 --> 00:03:21.280
+or forcing use native driver flags to bypass the congestion.
+
+61
+00:03:21.920 --> 00:03:25.040
+As long as the rendering pipeline relied on a synchronous message
+
+62
+00:03:25.040 --> 00:03:28.480
+passing, deterministic UI synchronization was unattainable.
+
+63
+00:03:29.120 --> 00:03:31.680
+Fabric clears away those queues entirely.
+
+64
+00:03:32.240 --> 00:03:35.280
+In the new architecture, the pipeline starts the same way.
+
+65
+00:03:35.280 --> 00:03:37.920
+JavaScript calls react reconciliation,
+
+66
+00:03:37.920 --> 00:03:41.360
+but as this diagram illustrates, there is no bridge.
+
+67
+00:03:41.360 --> 00:03:46.720
+The C++ fabric renderer traverses the resulting element tree immediately.
+
+68
+00:03:46.720 --> 00:03:49.600
+It builds out the core data structure of fabric,
+
+69
+00:03:49.600 --> 00:03:53.120
+a tree made up of strongly typed shadow node objects,
+
+70
+00:03:53.120 --> 00:03:54.880
+living strictly in C++.
+
+71
+00:03:55.520 --> 00:03:58.800
+Every shadow node carries three precise pieces of data.
+
+72
+00:03:59.280 --> 00:04:01.680
+The typed props coming from JavaScript,
+
+73
+00:04:01.680 --> 00:04:05.040
+native state that the UI can update, and the layout results.
+
+74
+00:04:05.520 --> 00:04:08.240
+Those layout results are calculated instantly
+
+75
+00:04:08.240 --> 00:04:11.760
+because the yoga engine is now embedded directly inside fabric,
+
+76
+00:04:11.760 --> 00:04:13.760
+operating synchronously on the nodes.
+
+77
+00:04:13.760 --> 00:04:16.480
+Because these nodes are defined as strictly typed
+
+78
+00:04:16.480 --> 00:04:20.160
+structs in C++, the payload is structurally safe.
+
+79
+00:04:20.160 --> 00:04:22.320
+There are no loose JSON strings.
+
+80
+00:04:22.320 --> 00:04:24.160
+The data is rigid and predictable.
+
+81
+00:04:24.800 --> 00:04:27.280
+Fabric replaces asynchronous message passing
+
+82
+00:04:27.280 --> 00:04:29.040
+with synchronous memory sharing,
+
+83
+00:04:29.040 --> 00:04:32.400
+priming the exact data needed for an immediate UI kit update.
+
+84
+00:04:33.040 --> 00:04:34.720
+Once the layout is calculated,
+
+85
+00:04:34.720 --> 00:04:38.160
+control shifts strictly to the iOS main thread for the commit face.
+
+86
+00:04:38.720 --> 00:04:41.760
+Fabric iterates over the C++ shadow node tree
+
+87
+00:04:41.760 --> 00:04:44.560
+and compiles a definitive list of visual mutations.
+
+88
+00:04:45.120 --> 00:04:47.760
+Every change is mapped to one of four mutation types.
+
+89
+00:04:48.320 --> 00:04:51.120
+Create, insert, update, or delete.
+
+90
+00:04:51.840 --> 00:04:54.320
+This diagram shows the exact handoff.
+
+91
+00:04:54.320 --> 00:04:58.480
+The C++ data funnels directly into the iOS mounting coordinator,
+
+92
+00:04:58.480 --> 00:05:00.960
+the engine responsible for actually touching the views.
+
+93
+00:05:01.520 --> 00:05:03.520
+The coordinator then hands these instructions
+
+94
+00:05:03.520 --> 00:05:05.600
+to RCT surface presenter.
+
+95
+00:05:05.600 --> 00:05:08.240
+This is fabric central iOS coordinator.
+
+96
+00:05:08.240 --> 00:05:11.920
+RCT surface presenter has one critical job.
+
+97
+00:05:11.920 --> 00:05:14.240
+It takes every single view creation
+
+98
+00:05:14.240 --> 00:05:16.240
+and property update in that frame
+
+99
+00:05:16.240 --> 00:05:19.440
+and groups them tightly inside a single cat transaction.
+
+100
+00:05:20.000 --> 00:05:23.600
+By locking all mutations into a single cat transaction,
+
+101
+00:05:23.600 --> 00:05:27.360
+Fabric executes the native equivalent of an atomic UI operation.
+
+102
+00:05:27.920 --> 00:05:31.040
+Structurally, no view can present partially updated,
+
+103
+00:05:31.040 --> 00:05:33.120
+effectively eliminating UI tearing.
+
+104
+00:05:33.680 --> 00:05:37.200
+To see how developers actually hook into this atomic process,
+
+105
+00:05:37.200 --> 00:05:40.240
+we have to look down at the individual iOS component level.
+
+106
+00:05:40.720 --> 00:05:45.200
+The legacy RCT view manager and its objective C property export macros
+
+107
+00:05:45.200 --> 00:05:46.480
+have been retired.
+
+108
+00:05:46.480 --> 00:05:49.760
+The new foundational unit of work for mapping native UI
+
+109
+00:05:49.760 --> 00:05:51.680
+is RCT view component view.
+
+110
+00:05:52.240 --> 00:05:53.840
+As this diagram details,
+
+111
+00:05:53.840 --> 00:05:58.640
+RCT view component view is an objective C++ subclass of UI view
+
+112
+00:05:58.640 --> 00:06:00.560
+that implements a specific protocol
+
+113
+00:06:00.560 --> 00:06:04.480
+to straddle the line between C++ logic and UI kit rendering.
+
+114
+00:06:04.960 --> 00:06:07.600
+Its core inward responsibility is intercepting
+
+115
+00:06:07.600 --> 00:06:09.760
+the strongly typed prop and state updates
+
+116
+00:06:09.760 --> 00:06:12.320
+flowing directly from the C++ shadow tree.
+
+117
+00:06:12.320 --> 00:06:15.440
+Its outward responsibility is executing callbacks,
+
+118
+00:06:15.440 --> 00:06:20.880
+firing user interactions back up to JavaScript via a typed C++ event emitter.
+
+119
+00:06:20.880 --> 00:06:22.480
+When building with this subclass,
+
+120
+00:06:22.480 --> 00:06:25.840
+the architectural best practice is the Swift helper pattern.
+
+121
+00:06:25.840 --> 00:06:29.840
+In this pattern, the actual drawing logic and UI kit gesture handling
+
+122
+00:06:29.840 --> 00:06:33.600
+live entirely within a pure dedicated Swift UI view.
+
+123
+00:06:33.600 --> 00:06:37.040
+The objective C++ RCT view component view
+
+124
+00:06:37.040 --> 00:06:39.120
+acts merely as a lightweight delegate,
+
+125
+00:06:39.120 --> 00:06:41.280
+doing nothing but receiving Fabric's data
+
+126
+00:06:41.280 --> 00:06:43.920
+and instantly passing it down to the Swift view.
+
+127
+00:06:43.920 --> 00:06:47.600
+This mirrors how standard reusable UI kit components are built.
+
+128
+00:06:47.600 --> 00:06:49.920
+It keeps the Swift code entirely clean,
+
+129
+00:06:49.920 --> 00:06:51.280
+independently testable,
+
+130
+00:06:51.280 --> 00:06:54.960
+and isolated from react natives internal C++ engine.
+
+131
+00:06:54.960 --> 00:06:58.480
+With the pipeline mapped from the JavaScript interface down to the Swift view,
+
+132
+00:06:58.480 --> 00:07:02.480
+we can evaluate the final performance profile of a completed render frame.
+
+133
+00:07:02.480 --> 00:07:05.600
+Fabric provides a strict guarantee to custom components.
+
+134
+00:07:05.600 --> 00:07:09.680
+The update props method is always called on the main queue during the commit phase.
+
+135
+00:07:09.680 --> 00:07:11.200
+Because of this guarantee,
+
+136
+00:07:11.200 --> 00:07:15.760
+engineers can apply core animation updates directly inside update props.
+
+137
+00:07:15.760 --> 00:07:19.680
+There is absolutely no need to wrap view updates in Dispatch Async
+
+138
+00:07:19.680 --> 00:07:21.280
+to reach the main thread.
+
+139
+00:07:21.280 --> 00:07:25.600
+In fact, using DispatchQ.main.async inside these updates
+
+140
+00:07:25.600 --> 00:07:27.440
+is now actively harmful.
+
+141
+00:07:27.440 --> 00:07:31.680
+Deferring the execution pushes the update outside of Fabric's commit window,
+
+142
+00:07:31.680 --> 00:07:34.800
+breaking the adamicity of the CA transaction.
+
+143
+00:07:34.800 --> 00:07:39.200
+If you need to perfectly coordinate a layer animation with a react native transition,
+
+144
+00:07:39.200 --> 00:07:44.320
+you handle it by calling CATransaction.begin and commit explicitly within update props.
+
+145
+00:07:44.960 --> 00:07:48.000
+Look at the complete execution path in this diagram.
+
+146
+00:07:48.000 --> 00:07:52.320
+A state update triggered from a Swift native module can now travel through JavaScript,
+
+147
+00:07:52.320 --> 00:07:55.280
+calculate layout in the shared C++ shadow tree,
+
+148
+00:07:55.280 --> 00:07:58.080
+and terminate in the main thread CA transaction,
+
+149
+00:07:58.080 --> 00:08:00.080
+all within a single run loop tick.
+
+150
+00:08:00.080 --> 00:08:03.680
+By moving layout calculation into synchronous C++,
+
+151
+00:08:03.680 --> 00:08:08.320
+unlocking visual mutations inside explicit core animation transactions,
+
+152
+00:08:08.320 --> 00:08:10.880
+Fabric natively bridges the performance gap,
+
+153
+00:08:10.880 --> 00:08:14.400
+aligning react native directly with Apple's compositing model.
+

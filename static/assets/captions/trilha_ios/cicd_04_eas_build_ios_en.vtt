@@ -1,0 +1,206 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:09.000
+Operating dedicated Mac OS runners for standard iOS continuous integration carries a high maintenance cost and a heavy physical burden.
+
+2
+00:00:09.000 --> 00:00:21.000
+Managing a local physical Mac means dealing with gigabytes of bloated derived data folders, constantly monitoring disk space and manually rotating expired distribution certificates.
+
+3
+00:00:21.000 --> 00:00:27.000
+When Apple releases a major Xcode update, the entire continuous integration pipeline is at risk.
+
+4
+00:00:27.000 --> 00:00:36.000
+A single deprecated API or altered build setting requires immediate manual intervention from a developer to keep the deployment process running.
+
+5
+00:00:36.000 --> 00:00:44.000
+Traditional iOS continuous integration relies on physical hardware maintenance regardless of the software tools used to manage the pipeline.
+
+6
+00:00:44.000 --> 00:00:52.000
+Expo application services or EAS is an architectural solution that removes the physical Mac from the continuous integration loop.
+
+7
+00:00:52.000 --> 00:01:01.000
+Instead of maintaining a local runner, EAS translates your manual terminal commands into a deterministic cloud-hosted fleet of machines.
+
+8
+00:01:01.000 --> 00:01:08.000
+Developers simply declare the specific Xcode version their project requires inside a central configuration file.
+
+9
+00:01:08.000 --> 00:01:18.000
+The EAS scheduler reads this declaration and automatically routes the build to a pre-configured Mac OS machine in the fleet that has that exact environment installed.
+
+10
+00:01:18.000 --> 00:01:25.000
+Unlike legacy self-hosted systems, there is no local hardware to maintain and no localized environment drift to debug.
+
+11
+00:01:25.000 --> 00:01:31.000
+The developer's workflow shifts from managing the physical state of a server to managing a JSON file.
+
+12
+00:01:31.000 --> 00:01:38.000
+By abstracting the physical layer away, EAS turns iOS infrastructure into pure declarative configuration.
+
+13
+00:01:38.000 --> 00:01:48.000
+This central document is EAS.json. It acts as the central router for the entire iOS build lifecycle, directing code through three specific profiles.
+
+14
+00:01:48.000 --> 00:01:54.000
+The first pathway is the development profile, which generates a build specifically for the iOS simulator.
+
+15
+00:01:54.000 --> 00:02:01.000
+This route skips code signing and Apple developer accounts entirely, outputting a fast lightweight app bundle for immediate local testing.
+
+16
+00:02:01.000 --> 00:02:07.000
+The second pathway is the preview profile, designed for internal quality assurance distribution.
+
+17
+00:02:07.000 --> 00:02:20.000
+Here, EAS automates ad hoc provisioning. It registers tester device UDIDs directly with Apple, allowing the QA team to install the app via a simple QR code by passing test flight.
+
+18
+00:02:21.000 --> 00:02:35.000
+The final pathway addresses the specific requirements of Apple's production code signing. Using a remote credentials flag, the production profile delegates authority to EAS, allowing it to communicate directly with the Apple developer API.
+
+19
+00:02:35.000 --> 00:02:41.000
+The system automatically creates, encrypts, and rotates your required distribution certificates in the cloud.
+
+20
+00:02:41.000 --> 00:02:48.000
+This dynamic generation ensures that a build will never fail because a certificate quietly expired or a new test device was added.
+
+21
+00:02:48.000 --> 00:02:56.000
+By wrapping the Apple developer API into a silent backend service, EAS.json automates the friction of manual iOS code signing.
+
+22
+00:02:56.000 --> 00:03:05.000
+With infrastructure and signing abstracted, the next requirement for a remote pipeline is maintaining a predictable native project state.
+
+23
+00:03:05.000 --> 00:03:13.000
+In a traditional bear workflow, developers must manually edit configuration files deeply nested within the underlying iOS directory.
+
+24
+00:03:13.000 --> 00:03:23.000
+Manually modifying core property lists and Xcode build settings inevitably creates Git conflicts and makes local environments impossible to perfectly reproduce in the cloud.
+
+25
+00:03:23.000 --> 00:03:35.000
+The architectural solution to this determinism problem is a system called config plugins. A config plugin is a JavaScript function that programmatically alters native files exactly at build time.
+
+26
+00:03:35.000 --> 00:03:40.000
+For device camera access, the developer avoids opening iOS property files.
+
+27
+00:03:40.000 --> 00:03:52.000
+Instead, the plugin automatically injects required permissions during the build. This script execution occurs during the EAS pre-build phase, finishing its modifications before Xcode even boots up.
+
+28
+00:03:52.000 --> 00:03:58.000
+As a result, developers no longer need to commit the underlying iOS directory to their repository at all.
+
+29
+00:03:58.000 --> 00:04:04.000
+The entire native directory is strictly treated as an ephemeral, throw away artifact that is generated fresh on every run.
+
+30
+00:04:05.000 --> 00:04:13.000
+If a custom native library doesn't supply its own plugin, developers simply write a short JavaScript script to patch the necessary files deterministically.
+
+31
+00:04:13.000 --> 00:04:21.000
+Config plugins guarantee that every single cloud build starts from a pristine, reproducible native state, eliminating environment-specific compilation errors.
+
+32
+00:04:21.000 --> 00:04:27.000
+Once the app is deployed, focus shifts to continuous delivery and over-the-air JavaScript updates through EAS update.
+
+33
+00:04:27.000 --> 00:04:32.000
+To understand how these updates work, we have to look at the architecture of a React native app.
+
+34
+00:04:32.000 --> 00:04:40.000
+It is split into two distinct layers, a compiled native binary at the base and a JavaScript bytecode layer on top.
+
+35
+00:04:40.000 --> 00:04:47.000
+Apples compliance rules dictate that modifications to the JavaScript layer can be delivered over-the-air directly to users.
+
+36
+00:04:47.000 --> 00:04:55.000
+However, any change to the native code strictly requires a new App Store review. This creates a critical vulnerability.
+
+37
+00:04:55.000 --> 00:05:06.000
+If a developer pushes an over-the-air update calling a new native module not included in the existing binary, that exact code mismatch will cause an immediate fatal runtime crash on the user's device.
+
+38
+00:05:06.000 --> 00:05:15.000
+EAS fingerprint is a strict cryptographic safety mechanism built to prevent these crashes. The algorithm scans all native modules and configuration settings.
+
+39
+00:05:15.000 --> 00:05:22.000
+EAS calculates this exact mathematical fingerprint during every build, embedding it into the binary artifact.
+
+40
+00:05:22.000 --> 00:05:29.000
+Before publishing, the system compares the new JavaScript bundles expected fingerprint against the live production fingerprint.
+
+41
+00:05:29.000 --> 00:05:40.000
+If the hashes do not match, the system throws a strict warning. This explicit block prevents crashes, notifying the developer that a full App Store compilation is required instead.
+
+42
+00:05:40.000 --> 00:05:50.000
+If a faulty update somehow bypasses standard checks, emergency rollback commands can instantly revert the deployment branch, pointing users back to a known safe binary.
+
+43
+00:05:50.000 --> 00:06:00.000
+By structurally enforcing the boundary between native and JavaScript layers, EAS fingerprint makes continuous delivery compliant with the App Store and cryptographically safe.
+
+44
+00:06:00.000 --> 00:06:05.000
+Tracing the modernized iOS deployment lifecycle reveals a unified pipeline.
+
+45
+00:06:05.000 --> 00:06:13.000
+Code enters the system, config plugins spin up a fresh native layer, and EAS.json routes the project to a macOS cloud node.
+
+46
+00:06:13.000 --> 00:06:23.000
+There, the system negotiates the Apple developer API, compiles a signed IPA file, securely hashes it with a fingerprint, and prepares it for distribution.
+
+47
+00:06:23.000 --> 00:06:32.000
+The EAS submit process bypasses manual transporter tools entirely, pushing the signed artifact straight into App Store Connect via API.
+
+48
+00:06:32.000 --> 00:06:42.000
+Weeks later, an over-the-air update bypasses the heavy compilation pipeline, validates the existing fingerprint hash, and routes directly to end user devices.
+
+49
+00:06:42.000 --> 00:06:48.000
+Stripping away the physical hardware requirements accelerates an engineering team's operational velocity.
+
+50
+00:06:48.000 --> 00:06:56.000
+iOS continuous integration is no longer a frustrating exercise in manual certificate wrangling and constant physical hardware resets.
+
+51
+00:06:56.000 --> 00:07:07.000
+By abstracting Apple's rigid ecosystem into a deterministic, cloud-managed state machine, engineering teams can finally treat native mobile deployment exactly like modern web infrastructure.
+

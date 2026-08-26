@@ -1,0 +1,214 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:08.000
+A integração Brownfield exige que um runtime nativo em Swift e um runtime JavaScript coexistam dentro de um único processo iOS.
+
+2
+00:00:08.000 --> 00:00:11.000
+Eles rodam lado a lado, executando a lógica simultaneamente.
+
+3
+00:00:11.000 --> 00:00:14.000
+Você não pode usar o managed workflow do Expo para isso.
+
+4
+00:00:14.000 --> 00:00:20.000
+Uma aplicação host Brownfield já possui seu próprio projeto Xcode, seu grafo de dependências customizado e seu app delegate.
+
+5
+00:00:20.000 --> 00:00:24.000
+O Expo não pode ser sobreposto a uma fundação nativa já existente.
+
+6
+00:00:24.000 --> 00:00:32.000
+Em vez disso, você deve usar o React Native CLI para costurar manualmente o workspace JavaScript ao seu projeto nativo iOS existente.
+
+7
+00:00:32.000 --> 00:00:42.000
+O sucesso nesse ambiente depende inteiramente de dois requisitos técnicos: configurar a vinculação estática (static linkage) no nível de build e utilizar totalmente a new architecture do React Native.
+
+8
+00:00:42.000 --> 00:00:48.000
+Historicamente, as integrações dependiam da bridge assíncrona para passar mensagens entre Swift e JavaScript.
+
+9
+00:00:48.000 --> 00:00:54.000
+Isso criava gargalos severos de serialização JSON, frequentemente travando a main thread durante cargas pesadas de dados.
+
+10
+00:00:54.000 --> 00:01:00.000
+A new architecture substitui essa bridge legada pelo fabric renderer e pelo JSI.
+
+11
+00:01:00.000 --> 00:01:10.000
+JSI permite que o C++ atue como uma linguagem compartilhada entre os ambientes, estabelecendo comunicação síncrona com zero serialização.
+
+12
+00:01:10.000 --> 00:01:18.000
+O desafio central de uma integração bem-sucedida está no gerenciamento rigoroso da fronteira C++ entre esses dois runtimes ativos.
+
+13
+00:01:18.000 --> 00:01:24.000
+A integração física entre Swift e React Native começa no package manager.
+
+14
+00:01:24.000 --> 00:01:27.000
+O Coco Pods roteia todas as dependências iOS necessárias.
+
+15
+00:01:27.000 --> 00:01:35.000
+Defina explicitamente a flag do fabric renderer como true no seu pod file, direcionando a compilação para longe do paper renderer, que está obsoleto.
+
+16
+00:01:35.000 --> 00:01:45.000
+Habilitar o Hermes engine também é obrigatório. Ele é o único JavaScript engine oficialmente suportado pela nova arquitetura e deve compilar em conjunto com o fabric.
+
+17
+00:01:45.000 --> 00:01:51.000
+O Fabric introduz uma restrição rígida de build. Ele exige linkagem estática em todo o seu grafo de dependências.
+
+18
+00:01:51.000 --> 00:01:59.000
+Se você permitir frameworks dinâmicos nessa etapa de compilação, o compilador inevitavelmente gerará erros de símbolos duplicados no momento do link.
+
+19
+00:01:59.000 --> 00:02:12.000
+O build vai falhar a menos que a linkagem estática seja imposta. Para que o script de resolução do Pods localize os módulos necessários, coloque o seu package.json na raiz do repositório, exatamente um nível acima da pasta iOS.
+
+20
+00:02:12.000 --> 00:02:22.000
+Depois de resolver o pod file, sempre abra o arquivo .xcworkspace resultante. O arquivo .xcproject padrão não vai mais compilar as novas dependências.
+
+21
+00:02:22.000 --> 00:02:29.000
+Esse rígido grafo de dependências do Coco Pods é o pré-requisito físico que permite que a camada JSI em C++ funcione.
+
+22
+00:02:29.000 --> 00:02:36.000
+Passando da etapa de build para a memória em tempo de execução, a âncora do motor JavaScript é uma classe chamada RCT host.
+
+23
+00:02:36.000 --> 00:02:45.000
+Um processo iOS deve instanciar exatamente um RCT host. O host único inicializa o Hermes, gerencia o bundle e é dono do surface presenter.
+
+24
+00:02:45.000 --> 00:02:52.000
+Violar a regra de singleton criando múltiplos hosts desperdiça memória, atinge limites e dispara comportamento indefinido no JSI.
+
+25
+00:02:52.000 --> 00:03:00.000
+O host também controla como o bundle JavaScript é resolvido. Em desenvolvimento, ele se conecta ao servidor Metro pela porta 8081.
+
+26
+00:03:00.000 --> 00:03:05.000
+Em produção, ele lê um bundle offline embutido diretamente do dispositivo.
+
+27
+00:03:06.000 --> 00:03:15.000
+Nunca desaloque o RCT host a menos que todas as surfaces de UI estejam confirmadamente desmontadas e não haja nenhum trabalho JavaScript assíncrono pendente.
+
+28
+00:03:15.000 --> 00:03:22.000
+Isolar o motor JavaScript dentro de um singleton estrito evita que o runtime secundário sobrecarregue a memória do dispositivo host.
+
+29
+00:03:22.000 --> 00:03:30.000
+A antiga classe RCT root B, usada para montar views do react native, está completamente depreciada no react native 0.76.
+
+30
+00:03:30.000 --> 00:03:39.000
+O ponto de entrada moderno é o RCT fabric surface. Ele opera como um view controller leve que recebe sua coordenação de renderização diretamente do host.
+
+31
+00:03:39.000 --> 00:03:44.000
+O Swift passa os dados de carregamento inicial para a surface usando o dicionário de initial properties.
+
+32
+00:03:44.000 --> 00:03:49.000
+Como isso depende do JSI, o initial properties ignora completamente as async cues.
+
+33
+00:03:49.000 --> 00:03:56.000
+Os dados são serializados de forma síncrona através da boundary antes que a surface renderize seu primeiro physical frame.
+
+34
+00:03:56.000 --> 00:04:00.000
+Essas initial properties são estritamente somente leitura no momento do mount.
+
+35
+00:04:00.000 --> 00:04:12.000
+Se sua aplicação usa SwiftUI, envolva o native view controller dentro de uma struct view UI controller representable, utilizando o método make UI controller para a inicialização.
+
+36
+00:04:12.000 --> 00:04:20.000
+Para evitar que a surface sobreponha a native navigation bar, aplique o modifier .ignores safe area no lado do SwiftUI.
+
+37
+00:04:20.000 --> 00:04:25.000
+Isso entrega explicitamente o controle dos insets para o react native safe area context.
+
+38
+00:04:25.000 --> 00:04:37.000
+Ao tratar a RCT fabric surface como um disposable lightweight child do RCT host, os engenheiros podem incorporar telas cross-platform sem interromper a arquitetura nativa do SwiftUI.
+
+39
+00:04:37.000 --> 00:04:46.000
+Depois que uma surface é montada, você precisa de comunicação contínua entre Swift e JavaScript para acionar comportamentos nativos como o iOS keychain ou o health kit.
+
+40
+00:04:46.000 --> 00:04:51.000
+Turbo modules são o caminho obrigatório para executar esses comportamentos nativos na new architecture.
+
+41
+00:04:51.000 --> 00:05:01.000
+Essa interoperabilidade depende do Cogen. No momento da build, uma especificação TypeScript é compilada em código glue C++, conectando fisicamente os ambientes.
+
+42
+00:05:01.000 --> 00:05:08.000
+Essa camada C++ utiliza o JSI para cruzar para o Swift de forma síncrona, eliminando completamente as idas e voltas assíncronas.
+
+43
+00:05:08.000 --> 00:05:16.000
+Ao rotear universal links do iOS, se a superfície de UI ainda não foi criada, o Swift precisa injetar a URL diretamente nas initial properties.
+
+44
+00:05:16.000 --> 00:05:23.000
+Mas se a react native surface já estiver montada, o Swift precisa enviar a URL através de um turbo module eventometer para entrega imediata.
+
+45
+00:05:23.000 --> 00:05:30.000
+Os turbo modules fazem a ponte entre os limites do runtime, transformando o gargalo assíncrono lento em uma via sincronizada em C++.
+
+46
+00:05:30.000 --> 00:05:42.000
+Essa é a stack completa de brownfield. Uma fundação estática baseada em pod file sustenta o pilar RCT host, que se ramifica em múltiplas camadas de UI fabric surface, todas interconectadas por linhas de dados síncronas em C++.
+
+47
+00:05:42.000 --> 00:05:47.000
+Após a integração, um bug comum em runtime é uma tela preta prolongada no primeiro lançamento do app.
+
+48
+00:05:47.000 --> 00:05:53.000
+Para corrigir isso, observe a propriedade stage mounted na RCT fabric surface.
+
+49
+00:05:53.000 --> 00:05:59.000
+Use-a para acionar um indicador de carregamento nativo enquanto o bundle JavaScript termina sua avaliação.
+
+50
+00:05:59.000 --> 00:06:06.000
+Outro problema frequente ocorre quando inputs nativos falham em empurrar o conteúdo do react native para cima, evitando o teclado do iOS.
+
+51
+00:06:06.000 --> 00:06:14.000
+O React Native gerencia seu próprio comportamento de teclado. Você deve implementar explicitamente o keyboard avoiding view no lado do JavaScript para lidar com o offset.
+
+52
+00:06:14.000 --> 00:06:23.000
+Se o app travar porque um turbo module não pôde ser encontrado, verifique se os nomes das classes Objective C correspondem perfeitamente ao turbo module registry.
+
+53
+00:06:23.000 --> 00:06:34.000
+Ao respeitar rigorosamente os limites de C++ desses dois runtimes, as equipes de engenharia podem migrar aplicações iOS legadas tela por tela, mantendo a responsividade em nível nativo.
+

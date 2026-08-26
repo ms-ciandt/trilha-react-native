@@ -1,0 +1,258 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:06.720
+A nova arquitetura do React Native depende da JavaScript interface, ou JSI, para expor um ambiente
+
+2
+00:00:06.720 --> 00:00:14.000
+de execução síncrono. Isso cria uma restrição imediata para engenheiros iOS. JSI é uma biblioteca
+
+3
+00:00:14.000 --> 00:00:19.760
+C++ pura. Quando o React Native chama um native module através de um turbo module, o callpath espera
+
+4
+00:00:19.760 --> 00:00:25.920
+interagir diretamente com C++. Isso estabelece um limite rígido. Código nativo Swift não pode ser chamado
+
+5
+00:00:25.920 --> 00:00:32.080
+diretamente a partir de C++. Este diagrama ilustra o isolamento entre o JSI runtime à esquerda
+
+6
+00:00:32.080 --> 00:00:37.840
+e a lógica de negócio padrão do iOS à direita. Um caminho de execução originado em C++ simplesmente
+
+7
+00:00:37.840 --> 00:00:42.800
+se estilhaça contra uma linha de fronteira vermelha ao tentar alcançar o Swift. A Apple introduziu
+
+8
+00:00:42.800 --> 00:00:49.360
+interoperabilidade com C++ no Swift 5.9. Muitos desenvolvedores assumem que isso conecta essa lacuna de forma nativa. Embora o Swift 5.9
+
+9
+00:00:49.360 --> 00:00:55.280
+permita alguma interoperabilidade, isso exige anotações explícitas e cobre apenas um subconjunto de padrões.
+
+10
+00:00:55.280 --> 00:01:00.880
+Isso não consegue satisfazer a resolução dinâmica de runtime que o JSI espera. Especificamente, o
+
+11
+00:01:00.880 --> 00:01:07.280
+A interoperação falha ao tentar resolver o get turbo module. O método exato que o React Native exige
+
+12
+00:01:07.280 --> 00:01:12.960
+para localizar a instância nativa. O runtime do objective C, no entanto, foi projetado para interoperar
+
+13
+00:01:12.960 --> 00:01:20.480
+tanto com C++ quanto com Swift simultaneamente. Isso faz de uma unidade de compilação objective C++ identificada
+
+14
+00:01:20.480 --> 00:01:26.480
+pela extensão .MM o único ponto de integração sancionado. Como a comunicação direta é
+
+15
+00:01:26.480 --> 00:01:33.360
+impossível, os desenvolvedores precisam construir uma ponte arquitetural precisa e em múltiplas camadas, começando pelo C++
+
+16
+00:01:33.360 --> 00:01:39.040
+e terminando no Swift, para alcançar a execução síncrona do módulo. Construir essa ponte começa fora
+
+17
+00:01:39.040 --> 00:01:45.280
+do Xcode, começando pela definição de um contrato estrito entre JavaScript e nativo. Esse esquema de código
+
+18
+00:01:45.280 --> 00:01:51.200
+representa um arquivo de especificação TypeScript. Ele serve como o contrato universal que descreve as exatas
+
+19
+00:01:51.200 --> 00:01:56.960
+entradas e saídas do seu módulo nativo. O React Native lê a especificação usando uma ferramenta chamada
+
+20
+00:01:56.960 --> 00:02:03.120
+CodeGen, que executa automaticamente durante o fluxo padrão do pod install. O CodeGen analisa o
+
+21
+00:02:03.120 --> 00:02:10.160
+Especificação TypeScript e gera um arquivo de interface C++ puro. Modificar a especificação TypeScript requer
+
+22
+00:02:10.160 --> 00:02:15.920
+reexecutar o pod install antes de compilar no Xcode para garantir que esses arquivos gerados sejam atualizados corretamente.
+
+23
+00:02:16.480 --> 00:02:23.760
+Este arquivo C++ gerado contém o protocolo exato que o código nativo iOS deve eventualmente implementar
+
+24
+00:02:23.760 --> 00:02:31.040
+para satisfazer a execução do JavaScript. Esta interface C++ auto-gerada dita o alvo inflexível
+
+25
+00:02:31.040 --> 00:02:36.720
+que direciona rigorosamente o restante de toda a implementação arquitetural do iOS. Para implementar este
+
+26
+00:02:36.720 --> 00:02:42.160
+protocolo, mudamos para o outro lado da arquitetura para estabelecer a lógica de negócio nativa real
+
+27
+00:02:42.160 --> 00:02:48.480
+escrita em Swift. Esta é uma classe auxiliar Swift padrão, atuando como um dicionário de armazenamento thread-safe.
+
+28
+00:02:48.480 --> 00:02:54.320
+Observe a declaração at-objcb-embers no topo da classe. Dentro da classe, uma fila de despacho
+
+29
+00:02:54.320 --> 00:02:59.680
+concorrente usando uma flag dot-barrier garante leituras thread-safe e escritas serializadas para os
+
+30
+00:02:59.680 --> 00:03:06.240
+dados dos módulos. A anotação at-obj-members expõe todo método e propriedade desta classe para o
+
+31
+00:03:06.240 --> 00:03:13.200
+objective C runtime, eliminando a necessidade de marcar linhas individuais. No entanto, classes Swift, mesmo com
+
+32
+00:03:13.200 --> 00:03:19.280
+anotações, não são visíveis para arquivos objective C por padrão. Nós expomos a classe Swift para o restante
+
+33
+00:03:19.280 --> 00:03:25.440
+do projeto gerando um project bridging header. A exceção aqui é para custom pod libraries,
+
+34
+00:03:25.440 --> 00:03:31.440
+onde o Xcode gera automaticamente um header dash-swift.h, eliminando completamente a necessidade de um
+
+35
+00:03:31.440 --> 00:03:37.920
+bridging file manual. A arquitetura agora tem uma lógica de negócio Swift isolada e thread-safe que é totalmente visível
+
+36
+00:03:37.920 --> 00:03:44.080
+para o objective C runtime, pronta para ser conectada à camada C++. Este diagrama mostra a peça
+
+37
+00:03:44.080 --> 00:03:50.160
+central final da arquitetura, o arquivo de implementação objective C++. Ele se encaixa exatamente no
+
+38
+00:03:50.160 --> 00:03:56.400
+centro entre o protocolo C++ e a lógica Swift. A extensão dot-mem não é negociável aqui.
+
+39
+00:03:56.400 --> 00:04:01.760
+É o único ambiente de compilador capaz de hospedar headers C++ e código objective C simultaneamente.
+
+40
+00:04:02.240 --> 00:04:07.120
+A primeira função crítica dentro deste arquivo é registrar o módulo com o react native
+
+41
+00:04:07.120 --> 00:04:13.600
+runtime usando a macro RCT export module. O argumento string dentro dessa macro deve corresponder
+
+42
+00:04:13.600 --> 00:04:19.520
+perfeitamente ao nome do module definido lá no TypeScript spec. O segundo método, mais crucial, exigido no
+
+43
+00:04:19.520 --> 00:04:26.400
+arquivo dot-mem é getTurboModule. GetTurboModule deve retornar um ponteiro de memória específico, um standard
+
+44
+00:04:26.400 --> 00:04:32.160
+shared pointer direcionado de volta à classe C++ gerada pelo Cogen. Esse ponteiro envolve a implementação
+
+45
+00:04:32.160 --> 00:04:38.240
+objective C e a expõe de volta através do JSI. Não ter esse método significa que o JSI não consegue localizar a lógica
+
+46
+00:04:38.240 --> 00:04:43.920
+Swift, fazendo com que a chamada JavaScript recorra à legacy bridge ou falhe completamente. Nas versões
+
+47
+00:04:43.920 --> 00:04:48.960
+modernas do react native, as mudanças no app delegate são amplamente desnecessárias uma vez que isso é feito, devido à auto
+
+48
+00:04:48.960 --> 00:04:55.120
+discovery gerenciada pelo RCT app setup utles. O arquivo dot-mem serve como o tradutor indispensável.
+
+49
+00:04:55.120 --> 00:05:01.120
+É o único ambiente sancionado capaz de transformar uma chamada JSI C++ síncrona em uma
+
+50
+00:05:01.120 --> 00:05:07.600
+execução objective C que invoca a lógica Swift. Este diagrama exibe uma execução completa e bem-sucedida
+
+51
+00:05:07.600 --> 00:05:14.320
+caminho de uma invocação JavaScript fluindo através da camada C++ JSI, atravessando a ponte dot-mem
+
+52
+00:05:14.320 --> 00:05:20.080
+e chegando a uma mutação de dicionário em Swift. Como isso depende de uma cadeia estrita e multicamada,
+
+53
+00:05:20.080 --> 00:05:25.840
+uma única configuração incorreta causa uma quebra catastrófica em uma camada específica. A primeira falha comum
+
+54
+00:05:25.840 --> 00:05:31.520
+é um erro de runtime do JavaScript afirmando cannot find module. Isso aponta para uma falha na camada de
+
+55
+00:05:31.520 --> 00:05:37.520
+registro. Ou o code Gen não foi executado, ou a string dentro do RCT export module não corresponde ao TypeScript
+
+56
+00:05:37.920 --> 00:05:43.920
+exatamente. O segundo erro principal é uma falha do compilador afirmando que a classe não está em conformidade com o protocolo.
+
+57
+00:05:43.920 --> 00:05:49.600
+Isso indica uma incompatibilidade de assinatura na fronteira do C++, o que significa que os métodos em Objective-C++ não possuem os
+
+58
+00:05:49.600 --> 00:05:55.040
+parâmetros e tipos de retorno precisos exigidos pela saída do code Gen. A terceira falha ocorre quando
+
+59
+00:05:55.040 --> 00:06:01.600
+o módulo compila com sucesso, mas retorna undefined em tempo de execução. Isso quase sempre é causado por um
+
+60
+00:06:01.600 --> 00:06:07.600
+ponteiro nulo no método getTurboModule, que quebra a ligação de volta com o JSI. Ao solucionar problemas
+
+61
+00:06:07.600 --> 00:06:14.160
+Verifique se RCT enableTurboModule está ativo no app delegate para evitar que o runtime
+
+62
+00:06:14.160 --> 00:06:20.720
+volte para o legacy bridge. Ao respeitar rigorosamente os limites C++ do JSI e utilizar o
+
+63
+00:06:20.720 --> 00:06:26.720
+padrão de bridging objective C++, os desenvolvedores garantem a capacidade de executar lógica Swift complexa e thread-safe
+
+64
+00:06:26.720 --> 00:06:36.720
+de forma síncrona dentro de aplicações React Native modernas.
+

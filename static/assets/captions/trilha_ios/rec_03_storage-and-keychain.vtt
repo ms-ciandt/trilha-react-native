@@ -1,0 +1,418 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:05.920
+Aplicativos móveis corporativos exigem uma arquitetura robusta capaz de lidar com tudo,
+
+2
+00:00:05.920 --> 00:00:11.000
+desde preferências leves do usuário até tokens de sessão fortemente criptografados.
+
+3
+00:00:11.000 --> 00:00:16.840
+No desenvolvimento nativo iOS, essa hierarquia de armazenamento é estritamente categorizada em quatro pilares
+
+4
+00:00:16.840 --> 00:00:18.240
+fundamentais.
+
+5
+00:00:18.240 --> 00:00:24.680
+Como este diagrama ilustra à esquerda, temos user defaults, NS file manager, core data,
+
+6
+00:00:24.680 --> 00:00:26.080
+e o keychain.
+
+7
+00:00:26.080 --> 00:00:30.200
+O lado direito, representando o React Native, está atualmente em branco.
+
+8
+00:00:30.200 --> 00:00:34.840
+Quando engenheiros migram para o React Native, eles frequentemente cometem um erro crítico.
+
+9
+00:00:34.840 --> 00:00:40.120
+Eles tratam o armazenamento em JavaScript como uma abstração genérica de web, em vez de uma interface estrita
+
+10
+00:00:40.120 --> 00:00:42.280
+para essas camadas nativas.
+
+11
+00:00:42.280 --> 00:00:47.760
+Usar o armazenamento assíncrono padrão do React Native cria um gargalo imediato.
+
+12
+00:00:47.760 --> 00:00:51.880
+Tudo o que passa por ele se reduz a uma execução assíncrona lenta.
+
+13
+00:00:51.880 --> 00:00:56.120
+Minha arquitetura de performance exige abandonar essa abordagem genérica.
+
+14
+00:00:56.120 --> 00:01:01.400
+Você deve mapear cada camada nativa de armazenamento do iOS para um wrapper JavaScript feito sob medida.
+
+15
+00:01:01.400 --> 00:01:07.960
+Esses wrappers específicos se conectam diretamente às APIs C e Objective C subjacentes, contornando
+
+16
+00:01:07.960 --> 00:01:11.360
+completamente os gargalos padrão do React Native.
+
+17
+00:01:11.360 --> 00:01:16.360
+Ao alinhar a interface JavaScript com essas camadas específicas, a aplicação consegue manter
+
+18
+00:01:16.360 --> 00:01:22.240
+execução síncrona, criptografia em nível de hardware e a semântica exata do sistema definida pelo
+
+19
+00:01:22.240 --> 00:01:23.560
+iOS.
+
+20
+00:01:23.560 --> 00:01:28.040
+Começamos pela camada mais alta e leve da hierarquia de armazenamento.
+
+21
+00:01:28.040 --> 00:01:31.520
+Preferências do usuário, feature flags e tokens de sessão.
+
+22
+00:01:31.520 --> 00:01:37.320
+No iOS, esses valores vão para o user defaults, que é um armazenamento síncrono de chave-valor
+
+23
+00:01:37.320 --> 00:01:39.600
+baseado em um arquivo plist simples.
+
+24
+00:01:39.600 --> 00:01:43.240
+Desenvolvedores React Native tradicionalmente recorrem ao AsyncStorage aqui.
+
+25
+00:01:43.240 --> 00:01:49.320
+A falha nessa abordagem é que o AsyncStorage depende de operações de IO assíncronas e lentas.
+
+26
+00:01:49.320 --> 00:01:54.920
+Quando testamos isso contra um armazenamento nativo síncrono, o déficit de performance se torna óbvio.
+
+27
+00:01:54.920 --> 00:01:58.400
+Este gráfico de barras horizontais compara os tempos de execução.
+
+28
+00:01:58.400 --> 00:02:03.560
+A barra superior mostra uma leitura e escrita assíncrona levando de 2 a 5 milissegundos.
+
+29
+00:02:03.560 --> 00:02:11.520
+A barra inferior, React Native MMKV, executa em uma fração, 0.1 a 0.3 milissegundos.
+
+30
+00:02:11.520 --> 00:02:16.240
+Ele se encaixa perfeitamente como o equivalente arquitetural exato para dados do usuário.
+
+31
+00:02:16.240 --> 00:02:22.600
+Para a implementação mais ergonômica, os desenvolvedores persistem um zustand state store usando MMKV como
+
+32
+00:02:22.600 --> 00:02:28.400
+o back end, espelhando perfeitamente o comportamento do app storage wrapper no SwiftUI.
+
+33
+00:02:28.400 --> 00:02:33.240
+Mudar o armazenamento de preferências de volta para a thread síncrona remove o gargalo de IO da UI
+
+34
+00:02:33.240 --> 00:02:38.640
+loop, permitindo que dados key value estejam disponíveis imediatamente no mount, sem precisar gerenciar loading
+
+35
+00:02:38.640 --> 00:02:41.400
+states ou lag assíncrono.
+
+36
+00:02:41.400 --> 00:02:46.880
+Começando pelas preferências do usuário, temos dados binários grandes e arquivos gerados pelo usuário.
+
+37
+00:02:46.880 --> 00:02:52.840
+O Expo file system faz interface com o iOS nativo, NS file manager, se dividindo em três
+
+38
+00:02:52.840 --> 00:02:54.840
+ambientes sandbox.
+
+39
+00:02:54.840 --> 00:03:00.600
+O document directory persiste através de updates para conteúdo gerado pelo usuário e backups do iCloud.
+
+40
+00:03:00.600 --> 00:03:05.320
+O cache directory não possui backup e é ativamente visado para exclusão durante
+
+41
+00:03:05.320 --> 00:03:06.560
+pressão de armazenamento.
+
+42
+00:03:06.560 --> 00:03:12.480
+Por fim, o diretório temporário é completamente apagado toda vez que o dispositivo reinicia.
+
+43
+00:03:12.480 --> 00:03:16.280
+Colocar arquivos no diretório errado tem consequências graves.
+
+44
+00:03:16.280 --> 00:03:21.360
+Jogar arquivos de cache no diretório de documentos causa um aumento imediato no tamanho do backup do iCloud, enquanto
+
+45
+00:03:21.360 --> 00:03:26.480
+colocar documentos do usuário no cache garante que esses arquivos serão permanentemente excluídos durante
+
+46
+00:03:26.480 --> 00:03:28.120
+as limpezas do OS.
+
+47
+00:03:28.120 --> 00:03:33.280
+A próxima camada lida com grafos de objetos complexos e dados relacionais estruturados.
+
+48
+00:03:33.280 --> 00:03:38.000
+O SwiftNative não possui um equivalente direto, em nível de framework, ao Core Data da Apple ou aos
+
+49
+00:03:38.000 --> 00:03:39.600
+paradigmas de dados do Swift.
+
+50
+00:03:39.600 --> 00:03:45.040
+No desenvolvimento nativo, a macro de query do SwiftData envia automaticamente as alterações do banco de dados diretamente
+
+51
+00:03:45.040 --> 00:03:50.400
+para a camada de visualização SwiftUI, mantendo a interface instantaneamente sincronizada com os dados.
+
+52
+00:03:50.400 --> 00:03:55.680
+Construímos a base para isso no React Native usando Expo SQLite versão 2, que fornece
+
+53
+00:03:55.680 --> 00:03:58.480
+operações modernas e assíncronas de SQLite.
+
+54
+00:03:58.480 --> 00:04:02.000
+No entanto, o sqelite sozinho é apenas um banco de dados.
+
+55
+00:04:02.000 --> 00:04:07.080
+Ele carece da reatividade de auto-atualização que os desenvolvedores iOS esperam prontamente.
+
+56
+00:04:07.080 --> 00:04:10.440
+Corrigimos essa lacuna de reatividade usando o TANSTAC query.
+
+57
+00:04:10.440 --> 00:04:13.840
+Esse fluxo lógico de looping contínuo ilustra o padrão.
+
+58
+00:04:13.840 --> 00:04:19.000
+O banco de dados Expo sqelite alimenta os dados para o TANSTAC query, que então gerencia a camada
+
+59
+00:04:19.000 --> 00:04:23.200
+de cache e envia atualizações em tempo real diretamente para o componente de UI.
+
+60
+00:04:23.200 --> 00:04:28.440
+Ao combinar use query para operações de leitura e invalidate queries para escrita, construímos um sistema totalmente
+
+61
+00:04:28.440 --> 00:04:30.760
+Cache de estado de UI sincronizado.
+
+62
+00:04:30.760 --> 00:04:35.560
+Essa stack replica efetivamente o fluxo de dados reativo do Swift data, garantindo que mudanças
+
+63
+00:04:35.560 --> 00:04:40.200
+estruturais no banco de dados sqelite sejam automaticamente refletidas na UI do react native através
+
+64
+00:04:40.200 --> 00:04:41.600
+do query cache.
+
+65
+00:04:41.600 --> 00:04:44.960
+A camada final da nossa arquitetura é a mais restrita.
+
+66
+00:04:44.960 --> 00:04:50.080
+É aqui que lidamos com segredos altamente sensíveis, API keys e tokens criptográficos.
+
+67
+00:04:50.080 --> 00:04:54.920
+O iOS keychain é fisicamente protegido pelo secure enclave do dispositivo e vinculado diretamente
+
+68
+00:04:54.920 --> 00:04:57.120
+ao passcode do usuário.
+
+69
+00:04:57.120 --> 00:05:04.440
+Para acessar isso no react native, usamos o Expo secure store, que envolve as CAPIs nativas
+
+70
+00:05:04.440 --> 00:05:07.880
+usadas para adicionar e copiar itens do keychain.
+
+71
+00:05:07.880 --> 00:05:14.680
+Por padrão, esse wrapper direciona para a classe de proteção iOS accessible when unlocked, garantindo que os
+
+72
+00:05:14.680 --> 00:05:19.240
+dados fiquem disponíveis apenas enquanto o dispositivo estiver em uso ativo.
+
+73
+00:05:19.240 --> 00:05:26.040
+Para segurança elevada, os desenvolvedores podem forçar explicitamente verificações de hardware do Face ID ou Touch ID
+
+74
+00:05:26.040 --> 00:05:31.040
+ativando a flag de autenticação obrigatória em sua configuração.
+
+75
+00:05:31.040 --> 00:05:34.760
+Há uma restrição física rígida que deve ser levada em consideração aqui.
+
+76
+00:05:34.760 --> 00:05:38.880
+O keychain é projetado exclusivamente para payloads pequenos.
+
+77
+00:05:38.880 --> 00:05:44.560
+Se você tentar armazenar grandes conjuntos de dados no secure enclave, a operação falhará.
+
+78
+00:05:44.560 --> 00:05:48.200
+Proteger arquivos grandes exige um padrão arquitetural dividido.
+
+79
+00:05:48.200 --> 00:05:53.240
+Você gera uma chave de criptografia, armazena apenas essa chave dentro do secure store e coloca
+
+80
+00:05:53.240 --> 00:05:57.600
+o arquivo grande fortemente criptografado no document directory.
+
+81
+00:05:57.600 --> 00:06:02.320
+Tratar o secure store como um banco de dados padrão dispara limites de memória e degrada o desempenho
+
+82
+00:06:02.320 --> 00:06:03.320
+do sistema.
+
+83
+00:06:03.320 --> 00:06:08.280
+Ele deve ser utilizado estritamente como um sistema de gerenciamento de chaves criptográficas para manter a integridade
+
+84
+00:06:08.280 --> 00:06:13.000
+do enclave, implementar essa estrutura requer cuidado especial durante uma integração brownfield,
+
+85
+00:06:13.000 --> 00:06:18.640
+em que um aplicativo nativo iOS existente está sendo migrado para o react native.
+
+86
+00:06:18.640 --> 00:06:22.480
+O perigo imediato durante essa transição é o aprisionamento de dados do usuário.
+
+87
+00:06:22.480 --> 00:06:27.040
+Com os stores nativos legados permanecendo intocados, você acaba com uma arquitetura de split brain, na qual
+
+88
+00:06:27.040 --> 00:06:31.200
+o app antigo e o app novo dependem de fontes de verdade completamente diferentes.
+
+89
+00:06:31.200 --> 00:06:35.840
+Para resolver isso, executamos uma sequência de migração única durante a fase de inicialização
+
+90
+00:06:35.840 --> 00:06:37.080
+do aplicativo.
+
+91
+00:06:37.080 --> 00:06:40.400
+Este fluxograma ilustra o processo do turbo-module personalizado.
+
+92
+00:06:40.400 --> 00:06:45.560
+Primeiro, o turbo-module extrai os nomes de serviços, contas e preferências conhecidos diretamente
+
+93
+00:06:45.560 --> 00:06:47.400
+dos armazenamentos nativos legados.
+
+94
+00:06:47.400 --> 00:06:52.240
+Segundo, nós imediatamente regravamos esses dados extraídos em nossos wrappers do react native
+
+95
+00:06:52.240 --> 00:06:56.960
+recém-criados, passando isso para o react native MMKV e o expo secure store.
+
+96
+00:06:56.960 --> 00:07:02.000
+Por fim, executamos uma exclusão definitiva dos registros nativos originais, garantindo que os wrappers do react
+
+97
+00:07:02.000 --> 00:07:05.240
+native se tornem a única fonte da verdade.
+
+98
+00:07:05.240 --> 00:07:10.800
+Voltando ao nosso mapeamento arquitetural de antes, o diagrama de duas colunas agora está completo.
+
+99
+00:07:10.800 --> 00:07:17.040
+Os dados do usuário estão perfeitamente alinhados ao MMKV, o NS file manager mapeia para o file system, o core data
+
+100
+00:07:17.040 --> 00:07:23.000
+combina com SQLite e TANstack query, e o keychain mapeia diretamente para o secure store.
+
+101
+00:07:23.000 --> 00:07:27.600
+Os limites de camada que o iOS impõe no nível de hardware e sistema operacional são
+
+102
+00:07:27.600 --> 00:07:31.160
+exatamente os limites que os desenvolvedores React Native devem respeitar.
+
+103
+00:07:31.160 --> 00:07:36.480
+Ao alinhar rigorosamente as características do payload de dados com o wrapper nativo preciso, um framework
+
+104
+00:07:36.480 --> 00:07:41.800
+orientado por JavaScript alcança exatamente a segurança, escalabilidade e desempenho síncrono do código Swift puro.
+

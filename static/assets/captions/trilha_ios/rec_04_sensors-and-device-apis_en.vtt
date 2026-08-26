@@ -1,0 +1,378 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:04.340
+React Native does not reinvent how mobile hardware functions.
+
+2
+00:00:04.340 --> 00:00:09.140
+When you write JavaScript for requesting location data or reading a sensor,
+
+3
+00:00:09.140 --> 00:00:14.340
+you are utilizing the same Native infrastructure that has governed iOS for years.
+
+4
+00:00:14.340 --> 00:00:19.620
+Access is controlled through established frameworks like Core Location for GPS,
+
+5
+00:00:19.620 --> 00:00:24.900
+Core Motion for telemetry, and Core Bluetooth for external device connectivity.
+
+6
+00:00:24.900 --> 00:00:27.700
+The relationship is visible in the syntax.
+
+7
+00:00:27.860 --> 00:00:33.060
+On the left is the native Swift implementation using CL Location Manager Delegate.
+
+8
+00:00:33.060 --> 00:00:36.980
+On the right is the React Native version using Expo Location.
+
+9
+00:00:36.980 --> 00:00:41.860
+If we remove the language specific syntax, the structural skeletons match.
+
+10
+00:00:41.860 --> 00:00:47.780
+The native delegate pattern and completion handlers are translated directly into JavaScript promises.
+
+11
+00:00:47.780 --> 00:00:50.660
+React Native libraries act as thin wrappers,
+
+12
+00:00:50.660 --> 00:00:53.780
+routing data from the system to your app components.
+
+13
+00:00:53.780 --> 00:00:58.660
+This means native delegate models and update patterns translate into standard JavaScript
+
+14
+00:00:58.660 --> 00:01:01.140
+async functions and event subscriptions.
+
+15
+00:01:01.140 --> 00:01:06.020
+Notting these connections reveals how the native iOS mental model applies directly
+
+16
+00:01:06.020 --> 00:01:09.940
+to the JavaScript layer, making hardware integration more predictable.
+
+17
+00:01:09.940 --> 00:01:13.300
+This integration begins with permission-gated APIs.
+
+18
+00:01:13.300 --> 00:01:18.420
+Core Location serves as the system-level gateway for GPS tracking and geofencing.
+
+19
+00:01:18.420 --> 00:01:23.380
+A request originates at the hardware, passes through the native CL Location Manager,
+
+20
+00:01:23.380 --> 00:01:25.700
+and is surfaced by Expo Location.
+
+21
+00:01:25.700 --> 00:01:29.940
+But specific OS-level keys are mandatory in info.plist.
+
+22
+00:01:29.940 --> 00:01:34.180
+For foreground location, NS location when-in-use usage description
+
+23
+00:01:34.180 --> 00:01:37.780
+must be declared to allow hardware data to route to the application.
+
+24
+00:01:37.780 --> 00:01:41.220
+If this key is missing, the request fails at the system level.
+
+25
+00:01:41.220 --> 00:01:43.140
+The permission dialog will not appear,
+
+26
+00:01:43.140 --> 00:01:45.700
+and the API request will fail silently.
+
+27
+00:01:45.700 --> 00:01:48.900
+Background location requires a two-step configuration.
+
+28
+00:01:48.900 --> 00:01:53.220
+Apple mandates the NS location always and when-in-use usage description entry
+
+29
+00:01:53.220 --> 00:01:55.140
+to enable tracking while suspended.
+
+30
+00:01:55.140 --> 00:01:57.620
+Core Bluetooth follows a similar requirement.
+
+31
+00:01:57.620 --> 00:02:03.460
+The React Native BLE-PLX package relies on the NS Bluetooth always usage description key
+
+32
+00:02:03.460 --> 00:02:06.500
+for scanning and connecting on iOS 13 and later.
+
+33
+00:02:06.500 --> 00:02:09.620
+Bluetooth also requires explicit resource management.
+
+34
+00:02:09.620 --> 00:02:11.060
+When a component unmounts,
+
+35
+00:02:11.060 --> 00:02:15.940
+the central manager must be destroyed to release the underlying CB Central Manager resources.
+
+36
+00:02:15.940 --> 00:02:18.020
+Regardless of the JavaScript syntax,
+
+37
+00:02:18.020 --> 00:02:22.580
+hardware access is governed by these native configuration files and lifecycle constraints.
+
+38
+00:02:22.580 --> 00:02:24.900
+Moving beyond simple discrete requests,
+
+39
+00:02:24.900 --> 00:02:28.180
+sensors like the accelerometer provide continuous telemetry,
+
+40
+00:02:28.180 --> 00:02:31.140
+a constant flowing stream of high-frequency data.
+
+41
+00:02:31.140 --> 00:02:33.540
+On iOS, this is handled by Core Motion,
+
+42
+00:02:33.540 --> 00:02:37.540
+with CM Motion Manager as the entry point for data from the accelerometer,
+
+43
+00:02:37.540 --> 00:02:40.820
+the gyroscope, the barometer, and the pedometer.
+
+44
+00:02:40.820 --> 00:02:43.380
+Expo sensors wraps CM Motion Manager,
+
+45
+00:02:43.380 --> 00:02:46.500
+separating each sensor into independent JS modules.
+
+46
+00:02:46.500 --> 00:02:50.660
+These sensors require an active data pipeline flowing from hardware to application.
+
+47
+00:02:50.740 --> 00:02:56.580
+The native start accelerometer updates method maps directly to JavaScript's ad listener,
+
+48
+00:02:56.580 --> 00:03:00.820
+transforming a continuous native stream into a standard event subscription.
+
+49
+00:03:01.540 --> 00:03:04.260
+Most sensors stream without specific keys,
+
+50
+00:03:04.260 --> 00:03:06.500
+but the pedometer is an exception.
+
+51
+00:03:06.500 --> 00:03:11.860
+CM Pedometer requires the NS Motion Usage description key in the app configuration.
+
+52
+00:03:12.260 --> 00:03:14.340
+These continuous native pipelines
+
+53
+00:03:14.340 --> 00:03:16.260
+match to standard event listeners,
+
+54
+00:03:16.260 --> 00:03:20.340
+allowing sensor data to be managed within the normal React lifecycle.
+
+55
+00:03:20.340 --> 00:03:24.020
+A synchronous hardware evaluation handles critical binary states,
+
+56
+00:03:24.020 --> 00:03:27.700
+such as instantly confirming a user's identity through biometric scans,
+
+57
+00:03:27.700 --> 00:03:29.700
+like Face ID or Touch ID.
+
+58
+00:03:29.700 --> 00:03:32.260
+The configuration rules apply here as well.
+
+59
+00:03:32.260 --> 00:03:36.660
+NS Face ID Usage description must be present in the info.p list
+
+60
+00:03:36.660 --> 00:03:39.460
+before the system permits an authentication prompt.
+
+61
+00:03:39.460 --> 00:03:45.300
+The Expo Local Authentication Library wraps the native LA context.evaluate policy method,
+
+62
+00:03:45.300 --> 00:03:48.580
+providing a simple async call to the JavaScript thread.
+
+63
+00:03:48.580 --> 00:03:54.740
+The library maps native LA error codes to JavaScript strings to handle failure states.
+
+64
+00:03:54.740 --> 00:04:00.500
+When a user cancels the prompt, the native user cancel returns as user cancel.
+
+65
+00:04:00.500 --> 00:04:05.380
+If disabled by too many attempts, biometry lockout maps to lockout,
+
+66
+00:04:05.380 --> 00:04:07.540
+triggering a UI fallback.
+
+67
+00:04:07.540 --> 00:04:11.460
+This mapping ensures that hardware evaluation is transparent,
+
+68
+00:04:11.460 --> 00:04:15.300
+providing native error codes that allow for precise UI decisions.
+
+69
+00:04:15.860 --> 00:04:19.380
+Finally, we see this mapping in UI-driven hardware,
+
+70
+00:04:19.380 --> 00:04:22.900
+such as map components and physical feedback generators.
+
+71
+00:04:22.900 --> 00:04:27.060
+React native maps utilizes UKIT's MKMAP view.
+
+72
+00:04:27.060 --> 00:04:30.020
+By using the provider default setting on iOS,
+
+73
+00:04:30.020 --> 00:04:32.820
+the library binds directly to Apple Maps.
+
+74
+00:04:32.820 --> 00:04:36.500
+Native map configurations are exposed through string properties.
+
+75
+00:04:36.500 --> 00:04:42.180
+Passing a value to the map type prop updates the underlying MKMAP type on the native view.
+
+76
+00:04:42.180 --> 00:04:48.100
+For example, the native .satellite flyover enum is accessed by passing the string satellite
+
+77
+00:04:48.100 --> 00:04:55.780
+flyover. haptic feedback follows the same pattern. Expo haptics wraps the three UI-KIT generators,
+
+78
+00:04:55.780 --> 00:05:01.060
+impact, notification, and selection into named JavaScript functions.
+
+79
+00:05:01.060 --> 00:05:04.740
+This design handles cross-platform differences automatically.
+
+80
+00:05:04.740 --> 00:05:08.500
+If executed on an Android device lacking the equivalent engine,
+
+81
+00:05:08.500 --> 00:05:11.460
+the library safely treats them as a no-op.
+
+82
+00:05:11.540 --> 00:05:15.220
+This ensures the same code remains functional across platforms,
+
+83
+00:05:15.220 --> 00:05:19.220
+as haptic calls are simply ignored on devices that lack the hardware support.
+
+84
+00:05:19.780 --> 00:05:24.820
+This architectural relationship between the JavaScript thread and the underlying native system
+
+85
+00:05:24.820 --> 00:05:29.540
+solidifies into a highly predictable, reliable roadmap for developers.
+
+86
+00:05:29.540 --> 00:05:35.540
+Integrating hardware in React Native is effectively an exercise in native iOS development,
+
+87
+00:05:35.540 --> 00:05:38.580
+performed through a streamlined abstraction layer.
+
+88
+00:05:38.580 --> 00:05:42.260
+This table maps iOS frameworks to react native counterparts.
+
+89
+00:05:42.740 --> 00:05:48.820
+Native frameworks like CL Location Delegate, CB Central Manager, and LA Context
+
+90
+00:05:48.820 --> 00:05:56.100
+perform the actual device logic. React native libraries like Expo Location and React Native BLE
+
+91
+00:05:56.100 --> 00:06:03.380
+plugs serve as direct links to those native engines. Success depends on respecting native constraints,
+
+92
+00:06:03.380 --> 00:06:08.260
+managing the lifecycle of managers, and ensuring all info.plist permissions
+
+93
+00:06:08.260 --> 00:06:15.060
+are correctly defined. By treating the native OS as the engine and JavaScript as the interface,
+
+94
+00:06:15.060 --> 00:06:20.340
+you can build hardware integrations that are as stable and performant as their native counterparts.
+

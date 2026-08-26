@@ -1,0 +1,222 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:05.000
+In both SwiftUI and React, state is the single source of truth.
+
+2
+00:00:05.000 --> 00:00:10.000
+When state changes, that mutation is the sole driver of UI recomputations.
+
+3
+00:00:10.000 --> 00:00:14.000
+Swift engineers manage this state through a specific set of tools,
+
+4
+00:00:14.000 --> 00:00:19.000
+property wrappers for local values, external observables for business logic,
+
+5
+00:00:19.000 --> 00:00:22.000
+and discrete lifecycle modifiers to handle side effects.
+
+6
+00:00:22.000 --> 00:00:29.000
+React takes these mechanics and consolidates them into a minimal set of foundational functions called hooks.
+
+7
+00:00:29.000 --> 00:00:37.000
+Because of this consolidation, modern React Native moves away from class-based object-oriented programming for managing state outside the view.
+
+8
+00:00:37.000 --> 00:00:44.000
+We can trace a direct line from local toggles to complex combined streams into the React Hook ecosystem.
+
+9
+00:00:44.000 --> 00:00:47.000
+To navigate this, we will use this translation matrix.
+
+10
+00:00:47.000 --> 00:00:52.000
+We have SwiftUI architecture on the left and React primitives on the right.
+
+11
+00:00:52.000 --> 00:00:58.000
+We will systematically populate this grid row by row to build a 1-to-1 mental map of both frameworks.
+
+12
+00:00:58.000 --> 00:01:03.000
+Mastering React Native as an iOS developer isn't about learning a new architecture.
+
+13
+00:01:03.000 --> 00:01:09.000
+It is about translating your existing SwiftUI knowledge into a tighter generalized vocabulary.
+
+14
+00:01:09.000 --> 00:01:14.000
+Mapping at state to use state, the diagram shows the structural difference.
+
+15
+00:01:14.000 --> 00:01:20.000
+Use state returns a tuple, the current value, and a setter function dedicated to updating it.
+
+16
+00:01:20.000 --> 00:01:22.000
+React forbids direct mutation.
+
+17
+00:01:22.000 --> 00:01:27.000
+You cannot change the variable directly. You must call the setter to trigger an update.
+
+18
+00:01:27.000 --> 00:01:37.000
+If your new state depends on the previous one, you pass a closure directly to the setter using the functional updater pattern, ensuring you never read a stale value.
+
+19
+00:01:37.000 --> 00:01:46.000
+Not all mutable data should trigger a view re-render. Applications rely on values like timer IDs or node references that need to change silently in the background.
+
+20
+00:01:46.000 --> 00:01:55.000
+In SwiftUI, tracking these non-rendered values with at-state can sometimes cause unnecessary view updates depending on where the view boundaries are drawn.
+
+21
+00:01:55.000 --> 00:02:00.000
+This diagram shows React's solution for non-rendering state. Use ref.
+
+22
+00:02:00.000 --> 00:02:05.000
+The dot current property of a use ref acts as a mutable container.
+
+23
+00:02:05.000 --> 00:02:11.000
+It survives the render cycle invisibly, acting like an instance variable that the render engine ignores.
+
+24
+00:02:11.000 --> 00:02:20.000
+Local state in React demands strict intent. You use use state when you want to trigger the UI render cycle and use ref when you need to bypass it.
+
+25
+00:02:20.000 --> 00:02:27.000
+A common obstacle for transitioning Swift developers is attempting to recreate the observable object pattern in JavaScript.
+
+26
+00:02:27.000 --> 00:02:36.000
+In modern iOS development, you use the at-observable macro to extract complex state and logic outside of a single view into a class.
+
+27
+00:02:36.000 --> 00:02:43.000
+Looking at this block diagram, React separates this concern. It drops classes entirely using plain functions called custom hooks.
+
+28
+00:02:44.000 --> 00:02:53.000
+A custom hook is any standard JavaScript function that starts with the word use and encapsulates stateful business logic. These hooks are highly composable.
+
+29
+00:02:53.000 --> 00:03:01.000
+A custom hook can internally call other basic hooks, stacking you state or use ref to build complex behaviors.
+
+30
+00:03:01.000 --> 00:03:11.000
+The resulting architecture is clean. The custom hook manages the logic and feeds data directly into a React component keeping the component itself purely presentational.
+
+31
+00:03:11.000 --> 00:03:23.000
+The custom hook is the direct functional equivalent of the V model pattern. Moving from class-based V models to functional custom hooks enables the same modular logic you would expect from Swift Composition.
+
+32
+00:03:23.000 --> 00:03:33.000
+SwiftUI manages side effects through discrete lifecycle modifiers attached to views, like dot on appear, dot dot disappear, and dot on change.
+
+33
+00:03:33.000 --> 00:03:40.000
+We map these specialized modifiers to a single primitive use effect, controlled entirely by its dependency array.
+
+34
+00:03:40.000 --> 00:03:44.000
+This array dictates exactly when to synchronize data.
+
+35
+00:03:44.000 --> 00:03:54.000
+Dot on appear maps to an empty array, running the effect once on mount. Dot on change maps to an array of specific variables, re-running only when those values change.
+
+36
+00:03:54.000 --> 00:04:01.000
+For tear down, the equivalent of Swift's D in it or cancelling a task, you return a cleanup function from inside the effect body.
+
+37
+00:04:01.000 --> 00:04:13.000
+React automatically calls this before the component unmounts or before the effect reruns. SwiftUI's dot task modifiers simplifies async operations by automatically tying an async function to the lifetime of the view.
+
+38
+00:04:13.000 --> 00:04:25.000
+You achieve this in React by defining and immediately invoking an async function inside the use effect, while utilizing a Boolean cancellation flag to prevent updates if the component unmounts.
+
+39
+00:04:25.000 --> 00:04:31.000
+Even declarative reactive streams, like combine publishers, map to a standard use effect pattern.
+
+40
+00:04:31.000 --> 00:04:37.000
+You subscribe in the body, store incoming data via use state, and unsubscribe in the cleanup function.
+
+41
+00:04:37.000 --> 00:04:44.000
+React does not possess discrete lifecycle events. It relies on data synchronization, controlled by the dependency array.
+
+42
+00:04:44.000 --> 00:04:51.000
+SwiftUI creates function closures fresh on every render, relying on the Swift compiler to manage performance.
+
+43
+00:04:51.000 --> 00:05:01.000
+Pasting a newly created function reference down to a child component in React creates a performance trap. It forces that child to re-render even if the data hasn't changed.
+
+44
+00:05:01.000 --> 00:05:11.000
+This diagram illustrates the solution. Use callback. This hook stabilizes function references, memoizing them so their memory address stays consistent across render cycles.
+
+45
+00:05:11.000 --> 00:05:20.000
+For caching expensive data calculations, we map Swift's computed properties or lazy var directly to react use memo.
+
+46
+00:05:20.000 --> 00:05:29.000
+Overapplying use memo adds unnecessary overhead. It is the same anti-pattern as adding lazy var to every property in a Swift project.
+
+47
+00:05:29.000 --> 00:05:40.000
+Because React manages all these hooks via call order, it enforces strict execution laws. You must call hooks only at the top level of your component and only from React functions.
+
+48
+00:05:40.000 --> 00:05:48.000
+If you emit a variable from a hooks dependency array, you create a stale closure. The effect will execute, but it will read outdated values.
+
+49
+00:05:48.000 --> 00:05:57.000
+A stale closure operates like capturing a weak reference in Swift that has already been deallicated. The effect sees old values from a previous render state.
+
+50
+00:05:57.000 --> 00:06:08.000
+React lacks the compiler and forced initialization checks you have in Swift, relying on tooling like the ESLint Hooks plugin is a mandatory architectural safety net to catch missing dependencies.
+
+51
+00:06:08.000 --> 00:06:15.000
+Here is our completed translation matrix, plotting every SwiftUI mechanic to its React counterpart.
+
+52
+00:06:15.000 --> 00:06:23.000
+Notice that combined streams, observable view models and task life cycles do not require heavy external libraries.
+
+53
+00:06:23.000 --> 00:06:35.000
+They are all achieved through the combined application of use state and use effect. The core translation to internalize is that the custom hook is the direct replacement for the view model.
+
+54
+00:06:35.000 --> 00:06:44.000
+Stop writing classes to manage external state, manage your dependency arrays strictly and trust your Linter to catch execution errors.
+
+55
+00:06:44.000 --> 00:06:54.000
+Hooks are not an alien framework. They are simply your existing SwiftUI expertise compiled down into a tighter functional toolkit.
+
