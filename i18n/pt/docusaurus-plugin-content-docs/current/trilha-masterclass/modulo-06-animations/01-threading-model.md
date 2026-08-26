@@ -6,6 +6,7 @@ title: "Thread JS vs Thread UI"
 
 <video width="100%" controls>
   <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/anim_01_threading_model.mp4" type="video/mp4">
+  <track kind="captions" src="/trilha-react-native/assets/captions/trilha_masterclass/anim_01_threading_model.vtt" srclang="pt" label="Português" default>
   Your browser does not support the video tag.
 </video>
 

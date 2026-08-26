@@ -1,0 +1,378 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:06.040
+Escrever software muitas vezes parece abstrato, mas renderizar uma interface de usuário está sujeito a prazos físicos rígidos e
+
+2
+00:00:06.040 --> 00:00:08.320
+inflexíveis.
+
+3
+00:00:08.320 --> 00:00:13.880
+A 60 quadros por segundo, uma tela atualiza a cada 16,67 milissegundos.
+
+4
+00:00:13.880 --> 00:00:18.840
+Para uma tela de 120 hertz, isso cai para 8,33 milissegundos.
+
+5
+00:00:18.840 --> 00:00:23.280
+Se o sistema levar uma fração de milissegundo a mais para confirmar os comandos de desenho, a tela
+
+6
+00:00:23.280 --> 00:00:24.720
+perde a atualização.
+
+7
+00:00:24.720 --> 00:00:26.600
+Você perde um quadro (frame).
+
+8
+00:00:26.600 --> 00:00:31.240
+Escrever isso requer saber exatamente onde seu código de animação é executado, porque o ambiente
+
+9
+00:00:31.240 --> 00:00:33.840
+de execução determina o desempenho.
+
+10
+00:00:33.840 --> 00:00:38.240
+Atingir 120 quadros por segundo requer adesão rigorosa à física do
+
+11
+00:00:38.240 --> 00:00:39.840
+ciclo de atualização.
+
+12
+00:00:39.840 --> 00:00:42.480
+Duas threads dominam o pipeline do React Native.
+
+13
+00:00:42.480 --> 00:00:48.000
+A thread de JS executa a Hermes VM, executando todos os renders do React, atualizações de estado, lógica de negócio,
+
+14
+00:00:48.000 --> 00:00:49.480
+e callbacks de rede.
+
+15
+00:00:49.480 --> 00:00:53.920
+A thread de UI nativa despacha eventos de toque, executa o layout engine e desenha pixels na
+
+16
+00:00:53.920 --> 00:00:55.400
+tela.
+
+17
+00:00:55.400 --> 00:01:00.320
+Escrever ou modificar uma view nativa deve acontecer na thread de UI, que depende da thread de
+
+18
+00:01:00.320 --> 00:01:03.680
+JS para entregar instruções de renderização a tempo.
+
+19
+00:01:03.680 --> 00:01:08.680
+Como existe exatamente uma thread de JS por app, lógica de negócio pesada vai bloqueá-la.
+
+20
+00:01:08.680 --> 00:01:14.400
+Quando a thread de JS engasga, a thread de UI não recebe atualizações, e o pipeline de renderização trava.
+
+21
+00:01:14.400 --> 00:01:19.040
+Considere uma falha de desempenho padrão: uma animação ativa e rodando suavemente
+
+22
+00:01:19.040 --> 00:01:23.680
+trava de repente porque uma atualização pesada de estado do React é disparada ao mesmo tempo.
+
+23
+00:01:23.680 --> 00:01:28.120
+Este fluxograma mapeia a arquitetura legada do React Native, onde essas threads se comunicavam
+
+24
+00:01:28.120 --> 00:01:32.840
+exclusivamente por meio de uma fila de mensagens JSON assíncrona conhecida como bridge.
+
+25
+00:01:32.840 --> 00:01:38.600
+Uma animação controlada pela thread JS recalculava seu valor a cada frame, serializava esses dados,
+
+26
+00:01:38.600 --> 00:01:40.640
+e os enviava por essa bridge.
+
+27
+00:01:40.640 --> 00:01:46.080
+A 60 quadros por segundo, o sistema força 60 idas e voltas de JSON serializado por segundo,
+
+28
+00:01:46.080 --> 00:01:48.160
+apenas para manter a animação em movimento.
+
+29
+00:01:48.160 --> 00:01:54.440
+Essas 60 atualizações competem por espaço na mesma fila usada por respostas pesadas de rede e
+
+30
+00:01:54.440 --> 00:01:56.640
+atualizações densas de estado.
+
+31
+00:01:56.640 --> 00:01:58.600
+O congestionamento é inevitável.
+
+32
+00:01:58.600 --> 00:02:04.000
+Os engenheiros mitigaram isso usando a API use Native driver, enviando a descrição da animação
+
+33
+00:02:04.000 --> 00:02:09.080
+pela bridge exatamente uma vez, permitindo que a thread de UI nativa execute o loop.
+
+34
+00:02:09.080 --> 00:02:14.400
+No entanto, essa abordagem tinha uma latência de configuração mensurável, e era estritamente limitada a animações declarativas
+
+35
+00:02:14.400 --> 00:02:20.480
+definidas previamente, tornando-a inútil para entradas de gestos contínuas e dinamicamente mutáveis.
+
+36
+00:02:20.480 --> 00:02:27.200
+Uma comunicação síncrona e serializada não consegue conduzir animações de interface complexas e interrompíveis.
+
+37
+00:02:27.200 --> 00:02:30.720
+Simplificando, a própria arquitetura era o gargalo.
+
+38
+00:02:30.720 --> 00:02:33.120
+A nova arquitetura resolve esse gargalo.
+
+39
+00:02:33.120 --> 00:02:37.720
+A bridge é completamente substituída pela JavaScript interface, ou JSI.
+
+40
+00:02:37.720 --> 00:02:43.680
+A JSI estabelece bindings diretos de métodos C++ acessados nativamente pela Hermes VM.
+
+41
+00:02:43.680 --> 00:02:49.320
+Isso elimina a serialização, remove a espera assíncrona e destrói a fila de mensagens.
+
+42
+00:02:49.320 --> 00:02:54.120
+O framework se afasta de um sistema de passagem de mensagens desconectado para um mostrado síncrono
+
+43
+00:02:54.120 --> 00:02:55.640
+modelo de memória.
+
+44
+00:02:55.640 --> 00:03:01.160
+Ao remover a latência da bridge, o JSI permite que o JSI e as camadas nativas executem cálculos complexos
+
+45
+00:03:01.160 --> 00:03:06.560
+entre os limites, tranquilamente dentro de um único quadro de 16 milissegundos.
+
+46
+00:03:06.560 --> 00:03:12.280
+Voltando à UI thread, a biblioteca reanimated aproveita o JSI para gerar worklets, executando
+
+47
+00:03:12.280 --> 00:03:15.600
+funções de animação diretamente no ambiente nativo.
+
+48
+00:03:15.600 --> 00:03:20.920
+Um worklet é um runtime Hermes secundário e miniaturizado que vive diretamente na UI thread para executar
+
+49
+00:03:20.920 --> 00:03:23.080
+funções de animação localmente.
+
+50
+00:03:23.080 --> 00:03:27.960
+Se executarmos essa mesma atualização pesada de estado do React junto com uma animação de gesto, mas executarmos a
+
+51
+00:03:27.960 --> 00:03:33.280
+lógica de animação dentro de um worklet, a thread principal do JSI pode bloquear por 30 milissegundos, falhando
+
+52
+00:03:33.280 --> 00:03:37.960
+seu deadline de renderização, enquanto a animação continua executando em taxa de quadros total.
+
+53
+00:03:37.960 --> 00:03:42.760
+O worklet lê e escreve o shared value de forma síncrona via JSI na thread de UI.
+
+54
+00:03:42.760 --> 00:03:46.640
+Ele está completamente isolado do event loop congestionado do JSI.
+
+55
+00:03:46.640 --> 00:03:51.440
+Mover a lógica de animação para a thread de UI através de worklets mantém a taxa de quadros estável, mesmo quando
+
+56
+00:03:51.440 --> 00:03:55.000
+a thread do JavaScript está sobrecarregada pela carga da aplicação.
+
+57
+00:03:55.000 --> 00:03:58.480
+O JSI também muda a forma como o framework lida com as medições de layout.
+
+58
+00:03:58.480 --> 00:04:02.120
+A função measure agora retorna as coordenadas de layout nativas de forma síncrona.
+
+59
+00:04:02.120 --> 00:04:06.600
+Não há mais espera por uma cadeia de callback assíncrona para localizar uma view na tela.
+
+60
+00:04:06.600 --> 00:04:11.160
+Isso se conecta diretamente ao Fabric, o renderizador concorrente do React Native, que gerencia o layout
+
+61
+00:04:11.160 --> 00:04:13.200
+árvores na UI thread.
+
+62
+00:04:13.200 --> 00:04:18.080
+O Fabric pode interromper de forma inteligente tarefas de renderização de baixa prioridade, como atualizações de listas fora da tela,
+
+63
+00:04:18.080 --> 00:04:21.640
+para processar imediatamente animações urgentes guiadas por gestos.
+
+64
+00:04:21.640 --> 00:04:26.760
+Combinados, JSI e Fabric criam uma arquitetura que prioriza fisicamente a interação humana
+
+65
+00:04:26.760 --> 00:04:28.600
+em relação ao processamento em segundo plano.
+
+66
+00:04:28.600 --> 00:04:31.720
+Essa matriz mapeia o novo desafio arquitetural.
+
+67
+00:04:31.720 --> 00:04:35.280
+Os engenheiros devem gerenciar explicitamente como os dados trafegam entre a thread principal do JSI e o
+
+68
+00:04:35.280 --> 00:04:36.960
+UI worklet.
+
+69
+00:04:36.960 --> 00:04:42.720
+Os shared values são o mecanismo primário, livre de locks, para passar dados entre essas threads sem
+
+70
+00:04:42.720 --> 00:04:45.400
+escrever código explícito de sincronização.
+
+71
+00:04:45.400 --> 00:04:47.840
+Uma regra rígida de limite se aplica.
+
+72
+00:04:47.840 --> 00:04:53.800
+Nunca tente chamar um setter de estado padrão do React diretamente de dentro de um worklet de UI.
+
+73
+00:04:53.800 --> 00:04:55.400
+O React não é thread safe.
+
+74
+00:04:55.400 --> 00:04:58.600
+Os setters de estado devem ser executados no loop principal do JS.
+
+75
+00:04:58.600 --> 00:05:03.920
+Para despachar com segurança uma função de um worklet de UI para a thread principal do JS, envolva a chamada em run
+
+76
+00:05:03.920 --> 00:05:05.400
+on JS.
+
+77
+00:05:05.400 --> 00:05:10.800
+Por outro lado, para agendar uma função worklet de UI a partir do JS, use run on UI.
+
+78
+00:05:10.800 --> 00:05:15.360
+Tratar esses limites como transferências manuais rígidas evita condições de corrida perigosas e
+
+79
+00:05:15.360 --> 00:05:18.640
+protege completamente a thread de UI contra falhas.
+
+80
+00:05:18.640 --> 00:05:21.360
+Gerenciar o frame de animação é apenas o primeiro passo.
+
+81
+00:05:21.360 --> 00:05:26.680
+Tarefas pesadas executadas imediatamente após uma animação ainda podem causar engasgos nos frames finais.
+
+82
+00:05:26.680 --> 00:05:30.920
+Este diagrama mostra o interaction manager, uma fila de retenção projetada para adiar com segurança esse
+
+83
+00:05:30.920 --> 00:05:32.840
+trabalho não essencial.
+
+84
+00:05:32.840 --> 00:05:39.040
+O método run after interactions mantém tarefas nesta fila até que todas as animações ativas e
+
+85
+00:05:39.040 --> 00:05:41.400
+eventos de toque estejam completamente concluídos.
+
+86
+00:05:41.400 --> 00:05:43.520
+Há uma exceção crucial.
+
+87
+00:05:43.520 --> 00:05:48.960
+Animações de fundo decorativas ou em loop devem ser marcadas como is interaction false.
+
+88
+00:05:48.960 --> 00:05:53.360
+Caso contrário, elas mantêm a fila aberta permanentemente e bloqueiam tarefas adiadas.
+
+89
+00:05:53.360 --> 00:05:59.120
+Por fim, ao verificar essas otimizações, faça o profile de desempenho da thread apenas em um build de
+
+90
+00:05:59.120 --> 00:06:04.760
+release totalmente compilado, o modo de desenvolvimento injeta uma sobrecarga pesada de JS que gera flame graphs imprecisos
+
+91
+00:06:04.760 --> 00:06:05.760
+gráficos.
+
+92
+00:06:05.760 --> 00:06:10.560
+Alcançar 120 quadros por segundo significa abandonar a mentalidade de caixa-preta.
+
+93
+00:06:10.560 --> 00:06:15.320
+Você precisa mapear cada cálculo para a thread correta e proteger agressivamente
+
+94
+00:06:15.320 --> 00:06:17.360
+seu orçamento físico de 16 milissegundos.
+

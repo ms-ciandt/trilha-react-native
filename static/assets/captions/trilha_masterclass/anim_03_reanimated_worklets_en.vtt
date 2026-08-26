@@ -1,0 +1,474 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:04.320
+We are looking at a mechanical metronome swinging with violent precision.
+
+2
+00:00:04.320 --> 00:00:08.720
+It represents the absolute physical limit of mobile UI performance.
+
+3
+00:00:08.720 --> 00:00:11.760
+To hit a flawless 120 frames per second,
+
+4
+00:00:11.760 --> 00:00:16.960
+your application has exactly 8 milliseconds to calculate and render a single frame.
+
+5
+00:00:16.960 --> 00:00:21.840
+This architectural diagram shows how traditional React Native handles that deadline.
+
+6
+00:00:21.840 --> 00:00:25.840
+On the left is the main JavaScript thread, where your AppLogic lives.
+
+7
+00:00:25.840 --> 00:00:29.520
+On the right is the Native UI thread, which actually draws the pixels.
+
+8
+00:00:29.680 --> 00:00:36.400
+To animate anything, the JS thread has to send a serialized message across an asynchronous bridge to the UI thread.
+
+9
+00:00:36.400 --> 00:00:40.720
+When standard application logic, like fetching data or processing state,
+
+10
+00:00:40.720 --> 00:00:45.360
+clogs up that JS thread. Those asynchronous animation messages get delayed.
+
+11
+00:00:45.360 --> 00:00:48.960
+The window to render the frame closes before the instructions even arrive,
+
+12
+00:00:48.960 --> 00:00:51.360
+resulting in dropped frames and a stuttering interface.
+
+13
+00:00:52.080 --> 00:00:56.080
+Re-enabited three abandons this declarative handoff model entirely.
+
+14
+00:00:56.080 --> 00:00:58.960
+Instead of sending instructions across a bridge,
+
+15
+00:00:58.960 --> 00:01:04.000
+re-animated achieves perfect frame rates by running your JavaScript imperative logic
+
+16
+00:01:04.000 --> 00:01:06.800
+directly on the UI thread itself.
+
+17
+00:01:06.800 --> 00:01:11.760
+Building fluid mobile applications requires mastering this dual thread system,
+
+18
+00:01:11.760 --> 00:01:16.480
+stripping animation logic completely away from standard application state.
+
+19
+00:01:16.480 --> 00:01:20.160
+This architectural separation begins during the build process,
+
+20
+00:01:20.160 --> 00:01:23.200
+powered by a specific Babel compiler plugin.
+
+21
+00:01:23.200 --> 00:01:27.920
+Developers use the Worklet string directive at the top of a JavaScript function.
+
+22
+00:01:27.920 --> 00:01:33.200
+This explicitly marks that specific block of code for execution on the UI thread.
+
+23
+00:01:33.200 --> 00:01:37.760
+The compiler locates the function, extracts its source and closure variables,
+
+24
+00:01:37.760 --> 00:01:40.720
+and serializes them into a packaged node.
+
+25
+00:01:40.720 --> 00:01:45.280
+At runtime, this bundle installs into a secondary Hermes virtual machine.
+
+26
+00:01:45.280 --> 00:01:48.800
+This VM operates exclusively on the Native UI thread,
+
+27
+00:01:48.800 --> 00:01:51.920
+physically separated from the main JavaScript runtime.
+
+28
+00:01:51.920 --> 00:01:57.280
+While standalone helper functions require you to manually write the Worklet directive,
+
+29
+00:01:57.280 --> 00:02:00.080
+functions passed in line to re-animated hooks,
+
+30
+00:02:00.080 --> 00:02:02.960
+like animated styles or gesture callbacks,
+
+31
+00:02:02.960 --> 00:02:06.160
+are automatically identified and processed by the compiler.
+
+32
+00:02:06.800 --> 00:02:08.640
+Through built-time compilation,
+
+33
+00:02:08.640 --> 00:02:12.240
+re-animated takes a single unified JavaScript code base
+
+34
+00:02:12.240 --> 00:02:16.400
+and physically divides it across two distinct execution environments.
+
+35
+00:02:16.400 --> 00:02:19.600
+When a user swipes or drags an element on the screen,
+
+36
+00:02:19.600 --> 00:02:22.880
+that gesture event originates natively on the UI thread.
+
+37
+00:02:22.880 --> 00:02:27.680
+That native interaction instantly triggers the invocation of our compiled Worklet.
+
+38
+00:02:27.680 --> 00:02:30.400
+This diagram outlines the communication layer.
+
+39
+00:02:30.400 --> 00:02:32.400
+Instead of an asynchronous bridge,
+
+40
+00:02:32.400 --> 00:02:35.920
+re-animated uses JSI, the JavaScript interface,
+
+41
+00:02:35.920 --> 00:02:40.000
+to directly connect the native UI to our secondary Hermes VM.
+
+42
+00:02:40.000 --> 00:02:45.600
+The Worklet function is invoked and processes the gesture math entirely within that UI thread VM.
+
+43
+00:02:45.600 --> 00:02:49.120
+Because of JSI, this execution happens synchronously.
+
+44
+00:02:49.200 --> 00:02:53.040
+It blocks the UI thread for only fractions of a millisecond,
+
+45
+00:02:53.040 --> 00:02:55.280
+finishing well within the current frame,
+
+46
+00:02:55.280 --> 00:02:59.120
+and requires zero communication with the main React JavaScript thread.
+
+47
+00:02:59.840 --> 00:03:03.440
+By isolating the animation calculations over JSI,
+
+48
+00:03:03.440 --> 00:03:08.080
+re-animated prevents standard application logic from interfering with the frame rate,
+
+49
+00:03:08.080 --> 00:03:10.480
+rendering UI stutters virtually impossible.
+
+50
+00:03:11.200 --> 00:03:14.720
+To share state between these two isolated Hermes runtimes,
+
+51
+00:03:14.720 --> 00:03:18.080
+we use a specific data primitive called use-shared value.
+
+52
+00:03:18.720 --> 00:03:24.400
+In this thread geometry, when the UI thread reads or writes to a shared value inside a Worklet,
+
+53
+00:03:24.400 --> 00:03:27.360
+the operation is immediate and synchronous on the same frame.
+
+54
+00:03:27.920 --> 00:03:31.600
+However, when the JavaScript thread updates that same shared value,
+
+55
+00:03:31.600 --> 00:03:34.560
+the write is a synchronous arriving before the next frame.
+
+56
+00:03:35.120 --> 00:03:39.200
+This creates a pitfall, writing to a shared value on the JS thread,
+
+57
+00:03:39.200 --> 00:03:42.560
+then reading it immediately returns a stale value.
+
+58
+00:03:42.560 --> 00:03:46.880
+Furthermore, reading that .value forces the main JS thread
+
+59
+00:03:46.880 --> 00:03:51.120
+to completely freeze, halting execution until the UI thread
+
+60
+00:03:51.120 --> 00:03:53.200
+delivers the payload across the boundary.
+
+61
+00:03:53.680 --> 00:03:58.000
+Despite these strict access rules, the memory bridge is versatile,
+
+62
+00:03:58.000 --> 00:04:02.800
+supporting everything from raw numbers and hex colors to complex objects and arrays.
+
+63
+00:04:03.680 --> 00:04:07.040
+Treating these shared values like standard React state
+
+64
+00:04:07.040 --> 00:04:09.280
+ignores their physical location and memory.
+
+65
+00:04:09.920 --> 00:04:13.840
+Relying on synchronous assumptions across asynchronous boundaries
+
+66
+00:04:13.840 --> 00:04:16.480
+leads directly to race conditions and thread locks.
+
+67
+00:04:17.280 --> 00:04:20.240
+To map these shared values to visual properties,
+
+68
+00:04:20.240 --> 00:04:22.160
+we use use animated style.
+
+69
+00:04:22.800 --> 00:04:26.720
+This hook computes a style object directly on the UI thread,
+
+70
+00:04:26.720 --> 00:04:30.720
+ensuring styles update frame by frame without JS thread intervention.
+
+71
+00:04:31.440 --> 00:04:33.760
+Only dynamic properties belong here.
+
+72
+00:04:33.760 --> 00:04:36.400
+Static properties, like borders or padding,
+
+73
+00:04:36.400 --> 00:04:38.880
+should remain in standard React style sheets,
+
+74
+00:04:38.880 --> 00:04:42.000
+removing the overhead of evaluating them on every single frame.
+
+75
+00:04:42.640 --> 00:04:46.560
+When a complex animation requires pure mathematical transformations
+
+76
+00:04:46.560 --> 00:04:48.400
+based on other shared values,
+
+77
+00:04:48.400 --> 00:04:51.200
+we compute them using used derived value,
+
+78
+00:04:51.200 --> 00:04:54.080
+which creates a read-only node in the reactive graph.
+
+79
+00:04:54.800 --> 00:04:57.840
+This flow chart illustrates a critical API rule,
+
+80
+00:04:58.480 --> 00:05:02.960
+never write to a shared value from within the callback actively reading from it.
+
+81
+00:05:03.520 --> 00:05:06.800
+Mutating state here creates an infinite feedback loop.
+
+82
+00:05:06.800 --> 00:05:09.280
+The callback continuously triggers itself,
+
+83
+00:05:09.360 --> 00:05:12.400
+rapidly accelerating until the thread completely crashes.
+
+84
+00:05:13.120 --> 00:05:17.760
+Reanimated's reactive graph is built as a strict one-way data pipeline.
+
+85
+00:05:17.760 --> 00:05:20.160
+To remain stable, your reactive callbacks
+
+86
+00:05:20.160 --> 00:05:23.360
+must operate strictly as pure read-only functions.
+
+87
+00:05:23.920 --> 00:05:28.960
+A common source of developer friction occurs when variables seem to mysteriously freeze,
+
+88
+00:05:28.960 --> 00:05:31.440
+failing to update inside a running workload.
+
+89
+00:05:31.440 --> 00:05:32.960
+This split view explains why.
+
+90
+00:05:33.520 --> 00:05:36.480
+Remember the build time serialization process.
+
+91
+00:05:36.480 --> 00:05:41.600
+A workload's closure references are permanently locked at the exact moment the app compiles.
+
+92
+00:05:41.600 --> 00:05:44.800
+When standard React state changes on the main JS thread,
+
+93
+00:05:44.800 --> 00:05:49.040
+there is no physical mechanism to transport that new value into the locked closure.
+
+94
+00:05:49.520 --> 00:05:55.440
+To bypass this limitation, you must use shared values as a designated live data channel,
+
+95
+00:05:55.440 --> 00:05:58.320
+keeping the UI thread supplied with current information.
+
+96
+00:05:58.960 --> 00:06:03.360
+When the workload finishes its task and needs to inform the rest of the application,
+
+97
+00:06:03.360 --> 00:06:05.360
+we use the run on JS function.
+
+98
+00:06:05.840 --> 00:06:08.480
+This provides an asynchronous escape hatch,
+
+99
+00:06:08.480 --> 00:06:12.960
+letting the UI thread dispatch completion callbacks back to the main react event loop.
+
+100
+00:06:13.600 --> 00:06:17.520
+Conversely, run on UI serves as the inverse conduit,
+
+101
+00:06:17.520 --> 00:06:22.880
+giving the main JavaScript thread the ability to manually schedule worklet executions on the UI thread.
+
+102
+00:06:23.520 --> 00:06:29.120
+These manual threading functions are the required tags for operating isolated virtual machines,
+
+103
+00:06:29.120 --> 00:06:32.640
+maintaining strict execution boundaries guarantees performance,
+
+104
+00:06:32.720 --> 00:06:35.360
+but it demands precise explicit communication.
+
+105
+00:06:36.080 --> 00:06:39.520
+We are observing a continuous high velocity render.
+
+106
+00:06:39.520 --> 00:06:44.320
+This visual represents the fluid momentum achievable when UI calculations execute
+
+107
+00:06:44.320 --> 00:06:50.080
+without system hesitation. Consider a scroll event mapped to use animated scroll handler.
+
+108
+00:06:50.080 --> 00:06:52.800
+The native scroll triggers the UI worklet,
+
+109
+00:06:52.800 --> 00:06:57.600
+which updates a shared value, which instantly recalculates an animated style.
+
+110
+00:06:58.080 --> 00:07:01.120
+The visual updates perfectly, frame by frame,
+
+111
+00:07:01.120 --> 00:07:04.160
+while the main JavaScript thread remains completely asleep.
+
+112
+00:07:04.880 --> 00:07:10.640
+To navigate this environment, developers rely on the global.worklet boolean as a definitive
+
+113
+00:07:10.640 --> 00:07:16.480
+runtime diagnostic tool. Evaluating this variable provides a hard environmental assertion,
+
+114
+00:07:16.480 --> 00:07:22.400
+proving exactly which of the two isolated Hermes runtimes is currently executing a given block of code.
+
+115
+00:07:23.040 --> 00:07:28.560
+Adopting reanimated 3 requires abandoning the mindset of treating mobile animations as simple,
+
+116
+00:07:28.560 --> 00:07:34.560
+declarative configuration files. Achieving flawless execution under physical time constraints means
+
+117
+00:07:34.560 --> 00:07:39.280
+treating animations as isolated concurrent software running on the UI thread.
+
+118
+00:07:39.280 --> 00:07:45.280
+It demands absolute mastery over thread boundaries, memory synchronization and the dual VM architecture.
+
