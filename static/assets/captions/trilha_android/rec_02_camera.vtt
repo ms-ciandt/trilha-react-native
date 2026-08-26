@@ -1,0 +1,314 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:06.440
+Construir uma funcionalidade de câmera no React Native força uma bifurcação séria na sua arquitetura, logo no primeiro dia.
+
+2
+00:00:06.440 --> 00:00:09.600
+De um lado, você tem a prioridade da velocidade de implantação.
+
+3
+00:00:09.600 --> 00:00:13.200
+Do outro, a exigência de controle direto do hardware.
+
+4
+00:00:13.200 --> 00:00:17.920
+Escolha o caminho errado agora, e você vai criar um gargalo nas capacidades essenciais do seu app,
+
+5
+00:00:17.920 --> 00:00:22.320
+ou perder semanas lutando contra erros de build nativos no Android e iOS hoje.
+
+6
+00:00:22.320 --> 00:00:27.920
+Esta matriz compara as duas bibliotecas, Expo Camera e React Native Vision Camera.
+
+7
+00:00:27.920 --> 00:00:34.800
+Observe estas duas linhas. Expo vence em simplicidade de configuração, enquanto Vision Camera domina no processamento de frames.
+
+8
+00:00:34.800 --> 00:00:41.760
+À medida que as especificações técnicas somem daqui, o que importa é mapear essas bibliotecas diretamente para as necessidades específicas do seu app.
+
+9
+00:00:41.760 --> 00:00:45.040
+Forçar-se a avaliar suas reais necessidades de funcionalidades desde o início
+
+10
+00:00:45.040 --> 00:00:50.320
+é a única forma garantida de evitar um over-engineering massivo e custoso na sua base de código.
+
+11
+00:00:50.320 --> 00:00:52.320
+Vamos começar com a rota básica.
+
+12
+00:00:52.320 --> 00:00:59.040
+Essa é para o pragmático sem tempo a perder, o desenvolvedor que precisa de captura de foto e vídeo padrão e confiável, sem dor de cabeça.
+
+13
+00:00:59.040 --> 00:01:03.360
+O principal atrativo aqui é utilizar o ambiente gerenciado do Expo Camera.
+
+14
+00:01:03.360 --> 00:01:09.280
+Isso não exige absolutamente nenhuma configuração Native, sem mexer em arquivos Gradle ou instalações de pods.
+
+15
+00:01:09.280 --> 00:01:15.040
+O resultado é uma implantação instantânea nos seus dispositivos de teste e um tratamento perfeitamente adequado da captura básica de mídia.
+
+16
+00:01:15.040 --> 00:01:19.680
+Mas, ao escolher essa rota, você está intencionalmente se colocando dentro de uma sandbox técnica.
+
+17
+00:01:19.680 --> 00:01:23.120
+Dentro dessa sandbox, você perde acesso a codecs de vídeo avançados,
+
+18
+00:01:23.120 --> 00:01:26.720
+controle direto de APIs Native e processamento personalizado quadro a quadro.
+
+19
+00:01:26.720 --> 00:01:30.080
+Até a leitura de códigos é restrita. QR codes simples funcionam bem.
+
+20
+00:01:30.080 --> 00:01:34.000
+Mas, se o seu roadmap incluir integração pesada de machine learning, você vai bater numa parede.
+
+21
+00:01:34.000 --> 00:01:37.600
+Para aplicativos utilitários como fazer upload de uma foto de perfil ou escanear um recibo,
+
+22
+00:01:37.600 --> 00:01:42.240
+trocar capacidades avançadas por estabilidade garantida é uma jogada de negócio incrivelmente inteligente.
+
+23
+00:01:42.240 --> 00:01:44.800
+Agora considere o otimizador focado em performance.
+
+24
+00:01:44.800 --> 00:01:48.960
+Se você está construindo um produto centrado em câmera, pense em uma ferramenta de AR ou um clone do Snapchat,
+
+25
+00:01:48.960 --> 00:01:50.240
+você precisa de uma ferramenta diferente.
+
+26
+00:01:50.240 --> 00:01:54.560
+Você tem que se comprometer com um input pesado, uma configuração Native completa.
+
+27
+00:01:54.560 --> 00:02:00.880
+Você estará traduzindo manualmente as configurações do Android Camera X ou do iOS AV Foundation
+
+28
+00:02:00.880 --> 00:02:03.520
+para dentro do seu projeto React Native.
+
+29
+00:02:03.520 --> 00:02:08.720
+Esta tabela de tradução mapeia conceitos nativos do Android para os equivalentes do vision camera.
+
+30
+00:02:08.720 --> 00:02:13.680
+Ela traduz abstrações como camera selector em comandos do React Native.
+
+31
+00:02:13.680 --> 00:02:16.400
+Como a captura de imagem e a análise de imagem destacam,
+
+32
+00:02:16.480 --> 00:02:20.320
+elas mapeiam diretamente para take photo e use frame processor,
+
+33
+00:02:20.320 --> 00:02:23.520
+concedendo acesso irrestrito às APIs de hardware do dispositivo.
+
+34
+00:02:24.160 --> 00:02:27.600
+Essa rota também desbloqueia a integração avançada com o ML kit
+
+35
+00:02:27.600 --> 00:02:31.200
+e oferece controle granular sobre as taxas de bits de vídeo e a estabilização.
+
+36
+00:02:31.840 --> 00:02:34.880
+O custo de todo esse poder é o imposto da configuração nativa.
+
+37
+00:02:35.200 --> 00:02:39.120
+Esse imposto significa dores mensuráveis, atrito na configuração do repositório,
+
+38
+00:02:39.120 --> 00:02:42.560
+maior manutenção durante futuras atualizações e uma curva de aprendizado acentuada.
+
+39
+00:02:43.120 --> 00:02:46.080
+O Vision camera concede um poder arquitetural absoluto,
+
+40
+00:02:46.080 --> 00:02:50.320
+mas exige um aumento permanente na sobrecarga de engenharia contínua para mantê-lo.
+
+41
+00:02:50.880 --> 00:02:55.840
+Há uma métrica que é um verdadeiro divisor de águas e separa essas duas bibliotecas,
+
+42
+00:02:55.840 --> 00:02:56.880
+o processamento de frames.
+
+43
+00:02:57.520 --> 00:03:02.880
+Um frame processor é simplesmente uma função JavaScript que é executada em cada frame da câmera
+
+44
+00:03:02.880 --> 00:03:04.640
+em tempo real, conforme a lente enxerga.
+
+45
+00:03:05.440 --> 00:03:09.440
+Aqui, um frame da câmera ignora completamente a bridge do React Native,
+
+46
+00:03:09.440 --> 00:03:13.360
+passando diretamente por um canal JSI de alta velocidade para uma thread dedicada.
+
+47
+00:03:14.240 --> 00:03:17.120
+Essa nova camada espelha estruturalmente o Android nativo,
+
+48
+00:03:17.120 --> 00:03:20.320
+agindo exatamente como uma thread de análise de imagem do CameraX
+
+49
+00:03:20.320 --> 00:03:22.160
+rodando em dispatchers.default.
+
+50
+00:03:23.040 --> 00:03:25.280
+O ganho de performance é enorme.
+
+51
+00:03:25.280 --> 00:03:29.760
+Você obtém acesso direto à memória dos frames da câmera sem atrasos de serialização de dados.
+
+52
+00:03:30.640 --> 00:03:34.000
+Como esse código é executado de 30 a 60 vezes por segundo,
+
+53
+00:03:34.000 --> 00:03:37.360
+qualquer pequena ineficiência no seu JavaScript é instantaneamente amplificada.
+
+54
+00:03:38.080 --> 00:03:41.440
+Você precisa mitigar rigorosamente essa carga gerenciando ativamente a memória
+
+55
+00:03:41.440 --> 00:03:44.080
+e definindo manualmente o limite de FPS do frame processor.
+
+56
+00:03:44.960 --> 00:03:50.080
+Não respeitar essa arquitetura do JSI vai drenar seriamente a bateria do usuário e causar quedas de frames.
+
+57
+00:03:50.720 --> 00:03:55.680
+É exatamente por isso que essa biblioteca é reservada estritamente para otimizadores técnicos.
+
+58
+00:03:56.240 --> 00:04:01.360
+Vamos nos afastar da arquitetura técnica e voltar para a sua decisão de negócio inicial,
+
+59
+00:04:01.360 --> 00:04:03.600
+avaliando os requisitos essenciais do seu app.
+
+60
+00:04:04.320 --> 00:04:07.840
+Esse fluxograma de árvore de decisão te dá um framework rigoroso.
+
+61
+00:04:07.920 --> 00:04:10.880
+O Nó 1 no topo faz a única pergunta que importa.
+
+62
+00:04:11.440 --> 00:04:16.640
+Seu app requer ML em tempo real, codecs de vídeo customizados, ou análise quadro a quadro?
+
+63
+00:04:17.280 --> 00:04:20.640
+Se sua resposta for não, siga este caminho até o Expo camera.
+
+64
+00:04:21.200 --> 00:04:26.000
+Se a câmera é apenas um utilitário para upload de avatares ou QR codes padrão,
+
+65
+00:04:26.000 --> 00:04:28.880
+você deve evitar pagar o custo da configuração nativa.
+
+66
+00:04:28.880 --> 00:04:29.520
+Mantenha simples.
+
+67
+00:04:30.160 --> 00:04:35.360
+Se sua resposta for sim, reiniciamos e seguimos o caminho oposto até o React Native Vision camera.
+
+68
+00:04:35.840 --> 00:04:39.760
+Quando o valor principal da sua aplicação depende da própria câmera,
+
+69
+00:04:39.760 --> 00:04:42.480
+o threading via JSI do vision camera é inegociável.
+
+70
+00:04:43.120 --> 00:04:45.680
+Nenhuma das bibliotecas é inerentemente superior.
+
+71
+00:04:45.680 --> 00:04:49.920
+Eles simplesmente atendem a modelos de negócio e requisitos de roadmap completamente diferentes.
+
+72
+00:04:49.920 --> 00:04:52.320
+Depois de capturar aquela foto ou vídeo,
+
+73
+00:04:52.320 --> 00:04:56.160
+você chega ao próximo passo lógico do seu ciclo de desenvolvimento: armazená-lo.
+
+74
+00:04:56.640 --> 00:05:00.640
+Na nossa próxima discussão, vamos abordar a interação com o file system,
+
+75
+00:05:00.640 --> 00:05:02.960
+utilizando local storage APIs,
+
+76
+00:05:02.960 --> 00:05:06.320
+e mapeando a file API do Android diretamente para React Native.
+
+77
+00:05:07.040 --> 00:05:11.920
+Alinhar sua arquitetura de sistema ao seu roadmap de produto antes de escrever uma única linha de código
+
+78
+00:05:11.920 --> 00:05:20.560
+é a marca registrada definitiva de um desenvolvedor sênior.
+

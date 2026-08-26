@@ -1,0 +1,242 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:06.720
+Historically, React Native Execution Environments operated as entirely isolated landmasses,
+
+2
+00:00:06.720 --> 00:00:10.480
+Android Native Code on one side, and JavaScript on the other.
+
+3
+00:00:10.480 --> 00:00:15.600
+To bridge this gap, the architecture relied on an asynchronous message passing system.
+
+4
+00:00:15.600 --> 00:00:21.120
+Functionally, this operated as a highly inefficient inter-process communication pipeline.
+
+5
+00:00:21.120 --> 00:00:27.440
+The new architecture rewrites this execution model by completely eliminating the asynchronous messaging queue.
+
+6
+00:00:27.440 --> 00:00:30.320
+This schematic illustrates the replacement structure.
+
+7
+00:00:30.320 --> 00:00:36.960
+The old queue is gone, replaced by a solid C++ layer called the JavaScript Interface, or JSI.
+
+8
+00:00:36.960 --> 00:00:42.400
+To understand exactly how this layer bypasses the old JSON serialization bottlenecks,
+
+9
+00:00:42.400 --> 00:00:47.360
+we have to map its execution model directly against standard Android thread concepts.
+
+10
+00:00:47.360 --> 00:00:52.000
+From there, we can break down the mechanics of transferring large data blocks between these environments
+
+11
+00:00:52.000 --> 00:00:53.520
+with zero copying.
+
+12
+00:00:53.520 --> 00:00:59.280
+By stripping out the messaging queue, React Native moves away from isolated message passing,
+
+13
+00:00:59.280 --> 00:01:02.720
+and toward a system of direct interaction between environments.
+
+14
+00:01:03.360 --> 00:01:08.960
+In the legacy pipeline, every cross-environment call is forced into a serialization block
+
+15
+00:01:08.960 --> 00:01:13.840
+and converted to JSON. The payload sits in an asynchronous queue, piling up.
+
+16
+00:01:14.560 --> 00:01:20.720
+Finally, Android must fully deserialize that string back into native objects before execution begins.
+
+17
+00:01:21.360 --> 00:01:27.120
+This imposes a severe execution penalty. It operates exactly like an Android looper that
+
+18
+00:01:27.120 --> 00:01:33.040
+strictly accepts post commands, but never posts sync. You simply cannot block the JavaScript thread
+
+19
+00:01:33.040 --> 00:01:37.120
+to wait for a native result. The compute cost is equally restrictive.
+
+20
+00:01:37.680 --> 00:01:41.120
+Forcing every cross-environment call through JSON formatting
+
+21
+00:01:41.120 --> 00:01:47.600
+incurs the same CQ and memory overhead as serializing every single binder IPC call to a text string
+
+22
+00:01:47.680 --> 00:01:52.640
+before dispatching it. Because these two execution environments operate in isolation,
+
+23
+00:01:52.640 --> 00:01:58.080
+they completely lack a shared memory map. Passing high throughput data across this boundary,
+
+24
+00:01:58.080 --> 00:02:03.760
+like an uncompressed camera frame, requires allocating new memory and physically duplicating the
+
+25
+00:02:03.760 --> 00:02:09.760
+entire buffer, byte for byte. The old bridge failed at high performance tasks because it forced
+
+26
+00:02:09.760 --> 00:02:16.080
+two blind processes to construct and decode text messages rather than sharing a common resource pool.
+
+27
+00:02:16.800 --> 00:02:23.040
+JSI introduces a native C++ layer that slides directly between the Hermes JavaScript engine
+
+28
+00:02:23.040 --> 00:02:28.240
+and native Android. Conceptually, this operates exactly like the Java native interface.
+
+29
+00:02:28.800 --> 00:02:35.920
+Where JNI bridges the execution gap between Kotlin and C++, JSI bridges the gap between JavaScript
+
+30
+00:02:35.920 --> 00:02:42.160
+and C++. When JavaScript calls a native method, it triggers a direct C++ function call.
+
+31
+00:02:42.640 --> 00:02:47.440
+This works because the Hermes engine now holds a direct pointer reference to the C++
+
+32
+00:02:47.440 --> 00:02:53.120
+object residing in memory. By holding this direct reference, the architecture removes the latency
+
+33
+00:02:53.120 --> 00:02:58.000
+of the bridge, bringing cross-environment calls significantly closer to the speed of standard
+
+34
+00:02:58.000 --> 00:03:04.400
+native function execution. This specific C++ block is called a host object. This is the functional
+
+35
+00:03:04.400 --> 00:03:10.160
+primitive that JSI exposes to the JavaScript engine. JavaScript interacts with these native C++
+
+36
+00:03:10.160 --> 00:03:15.440
+classes exactly as if they were standard local J objects, allowing for instantaneous synchronous
+
+37
+00:03:15.440 --> 00:03:21.280
+data returns. Modern libraries like the key value storage solution MMKV rely on this exact
+
+38
+00:03:21.280 --> 00:03:27.360
+architecture. By utilizing JSI directly, MMKV bypasses the traditional bridge entirely to execute
+
+39
+00:03:27.360 --> 00:03:32.480
+database reads with zero asynchronous delay. Integrating host objects removes the architectural
+
+40
+00:03:32.480 --> 00:03:37.120
+requirement to build loading states or asynchronous wrappers when a component fetches native data.
+
+41
+00:03:37.120 --> 00:03:41.680
+Instead of physically duplicating a data block into a new memory pool, both environments now look
+
+42
+00:03:41.680 --> 00:03:48.400
+at the exact same block. This is achieved for the shared array buffer. During execution, no actual
+
+43
+00:03:48.400 --> 00:03:54.480
+data moves across the boundary, only the reference pointer is passed. This direct referencing solves
+
+44
+00:03:54.480 --> 00:04:00.160
+bottlenecks for real-time camera processing, audio buffers, and continuous high throughput data streams.
+
+45
+00:04:00.880 --> 00:04:05.760
+Shifting from memory duplication to memory referencing provides the sustained bandwidth
+
+46
+00:04:05.760 --> 00:04:11.280
+necessary for hardware intensive mobile features, like real-time computer vision or high-fidelity audio
+
+47
+00:04:11.280 --> 00:04:17.680
+processing. This visualization shows the new architecture runtime stack. The system now operates
+
+48
+00:04:17.680 --> 00:04:24.640
+across distinct JS, UI, and background threads, all interconnected by the JSI layer. This thread
+
+49
+00:04:24.640 --> 00:04:29.680
+separation allows the new native rendering engine fabric to achieve true concurrent rendering.
+
+50
+00:04:30.320 --> 00:04:35.200
+This execution model closely mirrors Android's native split between the render thread and the UI
+
+51
+00:04:35.840 --> 00:04:40.960
+thread. Because layout calculations are handled natively, low priority state updates can yield their
+
+52
+00:04:40.960 --> 00:04:47.200
+execution time, preventing long tasks from blocking the UI thread. By decoupling UI rendering from
+
+53
+00:04:47.200 --> 00:04:52.400
+JavaScript execution blocking, the application maintains native level frame rates even during heavy
+
+54
+00:04:52.400 --> 00:04:59.440
+data processing. In practice, developers rarely write raw JSI C++ code to achieve this performance.
+
+55
+00:04:59.440 --> 00:05:04.320
+The modern workflow starts by writing a TypeScript spec, which establishes the precise architectural
+
+56
+00:05:04.400 --> 00:05:09.840
+contract for the module. A tool called CodeGen meets that specification and automatically generates the
+
+57
+00:05:09.840 --> 00:05:15.680
+necessary C++ JSI glue layer. The final step is simply writing the Kotlin implementation to fulfill
+
+58
+00:05:15.680 --> 00:05:22.000
+that generated contract. JSI transitions React Native to a model of direct synchronous memory access.
+
+59
+00:05:22.000 --> 00:05:27.040
+The next step is utilizing this workflow to build a functional Kotlin turbo module, entirely free
+
+60
+00:05:27.040 --> 00:05:29.040
+from bridge over Hype.
+

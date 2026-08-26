@@ -1,0 +1,582 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:03.280
+When it comes to building modern user interfaces,
+
+2
+00:00:03.280 --> 00:00:06.320
+Jetpack Compose and React Native approach rendering
+
+3
+00:00:06.320 --> 00:00:09.040
+with entirely different core architectures.
+
+4
+00:00:09.040 --> 00:00:13.280
+In Compose, the compiler tracks which composables read state.
+
+5
+00:00:13.280 --> 00:00:16.000
+Only dependent nodes update when state changes.
+
+6
+00:00:16.000 --> 00:00:18.320
+The rest are bypassed automatically.
+
+7
+00:00:18.320 --> 00:00:20.560
+React is the exact opposite.
+
+8
+00:00:20.560 --> 00:00:24.480
+By default, a parent's update sends a render signal cascading down,
+
+9
+00:00:24.480 --> 00:00:27.120
+hitting every single connected child node.
+
+10
+00:00:27.120 --> 00:00:29.920
+This exhaustive cascade executes regardless
+
+11
+00:00:29.920 --> 00:00:32.960
+of whether the child components actual data changed.
+
+12
+00:00:32.960 --> 00:00:36.320
+A node with completely static text will rebuild itself
+
+13
+00:00:36.320 --> 00:00:39.360
+simply because the parent above it triggered a state change.
+
+14
+00:00:39.360 --> 00:00:42.480
+To achieve the native level efficiency seen in Compose,
+
+15
+00:00:42.480 --> 00:00:45.680
+engineers building in React have to manually intervene.
+
+16
+00:00:45.680 --> 00:00:48.720
+You must explicitly opt in to smart rendering.
+
+17
+00:00:48.720 --> 00:00:52.560
+React provides three distinct tools to interrupt this default behavior.
+
+18
+00:00:52.560 --> 00:00:54.240
+First is the memo wrapper.
+
+19
+00:00:54.240 --> 00:00:57.600
+Second is the use memo hook, and finally, call back.
+
+20
+00:00:57.600 --> 00:01:01.200
+Without a deliberate strategy to orchestrate these three hooks,
+
+21
+00:01:01.200 --> 00:01:04.880
+an application burns through CPU cycles unnecessarily,
+
+22
+00:01:04.880 --> 00:01:08.400
+causing the interface to stutter during complex interactions.
+
+23
+00:01:08.400 --> 00:01:10.480
+Consider a standard React tree.
+
+24
+00:01:10.480 --> 00:01:13.360
+We have a parent node connected to an expensive child
+
+25
+00:01:13.360 --> 00:01:14.720
+and a static child.
+
+26
+00:01:14.720 --> 00:01:16.480
+When the parent state updates,
+
+27
+00:01:16.480 --> 00:01:19.680
+that red render signal travels down both paths.
+
+28
+00:01:19.680 --> 00:01:21.840
+The first line of defense is memo.
+
+29
+00:01:21.840 --> 00:01:23.920
+React's manual skip function.
+
+30
+00:01:23.920 --> 00:01:25.760
+When you wrap a component in memo,
+
+31
+00:01:25.760 --> 00:01:27.840
+you place a logic gate in front of it.
+
+32
+00:01:27.840 --> 00:01:29.440
+As the render signal approaches,
+
+33
+00:01:29.440 --> 00:01:32.640
+memo intercepts it to run a shallow equality check.
+
+34
+00:01:32.640 --> 00:01:34.720
+This check compares the incoming properties
+
+35
+00:01:34.720 --> 00:01:37.920
+against the exact properties from the previous render cycle.
+
+36
+00:01:37.920 --> 00:01:40.960
+If React determines the props are mathematically identical,
+
+37
+00:01:40.960 --> 00:01:42.320
+the logic gate holds.
+
+38
+00:01:42.320 --> 00:01:45.040
+The render cascade is aborted for that specific branch,
+
+39
+00:01:45.040 --> 00:01:46.800
+saving CPU cycles.
+
+40
+00:01:46.800 --> 00:01:49.280
+While memo acts as a highly effective shield,
+
+41
+00:01:49.280 --> 00:01:52.320
+its utility depends on the stability of incoming data.
+
+42
+00:01:52.320 --> 00:01:55.920
+Its crops change unnecessarily, the shield breaks.
+
+43
+00:01:55.920 --> 00:02:00.160
+If the expensive child component contains a heavy computational loop,
+
+44
+00:02:00.160 --> 00:02:02.320
+like sorting a massive data array,
+
+45
+00:02:02.320 --> 00:02:05.520
+it forces the main thread to freeze while processing.
+
+46
+00:02:05.520 --> 00:02:08.640
+Use memo caches the result of these heavy computations,
+
+47
+00:02:08.640 --> 00:02:11.840
+holding the processed data in memory between render cycles,
+
+48
+00:02:11.840 --> 00:02:13.760
+so the math isn't repeated.
+
+49
+00:02:13.760 --> 00:02:17.680
+This diagram illustrates a balancing scale of performance costs.
+
+50
+00:02:17.680 --> 00:02:20.160
+The first rule of use memo is that the computation
+
+51
+00:02:20.160 --> 00:02:24.000
+must be visibly slow, profiling at over one millisecond.
+
+52
+00:02:24.000 --> 00:02:26.880
+At that weight, the CPU cost clearly outweighs
+
+53
+00:02:26.880 --> 00:02:29.040
+the cache cost of allocating memory.
+
+54
+00:02:29.040 --> 00:02:32.080
+Structurally, deploy use memo when the output is passed
+
+55
+00:02:32.080 --> 00:02:34.400
+directly into a memo-wrapped child.
+
+56
+00:02:34.400 --> 00:02:36.640
+But watch what happens when we swap the heavy loop
+
+57
+00:02:36.640 --> 00:02:39.040
+for basic math or string concatenation.
+
+58
+00:02:39.040 --> 00:02:41.040
+The scale instantly tips.
+
+59
+00:02:41.040 --> 00:02:43.680
+Memoization requires its own memory allocation
+
+60
+00:02:43.680 --> 00:02:46.320
+and CPU cycles for dependency comparisons.
+
+61
+00:02:46.320 --> 00:02:49.200
+For simple operations, caching takes longer
+
+62
+00:02:49.200 --> 00:02:51.520
+than just recalculating the value.
+
+63
+00:02:51.520 --> 00:02:53.920
+Use memo is a specialized tool,
+
+64
+00:02:53.920 --> 00:02:56.960
+applying it indiscriminately to grades performance
+
+65
+00:02:56.960 --> 00:02:59.120
+by stacking up structural overhead
+
+66
+00:02:59.120 --> 00:03:02.320
+that eclipses the actual computational savings.
+
+67
+00:03:02.320 --> 00:03:06.080
+Even with memo in place, the shield has a vulnerability.
+
+68
+00:03:06.080 --> 00:03:08.000
+The shallow equality check fails
+
+69
+00:03:08.000 --> 00:03:10.720
+when it encounters referential instability.
+
+70
+00:03:10.720 --> 00:03:14.160
+When apparent renders, it executes its internal code,
+
+71
+00:03:14.160 --> 00:03:16.000
+recreating functions from scratch
+
+72
+00:03:16.000 --> 00:03:18.000
+with a new memory address pointer.
+
+73
+00:03:18.000 --> 00:03:20.560
+When passed down, the shallow equality check
+
+74
+00:03:20.560 --> 00:03:23.520
+sees the pointer has changed, the barrier shatters,
+
+75
+00:03:23.520 --> 00:03:25.520
+and the child re-renders anyway.
+
+76
+00:03:25.520 --> 00:03:28.720
+To prevent this, developers must use use callback
+
+77
+00:03:28.720 --> 00:03:30.480
+to lock the function's memory reference
+
+78
+00:03:30.480 --> 00:03:33.120
+in place across multiple render cycles.
+
+79
+00:03:33.120 --> 00:03:36.400
+Under the hood, use callback caches the function definition
+
+80
+00:03:36.400 --> 00:03:37.360
+itself.
+
+81
+00:03:37.360 --> 00:03:39.120
+By wrapping the function, the pointer
+
+82
+00:03:39.120 --> 00:03:40.400
+locks statically.
+
+83
+00:03:40.400 --> 00:03:42.000
+The next time the parent updates,
+
+84
+00:03:42.000 --> 00:03:44.640
+it passes down the exact same memory address.
+
+85
+00:03:44.640 --> 00:03:47.520
+The child's memo shield recognizes the identical reference
+
+86
+00:03:47.520 --> 00:03:48.880
+and holds firm.
+
+87
+00:03:48.880 --> 00:03:51.920
+Use callback does not make the function execute faster.
+
+88
+00:03:51.920 --> 00:03:55.120
+Its only architectural purpose is to maintain a stable reference
+
+89
+00:03:55.120 --> 00:03:58.400
+pointer to protect downstream shallow equality checks.
+
+90
+00:03:58.400 --> 00:04:01.920
+Both use memo and use callback rely on one control mechanism,
+
+91
+00:04:01.920 --> 00:04:05.440
+the dependency array, which dictates when the cache resets.
+
+92
+00:04:05.440 --> 00:04:07.360
+Misconfiguring this array is the leading cause
+
+93
+00:04:07.360 --> 00:04:09.280
+of memoization errors and react.
+
+94
+00:04:09.280 --> 00:04:11.680
+The first failure mode is the stale closure.
+
+95
+00:04:11.680 --> 00:04:14.720
+This occurs when developers omit required variables
+
+96
+00:04:14.720 --> 00:04:17.280
+from the array, with missing dependencies,
+
+97
+00:04:17.280 --> 00:04:20.240
+the cached function executes using outdated variables
+
+98
+00:04:20.240 --> 00:04:23.760
+trapped in its original closure, causing silent desinks.
+
+99
+00:04:23.760 --> 00:04:26.720
+The inverse error is overspecifying dependencies,
+
+100
+00:04:26.720 --> 00:04:29.360
+which happens when engineers pack the array with variables
+
+101
+00:04:29.360 --> 00:04:30.880
+that change constantly.
+
+102
+00:04:30.880 --> 00:04:34.000
+When the cache invalidates and resets on every single cycle,
+
+103
+00:04:34.000 --> 00:04:36.320
+you defeat memoization entirely.
+
+104
+00:04:36.320 --> 00:04:38.960
+You pay the checks performance cost and still recalculate
+
+105
+00:04:38.960 --> 00:04:40.080
+the value.
+
+106
+00:04:40.080 --> 00:04:42.160
+Constructing a correct dependency array
+
+107
+00:04:42.160 --> 00:04:44.160
+requires exact precision.
+
+108
+00:04:44.160 --> 00:04:46.320
+You must track exactly what the function needs
+
+109
+00:04:46.320 --> 00:04:50.080
+to remain mathematically accurate and absolutely nothing more.
+
+110
+00:04:50.080 --> 00:04:52.800
+Theoretical mechanics only matter if you can verify them
+
+111
+00:04:52.800 --> 00:04:54.320
+in a live environment.
+
+112
+00:04:54.320 --> 00:04:57.520
+To diagnose rendering cascades, we have to rely on objective
+
+113
+00:04:57.520 --> 00:04:58.400
+measurement.
+
+114
+00:04:58.400 --> 00:05:01.200
+This brings us to the react native DevTools profiler,
+
+115
+00:05:01.200 --> 00:05:03.920
+accessible by pressing J in the metroterminal.
+
+116
+00:05:03.920 --> 00:05:06.480
+It serves as the definitive source of truth
+
+117
+00:05:06.480 --> 00:05:08.240
+for component performance.
+
+118
+00:05:08.240 --> 00:05:10.720
+The profiling workflow is straightforward.
+
+119
+00:05:10.720 --> 00:05:12.800
+Start a recording in the DevTools,
+
+120
+00:05:12.800 --> 00:05:16.080
+manually trigger the heavy interaction on the physical device,
+
+121
+00:05:16.080 --> 00:05:19.440
+and stop the recording to generate a telemetry report.
+
+122
+00:05:19.440 --> 00:05:23.040
+This flame chart shows where the processor spent its time.
+
+123
+00:05:23.040 --> 00:05:26.560
+Clicking a prominent component bar opens a panel asking,
+
+124
+00:05:26.560 --> 00:05:28.080
+why did this render?
+
+125
+00:05:28.080 --> 00:05:30.160
+The DevTools categorize the trigger,
+
+126
+00:05:30.160 --> 00:05:33.600
+whether state updated, a prop changed, or crucially,
+
+127
+00:05:33.600 --> 00:05:37.200
+if the component updated simply because its parent re-rendered.
+
+128
+00:05:37.200 --> 00:05:40.480
+That diagnostic data drives a simple decision tree.
+
+129
+00:05:40.480 --> 00:05:43.440
+If a parent is forcing a static child to update,
+
+130
+00:05:43.440 --> 00:05:45.280
+deploy memo as a shield.
+
+131
+00:05:45.280 --> 00:05:47.920
+If a heavy calculation exceeds one millisecond,
+
+132
+00:05:47.920 --> 00:05:49.520
+cache it with use memo.
+
+133
+00:05:49.520 --> 00:05:52.080
+And if a changing memory address breaks that shield,
+
+134
+00:05:52.080 --> 00:05:54.320
+stabilize it with use callback.
+
+135
+00:05:54.320 --> 00:05:57.600
+Mastering these three tools takes react from an exhaustive
+
+136
+00:05:57.600 --> 00:06:01.840
+brute force architecture to a surgically precise rendering engine.
+
+137
+00:06:01.840 --> 00:06:04.640
+Once you have the render cycles under control,
+
+138
+00:06:04.640 --> 00:06:07.040
+the application interaction is fast,
+
+139
+00:06:07.040 --> 00:06:10.240
+but there is one final bottleneck left to solve.
+
+140
+00:06:10.240 --> 00:06:12.000
+Start up latency.
+
+141
+00:06:12.080 --> 00:06:15.280
+Getting your app to launch immediately on a cold start
+
+142
+00:06:15.280 --> 00:06:18.720
+requires analyzing Hermi's bytecode manipulation,
+
+143
+00:06:18.720 --> 00:06:21.120
+executing lazy loading strategies,
+
+144
+00:06:21.120 --> 00:06:24.400
+and rigorously auditing the final bundle size.
+
+145
+00:06:24.400 --> 00:06:26.400
+That is where we go next.
+

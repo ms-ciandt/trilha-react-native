@@ -1,0 +1,262 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:06.000
+Tradicionalmente, testar aplicativos móveis nativos exige inicializar um simulador de SO completo.
+
+2
+00:00:06.000 --> 00:00:10.000
+Para verificar o que um usuário vê, o framework de testes precisa lançar o aplicativo
+
+3
+00:00:10.000 --> 00:00:15.000
+e inspecionar a pesada hierarquia de acessibilidade produzida pelo toolkit de UI nativo.
+
+4
+00:00:15.000 --> 00:00:19.000
+O React Native Testing Library segue a mesma filosofia comportamental
+
+5
+00:00:19.000 --> 00:00:22.000
+mas move o processo de renderização para um ambiente node headless.
+
+6
+00:00:22.000 --> 00:00:26.000
+Essa comparação em tela dividida ilustra a diferença de desempenho resultante.
+
+7
+00:00:26.000 --> 00:00:30.000
+Ao remover completamente a GPU do dispositivo e a react native bridge,
+
+8
+00:00:30.000 --> 00:00:35.000
+o tempo de execução cai de minutos em um simulador completo para milissegundos no node.
+
+9
+00:00:35.000 --> 00:00:39.000
+A biblioteca alcança alta fidelidade em nível nativo sem o ambiente host nativo
+
+10
+00:00:39.000 --> 00:00:42.000
+ao aplicar rigorosamente um modelo de testes comportamental.
+
+11
+00:00:42.000 --> 00:00:46.000
+Ela oferece um vocabulário de consulta que força você a interagir com o componente
+
+12
+00:00:46.000 --> 00:00:49.000
+exatamente da forma como um usuário ou um leitor de tela faria.
+
+13
+00:00:49.000 --> 00:00:55.000
+Se você vem do XCU test, seu ponto de entrada geralmente é a instância da aplicação XCU.
+
+14
+00:00:55.000 --> 00:01:00.000
+Na react native testing library, seu ponto de entrada é simplesmente a função render.
+
+15
+00:01:00.000 --> 00:01:05.000
+Quando o render monta seu componente em memória, ele gera um objeto screen.
+
+16
+00:01:05.000 --> 00:01:10.000
+Esse objeto contém referências a todas as funções de consulta restritas àquele ciclo específico de render,
+
+17
+00:01:10.000 --> 00:01:15.000
+o que evita que seus testes fiquem presos a variáveis obsoletas quando um componente é renderizado novamente.
+
+18
+00:01:15.000 --> 00:01:18.000
+Este diagrama mostra como lidamos com dependências de produção.
+
+19
+00:01:18.000 --> 00:01:22.000
+A maioria dos componentes do mundo real depende de contexto externo,
+
+20
+00:01:22.000 --> 00:01:26.000
+como um theme provider, uma sessão de autenticação ou um query client.
+
+21
+00:01:26.000 --> 00:01:33.000
+Para testá-los, você usa uma propriedade wrapper personalizada para fornecer essas camadas de contexto aninhadas diretamente à função de render.
+
+22
+00:01:33.000 --> 00:01:36.000
+Esse wrapper também é onde você otimiza para o ambiente de teste.
+
+23
+00:01:36.000 --> 00:01:43.000
+Por exemplo, definir retry false no seu query client força o react query a falhar imediatamente em requisições de rede ruins,
+
+24
+00:01:43.000 --> 00:01:47.000
+em vez de iniciar um loop de retry que deixa o seu test runner mais lento.
+
+25
+00:01:47.000 --> 00:01:50.000
+Para evitar escrever esse boilerplate em todo arquivo,
+
+26
+00:01:50.000 --> 00:01:57.000
+uma prática de engenharia padrão é exportar um custom render with provider's helper a partir de um arquivo de utilitários compartilhado,
+
+27
+00:01:57.000 --> 00:02:00.000
+padronizando o contexto para toda a sua suíte de testes.
+
+28
+00:02:00.000 --> 00:02:06.000
+Isolar o render boundary com providers mockados garante que a lógica do seu componente seja testada de forma determinística,
+
+29
+00:02:06.000 --> 00:02:09.000
+completamente isolada de instabilidades externas de rede.
+
+30
+00:02:09.000 --> 00:02:15.000
+Quando você precisar encontrar um elemento, priorize sua accessibility role em vez de tags de implementação interna.
+
+31
+00:02:15.000 --> 00:02:21.000
+Isso reflete a orientação de longa data da Apple para escrever testes orientados a comportamento que sobrevivem a refatorações de código,
+
+32
+00:02:21.000 --> 00:02:25.000
+interagindo com traços visíveis da interface, não com o estado subjacente.
+
+33
+00:02:25.000 --> 00:02:29.000
+Essa pirâmide ilustra a hierarquia estrita de queries que você deve seguir.
+
+34
+00:02:29.000 --> 00:02:34.000
+No topo, em verde, você usa por padrão get by role e get by text.
+
+35
+00:02:34.000 --> 00:02:39.000
+Descendo, recorra ao get by label text caso o elemento não tenha texto visível,
+
+36
+00:02:39.000 --> 00:02:42.000
+e na base, em vermelho, está o get by test ID.
+
+37
+00:02:42.000 --> 00:02:48.000
+O get by role fica no topo porque ele lê exatamente as mesmas props de acessibilidade que um dispositivo real usa.
+
+38
+00:02:48.000 --> 00:02:57.000
+Um role de button ou spin button reflete perfeitamente os traços de acessibilidade dot button ou dot adjustable da UI que o voiceover anuncia para o usuário no iOS.
+
+39
+00:02:57.000 --> 00:03:01.000
+A query get by test ID é o último recurso absoluto.
+
+40
+00:03:01.000 --> 00:03:09.000
+Você a reserva exclusivamente para elementos que não têm significado semântico intrínseco, como uma view animada personalizada ou um container de layout decorativo.
+
+41
+00:03:09.000 --> 00:03:13.000
+Ao impor essa hierarquia, seus testes cumprem uma função dupla.
+
+42
+00:03:13.000 --> 00:03:19.000
+Eles validam o comportamento lógico dos aplicativos e, implicitamente, garantem que a interface seja acessível a leitores de tela,
+
+43
+00:03:19.000 --> 00:03:22.000
+tudo isso permanecendo imune a mudanças estruturais no seu DOM.
+
+44
+00:03:22.000 --> 00:03:28.000
+Para acionar a lógica, a biblioteca oferece duas APIs de interação distintas, fire event e user event.
+
+45
+00:03:28.000 --> 00:03:33.000
+Esta linha do tempo visualiza o fire event. É a API mais antiga e de baixo nível.
+
+46
+00:03:33.000 --> 00:03:41.000
+Ele opera de forma síncrona, contornando a camada de UI para disparar um evento sintético diretamente na função handler do componente.
+
+47
+00:03:41.000 --> 00:03:44.000
+Uma interação real de usuário é completamente diferente.
+
+48
+00:03:44.000 --> 00:03:48.000
+O user event simula a sequência real de um toque físico.
+
+49
+00:03:48.000 --> 00:03:57.000
+Um único toque dispara uma cascata sequencial de eventos de ponteiro, do touchdown até o release, replicando o verdadeiro ciclo de vida do gesto.
+
+50
+00:03:57.000 --> 00:04:10.000
+Como as interações do user event compartilham um relógio e um contexto de evento unificados, elas acionam corretamente comportamentos complexos que eventos sintéticos simples não capturam, como debounce em campos de texto ou atualizações de estado em lote.
+
+51
+00:04:10.000 --> 00:04:14.000
+A regra de engenharia aqui é simples. Sempre priorize o user event.
+
+52
+00:04:14.000 --> 00:04:23.000
+Isso garante que você está testando como o componente realmente se comporta sob restrições físicas, em vez de testar uma invocação idealizada e instantânea do handler.
+
+53
+00:04:23.000 --> 00:04:27.000
+Isso nos leva ao desafio central do teste assíncrono de UI.
+
+54
+00:04:27.000 --> 00:04:37.000
+Apenas executa código extremamente rápido. Frequentemente mais rápido do que o React consegue processar seu próprio ciclo de renderização, fazendo com que as asserções disparem contra uma UI incompleta.
+
+55
+00:04:37.000 --> 00:04:47.000
+Quando uma interação dispara uma atualização de estado fora de um handler de evento direto, como dados chegando de uma promise resolvida ou um timeout atrasado, o React agrupa essa atualização.
+
+56
+00:04:47.000 --> 00:04:57.000
+Para sincronizar o test runner com o componente, você usa a função Act. Act é o equivalente exato de chamar fulfill em uma XC test expectation.
+
+57
+00:04:57.000 --> 00:05:03.000
+Ela explicitamente interrompe o teste até que o React finalize todas as atualizações de estado e efeitos pendentes antes de continuar.
+
+58
+00:05:03.000 --> 00:05:08.000
+Envolver código manualmente em Act é tedioso, então a biblioteca fornece açúcar sintático.
+
+59
+00:05:08.000 --> 00:05:15.000
+Funções como wait for para aguardar a interface, ou find by para consultar elementos assíncronos, lidam com esse limite automaticamente.
+
+60
+00:05:15.000 --> 00:05:23.000
+Sincronizar esses limites assíncronos garante que o DOM esteja totalmente estabilizado antes que o test runner tente lê-lo, tornando as asserções previsíveis.
+
+61
+00:05:23.000 --> 00:05:39.000
+Um teste robusto de componente React Native segue um pipeline rigoroso: configure o render boundary com providers mockados, consulte elementos pelas suas accessibility roles, dispare interações baseadas na realidade via user events, e aguarde os resultados usando async boundaries adequados.
+
+62
+00:05:39.000 --> 00:05:46.000
+Ao combinar um headless node runtime com queries mapeadas por voice over, esse pipeline processa centenas de assertions em milissegundos.
+
+63
+00:05:46.000 --> 00:05:55.000
+Como esses testes ignoram detalhes de implementação, refatorar o formato do estado interno de um componente não vai quebrar sua suíte, desde que o output visível permaneça o mesmo.
+
+64
+00:05:55.000 --> 00:06:07.000
+Essa abordagem cobre sua lógica e layout, mas tem limites. Verificar a ponte nativa real, chamadas de rede reais e stacks de navegação profundas requer migrar para frameworks end-to-end como o detox.
+
+65
+00:06:07.000 --> 00:06:19.000
+O React Native Testing Library serve como a fundação estrutural de alta velocidade da sua pirâmide de testes. Ele comprova que a lógica do seu componente e a acessibilidade estão impecáveis muito antes de um simulador mobile pesado sequer ser iniciado.
+

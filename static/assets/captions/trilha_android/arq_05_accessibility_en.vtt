@@ -1,0 +1,406 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:03.400
+When building accessible interfaces in React Native,
+
+2
+00:00:03.400 --> 00:00:07.400
+the primary challenge is mapping two distinct engineering environments
+
+3
+00:00:07.400 --> 00:00:10.200
+without losing semantic meaning in translation.
+
+4
+00:00:10.200 --> 00:00:14.600
+The framework avoids creating a bespoke mental model for accessibility.
+
+5
+00:00:14.600 --> 00:00:20.800
+Instead, it operates directly as a thin wrapper over iOS's native UI accessibility framework.
+
+6
+00:00:20.800 --> 00:00:22.800
+Everything you know from UIKit,
+
+7
+00:00:22.800 --> 00:00:24.600
+how voiceover reads the screen,
+
+8
+00:00:24.600 --> 00:00:26.600
+how dynamic type scales text,
+
+9
+00:00:26.600 --> 00:00:29.000
+and how reduced motion effects animations
+
+10
+00:00:29.000 --> 00:00:30.600
+remains applicable.
+
+11
+00:00:30.600 --> 00:00:34.400
+The only requirement is learning the deterministic API translation map
+
+12
+00:00:34.400 --> 00:00:36.600
+between Swift and JSX.
+
+13
+00:00:36.600 --> 00:00:40.200
+The main structural difference you will encounter is how state is handled.
+
+14
+00:00:40.200 --> 00:00:45.000
+While UIKit often combines static elements and dynamic states into the same property,
+
+15
+00:00:45.000 --> 00:00:47.000
+React Native separates them.
+
+16
+00:00:47.000 --> 00:00:49.400
+You will also navigate a behavioral shift.
+
+17
+00:00:49.400 --> 00:00:52.800
+React Native inverts the visibility defaults for container elements
+
+18
+00:00:52.800 --> 00:00:55.000
+compared to standard UI views.
+
+19
+00:00:55.000 --> 00:00:59.200
+Mastering React Native accessibility is a syntax translation exercise.
+
+20
+00:00:59.200 --> 00:01:02.800
+The system is designed to preserve native semantic meaning
+
+21
+00:01:02.800 --> 00:01:05.800
+by speaking a specific JSX dialect.
+
+22
+00:01:05.800 --> 00:01:11.600
+In UIKit, you assign static semantics to a view using the accessibility traits property.
+
+23
+00:01:11.600 --> 00:01:15.200
+React Native replaces this property with accessibility role,
+
+24
+00:01:15.200 --> 00:01:17.400
+accepting a single string value.
+
+25
+00:01:17.400 --> 00:01:21.600
+A dot button trait in Swift becomes button in JSX.
+
+26
+00:01:21.600 --> 00:01:26.400
+While UIKit appends dynamic conditions like dot selected to that trait array,
+
+27
+00:01:26.400 --> 00:01:31.400
+React Native requires them in a distinctly separate accessibility state object.
+
+28
+00:01:31.400 --> 00:01:37.000
+If you are building a custom control that lacks a direct one-to-one UI accessibility equivalent,
+
+29
+00:01:37.000 --> 00:01:39.400
+the fallback strategy is straightforward.
+
+30
+00:01:39.400 --> 00:01:43.800
+Assign the role of none and combine it with an explicit accessibility label
+
+31
+00:01:43.800 --> 00:01:46.600
+to provide voiceover with the necessary context.
+
+32
+00:01:46.600 --> 00:01:51.000
+This strict API separation of concerns prevents semantic pollution.
+
+33
+00:01:51.000 --> 00:01:56.800
+It keeps your static definitions clean and aligns accessibility with reacts data-driven state management.
+
+34
+00:01:56.800 --> 00:02:01.600
+Beyond individual elements, you have to account for a structural divergence
+
+35
+00:02:01.600 --> 00:02:05.600
+regarding how iOS and React Native handle container views.
+
+36
+00:02:05.600 --> 00:02:11.200
+In UIKit, a standard UIV defaults to ignoring accessibility entirely.
+
+37
+00:02:11.200 --> 00:02:13.600
+React Native inverts this baseline.
+
+38
+00:02:13.600 --> 00:02:16.800
+Applying the accessible prop to apparent container view
+
+39
+00:02:16.800 --> 00:02:19.400
+changes how the system parses its children.
+
+40
+00:02:19.400 --> 00:02:22.800
+When you set accessible equals true on that parent container,
+
+41
+00:02:22.800 --> 00:02:25.800
+that view and all of its children are treated as a single,
+
+42
+00:02:25.800 --> 00:02:28.000
+focusable element by voiceover.
+
+43
+00:02:28.000 --> 00:02:32.400
+Use this specific grouping pattern for list row cells or metadata rows.
+
+44
+00:02:32.400 --> 00:02:35.400
+Leaving data fragments isolated destroys meaning.
+
+45
+00:02:35.400 --> 00:02:39.000
+Grouping them ensures voiceover reads the related text together.
+
+46
+00:02:39.000 --> 00:02:45.000
+Grouping elements is different from the requirement to completely remove a decorative element tree from voiceover's radar.
+
+47
+00:02:45.000 --> 00:02:50.000
+To replicate UIKit's cascading logic, where is accessibility element is set to false,
+
+48
+00:02:50.000 --> 00:02:55.000
+you use the important for accessibility prop and set it to no hide descendants.
+
+49
+00:02:55.000 --> 00:03:00.400
+Proactive manipulation of the accessibility tree prevents fragmented reading orders.
+
+50
+00:03:00.400 --> 00:03:06.200
+It guarantees you are restoring standard native user experience expectations for screen readers.
+
+51
+00:03:06.200 --> 00:03:10.000
+Static trees are predictable, but asynchronous view updates,
+
+52
+00:03:10.000 --> 00:03:14.400
+like validation errors surfacing outside of standard navigation transitions,
+
+53
+00:03:14.400 --> 00:03:16.400
+create focus challenges.
+
+54
+00:03:16.400 --> 00:03:20.800
+UIKit relies on the UI accessibility.post notification system,
+
+55
+00:03:20.800 --> 00:03:25.800
+specifically the dot screen changed argument to alert voiceover to these shifts.
+
+56
+00:03:25.800 --> 00:03:29.600
+The React Native equivalent is the accessibility info API.
+
+57
+00:03:29.600 --> 00:03:35.200
+You use its announce for accessibility method to command the system to read new context allowed.
+
+58
+00:03:35.200 --> 00:03:39.800
+To manually redirect voiceover focus to a specific element after an update,
+
+59
+00:03:39.800 --> 00:03:45.200
+capture a reference to that element and pass it to accessibility info dot set accessibility focus.
+
+60
+00:03:45.200 --> 00:03:51.200
+This imperative focus management is crucial when handling custom bottom sheets and UI overlays.
+
+61
+00:03:51.200 --> 00:03:56.000
+If you build a custom modal without using React Native's built-in component,
+
+62
+00:03:56.000 --> 00:03:59.200
+voiceover will read the hidden background content.
+
+63
+00:03:59.200 --> 00:04:03.200
+You must apply the accessibility view is modal prop.
+
+64
+00:04:03.200 --> 00:04:09.600
+This acts as an absolute barrier, telling voiceover to ignore everything outside that specific view.
+
+65
+00:04:10.200 --> 00:04:14.600
+Mastering imperative focus management and modal properties is mandatory.
+
+66
+00:04:14.600 --> 00:04:19.800
+Without them, screen reader users can find themselves trapped in inactive UI layers.
+
+67
+00:04:19.800 --> 00:04:25.600
+Beyond component level traits, you must respect OS level user accessibility preferences,
+
+68
+00:04:25.600 --> 00:04:28.200
+starting with iOS dynamic type.
+
+69
+00:04:28.200 --> 00:04:31.600
+While UIKit observes UI font dot preferred font,
+
+70
+00:04:31.600 --> 00:04:36.800
+React Native's text components scale by default through the allow font scaling prop.
+
+71
+00:04:36.800 --> 00:04:40.600
+To adapt custom layout dimensions for those larger text sizes,
+
+72
+00:04:40.600 --> 00:04:45.200
+read the current scale multiplier using pixel ratio dot get font scaling.
+
+73
+00:04:45.200 --> 00:04:49.400
+You must also handle the system level iOS reduce motion setting.
+
+74
+00:04:49.400 --> 00:04:55.000
+Branch your code and suppress complex animation logic based on this specific OS preference.
+
+75
+00:04:55.000 --> 00:04:58.400
+If you are using the reanimated three library,
+
+76
+00:04:58.400 --> 00:05:03.400
+you execute this branch by implementing the use reduced motion hook.
+
+77
+00:05:03.400 --> 00:05:07.200
+To monitor for runtime setting changes while the app is active,
+
+78
+00:05:07.200 --> 00:05:11.200
+observe accessibility info dot add event listener.
+
+79
+00:05:11.200 --> 00:05:15.800
+Intercepting and respecting the system level scaling and motion preferences
+
+80
+00:05:15.800 --> 00:05:19.600
+is a requirement for passing native accessibility audits.
+
+81
+00:05:19.600 --> 00:05:21.600
+Once your mappings are implemented,
+
+82
+00:05:21.600 --> 00:05:26.400
+you have to verify that the accessibility tree actually behaves as expected.
+
+83
+00:05:26.400 --> 00:05:30.400
+Relying solely on the iOS simulator to test voiceover behavior
+
+84
+00:05:30.400 --> 00:05:33.200
+introduces significant limitations.
+
+85
+00:05:33.200 --> 00:05:38.600
+The simulator lacks swipe gestures, haptic feedback and accurate audio routing.
+
+86
+00:05:38.600 --> 00:05:42.800
+Critically, the timing behaviors around how voiceover focus changes
+
+87
+00:05:42.800 --> 00:05:46.000
+differ from the native experience on actual hardware.
+
+88
+00:05:46.000 --> 00:05:51.200
+Firm, limit the simulator to pairing with the Xcode accessibility inspector.
+
+89
+00:05:51.200 --> 00:05:56.800
+This setup is efficient for static verification of your tree structure, labels and roles.
+
+90
+00:05:56.800 --> 00:06:00.400
+True behavioral validation requires a physical iPhone.
+
+91
+00:06:00.400 --> 00:06:03.800
+On the device, swipe right through every interactive element
+
+92
+00:06:03.800 --> 00:06:08.000
+to ensure the sequential swipe order matches the visual layout order.
+
+93
+00:06:08.000 --> 00:06:10.200
+Next, run the interactive checks.
+
+94
+00:06:10.200 --> 00:06:13.200
+Verify that double tap actions fire correctly
+
+95
+00:06:13.200 --> 00:06:17.600
+and use swipe gestures to confirm value changes on adjustable controls.
+
+96
+00:06:17.600 --> 00:06:19.800
+Finally, perform boundary checks.
+
+97
+00:06:19.800 --> 00:06:23.400
+Navigate into custom models to confirm focus is trapped
+
+98
+00:06:23.400 --> 00:06:27.600
+and ensure it correctly restores to the underlying screen upon dismissal.
+
+99
+00:06:27.600 --> 00:06:30.200
+Because ReactMative acts as a thin wrapper,
+
+100
+00:06:30.200 --> 00:06:34.600
+its accessibility success depends on preserving native iOS semantics.
+
+101
+00:06:34.600 --> 00:06:37.600
+This can only be proven through native physical testing.
+

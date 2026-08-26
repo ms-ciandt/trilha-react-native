@@ -1,0 +1,378 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:07.680
+Por anos, a React Native Bridge operou em um sistema bem específico e com gargalos, fracamente tipado,
+
+2
+00:00:07.680 --> 00:00:12.800
+passagem de mensagens assíncrona. Veja como é essa sobrecarga mecânica na prática.
+
+3
+00:00:13.360 --> 00:00:19.440
+Quando você chama uma função, os argumentos são serializados em uma string JSON na thread do JavaScript,
+
+4
+00:00:19.440 --> 00:00:25.280
+e depois convertidos de volta em um objeto nativo na thread do Android. Esse processo de dupla conversão
+
+5
+00:00:25.280 --> 00:00:32.160
+introduz um atraso de processamento inevitável. Conforme este diagrama é atualizado, vemos o mecanismo de substituição.
+
+6
+00:00:32.160 --> 00:00:38.640
+O antigo módulo Java baseado em React context está obsoleto porque simplesmente não consegue executar de forma síncrona
+
+7
+00:00:38.640 --> 00:00:44.800
+nem garantir segurança de tipos. A nova arquitetura elimina completamente a serialização JSON,
+
+8
+00:00:44.800 --> 00:00:50.880
+substituindo-a por um ponteiro de memória direto, alimentado pelo JSI, que conecta o payload do JavaScript
+
+9
+00:00:50.880 --> 00:00:57.280
+diretamente a uma referência em C++. Como esse acesso direto à memória acontece no nível do C++,
+
+10
+00:00:57.280 --> 00:01:03.600
+a antiga estrutura de classes baseada em Java já não é suficiente. O JSI precisa de uma estrutura de módulo que consiga enxergar
+
+11
+00:01:03.600 --> 00:01:09.840
+e interagir diretamente. Isso exige uma mudança para turbo modules, módulos nativos construídos
+
+12
+00:01:09.840 --> 00:01:15.920
+sobre uma camada C++ para permitir execução síncrona. Alcançar esse nível de comunicação
+
+13
+00:01:15.920 --> 00:01:21.920
+significa abandonar payloads JSON dinâmicos e sem tipagem. Agora tudo deve seguir um contrato arquitetural
+
+14
+00:01:21.920 --> 00:01:27.280
+estritamente definido e pré-compilado. Migrar para turbo modules significa que os desenvolvedores Android precisam
+
+15
+00:01:27.280 --> 00:01:32.640
+desaprender como os módulos nativos são estruturados e inicializados. Vamos olhar essa tabela comparativa.
+
+16
+00:01:32.640 --> 00:01:37.200
+No sistema antigo, todo módulo nativo era inicializado no App Startup,
+
+17
+00:01:37.200 --> 00:01:43.040
+o que atrasava os tempos de carregamento. Os turbo modules, no entanto, são estritamente lazy loaded. Eles inicializam exatamente
+
+18
+00:01:43.040 --> 00:01:48.800
+quando o JavaScript os solicita, e nem um milissegundo antes. A forma como definimos métodos também muda.
+
+19
+00:01:48.800 --> 00:01:54.400
+Você não espalha mais anotações at react method pelos seus arquivos Java. Em vez disso, cada método é
+
+20
+00:01:54.400 --> 00:02:00.000
+definido estritamente de antemão em um único arquivo de especificação TypeScript. Estruturalmente, você não é mais
+
+21
+00:02:00.000 --> 00:02:05.440
+estendendo uma classe Java base. Você escreve uma classe Coplin que implementa uma interface estritamente tipada
+
+22
+00:02:05.440 --> 00:02:11.600
+gerada pelo build system. Isso transfere todo o fardo da estabilidade. Em vez de depender de verificação de erros
+
+23
+00:02:11.600 --> 00:02:16.560
+em tempo de execução para detectar incompatibilidades, nós travamos a Type Safety em tempo de build através de geração de código.
+
+24
+00:02:17.280 --> 00:02:22.000
+Na nova arquitetura, o JavaScript dita a estrutura. O lado nativo está simplesmente ali para
+
+25
+00:02:22.000 --> 00:02:27.200
+cumpri-la. O contrato de vinculação entre esses dois ambientes são os arquivos de spec em TypeScript.
+
+26
+00:02:27.200 --> 00:02:32.400
+Este documento diz ao gerador de código exatamente quais arquivos C++ e Kotlin ele precisa construir.
+
+27
+00:02:32.960 --> 00:02:37.920
+Para manter a ponte perfeita, o gerador de código intencionalmente suporta um conjunto altamente restrito de
+
+28
+00:02:37.920 --> 00:02:43.680
+tipos de dados. Neste diagrama de mapeamento, os primitivos atravessam de forma limpa. Uma string ou Boolean do TypeScript
+
+29
+00:02:43.680 --> 00:02:49.680
+se traduz exatamente. Um number do TypeScript mapeia especificamente para um double do Kotlin. Para dados complexos,
+
+30
+00:02:49.680 --> 00:02:55.200
+objetos simples se traduzem para readable map, arrays para readable array, e uma promise mapeia diretamente para a
+
+31
+00:02:55.200 --> 00:03:01.360
+interface de bridge promise. Essas restrições são rígidas por design. Todo tipo definido deve mapear entre
+
+32
+00:03:01.360 --> 00:03:06.800
+os limites de TypeScript, C++ e Kotlin sem depender de reflexão lenta em tempo de execução.
+
+33
+00:03:07.520 --> 00:03:12.080
+No momento em que você executa o build da sua aplicação, um pipeline automatizado é acionado, disparado pelo
+
+34
+00:03:12.080 --> 00:03:18.320
+local do spec registrado no seu package.json. O script de build passa o seu spec TypeScript diretamente
+
+35
+00:03:18.320 --> 00:03:24.160
+para o Cogen engine. Como mostrado neste flow chart, o spec entra no Cogen. O engine automaticamente
+
+36
+00:03:24.160 --> 00:03:30.000
+escreve todos os arquivos C++ necessários e o glue JNI específico para o JavaScript engine se comunicar com a Java
+
+37
+00:03:30.000 --> 00:03:36.400
+virtual machine. Seguindo a segunda ramificação, o Cogen também gera uma classe abstrata Kotlin totalmente tipada.
+
+38
+00:03:36.960 --> 00:03:41.680
+A partir daqui, o único trabalho do desenvolvedor é criar uma classe Kotlin que herda dessa
+
+39
+00:03:41.680 --> 00:03:46.800
+interface gerada e implementa a lógica necessária. Ao lidar com a camada de tradução de forma mecânica,
+
+40
+00:03:46.800 --> 00:03:51.920
+o Cogen elimina o boilerplate manual tedioso, liberando os engenheiros para focar estritamente na sua lógica nativa
+
+41
+00:03:51.920 --> 00:03:58.080
+lógica de negócio. A API padrão baseada em promises funciona, mas promises não possuem cancelamento
+
+42
+00:03:58.080 --> 00:04:04.000
+integrado se um componente react for desmontado antes que o trabalho nativo termine. Como os turbo modules
+
+43
+00:04:04.080 --> 00:04:09.920
+carregam sob demanda e persistem independentemente das telas individuais da UI, tratar suas tarefas em segundo plano
+
+44
+00:04:09.920 --> 00:04:14.400
+como processos Java assíncronos padrão cria um risco de problemas de concorrência.
+
+45
+00:04:14.960 --> 00:04:19.120
+O erro mais frequente que desenvolvedores Android cometem aqui é gerar um
+
+46
+00:04:19.120 --> 00:04:23.520
+co-routine scope anônimo dentro de um método de turbo-module sempre que precisam executar uma thread em segundo plano.
+
+47
+00:04:24.080 --> 00:04:28.640
+Dê uma olhada nesta timeline. Se o componente react for desmontado e desaparecer,
+
+48
+00:04:28.640 --> 00:04:34.640
+esse co-routine anônimo não tem nenhuma consciência de ciclo de vida. A thread do processo continua executando em
+
+49
+00:04:34.640 --> 00:04:40.800
+segundo plano, sobrevivendo ao contexto e criando um processo zumbi que vaza memória. A abordagem
+
+50
+00:04:40.800 --> 00:04:46.560
+correta é a structured concurrency. Se você escreve apps Android, pode seguir a mesma lógica usada
+
+51
+00:04:46.560 --> 00:04:53.200
+em um escopo de modelo V. O padrão em um turbo-module é declarar um único escopo de módulo centralizado
+
+52
+00:04:53.200 --> 00:04:59.280
+que está diretamente vinculado ao ciclo de vida do próprio módulo. Turbo modules fornecem um método invalidate.
+
+53
+00:04:59.280 --> 00:05:04.080
+Este é o momento exato em que o framework react native sinaliza que o módulo está sendo desmontado.
+
+54
+00:05:04.640 --> 00:05:10.160
+Observe o que acontece agora. Ao chamar modulescope.cancel dentro do bloco invalidate,
+
+55
+00:05:10.160 --> 00:05:15.600
+o componente react que está desaparecendo efetivamente envia um sinal de encerramento, de forma instantânea e segura,
+
+56
+00:05:15.600 --> 00:05:20.800
+encerrando todas as co-rotinas em segundo plano que estão em execução. Você também deve selecionar o dispatcher correto para esse
+
+57
+00:05:20.800 --> 00:05:27.520
+escopo. Dispatchers.io fornece um pool de threads dimensionado especificamente para operações de I/O bloqueantes, como requisições de rede
+
+58
+00:05:27.520 --> 00:05:34.640
+ou leituras de banco de dados. Em contraste, dispatchers.default limita seu pool de threads ao número de núcleos de CPU,
+
+59
+00:05:34.640 --> 00:05:40.800
+tornando-o ideal para cálculos intensivos sem bloqueio. E dispatchers.main é estritamente reservado
+
+60
+00:05:40.800 --> 00:05:47.040
+para interagir com APIs do sistema Android que exigem acesso à thread principal. Trabalho nativo em segundo plano
+
+61
+00:05:47.040 --> 00:05:51.600
+deve espelhar o ciclo de vida do ambiente JavaScript. Se os dois ficarem fora de sincronia,
+
+62
+00:05:51.600 --> 00:05:57.520
+o lado nativo pode tentar resolver dados em um contexto que não existe mais. Promises resolvem
+
+63
+00:05:57.520 --> 00:06:03.200
+tarefas de resposta única, mas elas resolvem exatamente uma vez. Se você construir um turbo module para um scanner
+
+64
+00:06:03.200 --> 00:06:09.440
+Bluetooth ou um gyvoscope, uma promise é inútil. As APIs do sistema Android transmitem fluxos contínuos de dados
+
+65
+00:06:09.440 --> 00:06:14.320
+usando loops de callback contínuos. Para conectar esses fluxos contínuos à nova arquitetura,
+
+66
+00:06:14.320 --> 00:06:20.400
+contamos com um recurso do Kotlin chamado callbackflow. O callbackflow atua como um funil estrutural. Ele captura
+
+67
+00:06:20.400 --> 00:06:25.520
+cada callback individual do sistema Android e os organiza, emitindo cada um sequencialmente em
+
+68
+00:06:25.520 --> 00:06:32.080
+um Kotlin flow. Neste diagrama de fluxo, você pode ver o próximo passo. Uma vez que os dados saem do callback flow,
+
+69
+00:06:32.080 --> 00:06:37.680
+o react native eventometer assume, empurrando esses blocos sequenciais organizados diretamente através
+
+70
+00:06:37.680 --> 00:06:43.520
+da fronteira do JSI. Do lado do JavaScript, a aplicação simplesmente se inscreve nessas emissões usando um
+
+71
+00:06:43.520 --> 00:06:49.360
+listener de evento padrão. Ao envolver callbacks do sistema em um flow, substituímos o bridging customizado frágil
+
+72
+00:06:49.360 --> 00:06:55.840
+por uma lógica de concorrência idiomática em Kotlin que interage com o JSI. Code Gen e Kotlin cobrem a grande
+
+73
+00:06:55.840 --> 00:07:01.440
+maioria dos casos de uso nativos, mas existem cenários que exigem ir além da camada gerada.
+
+74
+00:07:01.440 --> 00:07:06.400
+O primeiro cenário é quando você precisa envolver uma biblioteca C++ de baixo nível pré-existente,
+
+75
+00:07:06.400 --> 00:07:12.160
+como um codec de áudio ou OpenCv, onde passar dados de um lado para o outro via JNI adicionaria complexidade
+
+76
+00:07:12.160 --> 00:07:17.200
+desnecessária. O segundo cenário é quando você precisa do maior throughput síncrono possível,
+
+77
+00:07:17.200 --> 00:07:22.320
+como no processamento de frames de câmera em alta resolução, onde cada milissegundo de overhead do JNI importa.
+
+78
+00:07:22.880 --> 00:07:29.440
+Essa árvore de decisão ilustra essa divisão. Se você chegar a esse segundo nó, precisando de integração com C++
+
+79
+00:07:29.440 --> 00:07:37.920
+ou latência mínima, você contorna o code Gen. Em vez disso, você configura um build customizado no CMakeLists.txt.
+
+80
+00:07:38.400 --> 00:07:45.200
+Em seguida, você escreve uma classe C++ customizada que herda de host object. Você constrói manualmente os métodos
+
+81
+00:07:45.200 --> 00:07:50.240
+e instalar esse objeto diretamente no espaço de memória do runtime JavaScript a partir do lado nativo.
+
+82
+00:07:50.800 --> 00:07:57.280
+Descer para C++ puro significa abrir mão da segurança automatizada e dos testes gerados do Kotlin.
+
+83
+00:07:57.280 --> 00:08:03.760
+Em troca, você ganha acesso direto ao motor JS com o mesmo perfil de performance do código C++ nativo.
+
+84
+00:08:03.840 --> 00:08:08.400
+Para construir de forma eficaz na nova arquitetura, você só precisa respeitar o roteamento.
+
+85
+00:08:08.400 --> 00:08:13.760
+A spec TypeScript impõe seu contrato de dados, e o code Gen automatiza a ligação (glue) em C++.
+
+86
+00:08:14.240 --> 00:08:19.520
+Para APIs padrão, suas interfaces Kotlin geradas devem implementar concorrência estruturada,
+
+87
+00:08:19.520 --> 00:08:23.600
+usando cancelamento em escopo de módulo para encerrar tarefas quando a UI é desmontada.
+
+88
+00:08:24.160 --> 00:08:29.200
+Observando esse blueprint arquitetural completo, vemos claramente o caminho de exceção.
+
+89
+00:08:29.280 --> 00:08:36.880
+O Caminho B ignora o code Gen por completo, indo direto para um host object em C++, reservado para bibliotecas C++
+
+90
+00:08:36.880 --> 00:08:42.720
+wrappers ou processamento de dados de alta vazão. Esse ecossistema exige que engenheiros Android pensem em
+
+91
+00:08:42.720 --> 00:08:47.360
+em termos de propriedade de memória e alinhamento de ciclo de vida, em vez de simples passagem de mensagens.
+
+92
+00:08:48.000 --> 00:08:53.040
+Ao substituir a bridge assíncrona pelo compartilhamento direto de memória, a nova arquitetura elimina
+
+93
+00:08:53.040 --> 00:08:58.560
+a latência induzida por software do sistema legado. O resultado é uma base mais previsível
+
+94
+00:08:58.560 --> 00:09:06.720
+para a construção de recursos nativos complexos.
+

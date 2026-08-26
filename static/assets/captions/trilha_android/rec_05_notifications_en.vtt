@@ -1,0 +1,330 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:05.360
+Setting up native Android push notifications usually means wrestling with Firebase Cloud
+
+2
+00:00:05.360 --> 00:00:08.120
+messaging directly in Kotlin or Java.
+
+3
+00:00:08.120 --> 00:00:13.320
+It requires untangling intensive background services and configuring the Android manifest
+
+4
+00:00:13.320 --> 00:00:16.800
+just to get a single message to appear on the device.
+
+5
+00:00:16.800 --> 00:00:21.960
+When you switch to Expo, the underlying architecture doesn't actually change.
+
+6
+00:00:21.960 --> 00:00:27.840
+Firebase Cloud Messaging still handles the delivery and Android still draws the alert on screen.
+
+7
+00:00:27.840 --> 00:00:33.400
+This simply gives you a JavaScript API to control those exact same native mechanisms.
+
+8
+00:00:33.400 --> 00:00:38.560
+To execute this setup, you need an initialized Expo project, the Expo notifications package
+
+9
+00:00:38.560 --> 00:00:43.560
+installed, and an emulator or physical device running Android 8 or newer.
+
+10
+00:00:43.560 --> 00:00:48.320
+Knowing that you are operating the exact same native levers through JavaScript lets you configure
+
+11
+00:00:48.320 --> 00:00:53.400
+the entire pipeline reliably, avoiding the usual guesswork of cross-platform notification
+
+12
+00:00:53.400 --> 00:00:54.400
+routing.
+
+13
+00:00:54.400 --> 00:00:58.920
+A traditional Android developer configures builders and channels using Kotlin.
+
+14
+00:00:58.920 --> 00:01:05.000
+In our React native ecosystem, we handle those exact responsibilities using the methods provided
+
+15
+00:01:05.000 --> 00:01:07.800
+by the Expo notifications package.
+
+16
+00:01:07.800 --> 00:01:10.400
+Look at this side-by-side comparison.
+
+17
+00:01:10.400 --> 00:01:16.160
+Native Android calls Firebase Messaging for a token, while Expo exposes Get Expo push-token
+
+18
+00:01:16.160 --> 00:01:19.400
+async to achieve the exact same result.
+
+19
+00:01:19.400 --> 00:01:24.840
+Starting to local alerts, the native notify function maps to Expo's schedule notification
+
+20
+00:01:24.840 --> 00:01:26.400
+async method.
+
+21
+00:01:26.400 --> 00:01:32.560
+The most critical rule inherited from native Android development involves notification channels.
+
+22
+00:01:32.560 --> 00:01:37.720
+Starting with Android 8.0, the operating system requires all notifications to be assigned
+
+23
+00:01:37.720 --> 00:01:42.160
+to a specific channel, which governs rules like sound and vibration.
+
+24
+00:01:42.160 --> 00:01:47.400
+You define this rule set in your JavaScript by calling set notification channel async,
+
+25
+00:01:47.400 --> 00:01:52.040
+defining a unique string ID, and specifying the importance level before you ever attempt
+
+26
+00:01:52.040 --> 00:01:53.760
+to send a message.
+
+27
+00:01:53.760 --> 00:01:58.440
+If you skip this critical channel creation step, the Android system will silently drop your
+
+28
+00:01:58.440 --> 00:02:01.000
+notification payloads immediately.
+
+29
+00:02:01.000 --> 00:02:05.400
+The app won't crash, but the user will never see the alert.
+
+30
+00:02:05.400 --> 00:02:09.960
+Translating these native rules into JavaScript ensures the Android operating system accepts
+
+31
+00:02:09.960 --> 00:02:15.520
+and displays your notifications exactly as it would for an app written purely in Kotlin.
+
+32
+00:02:15.520 --> 00:02:20.320
+Before fetching any identifiers, you first call request permissions async.
+
+33
+00:02:20.320 --> 00:02:24.680
+This triggers the standard Android system dialogue, asking the user to allow notifications
+
+34
+00:02:24.680 --> 00:02:26.480
+from your application.
+
+35
+00:02:26.480 --> 00:02:30.960
+Once the user grants permission, you immediately invoke the token retrieval method.
+
+36
+00:02:30.960 --> 00:02:35.480
+This requests a unique identifier from the Firebase Cloud Messaging servers, routing it back
+
+37
+00:02:35.480 --> 00:02:36.920
+down to your app.
+
+38
+00:02:36.920 --> 00:02:40.360
+The result of that function is a long alphanumeric string.
+
+39
+00:02:40.360 --> 00:02:44.680
+This is your FCM token, safely extracted into your JavaScript environment.
+
+40
+00:02:44.680 --> 00:02:47.560
+You store this exact string in your backend database.
+
+41
+00:02:47.560 --> 00:02:51.480
+It acts as the precise mailing address for this specific device, allowing your servers
+
+42
+00:02:51.480 --> 00:02:53.120
+to target it remotely.
+
+43
+00:02:53.120 --> 00:02:55.920
+You don't always need a remote server to ping the user.
+
+44
+00:02:55.920 --> 00:03:01.320
+To schedule a local alert, your app only needs to calculate the timing and construct the message
+
+45
+00:03:01.320 --> 00:03:04.080
+content entirely on the client side.
+
+46
+00:03:04.080 --> 00:03:10.720
+By passing a title and a body and a trigger condition into schedule notification async,
+
+47
+00:03:10.720 --> 00:03:16.200
+you instruct the Android OS to generate a standard heads-up alert at that exact moment.
+
+48
+00:03:16.200 --> 00:03:21.120
+You can expand this basic alert by passing additional parameters in the content object.
+
+49
+00:03:21.120 --> 00:03:26.320
+This allows you to apply native features, like big text style for longer paragraphs, or
+
+50
+00:03:26.320 --> 00:03:30.560
+inject large images directly into the expanded notification view.
+
+51
+00:03:30.560 --> 00:03:35.160
+You can also include a badge property in that same configuration, which commands the Android
+
+52
+00:03:35.160 --> 00:03:40.600
+launcher to update the small unread indicator number resting on your application's icon.
+
+53
+00:03:40.600 --> 00:03:45.080
+Following up these local triggers allows the application to surface reminders and updates
+
+54
+00:03:45.080 --> 00:03:50.880
+based on the user's on-device activity, avoiding unnecessary network requests entirely.
+
+55
+00:03:50.880 --> 00:03:54.400
+Getting the notification onto the screen is only half the process.
+
+56
+00:03:54.400 --> 00:03:59.760
+You also need to determine how the app responds when the user actually engages with it.
+
+57
+00:03:59.760 --> 00:04:05.440
+When the app is actively open on the screen, you use Add Notification Received Listener.
+
+58
+00:04:05.440 --> 00:04:10.520
+This intercepts the incoming data payload silently, so you can update the UI without throwing
+
+59
+00:04:10.520 --> 00:04:13.640
+a disruptive alert over the user's current task.
+
+60
+00:04:13.640 --> 00:04:18.160
+If the app is minimized or closed, the OS handles the visual alert.
+
+61
+00:04:18.160 --> 00:04:23.320
+In this state, you register Add Notification Response Received Listener to catch the interaction
+
+62
+00:04:23.320 --> 00:04:27.400
+when the user eventually taps that alert in the notification tray.
+
+63
+00:04:27.400 --> 00:04:32.680
+Managing these two separate listeners replicates how a native Kotlin app uses Android Intense
+
+64
+00:04:32.680 --> 00:04:37.040
+to route data differently depending on the application's current lifecycle state.
+
+65
+00:04:37.040 --> 00:04:39.800
+This flow chart shows the data extraction path.
+
+66
+00:04:39.800 --> 00:04:42.800
+When the user taps, the listener receives an object.
+
+67
+00:04:42.800 --> 00:04:48.360
+You access the custom JSON payload by navigating through the notification, into the request, down
+
+68
+00:04:48.360 --> 00:04:52.440
+to content, and finally accessing the data object.
+
+69
+00:04:52.440 --> 00:04:57.040
+Extracting this payload data allows you to read specific ID numbers or routes attached to
+
+70
+00:04:57.040 --> 00:05:02.120
+the alert, giving you the information needed to immediately navigate the user to the exact
+
+71
+00:05:02.120 --> 00:05:04.680
+relevant screen inside the app.
+
+72
+00:05:04.680 --> 00:05:09.360
+You have successfully connected the native Android Firebase cloud messaging infrastructure to your
+
+73
+00:05:09.360 --> 00:05:14.760
+react native environment, controlling channels, tokens, and payloads through a single JavaScript
+
+74
+00:05:14.760 --> 00:05:16.320
+interface.
+
+75
+00:05:16.320 --> 00:05:20.480
+This chart visualizes our progression through the native resources module.
+
+76
+00:05:20.480 --> 00:05:25.080
+We've mapped out permissions, accessed the camera and file storage, tapped into hardware
+
+77
+00:05:25.080 --> 00:05:29.360
+sensors, and finally integrated background notifications.
+
+78
+00:05:29.360 --> 00:05:34.080
+The next sequence of technical modules focuses strictly on application performance.
+
+79
+00:05:34.080 --> 00:05:39.280
+You will profile react renders, optimize flat list rendering, and tune the Hermes engine
+
+80
+00:05:39.280 --> 00:05:42.200
+to ensure maximum frame rates.
+
+81
+00:05:42.200 --> 00:05:47.160
+Integrating these device level features gives your application its core functionality, but
+
+82
+00:05:47.160 --> 00:05:52.120
+applying rigorous performance optimizations is what will elevate it to a professional standard.
+

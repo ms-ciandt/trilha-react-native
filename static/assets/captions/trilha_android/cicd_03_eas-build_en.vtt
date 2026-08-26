@@ -1,0 +1,258 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:05.640
+Setting up a local build environment for a mobile app requires downloading massive Android
+
+2
+00:00:05.640 --> 00:00:10.640
+SDKs, configuring Gradle and maintaining heavy build machines.
+
+3
+00:00:10.640 --> 00:00:15.440
+This local dependency creates immediate physical friction in the development process.
+
+4
+00:00:15.440 --> 00:00:18.080
+EAS Build offers an alternative.
+
+5
+00:00:18.080 --> 00:00:23.080
+It is a cloud-based service provided by Expo that offloads the entire native compilation
+
+6
+00:00:23.080 --> 00:00:25.200
+step to their remote servers.
+
+7
+00:00:25.200 --> 00:00:29.880
+You send your raw project code up to the cloud, and the service returns a fully compiled
+
+8
+00:00:29.880 --> 00:00:33.600
+Android application that is ready to install or distribute.
+
+9
+00:00:33.600 --> 00:00:35.800
+To follow along, you need two things.
+
+10
+00:00:35.800 --> 00:00:41.120
+An active Expo account and an existing React Native project open in your code editor.
+
+11
+00:00:41.120 --> 00:00:46.000
+By removing the need to manage local compilers, the development process becomes faster and
+
+12
+00:00:46.000 --> 00:00:49.960
+highly repeatable, regardless of the hardware you are working on.
+
+13
+00:00:49.960 --> 00:00:52.840
+Start by opening your standard development environment.
+
+14
+00:00:52.840 --> 00:00:56.480
+Make sure you are at the root directory of your project in your code editor.
+
+15
+00:00:56.480 --> 00:01:00.440
+In your terminal, run the EAS Initialization command.
+
+16
+00:01:00.440 --> 00:01:05.800
+This establishes the initial connection between your local project and the Expo cloud servers.
+
+17
+00:01:05.800 --> 00:01:07.280
+Check your file explorer.
+
+18
+00:01:07.280 --> 00:01:11.400
+You will see a newly generated file named EAS.json.
+
+19
+00:01:11.400 --> 00:01:15.600
+This file contains the exact instructions the cloud servers will follow when compiling
+
+20
+00:01:15.600 --> 00:01:16.880
+your app.
+
+21
+00:01:16.880 --> 00:01:23.800
+This EAS.json configuration block uses build profiles to define isolated deployment environments.
+
+22
+00:01:23.800 --> 00:01:26.080
+Typically splits into two paths.
+
+23
+00:01:26.080 --> 00:01:31.160
+Development generates an application for testing, and production packages the final release.
+
+24
+00:01:31.160 --> 00:01:36.400
+A single parameter line toggles the output format between an APK and an AAB.
+
+25
+00:01:36.400 --> 00:01:40.880
+Be sure to double check which profile you are targeting before initiating a build.
+
+26
+00:01:40.880 --> 00:01:45.800
+Generating a production AAB when you only need a quick testing APK will unnecessarily slow
+
+27
+00:01:45.800 --> 00:01:47.840
+down your testing cycle.
+
+28
+00:01:47.840 --> 00:01:52.720
+Because EAS.json defines all these parameters, it acts as the single source of truth for
+
+29
+00:01:52.720 --> 00:01:54.240
+the cloud servers.
+
+30
+00:01:54.240 --> 00:01:59.360
+This guarantees that every build is consistent and reproducible without you having to manually
+
+31
+00:01:59.360 --> 00:02:01.720
+configure settings each time.
+
+32
+00:02:01.720 --> 00:02:05.880
+With the configuration saved, return to your command line interface.
+
+33
+00:02:05.880 --> 00:02:09.840
+The setup is done, and it is time to start the remote compilation.
+
+34
+00:02:09.840 --> 00:02:14.960
+Run the EAS build command and append the flag that specifies the exact profile you want
+
+35
+00:02:14.960 --> 00:02:18.000
+to build, like development or production.
+
+36
+00:02:18.000 --> 00:02:22.360
+The terminal will pause and prompt you regarding Android KeyStore generation.
+
+37
+00:02:22.360 --> 00:02:27.800
+A KeyStore is a cryptographic file required by Android to verify the identity of the developer
+
+38
+00:02:27.800 --> 00:02:29.760
+signing the application.
+
+39
+00:02:29.760 --> 00:02:34.000
+Do not try to run manual key tool commands to generate this file yourself.
+
+40
+00:02:34.000 --> 00:02:38.840
+EAS is built to handle this cryptographic process entirely on its own.
+
+41
+00:02:38.840 --> 00:02:45.360
+As shown here, EAS securely generates the cryptographic keys, applies them to your raw code package,
+
+42
+00:02:45.360 --> 00:02:49.000
+and then stores them safely on their servers for future updates.
+
+43
+00:02:49.000 --> 00:02:53.600
+Once the KeyStore is handled, your terminal will display a real-time progress bar.
+
+44
+00:02:53.600 --> 00:02:58.320
+The heavy lifting is now executing on expose cloud servers.
+
+45
+00:02:58.320 --> 00:03:03.280
+Delegating this credential management to EAS removes one of the most common points of failure
+
+46
+00:03:03.280 --> 00:03:08.080
+in Android development, losing or mismatching your signing keys.
+
+47
+00:03:08.080 --> 00:03:13.360
+Running commands manually is fine for local development, but you can also automate this process using
+
+48
+00:03:13.360 --> 00:03:17.200
+a continuous integration pipeline like GitHub Actions.
+
+49
+00:03:17.200 --> 00:03:22.360
+To allow an external system to trigger a build on your behalf, it needs a way to authenticate
+
+50
+00:03:22.360 --> 00:03:26.480
+with Expo, without requiring your manual login credentials.
+
+51
+00:03:26.480 --> 00:03:29.440
+This requires an EXPO token.
+
+52
+00:03:29.440 --> 00:03:34.320
+You can generate this access token securely by running the designated EAS token creation
+
+53
+00:03:34.320 --> 00:03:36.760
+command in your local terminal.
+
+54
+00:03:36.760 --> 00:03:41.480
+Looking at the GitHub repository settings, you navigate to the secrets configuration.
+
+55
+00:03:41.480 --> 00:03:46.000
+The token is injected here to grant GitHub the necessary build permissions.
+
+56
+00:03:46.000 --> 00:03:49.880
+By adding this token, the repository becomes an active trigger.
+
+57
+00:03:49.880 --> 00:03:55.000
+It can now automatically launch EAS builds every time a team member pushes new code.
+
+58
+00:03:55.000 --> 00:03:59.760
+That can a browser refresh your Expo dashboard interface to confirm that the cloud compilation
+
+59
+00:03:59.760 --> 00:04:02.160
+process has finished successfully.
+
+60
+00:04:02.160 --> 00:04:06.560
+You will see a final download link provided right on the dashboard, giving you direct access
+
+61
+00:04:06.560 --> 00:04:09.840
+to the generated APK or AAB file.
+
+62
+00:04:09.840 --> 00:04:14.800
+While EAS handled the initial KeyStore creation automatically, understanding how code signing
+
+63
+00:04:14.800 --> 00:04:18.080
+actually works, is vital for long-term project maintenance.
+
+64
+00:04:18.080 --> 00:04:22.640
+Next, we will cover the underlying mechanics of Android code signing and KeyStore management.
+

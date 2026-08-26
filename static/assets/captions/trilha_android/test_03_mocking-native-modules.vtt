@@ -1,0 +1,330 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:06.160
+Quando você escreve testes unitários para iOS, o teste X-test opera dentro de um processo completo da Apple.
+
+2
+00:00:06.160 --> 00:00:09.600
+Ele inicializa com runtimes completos já vinculados e ativos.
+
+3
+00:00:09.600 --> 00:00:12.960
+O Gest opera sob restrições completamente diferentes.
+
+4
+00:00:12.960 --> 00:00:16.000
+Ele roda inteiramente dentro do Node.js.
+
+5
+00:00:16.000 --> 00:00:18.400
+No Node, não existe UI kit.
+
+6
+00:00:18.400 --> 00:00:22.880
+Não existe Core location, nem runtime Objective-C, nem ponte Java.
+
+7
+00:00:22.880 --> 00:00:26.640
+Em um dispositivo real, uma thread JavaScript atravessa com sucesso a bridge
+
+8
+00:00:26.640 --> 00:00:28.720
+para um registro nativo populado.
+
+9
+00:00:28.720 --> 00:00:31.760
+No Gest, ela encontra um vazio vazio e sem saída.
+
+10
+00:00:31.760 --> 00:00:34.160
+Como esse registro está completamente vazio,
+
+11
+00:00:34.160 --> 00:00:37.920
+invocar uma contraparte nativa garante um erro de tipo imediato.
+
+12
+00:00:37.920 --> 00:00:41.680
+Para evitar isso, você precisa arquitetar padrões puros em JavaScript
+
+13
+00:00:41.680 --> 00:00:44.880
+para substituir cada fronteira nativa na sua base de código.
+
+14
+00:00:44.880 --> 00:00:47.600
+Isso é o que chamamos de interceptação estrita de fronteira.
+
+15
+00:00:47.600 --> 00:00:50.960
+É o processo de capturar importações de componentes e chamadas de rede
+
+16
+00:00:50.960 --> 00:00:53.360
+antes que elas alcancem a bridge nativa ausente.
+
+17
+00:00:53.360 --> 00:00:56.080
+A ingestão de mocking é uma necessidade mecânica.
+
+18
+00:00:56.080 --> 00:00:59.280
+Sem interceptar essas chamadas, sua suíte de testes vai falhar
+
+19
+00:00:59.280 --> 00:01:02.080
+com exceções catastróficas de null pointer.
+
+20
+00:01:02.080 --> 00:01:06.880
+O ciclo de resolução começa no momento em que você escreve uma instrução padrão de importação de componente,
+
+21
+00:01:06.880 --> 00:01:10.640
+rastreando a árvore de dependências para encontrar o módulo necessário.
+
+22
+00:01:10.640 --> 00:01:13.520
+Normalmente, quando você está inicializando em um dispositivo físico,
+
+23
+00:01:13.520 --> 00:01:17.200
+implementações nativas em C++ e Objective C++
+
+24
+00:01:17.200 --> 00:01:21.280
+preenchem o turbo-module registry durante a fase de bootstrap do hardware.
+
+25
+00:01:21.280 --> 00:01:24.480
+O Node ignora completamente essa fase de bootstrap do hardware.
+
+26
+00:01:24.480 --> 00:01:29.200
+Como resultado, o registro nativo permanece permanentemente vazio durante suas execuções de teste.
+
+27
+00:01:29.200 --> 00:01:32.720
+Você intercepta o ciclo usando a opção just.mox.
+
+28
+00:01:32.720 --> 00:01:35.200
+Ao colocá-la bem no topo de um arquivo de teste,
+
+29
+00:01:35.200 --> 00:01:37.920
+ela antecipa a resolução padrão de import.
+
+30
+00:01:37.920 --> 00:01:42.000
+Aqui, just.mox atua como uma barreira no meio do ciclo de require.
+
+31
+00:01:42.000 --> 00:01:44.240
+Ele interrompe a requisição antes da camada nativa,
+
+32
+00:01:44.240 --> 00:01:47.200
+retornando um novo objeto factory JavaScript de volta.
+
+33
+00:01:47.200 --> 00:01:51.920
+Isso garante que o teste receba um objeto JavaScript puro e seguro, evitando falhas (crashes).
+
+34
+00:01:52.000 --> 00:01:57.360
+Esse mecanismo cumpre exatamente o mesmo propósito que a injeção de dependência via constructor e swift,
+
+35
+00:01:57.360 --> 00:02:00.960
+onde você substitui uma dependência antes da execução de um método de teste.
+
+36
+00:02:01.680 --> 00:02:07.120
+Escrever essas funções mock factory manualmente em dezenas de arquivos de teste individuais
+
+37
+00:02:07.120 --> 00:02:08.720
+rapidamente polui sua base de código.
+
+38
+00:02:09.360 --> 00:02:13.440
+Você resolve isso criando um diretório double underscore mox.
+
+39
+00:02:13.440 --> 00:02:18.240
+Isso estabelece mocks globais e automáticos para qualquer dependência recorrente.
+
+40
+00:02:18.880 --> 00:02:24.720
+Interceptar a resolução de módulos separa de forma limpa o JavaScript do registro C++ ausente.
+
+41
+00:02:25.200 --> 00:02:28.640
+Seu componente agora está pronto para renderizar em completo isolamento.
+
+42
+00:02:29.360 --> 00:02:32.080
+Renderizar um componente é apenas o primeiro passo.
+
+43
+00:02:32.080 --> 00:02:36.880
+Você também precisa gerenciar componentes que dependem de estados persistentes locais,
+
+44
+00:02:36.880 --> 00:02:38.720
+como o React Native MMKV.
+
+45
+00:02:39.440 --> 00:02:42.800
+MMKV é um módulo de armazenamento nativo em C++,
+
+46
+00:02:42.800 --> 00:02:44.560
+então ele falha instantaneamente no ingest.
+
+47
+00:02:45.120 --> 00:02:48.640
+Você deve replicar toda a mecânica de estado dele inteiramente em JavaScript.
+
+48
+00:02:49.200 --> 00:02:54.320
+A estratégia mais eficaz é substituir o módulo de armazenamento nativo por um map
+
+49
+00:02:54.320 --> 00:03:02.080
+em memória, em JavaScript. Esta imagem mostra a implementação. À esquerda, a inicialização padrão do MKVV nativo.
+
+50
+00:03:02.720 --> 00:03:08.960
+À direita, nossa substituição com map. Note o destaque antes de cada bloco, chamando store.clear,
+
+51
+00:03:08.960 --> 00:03:10.320
+evitando a poluição de testes.
+
+52
+00:03:11.200 --> 00:03:16.480
+Em seguida, você precisará avaliar os caminhos de lógica condicional que são controlados por
+
+53
+00:03:16.480 --> 00:03:23.120
+constantes específicas de plataforma, como iOS versus Android. Se você tentar uma atribuição direta a platform.OS,
+
+54
+00:03:23.120 --> 00:03:27.040
+as versões modernas do React Native lançarão um erro de execução de somente leitura.
+
+55
+00:03:27.040 --> 00:03:32.720
+O único método confiável para sobrescrever constantes de plataforma em cada teste é utilizando
+
+56
+00:03:32.720 --> 00:03:38.320
+object.define property. À medida que sua suíte de testes cresce, você construirá repetidamente esses objetos de estado e
+
+57
+00:03:38.320 --> 00:03:42.720
+mock de plataforma. Factory functions são necessárias para gerenciar essa repetição.
+
+58
+00:03:43.360 --> 00:03:48.320
+Factory functions impõem interfaces estritas do TypeScript. Elas capturam incompatibilidades de tipo no
+
+59
+00:03:48.320 --> 00:03:53.760
+momento da criação, muito antes do teste realmente ser executado. Manter os contatos de estado e plataforma estritamente
+
+60
+00:03:53.760 --> 00:03:58.720
+dentro do JavaScript garante que sua suíte de testes permaneça perfeitamente determinística, independentemente do
+
+61
+00:03:58.720 --> 00:04:03.920
+sistema operacional executando o script de teste. Há um limite externo final que fará seu
+
+62
+00:04:03.920 --> 00:04:09.840
+teste falhar. Requisições de rede de saída. No desenvolvimento Native iOS, você gerencia isso com URL
+
+63
+00:04:09.840 --> 00:04:16.880
+protocol subclassing. No ecossistema just, você usa mock service worker, ou MSW. MSW não é uma
+
+64
+00:04:16.880 --> 00:04:22.720
+função de mock simples. Ele se instala diretamente como um interceptador HTTP no nível do processo node.
+
+65
+00:04:22.720 --> 00:04:28.080
+Quando seu componente faz uma requisição fetch, um pacote de dados se move para fora. O interceptador MSW captura
+
+66
+00:04:28.080 --> 00:04:33.120
+isso, faz a referência cruzada com sua própria lista de handlers, e imediatamente injeta uma resposta JSON sintética
+
+67
+00:04:33.120 --> 00:04:38.160
+de volta na thread de execução, permitindo que o JavaScript continue sem interrupções. Você pode sobrescrever um
+
+68
+00:04:38.160 --> 00:04:43.520
+handler de sucesso em uma base por teste para retornar códigos de status específicos, validando como sua aplicação
+
+69
+00:04:43.520 --> 00:04:50.480
+lida com estados de erro. Para proteger esse limite, sempre configure seu servidor MSW com o parâmetro on-unhandled
+
+70
+00:04:50.480 --> 00:04:57.200
+request definido como error. Forçando requisições não-stubadas a lançar erros fatais, garante que o
+
+71
+00:04:57.200 --> 00:05:02.720
+o limite de rede permanece hermeticamente selado, prevenindo falhas silenciosas e comportamento instável durante
+
+72
+00:05:02.720 --> 00:05:08.160
+seus pipelines de CI. Este bloco de código representa um arquivo de teste do react native totalmente arquitetado, pronto para produção,
+
+73
+00:05:08.160 --> 00:05:12.160
+que reúne todas essas camadas de interceptação.
+
+74
+00:05:12.880 --> 00:05:18.400
+No topo do arquivo, a configuração do servidor MSW protege ativamente o limite de rede contra
+
+75
+00:05:18.400 --> 00:05:24.640
+qualquer requisição HTTP de saída. Logo abaixo, as declarações de mock manuais separam o componente
+
+76
+00:05:24.640 --> 00:05:30.400
+de todas as dependências de hardware e sensores. Por fim, o bloco de execução do render opera inteiramente
+
+77
+00:05:30.400 --> 00:05:35.440
+dentro dos paradigmas padrão do JavaScript, isolado com segurança do registro C++ ausente.
+
+78
+00:05:36.160 --> 00:05:41.760
+O componente agora está sendo executado com sucesso, com zero dados reais de GPS, zero conectividade de rede,
+
+79
+00:05:41.760 --> 00:05:48.080
+e zero módulos nativos. Apenas o mocking é a disciplina rigorosa de engenharia de substituir dependências
+
+80
+00:05:48.080 --> 00:05:54.000
+precisamente no limite da plataforma. Ao interceptar sistematicamente módulos e camadas de rede antes de
+
+81
+00:05:54.000 --> 00:05:59.680
+eles cruzam para o node void, você garante que seus testes unitários permaneçam rápidos, determinísticos e altamente
+
+82
+00:05:59.680 --> 00:06:01.680
+confiáveis.
+

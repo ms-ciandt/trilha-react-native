@@ -1,0 +1,406 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:03.400
+Ao construir interfaces acessíveis em React Native,
+
+2
+00:00:03.400 --> 00:00:07.400
+o principal desafio é mapear dois ambientes de engenharia distintos
+
+3
+00:00:07.400 --> 00:00:10.200
+sem perder o significado semântico na tradução.
+
+4
+00:00:10.200 --> 00:00:14.600
+O framework evita criar um modelo mental personalizado para acessibilidade.
+
+5
+00:00:14.600 --> 00:00:20.800
+Em vez disso, ele opera diretamente como uma camada fina sobre o framework nativo de acessibilidade de UI do iOS.
+
+6
+00:00:20.800 --> 00:00:22.800
+Tudo o que você sabe do UIKit,
+
+7
+00:00:22.800 --> 00:00:24.600
+como o voiceover lê a tela,
+
+8
+00:00:24.600 --> 00:00:26.600
+como o dynamic type escala o texto,
+
+9
+00:00:26.600 --> 00:00:29.000
+e como o reduced motion afeta as animações
+
+10
+00:00:29.000 --> 00:00:30.600
+continua aplicável.
+
+11
+00:00:30.600 --> 00:00:34.400
+O único requisito é aprender o mapa determinístico de tradução da API
+
+12
+00:00:34.400 --> 00:00:36.600
+entre Swift e JSX.
+
+13
+00:00:36.600 --> 00:00:40.200
+A principal diferença estrutural que você encontrará é como o estado é tratado.
+
+14
+00:00:40.200 --> 00:00:45.000
+Enquanto o UIKit costuma combinar elementos estáticos e estados dinâmicos na mesma propriedade,
+
+15
+00:00:45.000 --> 00:00:47.000
+o React Native os separa.
+
+16
+00:00:47.000 --> 00:00:49.400
+Você também vai lidar com uma mudança comportamental.
+
+17
+00:00:49.400 --> 00:00:52.800
+O React Native inverte os padrões de visibilidade para elementos de contêiner
+
+18
+00:00:52.800 --> 00:00:55.000
+em comparação com as views de UI padrão.
+
+19
+00:00:55.000 --> 00:00:59.200
+Dominar a acessibilidade no React Native é um exercício de tradução de sintaxe.
+
+20
+00:00:59.200 --> 00:01:02.800
+O sistema foi projetado para preservar o significado semântico nativo
+
+21
+00:01:02.800 --> 00:01:05.800
+falando um dialeto específico de JSX.
+
+22
+00:01:05.800 --> 00:01:11.600
+No UIKit, você atribui semântica estática a uma view usando a propriedade accessibility traits.
+
+23
+00:01:11.600 --> 00:01:15.200
+O React Native substitui essa propriedade por accessibility role,
+
+24
+00:01:15.200 --> 00:01:17.400
+aceitando um único valor do tipo string.
+
+25
+00:01:17.400 --> 00:01:21.600
+Um trait dot button no Swift se torna button no JSX.
+
+26
+00:01:21.600 --> 00:01:26.400
+Enquanto o UIKit anexa condições dinâmicas como dot selected a esse array de traits,
+
+27
+00:01:26.400 --> 00:01:31.400
+o React Native exige que elas fiquem em um objeto accessibility state totalmente separado.
+
+28
+00:01:31.400 --> 00:01:37.000
+Se você estiver construindo um controle personalizado que não tenha um equivalente direto um-para-um em UI accessibility,
+
+29
+00:01:37.000 --> 00:01:39.400
+a estratégia alternativa é simples.
+
+30
+00:01:39.400 --> 00:01:43.800
+Atribua o role none e combine-o com um accessibility label explícito
+
+31
+00:01:43.800 --> 00:01:46.600
+para fornecer ao VoiceOver o contexto necessário.
+
+32
+00:01:46.600 --> 00:01:51.000
+Essa rigorosa separação de responsabilidades da API evita a poluição semântica.
+
+33
+00:01:51.000 --> 00:01:56.800
+Isso mantém suas definições estáticas limpas e alinha a acessibilidade com o gerenciamento de estado orientado a dados do React.
+
+34
+00:01:56.800 --> 00:02:01.600
+Além dos elementos individuais, você precisa considerar uma divergência estrutural
+
+35
+00:02:01.600 --> 00:02:05.600
+sobre como iOS e React Native lidam com as views de contêiner.
+
+36
+00:02:05.600 --> 00:02:11.200
+No UIKit, uma UIView padrão, por padrão, ignora completamente a acessibilidade.
+
+37
+00:02:11.200 --> 00:02:13.600
+O React Native inverte essa linha de base.
+
+38
+00:02:13.600 --> 00:02:16.800
+Aplicar a prop accessible a uma view de contêiner pai
+
+39
+00:02:16.800 --> 00:02:19.400
+muda a forma como o sistema analisa seus filhos.
+
+40
+00:02:19.400 --> 00:02:22.800
+Quando você define accessible igual a true nesse contêiner pai,
+
+41
+00:02:22.800 --> 00:02:25.800
+essa view e todos os seus filhos são tratados como um único,
+
+42
+00:02:25.800 --> 00:02:28.000
+elemento focável pelo voiceover.
+
+43
+00:02:28.000 --> 00:02:32.400
+Use esse padrão específico de agrupamento para células de linhas de lista ou linhas de metadados.
+
+44
+00:02:32.400 --> 00:02:35.400
+Deixar fragmentos de dados isolados destrói o significado.
+
+45
+00:02:35.400 --> 00:02:39.000
+Agrupá-los garante que o voiceover leia o texto relacionado em conjunto.
+
+46
+00:02:39.000 --> 00:02:45.000
+Agrupar elementos é diferente da exigência de remover completamente uma árvore de elementos decorativos do radar do voiceover.
+
+47
+00:02:45.000 --> 00:02:50.000
+Para replicar a lógica em cascata do UIKit, onde is accessibility element é definido como false,
+
+48
+00:02:50.000 --> 00:02:55.000
+você usa a prop important for accessibility e define como no hide descendants.
+
+49
+00:02:55.000 --> 00:03:00.400
+A manipulação proativa da árvore de acessibilidade evita ordens de leitura fragmentadas.
+
+50
+00:03:00.400 --> 00:03:06.200
+Isso garante que você esteja restaurando as expectativas padrão de experiência do usuário nativo para leitores de tela.
+
+51
+00:03:06.200 --> 00:03:10.000
+Árvores estáticas são previsíveis, mas atualizações assíncronas de view,
+
+52
+00:03:10.000 --> 00:03:14.400
+como erros de validação surgindo fora das transições padrão de navegação,
+
+53
+00:03:14.400 --> 00:03:16.400
+criam desafios de foco.
+
+54
+00:03:16.400 --> 00:03:20.800
+O UIKit depende do sistema UIAccessibility.post notification,
+
+55
+00:03:20.800 --> 00:03:25.800
+especificamente do argumento screenChanged para alertar o voiceover sobre essas mudanças.
+
+56
+00:03:25.800 --> 00:03:29.600
+O equivalente no React Native é a API accessibility info.
+
+57
+00:03:29.600 --> 00:03:35.200
+Você usa o método announceForAccessibility dela para comandar o sistema a ler o novo contexto permitido.
+
+58
+00:03:35.200 --> 00:03:39.800
+Para redirecionar manualmente o foco do voiceover para um elemento específico após uma atualização,
+
+59
+00:03:39.800 --> 00:03:45.200
+capture uma referência a esse elemento e passe-a para accessibility info dot set accessibility focus.
+
+60
+00:03:45.200 --> 00:03:51.200
+Esse gerenciamento imperativo de foco é crucial ao lidar com bottom sheets customizados e UI overlays.
+
+61
+00:03:51.200 --> 00:03:56.000
+Se você construir um modal customizado sem usar o componente nativo do React Native,
+
+62
+00:03:56.000 --> 00:03:59.200
+o voiceover vai ler o conteúdo oculto do background.
+
+63
+00:03:59.200 --> 00:04:03.200
+Você deve aplicar a prop accessibility view is modal.
+
+64
+00:04:03.200 --> 00:04:09.600
+Isso age como uma barreira absoluta, dizendo ao voiceover para ignorar tudo fora daquela view específica.
+
+65
+00:04:10.200 --> 00:04:14.600
+Dominar o gerenciamento imperativo de foco e as propriedades de modal é obrigatório.
+
+66
+00:04:14.600 --> 00:04:19.800
+Sem eles, usuários de screen reader podem se ver presos em camadas de UI inativas.
+
+67
+00:04:19.800 --> 00:04:25.600
+Além dos traits em nível de componente, você deve respeitar as preferências de acessibilidade do usuário em nível de OS,
+
+68
+00:04:25.600 --> 00:04:28.200
+começando pelo dynamic type do iOS.
+
+69
+00:04:28.200 --> 00:04:31.600
+Enquanto o UIKit observa o UI font dot preferred font,
+
+70
+00:04:31.600 --> 00:04:36.800
+os componentes de texto do React Native escalam por padrão através da prop allow font scaling.
+
+71
+00:04:36.800 --> 00:04:40.600
+Para adaptar as dimensões de layout personalizadas para esses tamanhos de texto maiores,
+
+72
+00:04:40.600 --> 00:04:45.200
+leia o multiplicador de escala atual usando pixel ratio dot get font scaling.
+
+73
+00:04:45.200 --> 00:04:49.400
+Você também deve lidar com a configuração de reduce motion no nível do sistema no iOS.
+
+74
+00:04:49.400 --> 00:04:55.000
+Ramifique seu código e suprima a lógica de animação complexa com base nessa preferência específica do OS.
+
+75
+00:04:55.000 --> 00:04:58.400
+Se você estiver usando a biblioteca reanimated three,
+
+76
+00:04:58.400 --> 00:05:03.400
+você executa essa ramificação implementando o hook use reduced motion.
+
+77
+00:05:03.400 --> 00:05:07.200
+Para monitorar mudanças de configuração em tempo de execução enquanto o app está ativo,
+
+78
+00:05:07.200 --> 00:05:11.200
+observe accessibility info dot add event listener.
+
+79
+00:05:11.200 --> 00:05:15.800
+Interceptar e respeitar as preferências de escala e movimento no nível do sistema
+
+80
+00:05:15.800 --> 00:05:19.600
+é um requisito para passar nas auditorias nativas de acessibilidade.
+
+81
+00:05:19.600 --> 00:05:21.600
+Depois que seus mapeamentos forem implementados,
+
+82
+00:05:21.600 --> 00:05:26.400
+você precisa verificar se a árvore de acessibilidade realmente se comporta como esperado.
+
+83
+00:05:26.400 --> 00:05:30.400
+Confiar apenas no simulador de iOS para testar o comportamento do voiceover
+
+84
+00:05:30.400 --> 00:05:33.200
+introduz limitações significativas.
+
+85
+00:05:33.200 --> 00:05:38.600
+O simulador não possui gestos de swipe, feedback tátil e roteamento de áudio preciso.
+
+86
+00:05:38.600 --> 00:05:42.800
+Criticamente, os comportamentos de tempo relacionados a como o foco do voiceover muda
+
+87
+00:05:42.800 --> 00:05:46.000
+diferem da experiência nativa em hardware real.
+
+88
+00:05:46.000 --> 00:05:51.200
+Firm, limite o simulador ao uso combinado com o Xcode accessibility inspector.
+
+89
+00:05:51.200 --> 00:05:56.800
+Essa configuração é eficiente para verificação estática da estrutura da sua árvore, labels e roles.
+
+90
+00:05:56.800 --> 00:06:00.400
+A validação comportamental verdadeira exige um iPhone físico.
+
+91
+00:06:00.400 --> 00:06:03.800
+No dispositivo, deslize para a direita por todos os elementos interativos
+
+92
+00:06:03.800 --> 00:06:08.000
+para garantir que a ordem sequencial de deslize corresponda à ordem visual do layout.
+
+93
+00:06:08.000 --> 00:06:10.200
+Em seguida, execute as verificações interativas.
+
+94
+00:06:10.200 --> 00:06:13.200
+Verifique se as ações de toque duplo são acionadas corretamente
+
+95
+00:06:13.200 --> 00:06:17.600
+e use gestos de deslize para confirmar mudanças de valor em controles ajustáveis.
+
+96
+00:06:17.600 --> 00:06:19.800
+Por fim, realize as verificações de limite.
+
+97
+00:06:19.800 --> 00:06:23.400
+Navegue até os modais personalizados para confirmar que o foco está retido
+
+98
+00:06:23.400 --> 00:06:27.600
+e garanta que ele seja corretamente restaurado para a tela subjacente ao ser dispensado.
+
+99
+00:06:27.600 --> 00:06:30.200
+Como o ReactNative atua como um wrapper fino,
+
+100
+00:06:30.200 --> 00:06:34.600
+seu sucesso em acessibilidade depende da preservação da semântica nativa do iOS.
+
+101
+00:06:34.600 --> 00:06:37.600
+Isso só pode ser comprovado por meio de testes físicos nativos.
+

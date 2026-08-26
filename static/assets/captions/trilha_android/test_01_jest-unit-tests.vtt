@@ -1,0 +1,314 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:05.000
+Se você tem escrito testes no Xcode 16 usando as macros modernas de Swift testing,
+
+2
+00:00:05.000 --> 00:00:09.000
+você já possui exatamente o modelo mental necessário para testes em JavaScript.
+
+3
+00:00:09.000 --> 00:00:13.000
+À primeira vista, sair do ambiente compilado do Swift
+
+4
+00:00:13.000 --> 00:00:18.000
+para o mundo interpretado do JavaScript parece uma desconexão na forma como a lógica é processada.
+
+5
+00:00:18.000 --> 00:00:22.000
+Mas por trás das ferramentas de superfície, a lógica estrutural continua a mesma.
+
+6
+00:00:22.000 --> 00:00:27.000
+Você isola um pedaço de comportamento, verifica que ele produz um resultado específico, e repete.
+
+7
+00:00:27.000 --> 00:00:32.000
+Vamos mapear o seu conhecimento existente em iOS diretamente para esse novo ambiente
+
+8
+00:00:32.000 --> 00:00:34.000
+usando uma matriz de tradução.
+
+9
+00:00:34.000 --> 00:00:37.000
+Vamos começar resolvendo esse ponto de fricção mais simples,
+
+10
+00:00:37.000 --> 00:00:41.000
+as diferenças superficiais de vocabulário, e como os testes são estruturados e agrupados.
+
+11
+00:00:41.000 --> 00:00:44.000
+Depois vamos abordar a diferença arquitetural central,
+
+12
+00:00:44.000 --> 00:00:50.000
+saindo da injeção de dependência em tempo de compilação do Swift para a interceptação de módulos apenas em tempo de execução.
+
+13
+00:00:50.000 --> 00:00:55.000
+Por fim, vamos expor a divisão invisível de engine entre o ambiente de teste do node JS
+
+14
+00:00:55.000 --> 00:00:58.000
+e o runtime mobile real do Hermes.
+
+15
+00:00:58.000 --> 00:01:02.000
+Sua intuição existente de testes em iOS é seu maior trunfo.
+
+16
+00:01:02.000 --> 00:01:07.000
+Depois de mapear isso para essa matriz, você será capaz de contribuir para uma suíte de testes do react native
+
+17
+00:01:07.000 --> 00:01:10.000
+com o mesmo rigor que você usa no Xcode.
+
+18
+00:01:10.000 --> 00:01:15.000
+Ambos os ecossistemas exigem que você organize comportamentos isolados em grupos lógicos,
+
+19
+00:01:15.000 --> 00:01:18.000
+abandonando classes do lado do JavaScript.
+
+20
+00:01:18.000 --> 00:01:22.000
+A anotação Swift at Suite mapeia diretamente para o bloco described do Jest.
+
+21
+00:01:23.000 --> 00:01:28.000
+Internamente, a função at test do Swift é idêntica à função it ou test do Jest.
+
+22
+00:01:28.000 --> 00:01:32.000
+No Swift, o isolamento de estado é tratado automaticamente.
+
+23
+00:01:32.000 --> 00:01:39.000
+Como structs do at Suite recebem uma instância nova a cada teste, colocar sua lógica de configuração no método init garante um estado limpo.
+
+24
+00:01:39.000 --> 00:01:42.000
+O Jest não possui esse ciclo de vida de struct.
+
+25
+00:01:42.000 --> 00:01:48.000
+Para alcançar esse mesmo isolamento de estado, você deve passar a lógica de configuração explícita para o hook before each.
+
+26
+00:01:48.000 --> 00:01:51.000
+O processo de finalização segue a mesma lógica.
+
+27
+00:01:51.000 --> 00:01:56.000
+Um método deinit da classe at Suite do Swift corresponde diretamente ao hook after each do Jest.
+
+28
+00:01:56.000 --> 00:02:03.000
+E assim como aninhar tipos at suite para cenários específicos, você pode aninhar blocos describe no Jest.
+
+29
+00:02:03.000 --> 00:02:09.000
+Os hooks de configuração e finalização respeitarão esses escopos aninhados, executando de fora para dentro.
+
+30
+00:02:09.000 --> 00:02:17.000
+Então, embora o Jest não tenha os contêineres orientados a objetos do Swift, seus hooks fornecem controle de ciclo de vida e isolamento de estado idênticos.
+
+31
+00:02:17.000 --> 00:02:21.000
+O Swift testing substitui a antiga família de access cert por macros.
+
+32
+00:02:21.000 --> 00:02:28.000
+Just apenas centraliza tudo em uma única função expect, que é então encadeada a métodos matcher específicos.
+
+33
+00:02:28.000 --> 00:02:31.000
+A verificação de igualdade é onde a precisão importa.
+
+34
+00:02:31.000 --> 00:02:38.000
+Para espelhar uma comparação de tipo primitivo no Swift, use .2b. Isso impõe uma igualdade de referência estrita.
+
+35
+00:02:38.000 --> 00:02:42.000
+Mas se estiver comparando arrays ou objetos complexos, .2b vai falhar.
+
+36
+00:02:42.000 --> 00:02:47.000
+Você deve usar .2 para uma comparação estrutural profunda dos dados aninhados.
+
+37
+00:02:47.000 --> 00:02:55.000
+Quando uma API retorna um payload enorme e você só se importa com três campos específicos, use .2b match object para uma correspondência parcial.
+
+38
+00:02:55.000 --> 00:03:01.000
+Agora um aviso crítico. Just não tem equivalente à macro hash-require do Swift.
+
+39
+00:03:01.000 --> 00:03:07.000
+Não existem paradas obrigatórias. Se uma asserção falhar, o Just não interrompe o teste.
+
+40
+00:03:07.000 --> 00:03:10.000
+A execução continuará pelo restante do bloco.
+
+41
+00:03:10.000 --> 00:03:14.000
+Passando para a execução assíncrona, o mapeamento é perfeito.
+
+42
+00:03:14.000 --> 00:03:20.000
+O modelo de concorrência nativa do Swift compartilha a mesma arquitetura das promises modernas do JavaScript.
+
+43
+00:03:20.000 --> 00:03:30.000
+Uma assinatura at-test async-throws se traduz perfeitamente em adicionar a palavra-chave async à função just test e usar await nas chamadas assíncronas internas.
+
+44
+00:03:30.000 --> 00:03:36.000
+Se você encontrar código legado do just utilizando o padrão de callback done, evite-o completamente.
+
+45
+00:03:36.000 --> 00:03:39.000
+Não misture com a sintaxe moderna.
+
+46
+00:03:39.000 --> 00:03:44.000
+O callback done é o equivalente em JavaScript da expectation desatualizada do X-test.
+
+47
+00:03:44.000 --> 00:03:48.000
+O just moderno depende inteiramente de async e await.
+
+48
+00:03:48.000 --> 00:03:55.000
+Aqui está a divergência arquitetural mais significativa entre os dois ecossistemas: como eles lidam com dependências.
+
+49
+00:03:55.000 --> 00:04:04.000
+O Swift alcança testabilidade em tempo de compilação. Você define um protocol, implementa uma struct leve para atuar como mock, e a injeta no tipo que você está testando.
+
+50
+00:04:05.000 --> 00:04:12.000
+O just opera em tempo de execução. Em vez de injetar dependências, ele intercepta o sistema de módulos usando just.mock.
+
+51
+00:04:12.000 --> 00:04:22.000
+Isso depende do hoisting. Simplesmente reloca fisicamente o seu mock para o topo da cadeia de avaliação, substituindo o módulo antes que qualquer outro código seja lido.
+
+52
+00:04:22.000 --> 00:04:27.000
+Se substituir o arquivo inteiro for muito destrutivo, você pode usar apenas just.spyon.
+
+53
+00:04:27.000 --> 00:04:33.000
+Esta é uma ferramenta de precisão que envolve um único método específico, deixando o restante do módulo intacto.
+
+54
+00:04:33.000 --> 00:04:39.000
+Para avaliar as chamadas interceptadas, você usa just.fn para criar uma mock function independente.
+
+55
+00:04:39.000 --> 00:04:43.000
+Isso funciona exatamente como um lightweight Swift mock struct.
+
+56
+00:04:43.000 --> 00:04:50.000
+Toda vez que o mock é invocado, ele registra os artimates e os armazena dentro da sua propriedade mock.calls para você fazer as asserções.
+
+57
+00:04:50.000 --> 00:04:58.000
+Para ter sucesso no just, você deve parar de tentar injetar dependências através de protocols e aprender a interceptar imports no nível do módulo.
+
+58
+00:04:58.000 --> 00:05:05.000
+Ao avaliar a lógica de UI, o React impõe uma restrição técnica rigorosa. Custom hooks não podem ser avaliados em um vácuo.
+
+59
+00:05:05.000 --> 00:05:09.000
+Eles exigem que exista um React runtime context.
+
+60
+00:05:09.000 --> 00:05:17.000
+Para lidar com isso, o pacote testing library slash React Native fornece o render hook, a ferramenta designada para executar e rastrear atualizações de estado.
+
+61
+00:05:17.000 --> 00:05:24.000
+A causa mais comum de falhas falsas em testes no React Native é esquecer de dar flush nos react effects antes de rodar suas assertions.
+
+62
+00:05:25.000 --> 00:05:30.000
+Toda ação que dispara uma atualização de estado deve ser envolvida dentro de uma função act.
+
+63
+00:05:30.000 --> 00:05:34.000
+Isso força o React a processar a fila antes de simplesmente avaliar o resultado.
+
+64
+00:05:34.000 --> 00:05:42.000
+Para validação de saída visual, apenas utilize snapshot testing. Isso mapeia diretamente para as imagens de baseline dos testes de UI do iOS.
+
+65
+00:05:42.000 --> 00:05:49.000
+O componente renderiza, serializa a saída para um arquivo de texto e falha o teste se esse arquivo de texto mudar na próxima execução.
+
+66
+00:05:49.000 --> 00:05:53.000
+Mas snapshots carregam um risco severo de snapshot blindness.
+
+67
+00:05:53.000 --> 00:06:05.000
+Se um componente recebe dados dinâmicos, como timestamps ou respostas de API, o snapshot vai quebrar constantemente, gerando falhas de baixa informação que os desenvolvedores rapidamente aprendem a ignorar.
+
+68
+00:06:05.000 --> 00:06:16.000
+Restrinja os testes de snapshot exclusivamente a componentes folha com apresentação pura e logicista. Isso protege sua suíte de testes de regressões acidentais sem gerar falsos positivos diários.
+
+69
+00:06:17.000 --> 00:06:23.000
+Há uma última complexidade nos testes em React Native, e ela diz respeito ao próprio motor de execução.
+
+70
+00:06:23.000 --> 00:06:29.000
+O React Native em produção executa JavaScript via o motor Hermes, mas o chest não roda dentro do Hermes.
+
+71
+00:06:29.000 --> 00:06:36.000
+Ele executa seus testes estritamente dentro de um ambiente Node.js V8. Essa separação cria perigos práticos.
+
+72
+00:06:36.000 --> 00:06:41.000
+O Hermes tem comportamentos de runtime específicos para datas e expressões regulares que o V8 não compartilha.
+
+73
+00:06:41.000 --> 00:06:50.000
+Por causa dessa disparidade de engine, quaisquer benchmarks de performance escritos como testes no Jest são inválidos para prever velocidades em produção.
+
+74
+00:06:50.000 --> 00:06:56.000
+Além disso, o Hermes desabilita deliberadamente certos recursos de introspecção do JavaScript por segurança.
+
+75
+00:06:56.000 --> 00:07:02.000
+Código que depende desses recursos vai passar na sua suíte de testes do Jest, e depois travar em um dispositivo físico.
+
+76
+00:07:02.000 --> 00:07:11.000
+Nós mapeamos a arquitetura, as assertions, os ciclos de vida assíncronos e os padrões de mocking. A matriz está completa.
+
+77
+00:07:11.000 --> 00:07:18.000
+Isso apenas fornece confiança absoluta na sua lógica arquitetural e comportamento, mas lembre-se da divisão entre engines.
+
+78
+00:07:18.000 --> 00:07:24.000
+A verdadeira fidelidade operacional ainda requer verificação manual em um dispositivo físico.
+

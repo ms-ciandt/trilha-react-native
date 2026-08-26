@@ -1,0 +1,490 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:05.480
+This node graph represents a legacy engineering instinct and react native development,
+
+2
+00:00:05.480 --> 00:00:10.120
+dumping all application data into a single unified global store.
+
+3
+00:00:10.120 --> 00:00:13.440
+This is the coupling of two incompatible data types,
+
+4
+00:00:13.440 --> 00:00:17.960
+a synchronous remote server data and synchronous local UI data.
+
+5
+00:00:17.960 --> 00:00:21.400
+This coupling creates immediate architectural symptoms.
+
+6
+00:00:21.400 --> 00:00:25.800
+The first is the necessity of writing manual cache and validation logic,
+
+7
+00:00:25.920 --> 00:00:30.520
+forcing developers to manage the timing of remote data refreshes by hand.
+
+8
+00:00:30.520 --> 00:00:32.840
+The second symptom follows directly.
+
+9
+00:00:32.840 --> 00:00:36.920
+Because the local store inevitably falls out of sync with the remote source,
+
+10
+00:00:36.920 --> 00:00:40.280
+stale data bugs begin appearing within the user interface.
+
+11
+00:00:40.280 --> 00:00:43.520
+The third symptom is the emergence of race conditions.
+
+12
+00:00:43.520 --> 00:00:47.440
+Multiple asynchronous fetches conflict within the single store,
+
+13
+00:00:47.440 --> 00:00:50.480
+leaving the user interface in a non-deterministic state
+
+14
+00:00:50.480 --> 00:00:52.600
+that is unresponsive to the user.
+
+15
+00:00:52.640 --> 00:00:56.840
+These are not inherent limitations of the react native framework.
+
+16
+00:00:56.840 --> 00:00:59.760
+They are the direct result of an architectural assumption
+
+17
+00:00:59.760 --> 00:01:02.160
+regarding how state should be managed.
+
+18
+00:01:02.160 --> 00:01:05.760
+Predictable scaling requires strict state bifurcation.
+
+19
+00:01:05.760 --> 00:01:08.800
+We must isolate data into distinct categories
+
+20
+00:01:08.800 --> 00:01:11.920
+and apply specialized tools to govern each domain.
+
+21
+00:01:11.920 --> 00:01:15.440
+Strict state decoupling provides the structural isolation needed
+
+22
+00:01:15.440 --> 00:01:17.520
+to remove manual caching logic,
+
+23
+00:01:17.520 --> 00:01:21.520
+providing a pathway to enterprise scale stability in react native.
+
+24
+00:01:21.560 --> 00:01:24.480
+This split-screen diagram illustrates the solution.
+
+25
+00:01:24.480 --> 00:01:28.480
+On the left is server state, data originating on a remote database
+
+26
+00:01:28.480 --> 00:01:32.080
+that must be continuously fetched, cached, and synchronized.
+
+27
+00:01:32.080 --> 00:01:33.920
+The industry standard enterprise tool
+
+28
+00:01:33.920 --> 00:01:37.320
+to manage this asynchronous domain is TANstack Query.
+
+29
+00:01:37.320 --> 00:01:39.440
+On the right side, we have client state.
+
+30
+00:01:39.440 --> 00:01:43.440
+This is ephemeral data existing only during the application's lifecycle,
+
+31
+00:01:43.440 --> 00:01:47.280
+dark mode preferences, local cart items, or active off-sessions.
+
+32
+00:01:47.280 --> 00:01:51.040
+The tool best suited for managing this local synchronous domain
+
+33
+00:01:51.040 --> 00:01:52.360
+is Zustant.
+
+34
+00:01:52.360 --> 00:01:54.360
+The primary architectural constraint
+
+35
+00:01:54.360 --> 00:01:58.880
+is that these two state domains must never be mixed into the same store.
+
+36
+00:01:58.880 --> 00:02:01.320
+Violating this firewall forces developers
+
+37
+00:02:01.320 --> 00:02:04.120
+to manually write distributed systems logic,
+
+38
+00:02:04.120 --> 00:02:09.160
+like network retries and caching, inside a simple UI state manager.
+
+39
+00:02:09.160 --> 00:02:13.400
+Respecting this boundary offloads complex caching to TANstack Query,
+
+40
+00:02:13.400 --> 00:02:15.920
+reducing the application's total code base
+
+41
+00:02:15.920 --> 00:02:19.080
+and lowering the cognitive load on the engineering team.
+
+42
+00:02:19.080 --> 00:02:21.720
+Looking specifically at the client state domain,
+
+43
+00:02:21.720 --> 00:02:24.280
+local UI state can still become a bottleneck
+
+44
+00:02:24.280 --> 00:02:26.800
+as an applications feature set expands.
+
+45
+00:02:26.800 --> 00:02:28.680
+This block diagram shows what happens
+
+46
+00:02:28.680 --> 00:02:32.360
+when a single sprawling Zustant store grows unchecked.
+
+47
+00:02:32.360 --> 00:02:34.880
+It becomes unmanageable for large teams,
+
+48
+00:02:34.880 --> 00:02:36.280
+generating merge conflicts
+
+49
+00:02:36.280 --> 00:02:39.200
+and triggering unnecessary global re-renders.
+
+50
+00:02:39.200 --> 00:02:41.560
+The standard scaling solution for this bottleneck
+
+51
+00:02:41.560 --> 00:02:43.560
+is the Zustant Slices pattern.
+
+52
+00:02:43.560 --> 00:02:48.600
+This pattern organizes the state into modular domain-specific architectures.
+
+53
+00:02:48.600 --> 00:02:51.720
+One slice exclusively for user authentication,
+
+54
+00:02:51.720 --> 00:02:54.160
+another isolated for shopping cart logic,
+
+55
+00:02:54.160 --> 00:02:57.240
+bringing development into native mobile alignment.
+
+56
+00:02:57.240 --> 00:02:59.560
+The conceptual purpose of a Zustant Slices
+
+57
+00:02:59.560 --> 00:03:03.040
+maps directly to the role of an Android view model class.
+
+58
+00:03:03.040 --> 00:03:05.480
+By trading slices like native view models,
+
+59
+00:03:05.480 --> 00:03:08.280
+engineers enforce a separation of concerns,
+
+60
+00:03:08.280 --> 00:03:10.720
+where a minor UI update in the shopping cart
+
+61
+00:03:10.720 --> 00:03:14.200
+cannot trigger a cascading re-render in the authentication flow.
+
+62
+00:03:14.200 --> 00:03:16.760
+Switching focus back to the server state domain,
+
+63
+00:03:16.760 --> 00:03:18.640
+simple fetch calls are insufficient
+
+64
+00:03:18.640 --> 00:03:21.640
+for an enterprise hand stack query implementation.
+
+65
+00:03:21.640 --> 00:03:24.120
+A common vulnerability in standard caching logic
+
+66
+00:03:24.120 --> 00:03:26.360
+is the reliance on hard-coded string keys
+
+67
+00:03:26.360 --> 00:03:28.480
+to identify and retrieve data.
+
+68
+00:03:28.480 --> 00:03:32.360
+Simple string typos inevitably bypass cache and validation rules.
+
+69
+00:03:32.360 --> 00:03:34.120
+This creates silent data failures
+
+70
+00:03:34.120 --> 00:03:36.720
+that are difficult to track down during debugging.
+
+71
+00:03:36.720 --> 00:03:39.160
+This visual code flow representation
+
+72
+00:03:39.160 --> 00:03:41.600
+demonstrates the structural solution,
+
+73
+00:03:41.600 --> 00:03:44.000
+typed query key factories.
+
+74
+00:03:44.040 --> 00:03:47.440
+A typed factory ensures absolute query consistency
+
+75
+00:03:47.440 --> 00:03:51.680
+and type safety across large multi-developer code bases.
+
+76
+00:03:51.680 --> 00:03:55.000
+Once robust type safety is securely established,
+
+77
+00:03:55.000 --> 00:03:57.440
+architecture must account for data latency
+
+78
+00:03:57.440 --> 00:04:00.120
+through proactive background data fetching.
+
+79
+00:04:00.120 --> 00:04:02.760
+This introduces the second major pattern,
+
+80
+00:04:02.760 --> 00:04:05.200
+prefetching in tan stack query.
+
+81
+00:04:05.200 --> 00:04:07.880
+This diagram shows a background data pipeline
+
+82
+00:04:07.880 --> 00:04:11.480
+that closely mirrors the mechanics of Android's work manager.
+
+83
+00:04:11.480 --> 00:04:13.360
+Using the work manager mental model
+
+84
+00:04:13.360 --> 00:04:15.560
+helps developers structure their applications
+
+85
+00:04:15.560 --> 00:04:17.400
+to ready data in the background.
+
+86
+00:04:17.400 --> 00:04:18.640
+Ensuring it is available,
+
+87
+00:04:18.640 --> 00:04:21.680
+the moment a user navigates to a new screen.
+
+88
+00:04:21.680 --> 00:04:23.880
+The final hurdle in application latency
+
+89
+00:04:23.880 --> 00:04:25.720
+occurs during mutations,
+
+90
+00:04:25.720 --> 00:04:28.960
+waiting for server confirmation when a user alters data,
+
+91
+00:04:28.960 --> 00:04:31.000
+such as pressing a like button.
+
+92
+00:04:31.000 --> 00:04:34.040
+The primary method for reducing this perceived network lag
+
+93
+00:04:34.040 --> 00:04:37.680
+is the third core pattern, optimistic updates.
+
+94
+00:04:37.680 --> 00:04:41.320
+This sequential flow diagram maps out the process.
+
+95
+00:04:41.320 --> 00:04:45.280
+You instantly mutate the local UI state upon user action,
+
+96
+00:04:45.280 --> 00:04:46.800
+operating under the assumption
+
+97
+00:04:46.800 --> 00:04:49.480
+that the server request will eventually succeed.
+
+98
+00:04:49.480 --> 00:04:51.920
+The safety net here is that tan stack query
+
+99
+00:04:51.920 --> 00:04:55.160
+automatically rolls back the UI to its previous state
+
+100
+00:04:55.160 --> 00:04:58.080
+if the background server request ultimately fails.
+
+101
+00:04:58.080 --> 00:05:01.800
+Combining key factories, prefetching and optimistic updates
+
+102
+00:05:01.800 --> 00:05:03.520
+transforms tan stack query
+
+103
+00:05:03.520 --> 00:05:07.240
+into a resilient offline capable synchronization engine.
+
+104
+00:05:07.240 --> 00:05:09.320
+Returning to our split screen diagram,
+
+105
+00:05:09.320 --> 00:05:11.200
+we can now view the fully realized
+
+106
+00:05:11.200 --> 00:05:14.520
+react native dual engine architecture in operation.
+
+107
+00:05:14.520 --> 00:05:18.000
+Zoo stan slices handle the immediate local UI logic,
+
+108
+00:05:18.000 --> 00:05:21.600
+while tan stack query strictly governs remote synchronization.
+
+109
+00:05:21.600 --> 00:05:23.440
+Enforcing this strict separation
+
+110
+00:05:23.440 --> 00:05:26.120
+addresses the structural causes of loading state bugs
+
+111
+00:05:26.120 --> 00:05:28.400
+and replaces the single store monolith
+
+112
+00:05:28.400 --> 00:05:30.680
+with a predictable modular system.
+
+113
+00:05:30.680 --> 00:05:34.240
+However, even perfectly architected state engines
+
+114
+00:05:34.240 --> 00:05:37.240
+will occasionally encounter unpredictable network
+
+115
+00:05:37.240 --> 00:05:39.600
+or logic failures in production.
+
+116
+00:05:39.600 --> 00:05:43.480
+This introduces the necessity of structured observability.
+
+117
+00:05:43.480 --> 00:05:45.640
+When the state drops, the engineering team
+
+118
+00:05:45.640 --> 00:05:47.920
+must know exactly why.
+
+119
+00:05:47.920 --> 00:05:51.480
+This sets up the next critical phase of enterprise scaling,
+
+120
+00:05:51.480 --> 00:05:54.560
+implementing century, structuring crash reporting,
+
+121
+00:05:54.560 --> 00:05:56.760
+and building global error handling patterns
+
+122
+00:05:56.760 --> 00:05:59.760
+to catch the failures that state engines cannot prevent.
+

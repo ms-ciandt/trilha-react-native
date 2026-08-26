@@ -8,6 +8,7 @@ sidebar_position: 4
 
 <video width="100%" controls>
   <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/cicd_04_code-signing-keystore.mp4" type="video/mp4">
+  <track kind="captions" src="/trilha-react-native/assets/captions/trilha_android/cicd_04_code-signing-keystore.vtt" srclang="pt" label="Português" default>
   Your browser does not support the video tag.
 </video>
 

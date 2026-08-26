@@ -1,0 +1,242 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:06.720
+Historicamente, os Ambientes de Execução do React Native operavam como territórios totalmente isolados,
+
+2
+00:00:06.720 --> 00:00:10.480
+Código Nativo Android de um lado, e JavaScript do outro.
+
+3
+00:00:10.480 --> 00:00:15.600
+Para preencher essa lacuna, a arquitetura dependia de um sistema assíncrono de passagem de mensagens.
+
+4
+00:00:15.600 --> 00:00:21.120
+Funcionalmente, isso operava como um pipeline de comunicação entre processos altamente ineficiente.
+
+5
+00:00:21.120 --> 00:00:27.440
+A nova arquitetura reescreve esse modelo de execução eliminando completamente a fila assíncrona de mensagens.
+
+6
+00:00:27.440 --> 00:00:30.320
+Este esquema ilustra a estrutura de substituição.
+
+7
+00:00:30.320 --> 00:00:36.960
+A antiga fila desapareceu, substituída por uma camada sólida em C++ chamada JavaScript Interface, ou JSI.
+
+8
+00:00:36.960 --> 00:00:42.400
+Para entender exatamente como essa camada contorna os antigos gargalos de serialização JSON,
+
+9
+00:00:42.400 --> 00:00:47.360
+precisamos mapear seu modelo de execução diretamente com os conceitos padrão de threads do Android.
+
+10
+00:00:47.360 --> 00:00:52.000
+A partir daí, podemos detalhar a mecânica de transferência de grandes blocos de dados entre esses ambientes
+
+11
+00:00:52.000 --> 00:00:53.520
+com cópia zero.
+
+12
+00:00:53.520 --> 00:00:59.280
+Ao eliminar a fila de mensagens, o React Native se afasta da passagem de mensagens isolada,
+
+13
+00:00:59.280 --> 00:01:02.720
+e caminha para um sistema de interação direta entre ambientes.
+
+14
+00:01:03.360 --> 00:01:08.960
+No pipeline legado, toda chamada entre ambientes é forçada a passar por um bloco de serialização
+
+15
+00:01:08.960 --> 00:01:13.840
+e convertida para JSON. O payload fica em uma fila assíncrona, se acumulando.
+
+16
+00:01:14.560 --> 00:01:20.720
+Por fim, o Android precisa desserializar completamente essa string de volta para objetos nativos antes que a execução comece.
+
+17
+00:01:21.360 --> 00:01:27.120
+Isso impõe uma penalidade severa de execução. Funciona exatamente como um looper do Android que
+
+18
+00:01:27.120 --> 00:01:33.040
+aceita estritamente comandos post, mas nunca posta de forma síncrona. Você simplesmente não pode bloquear a thread do JavaScript
+
+19
+00:01:33.040 --> 00:01:37.120
+para esperar por um resultado nativo. O custo computacional é igualmente restritivo.
+
+20
+00:01:37.680 --> 00:01:41.120
+Forçar toda chamada entre ambientes a passar pela formatação JSON
+
+21
+00:01:41.120 --> 00:01:47.600
+incorre na mesma sobrecarga de CQ e memória que serializar cada chamada de IPC do binder para uma string de texto
+
+22
+00:01:47.680 --> 00:01:52.640
+antes de despachá-la. Como esses dois ambientes de execução operam de forma isolada,
+
+23
+00:01:52.640 --> 00:01:58.080
+eles não possuem completamente um mapa de memória compartilhado. Passar dados de alto throughput através dessa fronteira,
+
+24
+00:01:58.080 --> 00:02:03.760
+como um frame de câmera não comprimido, exige alocar nova memória e duplicar fisicamente o
+
+25
+00:02:03.760 --> 00:02:09.760
+buffer inteiro, byte a byte. A antiga bridge falhava em tarefas de alta performance porque forçava
+
+26
+00:02:09.760 --> 00:02:16.080
+dois processos cegos a construir e decodificar mensagens de texto em vez de compartilhar um pool de recursos comum.
+
+27
+00:02:16.800 --> 00:02:23.040
+O JSI introduz uma camada nativa em C++ que se encaixa diretamente entre o Hermes JavaScript engine
+
+28
+00:02:23.040 --> 00:02:28.240
+e o Android nativo. Conceitualmente, isso funciona exatamente como o Java Native Interface.
+
+29
+00:02:28.800 --> 00:02:35.920
+Onde o JNI faz a ponte da lacuna de execução entre Kotlin e C++, o JSI faz a ponte da lacuna entre JavaScript
+
+30
+00:02:35.920 --> 00:02:42.160
+e C++. Quando o JavaScript chama um método nativo, isso dispara uma chamada de função C++ direta.
+
+31
+00:02:42.640 --> 00:02:47.440
+Isso funciona porque o motor Hermes agora mantém uma referência de ponteiro direta para o objeto C++
+
+32
+00:02:47.440 --> 00:02:53.120
+que reside na memória. Ao manter essa referência direta, a arquitetura elimina a latência
+
+33
+00:02:53.120 --> 00:02:58.000
+da bridge, trazendo as chamadas entre ambientes significativamente mais próximas da velocidade da
+
+34
+00:02:58.000 --> 00:03:04.400
+execução de funções nativas padrão. Esse bloco específico de C++ é chamado de host object. Essa é a primitiva
+
+35
+00:03:04.400 --> 00:03:10.160
+funcional que o JSI expõe ao engine JavaScript. O JavaScript interage com essas classes nativas C++
+
+36
+00:03:10.160 --> 00:03:15.440
+exatamente como se fossem objetos J locais padrão, permitindo retornos síncronos
+
+37
+00:03:15.440 --> 00:03:21.280
+de dados instantâneos. Bibliotecas modernas como a solução de armazenamento chave-valor MMKV dependem exatamente
+
+38
+00:03:21.280 --> 00:03:27.360
+dessa arquitetura. Ao utilizar o JSI diretamente, o MMKV contorna completamente a bridge tradicional para executar
+
+39
+00:03:27.360 --> 00:03:32.480
+leituras de banco de dados com zero atraso assíncrono. Integrar host objects elimina a necessidade
+
+40
+00:03:32.480 --> 00:03:37.120
+arquitetural de criar estados de carregamento ou wrappers assíncronos quando um componente busca dados nativos.
+
+41
+00:03:37.120 --> 00:03:41.680
+Em vez de duplicar fisicamente um bloco de dados em um novo pool de memória, ambos os ambientes agora olham
+
+42
+00:03:41.680 --> 00:03:48.400
+para o mesmo bloco exato. Isso é alcançado através do shared array buffer. Durante a execução, nenhum dado
+
+43
+00:03:48.400 --> 00:03:54.480
+real se move através da fronteira, apenas o ponteiro de referência é passado. Essa referenciação direta resolve
+
+44
+00:03:54.480 --> 00:04:00.160
+gargalos para processamento de câmera em tempo real, buffers de áudio e fluxos contínuos de dados de alto throughput.
+
+45
+00:04:00.880 --> 00:04:05.760
+A mudança da duplicação de memória para a referenciação de memória fornece a largura de banda sustentada
+
+46
+00:04:05.760 --> 00:04:11.280
+necessária para recursos móveis intensivos em hardware, como visão computacional em tempo real ou processamento
+
+47
+00:04:11.280 --> 00:04:17.680
+de áudio de alta fidelidade. Esta visualização mostra a nova pilha de execução da arquitetura. O sistema agora opera
+
+48
+00:04:17.680 --> 00:04:24.640
+através de threads distintas de JS, UI e background, todas interconectadas pela camada JSI. Essa separação
+
+49
+00:04:24.640 --> 00:04:29.680
+de threads permite que o novo motor de renderização nativo, o Fabric, alcance uma renderização verdadeiramente concorrente.
+
+50
+00:04:30.320 --> 00:04:35.200
+Este modelo de execução se assemelha de perto à divisão nativa do Android entre a render thread e a UI
+
+51
+00:04:35.840 --> 00:04:40.960
+thread. Como os cálculos de layout são tratados de forma nativa, atualizações de estado de baixa prioridade podem ceder seu
+
+52
+00:04:40.960 --> 00:04:47.200
+tempo de execução, evitando que tarefas longas bloqueiem a thread da UI. Ao desacoplar a renderização da UI da
+
+53
+00:04:47.200 --> 00:04:52.400
+execução bloqueante do JavaScript, a aplicação mantém taxas de quadros em nível nativo mesmo durante processamento
+
+54
+00:04:52.400 --> 00:04:59.440
+pesado de dados. Na prática, desenvolvedores raramente escrevem código JSI C++ puro para alcançar essa performance.
+
+55
+00:04:59.440 --> 00:05:04.320
+O fluxo de trabalho moderno começa escrevendo uma spec em TypeScript, que estabelece o contrato arquitetural
+
+56
+00:05:04.400 --> 00:05:09.840
+preciso para o module. Uma ferramenta chamada CodeGen atende essa especificação e gera automaticamente a
+
+57
+00:05:09.840 --> 00:05:15.680
+camada de ligação C++ JSI necessária. O passo final é simplesmente escrever a implementação em Kotlin para cumprir
+
+58
+00:05:15.680 --> 00:05:22.000
+esse contrato gerado. O JSI transiciona o React Native para um modelo de acesso direto e síncrono à memória.
+
+59
+00:05:22.000 --> 00:05:27.040
+O próximo passo é utilizar esse fluxo de trabalho para construir um turbo module funcional em Kotlin, totalmente livre
+
+60
+00:05:27.040 --> 00:05:29.040
+do bridge over Hype.
+

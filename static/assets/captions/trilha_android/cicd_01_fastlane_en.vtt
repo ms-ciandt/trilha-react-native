@@ -1,0 +1,246 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:06.000
+If you look closely at the reflection here, you'll see a familiar, exhausting loop.
+
+2
+00:00:06.000 --> 00:00:13.000
+Running Gradle Tasks, building release bundles, opening a browser, logging into the play console,
+
+3
+00:00:13.000 --> 00:00:15.000
+dragging files into a webinar face.
+
+4
+00:00:15.000 --> 00:00:18.000
+Doing this once is a chore.
+
+5
+00:00:18.000 --> 00:00:24.000
+Doing it for every single bug fix or feature update creates a massive drain on your time.
+
+6
+00:00:24.000 --> 00:00:32.000
+We are going to replace that entire manual sequence with one automated command that you run straight from your terminal.
+
+7
+00:00:32.000 --> 00:00:34.000
+That tool is fastling.
+
+8
+00:00:34.000 --> 00:00:38.000
+This maps out exactly how React Native divides deployment labor.
+
+9
+00:00:38.000 --> 00:00:42.000
+The JavaScript side routes to tools like Metro and EAS.
+
+10
+00:00:42.000 --> 00:00:46.000
+Fastlane strictly handles the native Android architecture.
+
+11
+00:00:46.000 --> 00:00:51.000
+It compiles Java and Kotlin code, builds the bundle, and handles the store upload.
+
+12
+00:00:51.000 --> 00:00:58.000
+Before we start writing the automation, you need one specific file ready, your Google Play service account JSON file.
+
+13
+00:00:58.000 --> 00:01:03.000
+This is the cryptographic key that gives your terminal permission to talk to the play star.
+
+14
+00:01:03.000 --> 00:01:06.000
+Once you have that JSON file, we can begin.
+
+15
+00:01:06.000 --> 00:01:13.000
+Configuring this tool is how you transition from repeating the same manual steps to defining those steps once as a script.
+
+16
+00:01:13.000 --> 00:01:15.000
+Step 1. Open your project terminal.
+
+17
+00:01:16.000 --> 00:01:21.000
+Take a look at this project file tree because this is where most developers make their first mistake.
+
+18
+00:01:21.000 --> 00:01:26.000
+Do not run the initialization command at the root of your React Native project.
+
+19
+00:01:26.000 --> 00:01:29.000
+Fastlane needs to integrate with the native build tools directly.
+
+20
+00:01:29.000 --> 00:01:35.000
+Instead, explicitly change your directory into the Android folder by typing CD Android.
+
+21
+00:01:35.000 --> 00:01:38.000
+Inside the Android directory, run Fastlane in it.
+
+22
+00:01:38.000 --> 00:01:40.000
+Watch the file tree as that executes.
+
+23
+00:01:40.000 --> 00:01:44.000
+Fastlane generates a new directory alongside your native source files.
+
+24
+00:01:44.000 --> 00:01:50.000
+Inside that new folder, you'll find the two core configuration files we need to edit, the app file and the fast file.
+
+25
+00:01:50.000 --> 00:01:52.000
+Each serves a distinct purpose.
+
+26
+00:01:52.000 --> 00:01:55.000
+The app file handles your authorization to Google.
+
+27
+00:01:55.000 --> 00:01:58.000
+The fast file contains the actual workflow steps you want to execute.
+
+28
+00:01:58.000 --> 00:02:04.000
+By forcing initialization inside the native directory, Fastlane bypasses the JavaScript wrapper.
+
+29
+00:02:04.000 --> 00:02:09.000
+It is now positioned to directly manipulate the underlying Android build system.
+
+30
+00:02:09.000 --> 00:02:12.000
+Let's start with authorization by opening the app file.
+
+31
+00:02:12.000 --> 00:02:16.000
+This document acts as your project's secure passport to the Google Play Store.
+
+32
+00:02:16.000 --> 00:02:20.000
+Looking at this editor window, we need to provide two pieces of information.
+
+33
+00:02:20.000 --> 00:02:25.000
+First, set the package name variable to match your app's exact package identifier.
+
+34
+00:02:25.000 --> 00:02:31.000
+Second, map the JSON key file variable to the relative path of the Google Play service account file we secured earlier.
+
+35
+00:02:31.000 --> 00:02:35.000
+That path must be strictly accurate relative to the folder where you run Fastlane.
+
+36
+00:02:35.000 --> 00:02:39.000
+Critically, you must immediately add that JSON file to your .get ignore.
+
+37
+00:02:39.000 --> 00:02:43.000
+If you commit that key to a public repository, anyone can push updates to your app.
+
+38
+00:02:43.000 --> 00:02:48.000
+With the path mapped and the file secured, your app file now proves authorization to Google,
+
+39
+00:02:48.000 --> 00:02:51.000
+without ever exposing your private keys to your team or the public.
+
+40
+00:02:51.000 --> 00:02:54.000
+With authorization handled, open the fast file.
+
+41
+00:02:54.000 --> 00:02:57.000
+This is where we script the automation logic itself.
+
+42
+00:02:57.000 --> 00:03:00.000
+Fastlane operates using what it calls lanes.
+
+43
+00:03:00.000 --> 00:03:05.000
+Think of a lane exactly like this high-speed mechanical assembly line.
+
+44
+00:03:05.000 --> 00:03:12.000
+It is a sequenced, repeatable workflow that groups multiple discrete actions together into one continuous process.
+
+45
+00:03:12.000 --> 00:03:16.000
+Your initialized fast file will be full of example boilerplate.
+
+46
+00:03:16.000 --> 00:03:20.000
+Delete it all and let's draft a clean custom deployment lane from scratch.
+
+47
+00:03:20.000 --> 00:03:22.000
+Here is the code block for our new lane.
+
+48
+00:03:22.000 --> 00:03:29.000
+Inside, the first component we add tells Fastlane to trigger the underlying gradle tool to compile a release bundle.
+
+49
+00:03:29.000 --> 00:03:34.000
+Directly beneath that, we add the second step using the native action upload to Play Store.
+
+50
+00:03:34.000 --> 00:03:41.000
+The second line intercepts the bundle that was just compiled and securely pushes it through the API directly to the Play Console.
+
+51
+00:03:41.000 --> 00:03:46.000
+By writing this out, you can solidate those manual terminal commands into a single blueprint.
+
+52
+00:03:46.000 --> 00:03:54.000
+Instead of relying on your memory every time you deploy, you're relying on a file that performs the exact same sequence every time it's called.
+
+53
+00:03:54.000 --> 00:03:58.000
+Now, return to your terminal and execute your newly minted custom lane.
+
+54
+00:03:58.000 --> 00:04:03.000
+As the script runs, you'll see the terminal trace the exact sequence you built.
+
+55
+00:04:03.000 --> 00:04:10.000
+And when it finishes, you get a summary table with green check marks confirming a successful build and a completed Play Store upload.
+
+56
+00:04:10.000 --> 00:04:13.000
+The browser is no longer part of your deployment loop.
+
+57
+00:04:13.000 --> 00:04:19.000
+Every step from compilation to store submission now happens directly through this connection.
+
+58
+00:04:19.000 --> 00:04:21.000
+But look at this network view for a second.
+
+59
+00:04:22.000 --> 00:04:28.000
+As effective as this lane is, it still relies on your local machine and your manual trigger to start the process.
+
+60
+00:04:28.000 --> 00:04:35.000
+However, this localized setup is the exact foundation required for a full continuous integration pipeline.
+
+61
+00:04:35.000 --> 00:04:44.000
+Next, we will connect this Fastlane configuration to GitHub actions, allowing your code pushes to trigger this entire sequence from the cloud automatically.
+
