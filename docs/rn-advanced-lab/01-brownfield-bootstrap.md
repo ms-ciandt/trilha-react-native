@@ -132,3 +132,9 @@ Once your RN screen round-trips correctly, move on to
 [Lab 02 — Brownfield Navigation](/rn-advanced-lab/brownfield-navigation), where that
 placeholder becomes the real Tournament Detail screen and starts talking to the native
 History and Ranking screens.
+
+If you're curious how this same plumbing looks with a multi-bundle architecture instead
+of a single JS bundle, [Lab 01-B — Brownfield Bundle Split](/rn-advanced-lab/brownfield-bundle-split)
+is an optional side branch that rebuilds this exact outcome on Re.Pack + Module
+Federation. It's not required before Lab 02 — either version's output works as the
+starting point.

@@ -137,3 +137,10 @@ Depois que sua tela RN fizer o round-trip corretamente, siga para o
 [Lab 02 — Brownfield Navigation](/rn-advanced-lab/brownfield-navigation), onde esse
 placeholder vira a tela real de Tournament Detail e passa a conversar com as telas
 nativas de Histórico e Ranking.
+
+Se você tiver curiosidade de ver essa mesma encanação com uma arquitetura multi-bundle em
+vez de um único bundle JS, o
+[Lab 01-B — Brownfield Bundle Split](/rn-advanced-lab/brownfield-bundle-split) é um
+desvio opcional que reconstrói esse mesmo resultado sobre Re.Pack + Module Federation.
+Não é obrigatório antes do Lab 02 — o resultado de qualquer uma das duas versões serve
+como ponto de partida.

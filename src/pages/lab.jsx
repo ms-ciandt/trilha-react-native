@@ -17,6 +17,17 @@ const LABS = [
     path: '/rn-advanced-lab/brownfield-bootstrap',
   },
   {
+    id: '01b',
+    title: 'Brownfield Bundle Split',
+    description: 'Rebuild Lab 01\'s brownfield plumbing using a shared-core + service bundle split via Re.Pack and Module Federation, instead of a single JS bundle.',
+    goal: 'Produce two independently-buildable bundles (shared-core host + tournament-detail remote) with react/react-native as shared singletons, while keeping the exact same tap-to-RN-screen behavior as Lab 01.',
+    concepts: ['Module Federation', 'Re.Pack', 'Bundle splitting', 'Build organization', 'Low-end performance'],
+    outcome: 'The same native ↔ RN round trip as Lab 01, but built on a multi-bundle architecture you can compare directly against it.',
+    prerequisite: '01',
+    optional: true,
+    path: '/rn-advanced-lab/brownfield-bundle-split',
+  },
+  {
     id: '02',
     title: 'Brownfield Navigation',
     description: 'Build the real React Native Tournament Detail screen — bracket view for elimination, table + fixtures for round-robin/swiss — and bridge forward into the native History and Global Ranking screens.',
@@ -86,13 +97,12 @@ const RECOMMENDED_TRAILS = [
   },
 ];
 
-const EMPTY_STARTED = { '01': false, '02': false, '03': false, '04': false, '05': false };
+const EMPTY_STARTED = { '01': false, '01b': false, '02': false, '03': false, '04': false, '05': false };
 
-function getLabState(labId, started) {
-  if (labId === '01') return started['01'] ? 'started' : 'unlocked';
-  const prevId = String(parseInt(labId, 10) - 1).padStart(2, '0');
-  if (!started[prevId]) return 'locked';
-  return started[labId] ? 'started' : 'unlocked';
+function getLabState(lab, started) {
+  if (!lab.prerequisite) return started[lab.id] ? 'started' : 'unlocked';
+  if (!started[lab.prerequisite]) return 'locked';
+  return started[lab.id] ? 'started' : 'unlocked';
 }
 
 function GridBackground() {
@@ -253,7 +263,7 @@ export default function Lab() {
   return (
     <Layout
       title="RN Advanced Lab"
-      description="Five sequential hands-on challenges to put your advanced React Native skills to the test."
+      description="Six hands-on challenges to put your advanced React Native skills to the test."
     >
       <main className={styles.main}>
         <GridBackground />
@@ -262,11 +272,11 @@ export default function Lab() {
           <div className={styles.heroBadge}>RN Advanced Lab</div>
           <h1 className={styles.heroTitle}>Practice in the Field</h1>
           <p className={styles.heroSubtitle}>
-            Five hands-on challenges to put your advanced React Native skills to the test.
-            Each lab builds on the previous one — complete them in order.
+            Six hands-on challenges to put your advanced React Native skills to the test.
+            Labs run in sequence, with one optional branch (01-B) right after Lab 01.
           </p>
           <p className={styles.heroThemeNote}>
-            All five labs are built around the same running example: CI&amp;T Championships,
+            All six labs are built around the same running example: CI&amp;T Championships,
             an internal app for organizing office tournaments.
           </p>
         </header>
@@ -318,7 +328,7 @@ export default function Lab() {
             <LabCard
               key={lab.id}
               lab={lab}
-              state={getLabState(lab.id, started)}
+              state={getLabState(lab, started)}
               onStart={handleStart}
             />
           ))}

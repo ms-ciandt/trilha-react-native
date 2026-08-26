@@ -17,6 +17,17 @@ const LABS = [
     path: '/rn-advanced-lab/brownfield-bootstrap',
   },
   {
+    id: '01b',
+    title: 'Brownfield Bundle Split',
+    description: 'Reconstrua a encanação do Lab 01 usando um split de core compartilhado + bundle de serviço via Re.Pack e Module Federation, em vez de um único bundle JS.',
+    goal: 'Produzir dois bundles compiláveis de forma independente (host de core compartilhado + remote tournament-detail) com react/react-native como singletons compartilhados, mantendo o mesmo comportamento de tocar-e-abrir-tela-RN do Lab 01.',
+    concepts: ['Module Federation', 'Re.Pack', 'Divisão de bundle', 'Organização de build', 'Performance em devices fracos'],
+    outcome: 'A mesma ida e volta nativo ↔ RN do Lab 01, mas construída sobre uma arquitetura multi-bundle que você pode comparar diretamente com ela.',
+    prerequisite: '01',
+    optional: true,
+    path: '/rn-advanced-lab/brownfield-bundle-split',
+  },
+  {
     id: '02',
     title: 'Brownfield Navigation',
     description: 'Construa a tela React Native de Detalhes do Campeonato de verdade — chaveamento para mata-mata, tabela + jogos para ida-volta/suíço — e faça a ponte para as telas nativas de Histórico e Ranking Global.',
@@ -86,13 +97,12 @@ const RECOMMENDED_TRAILS = [
   },
 ];
 
-const EMPTY_STARTED = { '01': false, '02': false, '03': false, '04': false, '05': false };
+const EMPTY_STARTED = { '01': false, '01b': false, '02': false, '03': false, '04': false, '05': false };
 
-function getLabState(labId, started) {
-  if (labId === '01') return started['01'] ? 'started' : 'unlocked';
-  const prevId = String(parseInt(labId, 10) - 1).padStart(2, '0');
-  if (!started[prevId]) return 'locked';
-  return started[labId] ? 'started' : 'unlocked';
+function getLabState(lab, started) {
+  if (!lab.prerequisite) return started[lab.id] ? 'started' : 'unlocked';
+  if (!started[lab.prerequisite]) return 'locked';
+  return started[lab.id] ? 'started' : 'unlocked';
 }
 
 function GridBackground() {
@@ -253,7 +263,7 @@ export default function Lab() {
   return (
     <Layout
       title="RN Advanced Lab"
-      description="Cinco desafios práticos sequenciais para testar suas habilidades avançadas em React Native."
+      description="Seis desafios práticos para testar suas habilidades avançadas em React Native."
     >
       <main className={styles.main}>
         <GridBackground />
@@ -262,11 +272,11 @@ export default function Lab() {
           <div className={styles.heroBadge}>RN Advanced Lab</div>
           <h1 className={styles.heroTitle}>Coloque em Prática</h1>
           <p className={styles.heroSubtitle}>
-            Cinco desafios práticos para testar suas habilidades avançadas em React Native.
-            Cada lab é pré-requisito do seguinte — complete-os em ordem.
+            Seis desafios práticos para testar suas habilidades avançadas em React Native.
+            Os labs seguem uma sequência, com um desvio opcional (01-B) logo após o Lab 01.
           </p>
           <p className={styles.heroThemeNote}>
-            Os cinco labs são construídos em cima do mesmo exemplo: CI&amp;T Championships,
+            Os seis labs são construídos em cima do mesmo exemplo: CI&amp;T Championships,
             um app interno para organizar campeonatos do escritório.
           </p>
         </header>
@@ -318,7 +328,7 @@ export default function Lab() {
             <LabCard
               key={lab.id}
               lab={lab}
-              state={getLabState(lab.id, started)}
+              state={getLabState(lab, started)}
               onStart={handleStart}
             />
           ))}
