@@ -209,18 +209,32 @@ Convenção de nomes: `<prefixo-modulo>_<NN>_<slug>.<ext>`
 
 Para adicionar um novo vídeo, use o `/integrar-videos` — ele faz o upload via `gh release upload` e atualiza os docs automaticamente. O `gh` CLI precisa estar instalado e autenticado (`gh auth login`).
 
-Se existir um vídeo para o tópico, adicionar logo após o `# Título` do arquivo `.md`:
+Se existir um vídeo para o tópico, adicionar logo após o `# Título` do arquivo `.md`. Todo `<video>` deve incluir `controlsList="nodownload"` (desabilita o botão de download nativo do player) e uma tag `<track>` com as legendas, quando já geradas:
 
 ```html
 ## Video Overview
 
-<video width="100%" controls>
+<video width="100%" controls controlsList="nodownload">
   <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/fund_01_javascript.mp4" type="video/mp4">
+  <track kind="captions" src="/trilha-react-native/assets/captions/trilha_web/fund_01_javascript_en.vtt" srclang="en" label="English" default>
   Your browser does not support the video tag.
 </video>
 ```
 
-A URL usa sempre `https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/<nome-do-arquivo>`.
+A URL do `<source>` usa sempre `https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/<nome-do-arquivo>`.
+
+No espelho PT-BR, a tag `<track>` aponta para o `.vtt` em português (mesmo diretório, sem sufixo `_en`), com `srclang="pt"` e `label="Português"`:
+
+```html
+<track kind="captions" src="/trilha-react-native/assets/captions/trilha_web/fund_01_javascript.vtt" srclang="pt" label="Português" default>
+```
+
+### Legendas (captions)
+
+- Arquivos `.vtt` ficam em `static/assets/captions/<trilha>/` (`trilha_android`, `trilha_ios`, `trilha_web`, `trilha_masterclass`, `introducao`)
+- Convenção de nomes: `<nome-do-arquivo-sem-extensao>_en.vtt` (inglês) e `<nome-do-arquivo-sem-extensao>.vtt` (português, sem sufixo)
+- Geradas via `scripts/generate-all-captions.sh` (transcrição com faster-whisper + tradução) — idempotente, pula arquivos já existentes
+- Se um vídeo ainda não tem legenda gerada, omitir a tag `<track>` até que ela exista (não referenciar um `.vtt` inexistente)
 
 ## Tecnologia de referência
 

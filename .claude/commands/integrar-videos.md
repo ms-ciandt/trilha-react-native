@@ -150,12 +150,26 @@ Para extensões de **vídeo** (`.mp4`, `.webm`, `.mov`):
 ```html
 ## Video Overview
 
-<video width="100%" controls>
+<video width="100%" controls controlsList="nodownload">
   <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/{nome_final}" type="video/mp4">
   Your browser does not support the video tag.
 </video>
 ```
 Use `type="video/mp4"` para `.mp4`/`.mov`, `type="video/webm"` para `.webm`.
+
+`controlsList="nodownload"` é obrigatório em todo `<video>` — desabilita o botão de download nativo do player.
+
+Se já existir legenda gerada para o vídeo (`.vtt` em `static/assets/captions/{trilha_release}/{stem}_en.vtt` para EN, `{stem}.vtt` para PT — ver `scripts/generate-all-captions.sh`), adicionar a tag `<track>` logo após o `<source>`:
+
+```html
+<!-- doc EN -->
+<track kind="captions" src="/trilha-react-native/assets/captions/{trilha_release}/{stem}_en.vtt" srclang="en" label="English" default>
+
+<!-- doc PT-BR -->
+<track kind="captions" src="/trilha-react-native/assets/captions/{trilha_release}/{stem}.vtt" srclang="pt" label="Português" default>
+```
+
+Se a legenda ainda não existir, publique o embed sem a tag `<track>` — não referenciar um `.vtt` inexistente.
 
 Para extensões de **áudio** (`.wav`, `.mp3`, `.ogg`):
 ```html
