@@ -24,6 +24,36 @@ contrário. O Lab 01 é onde essa adição acontece pela primeira vez.
 Agora mesmo, tocar em um card de torneio não faz nada. Sua tarefa é fazer isso abrir uma
 tela React Native.
 
+## Estrutura do projeto
+
+O template hoje é só um projeto nativo puro — existe apenas a pasta `android/`, com todo
+o app Kotlin/Compose (arquivos Gradle, `app/`, o wrapper). Ainda não existe
+`package.json`, `index.js`, nada relacionado a JS.
+
+Este lab adiciona o React Native do mesmo jeito que um `npx react-native init` novo
+organizaria as coisas, só que encaixado em um app que já existe:
+
+```
+seu-repo/
+  android/                  ← projeto nativo existente, estruturalmente intocado
+    app/
+    build.gradle.kts
+    settings.gradle.kts
+    ...
+  package.json               ← novo, na raiz do repo
+  metro.config.js
+  babel.config.js
+  index.js                   ← registra a(s) tela(s) RN que você adicionar neste lab
+  src/
+    screens/                  ← seu código React Native, começando pelo placeholder deste lab
+```
+
+Tudo relacionado a Gradle fica dentro de `android/` — é lá também que entram o plugin
+Gradle do RN (`com.facebook.react`) e a conexão de `ReactHost`/`ReactActivityDelegate`,
+já que é o módulo nativo que resolve isso. O toolchain do RN (Metro, Babel, config de
+autolinking) fica na raiz do repo, igual em qualquer app React Native — `android/` é
+simplesmente a pasta de plataforma que o Metro e o autolinking já esperam encontrar ali.
+
 ## Objetivo
 
 Embutir o React Native no projeto Android nativo existente, e fazer com que tocar em um

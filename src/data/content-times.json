@@ -25,7 +25,7 @@
       "videoFile": "03_choose_track.mp4"
     },
     "rn-advanced-lab/01-brownfield-bootstrap.md": {
-      "readMin": 7,
+      "readMin": 8,
       "videoMin": null,
       "hasVideo": false,
       "videoFile": null
@@ -917,7 +917,7 @@
       "docCount": 1
     },
     "rn-advanced-lab/01-brownfield-bootstrap.md": {
-      "readMin": 7,
+      "readMin": 8,
       "videoMin": 0,
       "docCount": 1
     },
@@ -1094,7 +1094,7 @@
       "docCount": 4
     },
     "rn-advanced-lab": {
-      "readMin": 36,
+      "readMin": 37,
       "videoMin": 0,
       "docCount": 6
     },
@@ -1120,7 +1120,7 @@
     }
   },
   "total": {
-    "readMin": 637,
+    "readMin": 638,
     "videoMin": 867.6000000000001,
     "docCount": 149
   }

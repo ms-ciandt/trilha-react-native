@@ -24,6 +24,36 @@ not the other way around. Lab 01 is where that addition happens for the first ti
 Right now, tapping a tournament card does nothing. Your job is to make it open a React
 Native screen.
 
+## Project layout
+
+The template ships as a plain native project today — only the `android/` folder exists,
+holding the whole Kotlin/Compose app (Gradle files, `app/`, the wrapper). There is no
+`package.json`, no `index.js`, nothing JS-related yet.
+
+This lab adds React Native the same way a fresh `npx react-native init` would lay things
+out, just retrofitted onto an app that already exists:
+
+```
+your-repo/
+  android/                 ← existing native project, structurally untouched
+    app/
+    build.gradle.kts
+    settings.gradle.kts
+    ...
+  package.json              ← new, at the repo root
+  metro.config.js
+  babel.config.js
+  index.js                  ← registers the RN screen(s) you add in this lab
+  src/
+    screens/                 ← your React Native code, starting with this lab's placeholder
+```
+
+Everything Gradle-related stays inside `android/` — that's also where the RN Gradle
+plugin (`com.facebook.react`) and the `ReactHost`/`ReactActivityDelegate` wiring get
+added, since it's the native module that resolves them. The RN toolchain (Metro, Babel,
+autolinking config) lives at the repo root, same as in any React Native app — `android/`
+is simply the platform folder Metro and autolinking already expect to find there.
+
 ## Goal
 
 Embed React Native into this native Android project, and make tapping a tournament card
