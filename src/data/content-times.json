@@ -43,7 +43,7 @@
       "videoFile": null
     },
     "rn-advanced-lab/03-native-library-bridge.md": {
-      "readMin": 5,
+      "readMin": 6,
       "videoMin": null,
       "hasVideo": false,
       "videoFile": null
@@ -932,7 +932,7 @@
       "docCount": 1
     },
     "rn-advanced-lab/03-native-library-bridge.md": {
-      "readMin": 5,
+      "readMin": 6,
       "videoMin": 0,
       "docCount": 1
     },
@@ -1094,7 +1094,7 @@
       "docCount": 4
     },
     "rn-advanced-lab": {
-      "readMin": 37,
+      "readMin": 38,
       "videoMin": 0,
       "docCount": 6
     },
@@ -1120,7 +1120,7 @@
     }
   },
   "total": {
-    "readMin": 638,
+    "readMin": 639,
     "videoMin": 867.6000000000001,
     "docCount": 149
   }

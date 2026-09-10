@@ -24,23 +24,27 @@ que você só leu a respeito e passam a ser algo que você constrói.
 ## Objetivo
 
 Construir uma tela React Native de **Criar Torneio**, apoiada por um TurboModule nativo
-que recebe uma lista de participantes e um formato e devolve um chaveamento/calendário
-gerado — computado nativamente, não em JavaScript.
+que recebe uma lista de participantes, um formato (e um número de `legs` quando o formato
+for todos-contra-todos) e devolve um chaveamento/calendário gerado — computado
+nativamente, não em JavaScript.
 
 ## Critérios de conclusão
 
 - [ ] Uma nova tela RN (Criar Torneio) coleta: nome do torneio, modalidade, formato
-      (eliminação simples / todos-contra-todos / suíço), e uma lista de nomes de
+      (eliminação simples / todos-contra-todos / suíço), um seletor de `legs` (`1` ou `2`,
+      exibido apenas quando o formato é todos-contra-todos) e uma lista de nomes de
       participantes (adicionar/remover entradas, no mínimo 2 obrigatórios)
 - [ ] Um TurboModule (com `.spec.ts` de verdade e codegen — sem `NativeModules` legado) é
-      implementado no lado Android que expõe um método recebendo a lista de participantes
-      e o formato, devolvendo a estrutura de chaveamento gerada
+      implementado no lado Android que expõe um método recebendo a lista de participantes,
+      o formato e `legs` (quando aplicável), devolvendo a estrutura de chaveamento gerada
 - [ ] O módulo nativo trata corretamente **eliminação simples** com número de
       participantes que não é potência de 2 (byes são atribuídos, não deixados como erro
       ou crash)
-- [ ] O módulo nativo trata corretamente **todos-contra-todos** (cada participante joga
-      contra todos os outros exatamente uma vez; número ímpar gera um "descanso" por
-      rodada, não um crash)
+- [ ] O módulo nativo trata corretamente **todos-contra-todos** para os dois valores de
+      `legs`: cada participante joga contra todos os outros uma vez quando `legs` é `1`,
+      ou duas vezes — ida e volta, dobrando os confrontos — quando `legs` é `2`; número
+      ímpar de participantes continua gerando um "descanso" por rodada independentemente
+      de `legs`, não um crash
 - [ ] O módulo nativo trata corretamente o pareamento **suíço** da rodada 1 (o
       pareamento das rodadas seguintes depende de resultados, que ainda não existem no
       momento da criação — apenas a rodada 1 já basta para este lab)
@@ -60,8 +64,9 @@ gerado — computado nativamente, não em JavaScript.
 
 1. Escreva o `.spec.ts` primeiro. Decida o formato do valor de retorno (uma estrutura
    aninhada de rodadas → partidas → pares de participantes funciona para os três
-   formatos) antes de escrever qualquer Kotlin — isso mantém o codegen honesto sobre o
-   que os dois lados concordam ser o contrato.
+   formatos) e os parâmetros de entrada (lista de participantes, formato e — apenas
+   para todos-contra-todos — `legs`) antes de escrever qualquer Kotlin — isso mantém o
+   codegen honesto sobre o que os dois lados concordam ser o contrato.
 2. Implemente os três algoritmos de geração em Kotlin como funções simples primeiro
    (testáveis sem o RN no meio do caminho), depois embrulhe-as na classe do
    TurboModule.
