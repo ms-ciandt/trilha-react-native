@@ -23,22 +23,24 @@ read about and become something you build.
 ## Goal
 
 Build a **Create Tournament** React Native screen, backed by a native TurboModule that
-takes a participant list and a format and returns a generated bracket/schedule — computed
-natively, not in JavaScript.
+takes a participant list, a format (plus a `legs` count when the format is round-robin),
+and returns a generated bracket/schedule — computed natively, not in JavaScript.
 
 ## Completion criteria
 
 - [ ] A new RN screen (Create Tournament) collects: tournament name, modality, format
-      (single-elimination / round-robin / swiss), and a list of participant names (add/
-      remove entries, at least 2 required)
+      (single-elimination / round-robin / swiss), a `legs` toggle (`1` or `2`, only shown
+      when format is round-robin), and a list of participant names (add/remove entries,
+      at least 2 required)
 - [ ] A TurboModule (with a proper `.spec.ts` and codegen — no legacy `NativeModules`) is
-      implemented on the Android side that exposes a method taking the participant list
-      and format, returning the generated bracket structure
+      implemented on the Android side that exposes a method taking the participant list,
+      format, and `legs` (when applicable), returning the generated bracket structure
 - [ ] The native module correctly handles **single-elimination** with a non-power-of-2
       participant count (byes are assigned, not left as errors or crashes)
-- [ ] The native module correctly handles **round-robin** (every participant plays every
-      other participant exactly once; an odd count produces one "rest" per round, not a
-      crash)
+- [ ] The native module correctly handles **round-robin** for both `legs` values: every
+      participant plays every other participant once when `legs` is `1`, or twice — home
+      and away, doubling the fixtures — when `legs` is `2`; an odd participant count still
+      produces one "rest" per round regardless of `legs`, not a crash
 - [ ] The native module correctly handles **swiss** pairing for round 1 (subsequent
       rounds' pairing depends on results, which don't exist yet at creation time — round 1
       only is enough for this lab)
@@ -56,8 +58,10 @@ natively, not in JavaScript.
 ## How to approach it
 
 1. Write the `.spec.ts` first. Decide the shape of the return value (a nested structure
-   of rounds → matches → participant pairs works for all three formats) before writing any
-   Kotlin — this keeps codegen honest about what both sides agree the contract is.
+   of rounds → matches → participant pairs works for all three formats) and the input
+   parameters (participant list, format, and — only for round-robin — `legs`) before
+   writing any Kotlin — this keeps codegen honest about what both sides agree the contract
+   is.
 2. Implement the three generation algorithms in Kotlin as plain functions first (testable
    without RN in the loop at all), then wrap them in the TurboModule class.
 3. Wire the module into the existing native module package/registration the RN embedding
