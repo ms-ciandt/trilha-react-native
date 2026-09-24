@@ -1,8 +1,8 @@
 ---
-title: Bundle e Distribuicao
+title: Bundle e Distribuição
 ---
 
-# Bundle e Distribuicao
+# Bundle e Distribuição
 
 ## Video Overview
 
@@ -12,25 +12,25 @@ title: Bundle e Distribuicao
   Your browser does not support the video tag.
 </video>
 
-> **Modulo 04 — React Native Masterclass**
-> Publico-alvo: engenheiros senior responsaveis pelo pipeline completo de release — da configuracao do Metro ate a publicacao de artefatos no Artifactory.
+> **Módulo 04 — React Native Masterclass**
+> Público-alvo: engenheiros senior responsaveis pelo pipeline completo de release — da configuração do Metro até a publicação de artefatos no Artifactory.
 > React Native 0.76+ — New Architecture, Hermes, Gradle 8, Xcode 16.
 
 ---
 
-## 1. Metro e Geracao de Build
+## 1. Metro e Geração de Build
 
 ### O que o Metro faz
 
-Metro e o bundler JavaScript do React Native. Ele nao e Webpack, Vite ou esbuild — foi construido especificamente para mobile, com tres responsabilidades:
+Metro é o bundler JavaScript do React Native. Ele não é Webpack, Vite ou esbuild — foi construído especificamente para mobile, com três responsabilidades:
 
-1. **Resolucao** — segue caminhos de `import`/`require`, respeitando `package.json#main`, o campo `react-native` e sufixos especificos de plataforma (`.android.ts`, `.ios.ts`)
-2. **Transformacao** — transpila JS/TS/JSX via Babel (as transformacoes sao cacheadas por hash de arquivo)
-3. **Serializacao** — concatena todos os modulos em um unico arquivo de bundle (ou multiplos chunks para bundles divididos)
+1. **Resolução** — segue caminhos de `import`/`require`, respeitando `package.json#main`, o campo `react-native` e sufixos específicos de plataforma (`.android.ts`, `.ios.ts`)
+2. **Transformação** — transpila JS/TS/JSX via Babel (as transformações são cacheadas por hash de arquivo)
+3. **Serialização** — concatena todos os módulos em um único arquivo de bundle (ou multiplos chunks para bundles divididos)
 
-No release, o Metro e invocado pelo Gradle / Xcode. No debug, o Metro roda como servidor HTTP e serve o bundle em tempo real.
+No release, o Metro é invocado pelo Gradle / Xcode. No debug, o Metro roda como servidor HTTP e serve o bundle em tempo real.
 
-### Explorando a configuracao do Metro
+### Explorando a configuração do Metro
 
 ```javascript
 // metro.config.js
@@ -40,42 +40,42 @@ const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
 const customConfig = {
   // ── Resolver ──────────────────────────────────────────────────────────
   resolver: {
-    // Suporte a extensoes de arquivo adicionais
+    // Suporte a extensões de arquivo adicionais
     sourceExts: ['tsx', 'ts', 'jsx', 'js', 'json', 'svg'],
     assetExts: ['png', 'jpg', 'gif', 'webp', 'mp4', 'otf', 'ttf', 'woff2'],
 
-    // Resolucao por alias — util para monorepos
+    // Resolução por alias — util para monorepos
     extraNodeModules: {
       '@app': `${__dirname}/src`,
     },
 
-    // Precedencia de extensoes especificas de plataforma
+    // Precedencia de extensões específicas de plataforma
     // .android.ts e tentado antes de .ts no Android
     platforms: ['android', 'ios', 'native', 'web'],
   },
 
   // ── Transformer ───────────────────────────────────────────────────────
   transformer: {
-    // Habilita inline requires — adia a avaliacao de modulos (ver Performance)
+    // Habilita inline requires — adia a avaliação de módulos (ver Performance)
     getTransformOptions: async () => ({
       transform: {
         inlineRequires: true,
       },
     }),
 
-    // Plugin de assets — executa transformacoes customizadas em assets de imagem
+    // Plugin de assets — executa transformações customizadas em assets de imagem
     assetPlugins: ['@react-native/assets-plugin'],
 
-    // Flag instavel — habilita o novo worker de transformacao Babel (mais rapido)
+    // Flag instavel — habilita o novo worker de transformação Babel (mais rápido)
     unstable_allowRequireContext: true,
   },
 
   // ── Serialiser ────────────────────────────────────────────────────────
   serializer: {
-    // Entry-point customizado — util para configuracoes de multi-bundle
+    // Entry-point customizado — util para configurações de multi-bundle
     // createModuleIdFactory: ...
 
-    // Adiciona metadados ao bundle (ver Secao 3 — metadados e patches)
+    // Adiciona metadados ao bundle (ver Seção 3 — metadados e patches)
     customSerializer: buildCustomSerializer(),
   },
 
@@ -99,7 +99,7 @@ const customConfig = {
 module.exports = mergeConfig(getDefaultConfig(__dirname), customConfig);
 ```
 
-### Geracao de bundle: o comando CLI
+### Geração de bundle: o comando CLI
 
 ```bash
 # Bundle de release Android
@@ -128,14 +128,14 @@ Flags que importam:
 
 | Flag | Efeito |
 |---|---|
-| `--dev false` | Desativa `__DEV__`, remove avisos de desenvolvimento, habilita minificacao |
+| `--dev false` | Desativa `__DEV__`, remove avisos de desenvolvimento, habilita minificação |
 | `--minify` | Executa o Terser na saida — reduz o bundle em ~30–40% |
-| `--sourcemap-output` | Gera source map para simbolizacao de crashes |
-| `--profile` | Gera dados de timing por modulo — use para encontrar transformacoes lentas |
+| `--sourcemap-output` | Gera source map para simbolização de crashes |
+| `--profile` | Gera dados de timing por módulo — use para encontrar transformações lentas |
 
 ### Analise do bundle
 
-Identifique o que esta tornando seu bundle grande antes de otimizar:
+Identifique o que está tornando seu bundle grande antes de otimizar:
 
 ```bash
 # Instale o visualizador de bundle
@@ -155,9 +155,9 @@ npx react-native bundle \
 npx source-map-explorer /tmp/bundle.js /tmp/bundle.js.map
 ```
 
-O treemap mostra a contribuicao de cada modulo para o tamanho final do bundle. Descobertas comuns:
+O treemap mostra a contribuição de cada módulo para o tamanho final do bundle. Descobertas comuns:
 
-| Descoberta | Correcao |
+| Descoberta | Correção |
 |---|---|
 | `moment` em 300 KB | Substitua por `date-fns` ou `dayjs` |
 | `lodash` em 200 KB | Use imports nomeados: `import debounce from 'lodash/debounce'` |
@@ -165,15 +165,15 @@ O treemap mostra a contribuicao de cada modulo para o tamanho final do bundle. D
 | Arquivos de fonte grandes | Use apenas os pesos necessarios, considere fonte do sistema |
 | Dependencias duplicadas | Use `npm dedupe` ou `yarn-deduplicate` |
 
-### Pre-compilacao Hermes no build Gradle
+### Pre-compilação Hermes no build Gradle
 
 Quando `hermesEnabled = true` na sua config Gradle, a task `bundleReleaseJsAndAssets` executa:
 
 ```
-Bundle Metro  →  bundle .js  →  compilacao hermes  →  bytecode .hbc
+Bundle Metro  →  bundle .js  →  compilação hermes  →  bytecode .hbc
 ```
 
-O passo de compilacao do Hermes e controlado pelo `android/app/build.gradle`:
+O passo de compilação do Hermes é controlado pelo `android/app/build.gradle`:
 
 ```groovy
 // android/app/build.gradle (Groovy DSL)
@@ -197,7 +197,7 @@ react {
 }
 ```
 
-**Flags de compilacao do Hermes** que voce pode adicionar via `extraPackagerArgs`:
+**Flags de compilação do Hermes** que você pode adicionar via `extraPackagerArgs`:
 
 ```groovy
 extraPackagerArgs = [
@@ -207,17 +207,17 @@ extraPackagerArgs = [
 
 ### Bundle iOS nas fases de build do Xcode
 
-No iOS, o bundle e gerado pelo Run Script `Bundle React Native code and images` no Xcode:
+No iOS, o bundle é gerado pelo Run Script `Bundle React Native code and images` no Xcode:
 
 ```bash
-# O script (gerado automaticamente pelo react-native init, nao edite manualmente):
+# O script (gerado automaticamente pelo react-native init, não edite manualmente):
 set -e
 WITH_ENVIRONMENT="../node_modules/react-native/scripts/xcode/with-environment.sh"
 REACT_NATIVE_XCODE="../node_modules/react-native/scripts/react-native-xcode.sh"
 /bin/sh -c "$WITH_ENVIRONMENT $REACT_NATIVE_XCODE"
 ```
 
-Para customizar o comando de bundle do iOS, adicione variaveis de ambiente ao scheme do Xcode:
+Para customizar o comando de bundle do iOS, adicione variáveis de ambiente ao scheme do Xcode:
 
 ```
 BUNDLE_COMMAND=bundle
@@ -228,9 +228,9 @@ HERMES_CLI_PATH=../node_modules/react-native/sdks/hermesc/osx-bin/hermesc
 
 ---
 
-## 2. Bundles de Producao Android e iOS
+## 2. Bundles de Produção Android e iOS
 
-### Pipeline de build de producao Android
+### Pipeline de build de produção Android
 
 ```
 index.js (entry)
@@ -238,7 +238,7 @@ index.js (entry)
     ▼ Metro (task Gradle bundleReleaseJsAndAssets)
 index.android.bundle.js   +   res/drawable-* (imagens)
     │
-    ▼ hermesc (passo de compilacao HermesExecutor)
+    ▼ hermesc (passo de compilação HermesExecutor)
 index.android.bundle     ← agora e bytecode Hermes (.hbc)
     │
     ▼ incluido no APK / AAB como asset
@@ -252,7 +252,7 @@ Comandos de build de release:
 # Android App Bundle (preferido para a Play Store)
 cd android && ./gradlew bundleRelease
 
-# APK (para distribuicao direta / sideloading)
+# APK (para distribuição direta / sideloading)
 cd android && ./gradlew assembleRelease
 
 # Bundle assinado (requer keystore configurado em gradle.properties)
@@ -263,7 +263,7 @@ cd android && ./gradlew assembleRelease
   -Pandroid.injected.signing.key.password=***
 ```
 
-Configuracao do keystore em `android/gradle.properties` (nunca commite este arquivo):
+Configuração do keystore em `android/gradle.properties` (nunca commite este arquivo):
 
 ```properties
 # android/gradle.properties (ignorado pelo git)
@@ -295,7 +295,7 @@ android {
 }
 ```
 
-### Pipeline de build de producao iOS
+### Pipeline de build de produção iOS
 
 ```
 index.js (entry)
@@ -356,7 +356,7 @@ xcodebuild -exportArchive \
 
 ### ProGuard e R8 — o que preservar
 
-R8 (o sucessor do ProGuard) reduz o codigo nativo Java/Kotlin em builds de release. O React Native requer regras de keep especificas:
+R8 (o sucessor do ProGuard) reduz o código nativo Java/Kotlin em builds de release. O React Native requer regras de keep específicas:
 
 ```proguard
 # android/app/proguard-rules.pro
@@ -385,7 +385,7 @@ R8 (o sucessor do ProGuard) reduz o codigo nativo Java/Kotlin em builds de relea
 
 ### Metadados do bundle
 
-Incorporar metadados no bundle permite rastrear exatamente qual codigo esta rodando em producao — critico para implantacoes OTA onde as versoes JS e nativa podem divergir.
+Incorporar metadados no bundle permite rastrear exatamente qual código está rodando em produção — crítico para implantações OTA onde as versões JS e nativa podem divergir.
 
 #### Injetando metadados no momento do bundle
 
@@ -394,7 +394,7 @@ Incorporar metadados no bundle permite rastrear exatamente qual codigo esta roda
 const { buildBundleFromModules } = require('@react-native/metro-config');
 
 function buildCustomSerializer() {
-  // Retorna undefined para usar o serializador padrao
+  // Retorna undefined para usar o serializador padrão
   if (!process.env.CI) return undefined;
 
   return async (entryPoint, preModules, graph, options) => {
@@ -406,12 +406,12 @@ function buildCustomSerializer() {
       platform: options.platform,
     };
 
-    // Saida do serializador padrao
+    // Saida do serializador padrão
     const defaultBundle = await buildBundleFromModules(
       entryPoint, preModules, graph, options
     );
 
-    // Prepend dos metadados como expressao JS auto-executavel
+    // Prepend dos metadados como expressão JS auto-executavel
     const metadataHeader = `
 var __BUNDLE_METADATA__ = ${JSON.stringify(metadata)};
 // --- bundle start ---
@@ -425,7 +425,7 @@ var __BUNDLE_METADATA__ = ${JSON.stringify(metadata)};
 }
 ```
 
-Lendo metadados em tempo de execucao:
+Lendo metadados em tempo de execução:
 
 ```typescript
 // src/utils/bundleMetadata.ts
@@ -444,7 +444,7 @@ export const bundleMetadata = typeof __BUNDLE_METADATA__ !== 'undefined'
 
 #### Anexando metadados como sidecar JSON separado
 
-Para sistemas de atualizacao OTA que verificam a identidade do bundle:
+Para sistemas de atualização OTA que verificam a identidade do bundle:
 
 ```bash
 # Script de CI: gera bundle + sidecar
@@ -469,13 +469,13 @@ cat > dist/bundle.meta.json << EOF
 EOF
 ```
 
-O campo `minNativeVersion` permite que o cliente de atualizacao OTA rejeite bundles que exigem uma atualizacao de binario nativo que o usuario ainda nao instalou.
+O campo `minNativeVersion` permite que o cliente de atualização OTA rejeite bundles que exigem uma atualização de binário nativo que o usuário ainda não instalou.
 
-### Bundles de hot-patch (atualizacoes OTA)
+### Bundles de hot-patch (atualizações OTA)
 
-Atualizacoes OTA funcionam substituindo o bundle JS no dispositivo sem passar pela App Store. O React Native suporta isso nativamente — o bundle JS e apenas um arquivo, e voce pode atualiza-lo em tempo de execucao.
+Atualizações OTA funcionam substituindo o bundle JS no dispositivo sem passar pela App Store. O React Native suporta isso nativamente — o bundle JS é apenas um arquivo, e você pode atualizá-lo em tempo de execução.
 
-**A restricao legal:** as diretrizes de revisao da App Store exigem que atualizacoes OTA nao possam mudar o proposito fundamental do app ou adicionar funcionalidades que nao foram revisadas. Correcoes de bugs que preservam o comportamento sao universalmente aceitas.
+**A restrição legal:** as diretrizes de revisão da App Store exigem que atualizações OTA não possam mudar o propósito fundamental do app ou adicionar funcionalidades que não foram revisadas. Correções de bugs que preservam o comportamento são universalmente aceitas.
 
 #### Loader OTA customizado
 
@@ -570,9 +570,9 @@ func sourceURL(for bridge: RCTBridge!) -> URL! {
 
 ---
 
-## 4. Publicacao e Consumo via Artifactory
+## 4. Publicação e Consumo via Artifactory
 
-Publicar uma biblioteca React Native ou SDK interno em um registry npm privado (JFrog Artifactory, GitHub Packages, Nexus) segue um padrao consistente independentemente do fornecedor do registry.
+Publicar uma biblioteca React Native ou SDK interno em um registry npm privado (JFrog Artifactory, GitHub Packages, Nexus) segue um padrão consistente independentemente do fornecedor do registry.
 
 ### Publicando no Artifactory
 
@@ -611,7 +611,7 @@ react-native-my-sdk/
 ├── android/
 │   ├── build.gradle
 │   └── src/main/java/com/mycompany/mySdk/MySDKModule.kt
-├── codegen/                ← saida do Codegen (gerado, nao commitado)
+├── codegen/                ← saida do Codegen (gerado, não commitado)
 └── .npmignore              ← exclui fonte, inclui apenas dist
 ```
 
@@ -646,7 +646,7 @@ react-native-my-sdk/
 }
 ```
 
-#### 3. Build e publicacao
+#### 3. Build e publicação
 
 ```bash
 # Build do distribuivel JS (usa bob — React Native Builder Bob)
@@ -659,7 +659,7 @@ npm pack --dry-run
 npm publish --registry=https://artifactory.mycompany.com/artifactory/api/npm/npm-local/
 ```
 
-#### 4. Automatizando a publicacao no CI
+#### 4. Automatizando a publicação no CI
 
 ```yaml
 # .github/workflows/publish-sdk.yml
@@ -668,7 +668,7 @@ name: Publish SDK
 on:
   push:
     tags:
-      - 'v*'           # dispara apenas em tags de versao: v1.2.3
+      - 'v*'           # dispara apenas em tags de versão: v1.2.3
 
 jobs:
   publish:
@@ -735,18 +735,18 @@ Pod::Spec.new do |s|
 end
 ```
 
-### Estrategia de versionamento
+### Estratégia de versionamento
 
 Use Semantic Versioning (`semver`) de forma rigorosa para bibliotecas consumidas por multiplos apps:
 
-| Tipo de mudanca | Incremento de versao | Exemplo |
+| Tipo de mudança | Incremento de versão | Exemplo |
 |---|---|---|
-| API nativa adicionada (novo metodo TurboModule) | Minor: `1.2.0 → 1.3.0` | Adicionado `fetchAsync` |
+| API nativa adicionada (novo método TurboModule) | Minor: `1.2.0 → 1.3.0` | Adicionado `fetchAsync` |
 | API nativa removida / assinatura alterada | Major: `1.x.x → 2.0.0` | Renomeado `getData` |
-| Correcao de bug apenas JS | Patch: `1.2.0 → 1.2.1` | Corrigida verificacao de null |
-| Novo binario nativo necessario | Major | Novo TurboModule, nova dependencia pod |
+| Correção de bug apenas JS | Patch: `1.2.0 → 1.2.1` | Corrigida verificação de null |
+| Novo binário nativo necessário | Major | Novo TurboModule, nova dependência pod |
 
-Publique versoes pre-release para testes antes de promover:
+Publique versões pre-release para testes antes de promover:
 
 ```bash
 # Tag pre-release: 2.0.0-beta.1
@@ -756,7 +756,7 @@ npm publish --tag beta
 # Consumidores optam por usar:
 npm install @mycompany/react-native-my-sdk@beta
 
-# Promova para estavel apos verificacao:
+# Promova para estavel após verificação:
 npm dist-tag add @mycompany/react-native-my-sdk@2.0.0-beta.1 latest
 ```
 
@@ -764,40 +764,40 @@ npm dist-tag add @mycompany/react-native-my-sdk@2.0.0-beta.1 latest
 
 ## Materiais de Estudo
 
-### Documentacao Oficial
+### Documentação Oficial
 
-| Recurso | Descricao |
+| Recurso | Descrição |
 |---|---|
-| [Metro documentation](https://metrobundler.dev/) | Referencia completa de config do Metro — resolver, transformer, serialiser |
-| [React Native Gradle Plugin](https://reactnative.dev/docs/new-architecture-library-intro) | Bloco `react {}`, tasks de bundle, integracao com Hermes |
+| [Metro documentation](https://metrobundler.dev/) | Referência completa de config do Metro — resolver, transformer, serialiser |
+| [React Native Gradle Plugin](https://reactnative.dev/docs/new-architecture-library-intro) | Bloco `react {}`, tasks de bundle, integração com Hermes |
 | [Publishing libraries](https://reactnative.dev/docs/new-architecture-library-intro) | Codegen, podspec, versionamento para New Architecture |
-| [React Native Builder Bob](https://github.com/callstack/react-native-builder-bob) | Ferramenta de build padrao para bibliotecas RN |
+| [React Native Builder Bob](https://github.com/callstack/react-native-builder-bob) | Ferramenta de build padrão para bibliotecas RN |
 
 ### Aprofundamentos
 
-| Recurso | Autor | O que voce aprendera |
+| Recurso | Autor | O que você aprendera |
 |---|---|---|
-| [Metro deep dive — resolution, transforms, cache](https://www.callstack.com/blog/metro-bundler-deep-dive) | Callstack | Algoritmo de resolucao, pipeline de transformacao, invalidacao de cache |
+| [Metro deep dive — resolution, transforms, cache](https://www.callstack.com/blog/metro-bundler-deep-dive) | Callstack | Algoritmo de resolução, pipeline de transformação, invalidação de cache |
 | [React Native OTA updates — the complete guide](https://blog.swmansion.com/react-native-ota-updates-a-practical-guide-ad4536ffe4c2) | Software Mansion | Mecanica de hot-patch, rollback, versionamento com gate |
-| [Publishing RN libraries to Artifactory](https://jfrog.com/blog/publishing-react-native-packages-to-jfrog-artifactory/) | JFrog | Config de escopo npm, gerenciamento de tokens no CI, fixacao de versao |
+| [Publishing RN libraries to Artifactory](https://jfrog.com/blog/publishing-react-native-packages-to-jfrog-artifactory/) | JFrog | Config de escopo npm, gerenciamento de tokens no CI, fixação de versão |
 | [Bundle size analysis](https://www.callstack.com/blog/bundle-size-analysis-for-react-native) | Callstack | source-map-explorer, visualizador de bundle, tree shaking |
 | [Code signing automation](https://fastlane.tools/codesigning/) | Fastlane | Match, certificados, provisioning profiles no CI |
 
 ### Tutoriais em Video
 
-| Recurso | Duracao | O que voce aprendera |
+| Recurso | Duração | O que você aprendera |
 |---|---|---|
-| [Metro bundler internals](https://www.youtube.com/watch?v=jGT0JZp1e_E) | 25 min | Resolucao, transformacoes, por que os IDs de modulo importam |
-| [React Native library development](https://www.youtube.com/watch?v=qPaFMeGRqTE) | 45 min | Configuracao completa de biblioteca com Builder Bob, Codegen, publicacao |
-| [OTA updates in RN](https://www.youtube.com/watch?v=U3SjJMz8YVQ) | 30 min | Carregamento de bundle, versionamento com gate, estrategia de rollback |
-| [ProGuard R8 for RN](https://www.youtube.com/watch?v=R3o8nIfmgqU) | 20 min | Keep rules, depuracao de stack traces ofuscados |
+| [Metro bundler internals](https://www.youtube.com/watch?v=jGT0JZp1e_E) | 25 min | Resolução, transformações, por que os IDs de módulo importam |
+| [React Native library development](https://www.youtube.com/watch?v=qPaFMeGRqTE) | 45 min | Configuração completa de biblioteca com Builder Bob, Codegen, publicação |
+| [OTA updates in RN](https://www.youtube.com/watch?v=U3SjJMz8YVQ) | 30 min | Carregamento de bundle, versionamento com gate, estratégia de rollback |
+| [ProGuard R8 for RN](https://www.youtube.com/watch?v=R3o8nIfmgqU) | 20 min | Keep rules, depuração de stack traces ofuscados |
 
 ### Interativo
 
 | Recurso | O que fazer |
 |---|---|
-| [source-map-explorer](https://github.com/danvk/source-map-explorer) | Execute localmente no seu bundle — encontre os maiores modulos |
-| [Bundlephobia](https://bundlephobia.com/) | Verifique o tamanho de qualquer pacote npm antes de adicioná-lo como dependencia |
+| [source-map-explorer](https://github.com/danvk/source-map-explorer) | Execute localmente no seu bundle — encontre os maiores módulos |
+| [Bundlephobia](https://bundlephobia.com/) | Verifique o tamanho de qualquer pacote npm antes de adicioná-lo como dependência |
 | [Semver calculator](https://semver.npmjs.com/) | Teste ranges de semver — entenda o que `^1.2.3` realmente resolve |
 
 ---

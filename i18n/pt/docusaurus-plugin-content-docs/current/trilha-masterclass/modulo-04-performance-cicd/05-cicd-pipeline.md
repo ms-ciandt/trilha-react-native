@@ -12,8 +12,8 @@ title: Pipeline de CI/CD
   Your browser does not support the video tag.
 </video>
 
-> **Modulo 04 — React Native Masterclass**
-> Publico-alvo: engenheiros senior que constroem pipelines de release automatizados para apps React Native.
+> **Módulo 04 — React Native Masterclass**
+> Público-alvo: engenheiros senior que constroem pipelines de release automatizados para apps React Native.
 > Ferramentas: GitHub Actions, Fastlane, Gradle, Xcode CLI. React Native 0.76+.
 
 ---
@@ -22,18 +22,18 @@ title: Pipeline de CI/CD
 
 ### O pipeline completo
 
-Um pipeline de CI RN de nivel de producao tem sete portas. Cada porta deve passar antes que a proxima execute:
+Um pipeline de CI RN de nível de produção tem sete portas. Cada porta deve passar antes que a próxima execute:
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│ Porta 1: Analise Estatica                                        │
-│  Compilacao TypeScript (tsc --noEmit)                            │
+│ Porta 1: Analise Estática                                        │
+│  Compilação TypeScript (tsc --noEmit)                            │
 │  ESLint                                                          │
-│  Auditoria de dependencias (npm audit)                           │
+│  Auditoria de dependências (npm audit)                           │
 └──────────────────────────────┬──────────────────────────────────┘
                                │ passou
 ┌──────────────────────────────▼──────────────────────────────────┐
-│ Porta 2: Testes Unitarios e de Integracao                        │
+│ Porta 2: Testes Unitarios e de Integração                        │
 │  Jest (--ci --coverage)                                          │
 │  Porta de threshold de cobertura (falha se < 70%)                │
 └──────────────────────────────┬──────────────────────────────────┘
@@ -52,21 +52,21 @@ Um pipeline de CI RN de nivel de producao tem sete portas. Cada porta deve passa
 └──────────────────────────────┬──────────────────────────────────┘
                                │ passou
 ┌──────────────────────────────▼──────────────────────────────────┐
-│ Porta 5: Verificacoes Pre-publicacao (Preflight)                 │
-│  Verificacao de unicidade de versao                              │
-│  Validacao do binario APK/IPA (aapt2, lipo)                     │
-│  Diff de permissoes (novas permissoes exigem revisao)            │
+│ Porta 5: Verificacoes Pre-publicação (Preflight)                 │
+│  Verificação de unicidade de versão                              │
+│  Validação do binário APK/IPA (aapt2, lipo)                     │
+│  Diff de permissões (novas permissões exigem revisão)            │
 │  Validade do certificado de assinatura                           │
 └──────────────────────────────┬──────────────────────────────────┘
                                │ passou
 ┌──────────────────────────────▼──────────────────────────────────┐
-│ Porta 6: Distribuicao Interna                                    │
+│ Porta 6: Distribuição Interna                                    │
 │  Android → Firebase App Distribution / track interno             │
 │  iOS → TestFlight                                                │
 └──────────────────────────────┬──────────────────────────────────┘
                                │ aprovacao do QA
 ┌──────────────────────────────▼──────────────────────────────────┐
-│ Porta 7: Release de Producao                                     │
+│ Porta 7: Release de Produção                                     │
 │  Android → Play Store (rollout escalonado: 10% → 50% → 100%)   │
 │  iOS → App Store Connect (phased release)                        │
 └─────────────────────────────────────────────────────────────────┘
@@ -74,7 +74,7 @@ Um pipeline de CI RN de nivel de producao tem sete portas. Cada porta deve passa
 
 ### GitHub Actions — workflow completo
 
-Este e um workflow completo e pronto para producao. Ele usa Fastlane para distribuicao nativa e executa os builds Android e iOS em paralelo:
+Este é um workflow completo e pronto para produção. Ele usa Fastlane para distribuição nativa e executa os builds Android e iOS em paralelo:
 
 ```yaml
 # .github/workflows/release.yml
@@ -268,21 +268,21 @@ jobs:
 
 ### Semantic versioning para apps nativos
 
-Apps moveis tem dois numeros de versao com significados distintos:
+Apps móveis tem dois números de versão com significados distintos:
 
-| Numero | Android | iOS | Proposito |
+| Número | Android | iOS | Proposito |
 |---|---|---|---|
 | **Version name / CFBundleShortVersionString** | `1.3.0` | `1.3.0` | Legivel por humanos, exibido nas lojas |
-| **Version code / CFBundleVersion** | `230` (inteiro) | `230` (numero de build) | Unico por upload, usado para rastreamento do binario |
+| **Version code / CFBundleVersion** | `230` (inteiro) | `230` (número de build) | Unico por upload, usado para rastreamento do binario |
 
-Nunca reutilize um version code/build number. Mesmo apos um upload com falha, incremente antes de tentar novamente.
+Nunca reutilize um version code/build number. Mesmo após um upload com falha, incremente antes de tentar novamente.
 
 ### Versionamento automatizado no CI
 
 ```bash
 # Script de CI: version.sh
 # Fonte de verdade: tag git (v1.3.0)
-# Build number: sequencial a partir do numero de execucao do CI
+# Build number: sequencial a partir do número de execução do CI
 
 TAG="${GITHUB_REF_NAME}"              # ex: v1.3.0
 VERSION="${TAG#v}"                     # remove o 'v' inicial → 1.3.0
@@ -312,9 +312,9 @@ lane :set_ios_version do
 end
 ```
 
-### `package.json` como unica fonte de verdade de versao
+### `package.json` como única fonte de verdade de versão
 
-Para equipes que preferem conduzir versoes a partir do `package.json`:
+Para equipes que preferem conduzir versões a partir do `package.json`:
 
 ```javascript
 // version-sync.js — execute no CI antes dos builds nativos
@@ -339,9 +339,9 @@ execSync(`/usr/libexec/PlistBuddy -c "Set CFBundleVersion ${build}" ios/YourApp/
 console.log(`Set version ${version} build ${build}`);
 ```
 
-### Fastlane para automacao de release
+### Fastlane para automação de release
 
-Fastlane e a camada padrao de automacao para CI mobile. Ele abstrai `xcodebuild`, `gradlew`, App Store Connect API e Play Developer API em lanes compostos com DSL Ruby.
+Fastlane é a camada padrão de automação para CI mobile. Ele abstrai `xcodebuild`, `gradlew`, App Store Connect API e Play Developer API em lanes compostos com DSL Ruby.
 
 ```ruby
 # fastlane/Fastfile
@@ -357,7 +357,7 @@ platform :android do
 
   desc "Build um AAB assinado e distribui via Firebase App Distribution"
   lane :release do
-    # 1. Define numeros de versao a partir do ambiente de CI
+    # 1. Define números de versão a partir do ambiente de CI
     android_set_version_name(version_name: ENV['VERSION'])
     android_set_version_code(version_code: ENV['BUILD_NUMBER'].to_i)
 
@@ -476,7 +476,7 @@ end
 
 ### Code signing — Fastlane Match
 
-Gerenciar certificados manualmente em uma equipe e suscetivel a erros. O `match` armazena todos os certificados e provisioning profiles em um repositorio Git privado (criptografado), e cada desenvolvedor e runner de CI sincroniza a partir dele:
+Gerenciar certificados manualmente em uma equipe é suscetível a erros. O `match` armazena todos os certificados e provisioning profiles em um repositório Git privado (criptografado), e cada desenvolvedor e runner de CI sincroniza a partir dele:
 
 ```bash
 # Inicializa o match (execute uma vez)
@@ -485,22 +485,22 @@ bundle exec fastlane match init
 # Adiciona certificado + perfil da App Store
 bundle exec fastlane match appstore
 
-# Adiciona certificado + perfil Ad-hoc (para distribuicao a testadores)
+# Adiciona certificado + perfil Ad-hoc (para distribuição a testadores)
 bundle exec fastlane match adhoc
 ```
 
-No CI, defina `MATCH_GIT_BASIC_AUTHORIZATION` como um `username:token` codificado em base64 com acesso de leitura ao repositorio privado de certificados. Nenhuma interacao humana necessaria.
+No CI, defina `MATCH_GIT_BASIC_AUTHORIZATION` como um `username:token` codificado em base64 com acesso de leitura ao repositório privado de certificados. Nenhuma interação humana necessária.
 
 ---
 
 ## 3. Deploy em Projetos Nativos
 
-### Implantando bundles OTA em infraestrutura propria
+### Implantando bundles OTA em infraestrutura própria
 
-Para equipes que operam sua propria infraestrutura OTA (em vez de usar um servico de terceiros):
+Para equipes que operam sua própria infraestrutura OTA (em vez de usar um servico de terceiros):
 
 ```bash
-# deploy-bundle.sh — chamado apos a Porta 3
+# deploy-bundle.sh — chamado após a Porta 3
 set -euo pipefail
 
 PLATFORM="${1:?informe android ou ios}"
@@ -544,19 +544,19 @@ aws s3 cp "/tmp/${PLATFORM}.bundle" \
 aws s3 cp "/tmp/bundle.meta.json" \
   "${S3_BUCKET}/${BUNDLE_ID}/bundle.meta.json"
 
-# Atualiza o ponteiro 'stable' (ultimo bundle que passou pelo QA)
+# Atualiza o ponteiro 'stable' (último bundle que passou pelo QA)
 aws s3 cp "/tmp/bundle.meta.json" \
   "${S3_BUCKET}/stable/${PLATFORM}/bundle.meta.json"
 
 echo "Deployed: ${S3_BUCKET}/${BUNDLE_ID}/"
 ```
 
-### Implantando binarios nativos para distribuicao interna
+### Implantando binários nativos para distribuição interna
 
 ```ruby
 # fastlane — implantacao interna Android
 lane :deploy_internal_android do
-  # AAB ja construido pelo lane de release
+  # AAB já construído pelo lane de release
   supply(
     track: 'internal',
     aab: 'android/app/build/outputs/bundle/release/app-release.aab',
@@ -579,33 +579,33 @@ lane :rollout_android do |options|
 end
 ```
 
-Invoque a progressao de rollout a partir do CI:
+Invoque a progressão de rollout a partir do CI:
 
 ```bash
 # Dispara rollout de 10%
 bundle exec fastlane android rollout_android percentage:10
 
-# Apos monitoramento (1 dia) — promove para 50%
+# Após monitoramento (1 dia) — promove para 50%
 bundle exec fastlane android rollout_android percentage:50
 
 # Rollout completo
 bundle exec fastlane android rollout_android percentage:100
 ```
 
-### Estrategia de rollback
+### Estratégia de rollback
 
 ```bash
-# Android — interrompe o rollout (impede novas instalacoes mas nao remove de dispositivos existentes)
+# Android — interrompe o rollout (impede novas instalacoes mas não remove de dispositivos existentes)
 # Via Play Console API:
 curl -X PATCH \
   "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/com.yourapp/edits/{editId}/tracks/production" \
   -H "Authorization: Bearer ${ACCESS_TOKEN}" \
   -d '{"releases": [{"status": "halted"}]}'
 
-# iOS — remove do TestFlight (nao e possivel remover da producao apos aprovacao)
+# iOS — remove do TestFlight (não e possível remover da produção após aprovacao)
 # Via App Store Connect API: define o status do build como DEVELOPER_REMOVED_FROM_SALE
 
-# Rollback OTA — reverte o ponteiro 'stable' para a versao anterior
+# Rollback OTA — reverte o ponteiro 'stable' para a versão anterior
 PREVIOUS_BUNDLE_ID=$(cat previous-bundle-id.txt)
 aws s3 cp \
   "s3://bundles.mycompany.com/rn-bundles/${PREVIOUS_BUNDLE_ID}/bundle.meta.json" \
@@ -614,9 +614,9 @@ aws s3 cp \
 
 ---
 
-## 4. Verificacoes Pre-publicacao (Preflight)
+## 4. Verificações Pré-publicação (Preflight)
 
-As verificacoes pre-publicacao rodam apos o binario nativo ser construido, mas antes de ser submetido a qualquer canal de distribuicao. Elas detectam problemas que os testes automatizados nao capturam.
+As verificações pré-publicação rodam após o binário nativo ser construído, mas antes de ser submetido a qualquer canal de distribuição. Elas detectam problemas que os testes automatizados não capturam.
 
 ### Script de preflight
 
@@ -648,7 +648,7 @@ function androidChecks() {
       name: 'AAB minimum size',
       check: () => {
         const size = fs.statSync(AAB_PATH).size;
-        return size > 1024 * 1024;    // deve ser > 1 MB (verificacao de sanidade — bundle vazio seria minusculo)
+        return size > 1024 * 1024;    // deve ser > 1 MB (verificação de sanidade — bundle vazio seria minusculo)
       },
       message: 'AAB esta suspeitamente pequeno — bundle pode estar vazio ou corrompido',
     },
@@ -741,18 +741,18 @@ function iosChecks() {
           plutil -convert json -o - -`
         ).toString();
         const parsed = JSON.parse(profile);
-        return parsed.ProvisionsAllDevices === undefined;  // true = distribuicao, nao ad-hoc/enterprise
+        return parsed.ProvisionsAllDevices === undefined;  // true = distribuição, não ad-hoc/enterprise
       },
       message: 'IPA usa provisioning profile ad-hoc — nao pode ser submetido a App Store',
     },
     {
       name: 'No debug symbols leaking',
       check: () => {
-        // .dSYM deve ser um artefato separado, nao embutido no IPA
+        // .dSYM deve ser um artefato separado, não embutido no IPA
         const output = execSync(`unzip -l "${IPA_PATH}" | grep -c '.dSYM' || true`).toString();
         return parseInt(output.trim(), 10) === 0;
       },
-      message: 'Simbolos .dSYM embutidos no IPA — aumenta o tamanho do binario e pode expor caminhos de fonte',
+      message: 'Simbolos .dSYM embutidos no IPA — aumenta o tamanho do binário e pode expor caminhos de fonte',
     },
     {
       name: 'Build number is unique',
@@ -787,11 +787,11 @@ function runChecks(checks) {
   }
 
   if (failed > 0) {
-    console.error(`\n${failed} verificacao(oes) preflight com falha. Abortando.`);
+    console.error(`\n${failed} verificação(ões) preflight com falha. Abortando.`);
     process.exit(1);
   }
 
-  console.log('\nTodas as verificacoes preflight passaram.');
+  console.log('\nTodas as verificações preflight passaram.');
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────
@@ -831,15 +831,15 @@ Execute no Fastlane:
 private_lane :preflight do |options|
   platform = options[:platform].to_s
   
-  UI.message "Executando verificacoes preflight para #{platform}..."
+  UI.message "Executando verificações preflight para #{platform}..."
   sh("node scripts/preflight.js --platform #{platform}")
   UI.success "Preflight passou!"
 end
 ```
 
-### Baseline de permissoes — prevenindo acumulo de permissoes
+### Baseline de permissões — prevenindo acumulo de permissões
 
-O arquivo de baseline de permissoes e versionado e atualizado manualmente apos revisao:
+O arquivo de baseline de permissões e versionado e atualizado manualmente após revisão:
 
 ```json
 // scripts/permissions-baseline.android.json
@@ -858,9 +858,9 @@ O arquivo de baseline de permissoes e versionado e atualizado manualmente apos r
 }
 ```
 
-Se o preflight detectar uma nova permissao perigosa, o CI falha e um humano deve revisar a permissao, atualizar a baseline e commita-la. Isso impede que adicoes acidentais de permissoes provenientes de uma atualizacao de biblioteca passem despercebidas para producao.
+Se o preflight detectar uma nova permissão perigosa, o CI falha e um humano deve revisar a permissão, atualizar a baseline e commita-la. Isso impede que adições acidentais de permissões provenientes de uma atualização de biblioteca passem despercebidas para produção.
 
-### Automacao de changelog
+### Automação de changelog
 
 Gera automaticamente um changelog de release a partir dos commits git:
 
@@ -897,7 +897,7 @@ git log "$RANGE" --oneline --no-merges \
   | sed 's/^[a-f0-9]* /- /'
 ```
 
-### Notificacao no Slack ao fazer release
+### Notificação no Slack ao fazer release
 
 ```yaml
 # .github/workflows/release.yml (trecho)
@@ -932,36 +932,36 @@ git log "$RANGE" --oneline --no-merges \
 
 ## Materiais de Estudo
 
-### Documentacao Oficial
+### Documentação Oficial
 
-| Recurso | Descricao |
+| Recurso | Descrição |
 |---|---|
-| [Fastlane documentation](https://docs.fastlane.tools/) | Referencia completa de todas as actions, plugins e integracoes de plataforma |
-| [Fastlane Match](https://docs.fastlane.tools/actions/match/) | Certificados de code signing via repositorio git privado |
+| [Fastlane documentation](https://docs.fastlane.tools/) | Referência completa de todas as actions, plugins e integrações de plataforma |
+| [Fastlane Match](https://docs.fastlane.tools/actions/match/) | Certificados de code signing via repositório git privado |
 | [GitHub Actions — secrets](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions) | Armazenamento e uso de keystores, chaves de API e tokens no CI |
 | [Play Developer API](https://developers.google.com/android-publisher) | Acesso programatico ao rollout escalonado e gerenciamento de tracks |
-| [App Store Connect API](https://developer.apple.com/documentation/appstoreconnectapi) | TestFlight, gerenciamento de versao, phased release |
-| [Sentry source maps](https://docs.sentry.io/platforms/react-native/sourcemaps/) | Upload de source maps RN para simbolizacao de crashes |
+| [App Store Connect API](https://developer.apple.com/documentation/appstoreconnectapi) | TestFlight, gerenciamento de versão, phased release |
+| [Sentry source maps](https://docs.sentry.io/platforms/react-native/sourcemaps/) | Upload de source maps RN para simbolização de crashes |
 
 ### Aprofundamentos
 
-| Recurso | Autor | O que voce aprendera |
+| Recurso | Autor | O que você aprendera |
 |---|---|---|
-| [React Native CI/CD — the practical guide](https://www.callstack.com/blog/react-native-ci-cd) | Callstack | Configuracao GitHub Actions + Fastlane, assinatura, distribuicao |
+| [React Native CI/CD — the practical guide](https://www.callstack.com/blog/react-native-ci-cd) | Callstack | Configuração GitHub Actions + Fastlane, assinatura, distribuição |
 | [Automating iOS code signing](https://codesigning.guide/) | Felix Krause (autor do Fastlane) | O guia definitivo do Match e gerenciamento de certificados |
-| [Android staged rollouts](https://support.google.com/googleplay/android-developer/answer/6346149) | Google | Mecanica de rollout, interrupcao, retomada, release completo |
-| [Preflight checks for mobile](https://thoughtbot.com/blog/preflight-checklist-mobile-releases) | Thoughtbot | Checklist abrangente — permissoes, assinatura, tamanho, versao |
+| [Android staged rollouts](https://support.google.com/googleplay/android-developer/answer/6346149) | Google | Mecanica de rollout, interrupção, retomada, release completo |
+| [Preflight checks for mobile](https://thoughtbot.com/blog/preflight-checklist-mobile-releases) | Thoughtbot | Checklist abrangente — permissões, assinatura, tamanho, versão |
 | [RN release automation](https://blog.swmansion.com/react-native-release-automation-e6b3a7e3b3e2) | Software Mansion | Pipeline de ponta a ponta: test → bundle → sign → distribute |
 
 ### Tutoriais em Video
 
-| Recurso | Duracao | O que voce aprendera |
+| Recurso | Duração | O que você aprendera |
 |---|---|---|
 | [React Native CI/CD with GitHub Actions](https://www.youtube.com/watch?v=5R1EFQF-q9A) | 45 min | Pipeline completo: lint → test → build → distribute |
 | [Fastlane for React Native](https://www.youtube.com/watch?v=QqUXVRRFbgA) | 35 min | Match, gym, pilot, supply — todas as actions do Fastlane explicadas |
-| [Android staged rollout](https://www.youtube.com/watch?v=4Nz_dkM2p2E) | 15 min | Walkthrough do Play Console — gerenciamento de tracks, interrupcao, promocao |
-| [iOS phased release](https://www.youtube.com/watch?v=Gk2Pz3JnJPo) | 12 min | TestFlight → App Store, configuracao de phased release |
-| [Sentry for RN — crash reporting](https://www.youtube.com/watch?v=GM0BrNxiTrc) | 20 min | Configuracao, source maps, monitoramento de performance |
+| [Android staged rollout](https://www.youtube.com/watch?v=4Nz_dkM2p2E) | 15 min | Walkthrough do Play Console — gerenciamento de tracks, interrupção, promoção |
+| [iOS phased release](https://www.youtube.com/watch?v=Gk2Pz3JnJPo) | 12 min | TestFlight → App Store, configuração de phased release |
+| [Sentry for RN — crash reporting](https://www.youtube.com/watch?v=GM0BrNxiTrc) | 20 min | Configuração, source maps, monitoramento de performance |
 
 ### Interativo
 
@@ -969,10 +969,10 @@ git log "$RANGE" --oneline --no-merges \
 |---|---|
 | [Fastlane action catalogue](https://docs.fastlane.tools/actions/) | Explore todas as actions disponíveis — pesquise por palavra-chave |
 | [GitHub Actions marketplace](https://github.com/marketplace?type=actions&query=react+native) | Actions da comunidade para CI com RN |
-| [semver.org](https://semver.org/) | Especificacao autoritativa do semver — leia antes de escrever suas regras de versionamento |
-| [aapt2 reference](https://developer.android.com/tools/aapt2) | Android Asset Packaging Tool — usado no preflight para inspecionar conteudo do AAB |
-| [Play Console staged rollouts](https://play.google.com/console) | Pratique gerenciamento de rollout no seu proprio projeto |
+| [semver.org](https://semver.org/) | Especificação autoritativa do semver — leia antes de escrever suas regras de versionamento |
+| [aapt2 reference](https://developer.android.com/tools/aapt2) | Android Asset Packaging Tool — usado no preflight para inspecionar conteúdo do AAB |
+| [Play Console staged rollouts](https://play.google.com/console) | Pratique gerenciamento de rollout no seu próprio projeto |
 
 ---
 
-← [Bundle e Distribuicao](./02-bundle-distribution.md) | Modulo 04 concluido
+← [Bundle e Distribuição](./02-bundle-distribution.md) | Módulo 04 concluido

@@ -1,5 +1,5 @@
 ---
-title: "JSI — Padroes Avancados"
+title: "JSI — Padrões Avançados"
 ---
 
 <video width="100%" controls controlsList="nodownload">
@@ -8,14 +8,14 @@ title: "JSI — Padroes Avancados"
   Your browser does not support the video tag.
 </video>
 
-## 5. Chamadas Sincronas e Assincronas
+## 5. Chamadas Síncronas e Assíncronas
 
-O JSI permite ambas. A escolha e sua; o JSI nao impos assincronicidade.
+O JSI permite ambas. A escolha é sua; o JSI não impõe assincronicidade.
 
-### Sincrono (mesma thread)
+### Síncrono (mesma thread)
 
 ```cpp
-// C++ — host function sincrona
+// C++ — host function síncrona
 auto syncHash = Function::createFromHostFunction(
     rt,
     PropNameID::forAscii(rt, "hashSync"),
@@ -31,26 +31,26 @@ rt.global().setProperty(rt, "hashSync", std::move(syncHash));
 ```
 
 ```typescript
-// JS — bloqueia a thread JS ate o C++ retornar
+// JS — bloqueia a thread JS até o C++ retornar
 const hash: number = (global as any).hashSync("hello world");
 ```
 
-Quando o sincrono e apropriado: ler um valor pequeno em cache, realizar um calculo barato, acessar memoria compartilhada que o C++ ja mantem. **Nunca chame I/O bloqueante de forma sincrona na thread JS.**
+Quando o síncrono é apropriado: ler um valor pequeno em cache, realizar um cálculo barato, acessar memória compartilhada que o C++ já mantém. **Nunca chame I/O bloqueante de forma síncrona na thread JS.**
 
-### Assincrono (via Promise)
+### Assíncrono (via Promise)
 
-Quando o trabalho e I/O-bound ou precisa rodar em uma thread diferente, voce retorna uma `Promise` construindo-a a partir do construtor global `Promise` do JS.
+Quando o trabalho é I/O-bound ou precisa rodar em uma thread diferente, você retorna uma `Promise` construindo-a a partir do construtor global `Promise` do JS.
 
 ```cpp
-// C++ — constroi uma Promise JS, resolve em thread de background
+// C++ — constrói uma Promise JS, resolve em thread de background
 Value asyncFetch(Runtime& rt, const Value& thisVal, const Value* args, size_t count) {
   std::string url = args[0].getString(rt).utf8(rt);
   
-  // Obtem o construtor Promise do JS
+  // Obtém o construtor Promise do JS
   auto promiseCtor = rt.global()
       .getPropertyAsFunction(rt, "Promise");
   
-  // Captura as funcoes resolve/reject que o executor nos fornece
+  // Captura as funções resolve/reject que o executor nos fornece
   std::shared_ptr<Function> resolve, reject;
   
   auto executor = Function::createFromHostFunction(
@@ -64,14 +64,14 @@ Value asyncFetch(Runtime& rt, const Value& thisVal, const Value* args, size_t co
       }
   );
   
-  // Constroi a Promise de fato — chama o executor imediatamente
+  // Constrói a Promise de fato — chama o executor imediatamente
   Value promise = promiseCtor.callAsConstructor(rt, executor);
   
   // Agenda trabalho em background
   threadPool_.submit([url, resolve, reject, &rt]() {
     auto result = http::get(url);   // I/O bloqueante em thread de background
     
-    // Precisa retornar para a thread JS (o runtime nao e thread-safe)
+    // Precisa retornar para a thread JS (o runtime não é thread-safe)
     jsCallInvoker_->invokeAsync([resolve, result, &rt]() {
       resolve->call(rt, String::createFromUtf8(rt, result.body));
     });
@@ -81,24 +81,24 @@ Value asyncFetch(Runtime& rt, const Value& thisVal, const Value* args, size_t co
 }
 ```
 
-A regra critica: **o `Runtime` nao e thread-safe**. Todas as operacoes com `jsi::Value` devem acontecer na thread que possui o runtime (a thread JS). `jsCallInvoker_->invokeAsync` e o hook que agenda trabalho de volta para a thread JS.
+A regra crítica: **o `Runtime` não é thread-safe**. Todas as operações com `jsi::Value` devem acontecer na thread que possui o runtime (a thread JS). `jsCallInvoker_->invokeAsync` é o hook que agenda trabalho de volta para a thread JS.
 
 ---
 
 ## 6. Interoperabilidade com Hermes
 
-Hermes e o engine JS padrao do React Native desde a versao 0.64 e o unico engine com suporte oficial para a New Architecture (embora o JSC ainda funcione via interface JSI).
+Hermes é o engine JS padrão do React Native desde a versão 0.64 e o único engine com suporte oficial para a New Architecture (embora o JSC ainda funcione via interface JSI).
 
 ### Por que Hermes?
 
 | Propriedade | Hermes | JavaScriptCore |
 |---|---|---|
-| Compilacao | Bytecode ahead-of-time | JIT em tempo de execucao |
-| Tempo de inicializacao | Mais rapido (bytecode ja compilado) | Mais lento (parse + warmup do JIT) |
+| Compilação | Bytecode ahead-of-time | JIT em tempo de execução |
+| Tempo de inicialização | Mais rápido (bytecode já compilado) | Mais lento (parse + warmup do JIT) |
 | Uso de RAM | Menor (sem compilador JIT residente) | Maior |
-| Protocolo de depuracao | CDP (Chrome DevTools Protocol) | CDP |
-| Tamanho do engine | Binario menor | Binario maior |
-| Implementacao JSI | `HermesRuntime` | `JSCRuntime` |
+| Protocolo de depuração | CDP (Chrome DevTools Protocol) | CDP |
+| Tamanho do engine | Binário menor | Binário maior |
+| Implementação JSI | `HermesRuntime` | `JSCRuntime` |
 
 ### Bytecode Hermes
 
@@ -112,16 +112,16 @@ O Hermes compila `.js` para `.hbc` (Hermes Bytecode) em tempo de build via CLI `
 ./hermes -dump-bytecode output.hbc
 ```
 
-O formato `.hbc` e um conjunto de instrucoes de VM baseado em registradores e compacto. Por ser pre-compilado:
-- Nenhum parser executa na inicializacao do app
-- Nenhuma AST e construida
-- Sem warmup de JIT — a execucao comeca a partir do bytecode imediatamente
+O formato `.hbc` é um conjunto de instruções de VM baseado em registradores e compacto. Por ser pré-compilado:
+- Nenhum parser executa na inicialização do app
+- Nenhuma AST é construída
+- Sem warmup de JIT — a execução começa a partir do bytecode imediatamente
 
-E por isso que o Hermes economiza 200–800ms nos tempos de cold-start em dispositivos reais (o numero exato depende muito do tamanho do bundle e da velocidade da CPU do dispositivo).
+É por isso que o Hermes economiza 200–800ms nos tempos de cold-start em dispositivos reais (o número exato depende muito do tamanho do bundle e da velocidade da CPU do dispositivo).
 
 ### HermesRuntime e JSI
 
-`HermesRuntime` e a implementacao Hermes de `jsi::Runtime`:
+`HermesRuntime` é a implementação Hermes de `jsi::Runtime`:
 
 ```cpp
 // hermes/API/hermes/hermes.h
@@ -150,9 +150,9 @@ std::unique_ptr<JSRuntime> HermesExecutorFactory::createJSRuntime(...) {
 }
 ```
 
-### Padrao Decorator do JSI no Hermes
+### Padrão Decorator do JSI no Hermes
 
-O Hermes fornece `DecoratedRuntime` — um wrapper que permite adicionar instrumentacao, profiling por amostragem ou extensoes de BigInt/Intl sem modificar o engine central:
+O Hermes fornece `DecoratedRuntime` — um wrapper que permite adicionar instrumentação, profiling por amostragem ou extensões de BigInt/Intl sem modificar o engine central:
 
 ```cpp
 // Runtime de profiling do Hermes (usado pelo Flipper)
@@ -163,11 +163,11 @@ auto profiledRuntime = std::make_unique<HermesDecoratedRuntime>(
 );
 ```
 
-E assim que o profiler por amostragem do Hermes funciona — ele encapsula o runtime e intercepta `call` para registrar timestamps.
+É assim que o profiler por amostragem do Hermes funciona — ele encapsula o runtime e intercepta `call` para registrar timestamps.
 
 ### BigInt e Hermes
 
-Hermes 0.12+ (incluido no RN 0.71+) suporta `BigInt`. Da perspectiva do JSI, `jsi::BigInt` e um tipo separado:
+Hermes 0.12+ (incluído no RN 0.71+) suporta `BigInt`. Da perspectiva do JSI, `jsi::BigInt` é um tipo separado:
 
 ```cpp
 // Verificando BigInt a partir do C++
@@ -180,14 +180,14 @@ if (value.isBigInt()) {
 
 ---
 
-## 7. Host Functions: Padroes do Mundo Real
+## 7. Host Functions: Padrões do Mundo Real
 
-### Padrao 1: API de Medicao (sincrona, sem alocacao)
+### Padrão 1: API de Medição (síncrona, sem alocação)
 
-Este e o padrao que o Fabric usa internamente para `measure()` e consultas de layout.
+Este é o padrão que o Fabric usa internamente para `measure()` e consultas de layout.
 
 ```cpp
-// Medicao de layout sincrona via JSI
+// Medição de layout síncrona via JSI
 auto measureHost = Function::createFromHostFunction(
     rt,
     PropNameID::forAscii(rt, "measure"),
@@ -195,10 +195,10 @@ auto measureHost = Function::createFromHostFunction(
     [uiManager](Runtime& rt, const Value&, const Value* args, size_t count) -> Value {
       int tag = static_cast<int>(args[0].getNumber());
       
-      // UIManager e thread-safe para leituras
+      // UIManager é thread-safe para leituras
       LayoutMetrics metrics = uiManager->getLayoutMetrics(tag);
       
-      // Retorna um objeto JS simples — sem JSON, sem serializacao
+      // Retorna um objeto JS simples — sem JSON, sem serialização
       auto result = Object(rt);
       result.setProperty(rt, "x",      Value(metrics.frame.origin.x));
       result.setProperty(rt, "y",      Value(metrics.frame.origin.y));
@@ -211,25 +211,25 @@ auto measureHost = Function::createFromHostFunction(
 );
 ```
 
-Na bridge antiga, `measure()` era assincrono por causa da fila. Com JSI, e sincrono — sem necessidade de `useEffect` + callback.
+Na bridge antiga, `measure()` era assíncrono por causa da fila. Com JSI, é síncrono — sem necessidade de `useEffect` + callback.
 
-### Padrao 2: ArrayBuffer Compartilhado (dados binarios sem copia)
+### Padrão 2: ArrayBuffer Compartilhado (dados binários sem cópia)
 
-Quando voce precisa passar dados binarios (pixels de imagem, amostras de audio) entre C++ e JS sem copiar, use `ArrayBuffer`:
+Quando você precisa passar dados binários (pixels de imagem, amostras de áudio) entre C++ e JS sem copiar, use `ArrayBuffer`:
 
 ```cpp
-// C++ — expoe um buffer nativo diretamente para o JS
+// C++ — expõe um buffer nativo diretamente para o JS
 auto getFrameBuffer = Function::createFromHostFunction(
     rt,
     PropNameID::forAscii(rt, "getFrameBuffer"),
     0,
     [&cameraDriver](Runtime& rt, const Value&, const Value* args, size_t) -> Value {
-      // Obtem ponteiro para o frame buffer nativo (ja em memoria)
+      // Obtém ponteiro para o frame buffer nativo (já em memória)
       uint8_t* pixels = cameraDriver.lockCurrentFrame();
       size_t byteSize = cameraDriver.frameByteSize();
       
-      // MutableBuffer e um tipo JSI que encapsula um ponteiro nativo
-      // A lambda e o destrutor — chamado pelo GC quando o JS libera o buffer
+      // MutableBuffer é um tipo JSI que encapsula um ponteiro nativo
+      // A lambda é o destrutor — chamado pelo GC quando o JS libera o buffer
       auto buffer = std::make_shared<jsi::MutableBuffer>(
           pixels,
           byteSize,
@@ -247,19 +247,19 @@ auto getFrameBuffer = Function::createFromHostFunction(
 // JS — acesso zero-copy aos dados nativos do frame
 const buffer: ArrayBuffer = (global as any).getFrameBuffer();
 const pixels = new Uint8ClampedArray(buffer);
-// pixels[0..3] e o RGBA do primeiro pixel — nenhuma copia foi feita
+// pixels[0..3] é o RGBA do primeiro pixel — nenhuma cópia foi feita
 ```
 
 ---
 
-## 8. Depuracao com JSI
+## 8. Depuração com JSI
 
 ### Identificando erros JSI
 
-Erros JSI surgem como `JSIException` em C++ e aparecem no error boundary do JS como objetos `Error` padrao. O stack trace apontara para o `HostFunction` ou `HostObject.get` que lancou a excecao.
+Erros JSI surgem como `JSIException` em C++ e aparecem no error boundary do JS como objetos `Error` padrão. O stack trace apontará para o `HostFunction` ou `HostObject.get` que lançou a exceção.
 
 ```cpp
-// Lancando um erro tipado a partir do C++
+// Lançando um erro tipado a partir do C++
 throw JSError(rt, "NativeSensor: device not calibrated");
 
 // Isso se torna no JS:
@@ -270,13 +270,13 @@ throw JSError(rt, "NativeSensor: device not calibrated");
 
 ### Chrome DevTools + Hermes
 
-Com RN 0.73+, o Hermes e depurado via CDP (Chrome DevTools Protocol) diretamente — sem necessidade do Flipper:
+Com RN 0.73+, o Hermes é depurado via CDP (Chrome DevTools Protocol) diretamente — sem necessidade do Flipper:
 
-1. Na saida do Metro voce vera: `Inspector proxy: ws://localhost:8081/inspector`
+1. Na saída do Metro você verá: `Inspector proxy: ws://localhost:8081/inspector`
 2. Abra `chrome://inspect` no Chrome
 3. Clique em "Inspect" no dispositivo listado
 
-Voce pode definir breakpoints dentro dos callbacks de `Function.createFromHostFunction` se fizer um build de debug com source maps. Em builds de release, use `console.log` direcionado para o log nativo:
+Você pode definir breakpoints dentro dos callbacks de `Function.createFromHostFunction` se fizer um build de debug com source maps. Em builds de release, use `console.log` direcionado para o log nativo:
 
 ```cpp
 // Logar do C++ para o console do Hermes
@@ -295,54 +295,54 @@ adb shell am start -n com.yourapp/.MainActivity \
   --ez "react_native_jsi_tracing" true
 ```
 
-Cada chamada de `HostFunction` aparece como uma fatia `JSI::HostFunction::<nome>`. Se voce ver fatias inesperadamente longas, a host function esta fazendo trabalho demais de forma sincrona na thread JS.
+Cada chamada de `HostFunction` aparece como uma fatia `JSI::HostFunction::<nome>`. Se você ver fatias inesperadamente longas, a host function está fazendo trabalho demais de forma síncrona na thread JS.
 
 ---
 
 ## Materiais de Estudo
 
-### Codigo-Fonte Oficial
+### Código-Fonte Oficial
 
-| Recurso | O que voce vai encontrar |
+| Recurso | O que você vai encontrar |
 |---|---|
-| [`jsi/jsi.h`](https://github.com/facebook/react-native/blob/main/packages/react-native/ReactCommon/jsi/jsi/jsi.h) | Definicoes completas dos tipos JSI — Runtime, Value, HostObject, HostFunction |
-| [`jsi/jsi-inl.h`](https://github.com/facebook/react-native/blob/main/packages/react-native/ReactCommon/jsi/jsi/jsi-inl.h) | Implementacoes inline dos construtores de Value |
+| [`jsi/jsi.h`](https://github.com/facebook/react-native/blob/main/packages/react-native/ReactCommon/jsi/jsi/jsi.h) | Definições completas dos tipos JSI — Runtime, Value, HostObject, HostFunction |
+| [`jsi/jsi-inl.h`](https://github.com/facebook/react-native/blob/main/packages/react-native/ReactCommon/jsi/jsi/jsi-inl.h) | Implementações inline dos construtores de Value |
 | [`ReactCommon/callinvoker`](https://github.com/facebook/react-native/tree/main/packages/react-native/ReactCommon/callinvoker) | `CallInvoker` — a forma correta de agendar trabalho C++ de volta para a thread JS |
-| [`hermes/API/hermes/hermes.h`](https://github.com/facebook/hermes/blob/main/API/hermes/hermes.h) | API publica do `HermesRuntime` |
+| [`hermes/API/hermes/hermes.h`](https://github.com/facebook/hermes/blob/main/API/hermes/hermes.h) | API pública do `HermesRuntime` |
 
-### Documentacao Oficial
+### Documentação Oficial
 
-| Recurso | Descricao |
+| Recurso | Descrição |
 |---|---|
-| [JSI Reference](https://reactnative.dev/docs/the-new-architecture/landing-page) | Pagina inicial da New Architecture com contexto sobre JSI |
+| [JSI Reference](https://reactnative.dev/docs/the-new-architecture/landing-page) | Página inicial da New Architecture com contexto sobre JSI |
 | [TurboModules com JSI](https://reactnative.dev/docs/turbo-native-modules-introduction) | Como o Codegen gera bindings JSI a partir de specs TypeScript |
-| [Documentacao do Hermes](https://hermesengine.dev/) | Site oficial do Hermes: formato de bytecode, depuracao, configuracao |
+| [Documentação do Hermes](https://hermesengine.dev/) | Site oficial do Hermes: formato de bytecode, depuração, configuração |
 
 ### Aprofundamentos
 
-| Recurso | Autor | O que voce vai aprender |
+| Recurso | Autor | O que você vai aprender |
 |---|---|---|
-| [JSI: A new infrastructure for React Native](https://formidable.com/blog/2019/jsi-jsc-part-2/) | Formidable | Analise original dos objetivos de design do JSI vs bridge antiga |
+| [JSI: A new infrastructure for React Native](https://formidable.com/blog/2019/jsi-jsc-part-2/) | Formidable | Análise original dos objetivos de design do JSI vs bridge antiga |
 | [Deep dive into React Native's New Architecture](https://medium.com/engineering-housing/deep-dive-into-react-natives-new-architecture-fb67ae615ccd) | Housing.com Eng | Arquitetura end-to-end: JSI → Fabric → TurboModules |
 | [Writing a JSI module from scratch](https://ospfranco.com/post/2021/02/24/how-to-create-a-jsi-module/) | Oscar Franco | Guia completo: HostObject C++, CMakeLists, wiring iOS e Android |
-| [react-native-mmkv internals](https://github.com/mrousavy/react-native-mmkv/blob/main/ios/MmkvHostObject.cpp) | Marc Rousavy | Implementacao de HostObject em producao — leia o codigo-fonte real |
-| [op-sqlite JSI source](https://github.com/OP-Engineering/op-sqlite/tree/main/cpp) | Oscar Franco | SQLite sincrono via JSI — dados binarios e tratamento de threads no mundo real |
+| [react-native-mmkv internals](https://github.com/mrousavy/react-native-mmkv/blob/main/ios/MmkvHostObject.cpp) | Marc Rousavy | Implementação de HostObject em produção — leia o código-fonte real |
+| [op-sqlite JSI source](https://github.com/OP-Engineering/op-sqlite/tree/main/cpp) | Oscar Franco | SQLite síncrono via JSI — dados binários e tratamento de threads no mundo real |
 
-### Tutoriais em Video
+### Tutoriais em Vídeo
 
-| Recurso | Duracao | O que voce vai aprender |
+| Recurso | Duração | O que você vai aprender |
 |---|---|---|
 | [JSI in React Native — Explained](https://www.youtube.com/watch?v=wKwJ9VBovDc) | 18 min | Guia visual do JSI substituindo a bridge |
 | [How Hermes Works](https://www.youtube.com/watch?v=oSHBQheFm48) | 22 min | Pipeline de bytecode, GC, profiling |
-| [React Native EU 2022 — JSI Internals](https://www.youtube.com/watch?v=yVhZnGl2C5M) | 30 min | Talk de conferencia: decisoes de design do JSI, casos extremos, modelo de threads |
+| [React Native EU 2022 — JSI Internals](https://www.youtube.com/watch?v=yVhZnGl2C5M) | 30 min | Talk de conferência: decisões de design do JSI, casos extremos, modelo de threads |
 
 ### Interativo
 
 | Recurso | O que fazer |
 |---|---|
-| [Expo Snack — JSI via MMKV](https://snack.expo.dev/@mrousavy/react-native-mmkv) | Execute MMKV no browser — observe leituras sincronas em acao |
-| [react-native-jsi-example](https://github.com/ospfranco/react-native-jsi-template) | Template minimal: um HostObject, CMakeLists, iOS + Android — faca fork e compile |
+| [Expo Snack — JSI via MMKV](https://snack.expo.dev/@mrousavy/react-native-mmkv) | Execute MMKV no browser — observe leituras síncronas em ação |
+| [react-native-jsi-example](https://github.com/ospfranco/react-native-jsi-template) | Template mínimo: um HostObject, CMakeLists, iOS + Android — faça fork e compile |
 
 ---
 
-Proximo → [Fabric — New Renderer](./02-fabric-renderer.md)
+Próximo → [Fabric — New Renderer](./02-fabric-renderer.md)

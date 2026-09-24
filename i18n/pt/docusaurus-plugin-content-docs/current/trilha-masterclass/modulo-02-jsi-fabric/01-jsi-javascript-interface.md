@@ -10,19 +10,19 @@ title: "JSI — JavaScript Interface"
   Your browser does not support the video tag.
 </video>
 
-> **Modulo 03 — React Native Masterclass**
-> Publico-alvo: engenheiros senior que querem entender como o JavaScript chama C++ sem uma fila de mensagens.
+> **Módulo 03 — React Native Masterclass**
+> Público-alvo: engenheiros sênior que querem entender como o JavaScript chama C++ sem uma fila de mensagens.
 > React Native 0.76+ — New Architecture (Bridgeless, JSI-first, Hermes).
 
 ---
 
 ## 1. O Problema que o JSI Resolve
 
-Para entender o JSI, e preciso primeiro entender o que ele substituiu e exatamente onde a bridge antiga era lenta.
+Para entender o JSI, é preciso primeiro entender o que ele substituiu e exatamente onde a bridge antiga era lenta.
 
-### A bridge antiga — serializacao como gargalo
+### A bridge antiga — serialização como gargalo
 
-A arquitetura antiga conectava o engine JS (JavaScriptCore) e o nativo por meio de uma fila de mensagens assincrona unidirecional. Cada chamada entre as camadas seguia este caminho:
+A arquitetura antiga conectava o engine JS (JavaScriptCore) e o nativo por meio de uma fila de mensagens assíncrona unidirecional. Cada chamada entre as camadas seguia este caminho:
 
 ```
 Thread JS
@@ -30,37 +30,37 @@ Thread JS
         └─► enfileirar mensagem na fila C++
               └─► desenfileirar na thread nativa
                     └─► parsear JSON de volta para tipos nativos (alloc + JSON decode)
-                          └─► executar codigo nativo
+                          └─► executar código nativo
                                 └─► re-serializar resultado para JSON
-                                      └─► callback assincrono para thread JS
+                                      └─► callback assíncrono para thread JS
 ```
 
-Isso tinha tres custos fixos:
+Isso tinha três custos fixos:
 
-| Custo | O que acontece | Impacto tipico |
+| Custo | O que acontece | Impacto típico |
 |---|---|---|
-| Serializacao | Cada numero, string e array vira uma string JSON | 0,1–5 ms por chamada grande |
-| Pressao de memoria | Copia da string existe em ambos os heaps simultaneamente | 2x o tamanho do payload alocado |
-| Assincronicidade | Nenhuma chamada pode bloquear e esperar | Todos os padroes exigem callbacks/promises |
+| Serialização | Cada número, string e array vira uma string JSON | 0,1–5 ms por chamada grande |
+| Pressão de memória | Cópia da string existe em ambos os heaps simultaneamente | 2x o tamanho do payload alocado |
+| Assincronicidade | Nenhuma chamada pode bloquear e esperar | Todos os padrões exigem callbacks/promises |
 
-A maior consequencia da restricao de apenas assincrono era que algumas APIs que **devem ser sincronas no nativo** (listeners de scroll, medicao de layout, drivers de animacao) precisavam contornar a bridge com gambiarras complexas — `InteractionManager`, `setNativeProps`, o driver antigo do Animated. Todos esses existem porque a bridge nao conseguia retornar um valor de forma sincrona.
+A maior consequência da restrição de apenas assíncrono era que algumas APIs que **devem ser síncronas no nativo** (listeners de scroll, medição de layout, drivers de animação) precisavam contornar a bridge com gambiarras complexas — `InteractionManager`, `setNativeProps`, o driver antigo do Animated. Todos esses existem porque a bridge não conseguia retornar um valor de forma síncrona.
 
-### O que e o JSI
+### O que é o JSI
 
-JSI significa **JavaScript Interface**. E uma biblioteca C++ fina, apenas de headers, que da a qualquer objeto C++ acesso direto ao heap JavaScript — sem serializacao, sem fila de mensagens, sem assincronicidade como restricao obrigatoria.
+JSI significa **JavaScript Interface**. É uma biblioteca C++ fina, apenas de headers, que dá a qualquer objeto C++ acesso direto ao heap JavaScript — sem serialização, sem fila de mensagens, sem assincronicidade como restrição obrigatória.
 
 O arquivo principal: [`jsi/jsi.h`](https://github.com/facebook/react-native/blob/main/packages/react-native/ReactCommon/jsi/jsi/jsi.h)
 
-O JSI define tres abstracoes fundamentais:
-- `jsi::Runtime` — o proprio engine JS (Hermes, JSC, V8)
-- `jsi::Value` — uma union com tag que armazena qualquer valor JS (undefined, null, bool, number, string, object, symbol, bigint) **sem copia-lo**
-- `jsi::HostObject` / `jsi::HostFunction` — objetos C++ que voce pode passar para o codigo JS
+O JSI define três abstrações fundamentais:
+- `jsi::Runtime` — o próprio engine JS (Hermes, JSC, V8)
+- `jsi::Value` — uma union com tag que armazena qualquer valor JS (undefined, null, bool, number, string, object, symbol, bigint) **sem copiá-lo**
+- `jsi::HostObject` / `jsi::HostFunction` — objetos C++ que você pode passar para o código JS
 
-O JSI e agnóstico em relacao ao engine. Ele nao e especifico do Hermes. Hermes, JavaScriptCore e V8 todos implementam a interface `jsi::Runtime`. Trocar de engine significa trocar a implementacao de `Runtime` — o codigo JSI acima dela nao muda.
+O JSI é agnóstico em relação ao engine. Ele não é específico do Hermes. Hermes, JavaScriptCore e V8 todos implementam a interface `jsi::Runtime`. Trocar de engine significa trocar a implementação de `Runtime` — o código JSI acima dela não muda.
 
 ---
 
-## 2. JSI vs Bridge Antiga — Comparacao Direta
+## 2. JSI vs Bridge Antiga — Comparação Direta
 
 ```
 Bridge Antiga                       JSI
@@ -70,13 +70,13 @@ JS ──[JSON]──► Fila ──[JSON]──►   JS ──[ponteiro]──�
 Nativo ◄──[JSON]── Fila ◄──[JSON]── (sem fila, chamada direta)
 ```
 
-| Dimensao | Bridge Antiga | JSI |
+| Dimensão | Bridge Antiga | JSI |
 |---|---|---|
-| Direcao da chamada | Apenas assincrono (fila) | Sincrono ou assincrono, o chamador decide |
-| Transferencia de dados | Serializacao JSON | Ponteiro compartilhado para valor JS |
-| Memoria | Copia em ambos os heaps | Zero-copy (GC do JS gerencia o ciclo de vida) |
-| Modelo de thread | Thread JS → thread nativa | Mesma thread (sincrono) ou qualquer thread (assincrono) |
-| Superficie C++ | RCTBridge (Obj-C++) | `jsi::Runtime` (C++ puro) |
+| Direção da chamada | Apenas assíncrono (fila) | Síncrono ou assíncrono, o chamador decide |
+| Transferência de dados | Serialização JSON | Ponteiro compartilhado para valor JS |
+| Memória | Cópia em ambos os heaps | Zero-copy (GC do JS gerencia o ciclo de vida) |
+| Modelo de thread | Thread JS → thread nativa | Mesma thread (síncrono) ou qualquer thread (assíncrono) |
+| Superfície C++ | RCTBridge (Obj-C++) | `jsi::Runtime` (C++ puro) |
 | Acoplamento com engine | Apenas JavaScriptCore | Qualquer engine que implemente `jsi::Runtime` |
 
 ---
@@ -85,7 +85,7 @@ Nativo ◄──[JSON]── Fila ◄──[JSON]── (sem fila, chamada diret
 
 ### `jsi::Runtime`
 
-O runtime e o seu ponto de entrada. Voce o obtem do engine; nao o cria voce mesmo. No React Native, `ReactInstance` mantem o runtime e passa referencias para TurboModules, Fabric e bindings gerados pelo Codegen.
+O runtime é o seu ponto de entrada. Você o obtém do engine; não o cria você mesmo. No React Native, `ReactInstance` mantém o runtime e passa referências para TurboModules, Fabric e bindings gerados pelo Codegen.
 
 ```cpp
 // jsi/jsi.h (simplificado)
@@ -114,7 +114,7 @@ public:
 
 ### `jsi::Value`
 
-Uma union com tag que pode armazenar qualquer valor JS. E **move-only** — a copia e intencionalmente desabilitada para forcar propriedade explicita.
+Uma union com tag que pode armazenar qualquer valor JS. É **move-only** — a cópia é intencionalmente desabilitada para forçar propriedade explícita.
 
 ```cpp
 class Value {
@@ -141,19 +141,19 @@ public:
   bool isSymbol() const;
   bool isBigInt() const;
 
-  // Extratores (lancam JSIException se o tipo for errado)
+  // Extratores (lançam JSIException se o tipo for errado)
   bool getBool() const;
   double getNumber() const;
   std::string getString(Runtime& rt) const;
-  Object getObject(Runtime& rt) &&;    // semantica de move: voce assume a propriedade
+  Object getObject(Runtime& rt) &&;    // semântica de move: você assume a propriedade
 };
 ```
 
-O design move-only e intencional: `jsi::Value` e uma **referencia** ao heap JS. Copiar exigiria duplicar o objeto no heap (custoso) ou criar uma segunda referencia sem o GC saber (ponteiro pendente). O move transfere a propriedade de forma limpa.
+O design move-only é intencional: `jsi::Value` é uma **referência** ao heap JS. Copiar exigiria duplicar o objeto no heap (custoso) ou criar uma segunda referência sem o GC saber (ponteiro pendente). O move transfere a propriedade de forma limpa.
 
 ### `jsi::HostObject`
 
-Uma classe C++ que voce expoe como um objeto JavaScript. Quando JS le uma propriedade, `get` e chamado. Quando JS escreve uma propriedade, `set` e chamado.
+Uma classe C++ que você expõe como um objeto JavaScript. Quando JS lê uma propriedade, `get` é chamado. Quando JS escreve uma propriedade, `set` é chamado.
 
 ```cpp
 class HostObject {
@@ -173,7 +173,7 @@ public:
 
 ### `jsi::HostFunction`
 
-Uma lambda ou funcao C++ exposta como uma funcao JavaScript. O objeto `this` e todos os argumentos chegam como referencias `jsi::Value`.
+Uma lambda ou função C++ exposta como uma função JavaScript. O objeto `this` e todos os argumentos chegam como referências `jsi::Value`.
 
 ```cpp
 // Assinatura de uma host function
@@ -186,7 +186,7 @@ using HostFunctionType = std::function<
 
 ## 4. Escrevendo um HostObject do Zero
 
-O exemplo a seguir mostra um HostObject completo e minimal que encapsula um sensor de hardware nativo. Sem Codegen, sem scaffolding de TurboModule — JSI puro.
+O exemplo a seguir mostra um HostObject completo e mínimo que encapsula um sensor de hardware nativo. Sem Codegen, sem scaffolding de TurboModule — JSI puro.
 
 ### Camada C++
 
@@ -207,13 +207,13 @@ public:
     std::string propName = name.utf8(rt);
     
     if (propName == "lastReading") {
-      // Retorna o valor atual do sensor de forma sincrona — sem async, sem JSON
+      // Retorna o valor atual do sensor de forma síncrona — sem async, sem JSON
       double reading = driver_->readSync();
       return Value(reading);
     }
     
     if (propName == "subscribe") {
-      // Retorna uma funcao JS que instala um callback
+      // Retorna uma função JS que instala um callback
       return Function::createFromHostFunction(
           rt,
           PropNameID::forAscii(rt, "subscribe"),
@@ -269,7 +269,7 @@ void installSensorObject(Runtime& rt, std::shared_ptr<ISensorDriver> driver) {
   // Encapsula em um Object JSI gerenciado pelo GC do JS
   auto jsObj = Object::createFromHostObject(rt, sensorObj);
   
-  // Expoe no escopo global: global.__sensorBridge
+  // Expõe no escopo global: global.__sensorBridge
   rt.global().setProperty(rt, "__sensorBridge", std::move(jsObj));
 }
 ```
@@ -280,19 +280,19 @@ void installSensorObject(Runtime& rt, std::shared_ptr<ISensorDriver> driver) {
 // Lado JS — sem NativeModules, sem require(), sem Codegen
 const sensor = (global as any).__sensorBridge;
 
-// Leitura sincrona — retorna imediatamente
+// Leitura síncrona — retorna imediatamente
 const reading: number = sensor.lastReading;
 console.log(reading); // ex.: 9.81
 
-// Assinatura de callback assincrono
+// Assinatura de callback assíncrono
 sensor.subscribe((value: number) => {
   console.log('Nova leitura:', value);
 });
 ```
 
-Observacoes principais:
-- `sensor.lastReading` executa C++ de forma sincrona na thread JS — sem await, sem Promise
-- `sensor.subscribe()` instala um callback C++ — quando o sensor dispara, `callback->call(rt, ...)` executa a funcao JS
-- Nao ha JSON, nenhuma fila, nenhum overhead de serializacao
+Observações principais:
+- `sensor.lastReading` executa C++ de forma síncrona na thread JS — sem await, sem Promise
+- `sensor.subscribe()` instala um callback C++ — quando o sensor dispara, `callback->call(rt, ...)` executa a função JS
+- Não há JSON, nenhuma fila, nenhum overhead de serialização
 
 ---

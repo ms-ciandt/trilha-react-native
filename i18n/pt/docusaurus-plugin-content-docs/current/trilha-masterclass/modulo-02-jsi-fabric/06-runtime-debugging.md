@@ -12,7 +12,7 @@ title: "Runtime — Debugging & E2E"
 
 ### Habilitando logs do modo Bridgeless
 
-No RN 0.76, `ReactHost`/`RCTHost` roda em modo bridgeless por padrao. Para habilitar logs detalhados:
+No RN 0.76, `ReactHost`/`RCTHost` roda em modo bridgeless por padrão. Para habilitar logs detalhados:
 
 ```kotlin
 // Android — habilita logs de debug em builds de desenvolvimento
@@ -33,9 +33,9 @@ class MyApp : Application() {
 // No Xcode: Edit Scheme → Run → Arguments → Adicionar -RCTFabricLogs 1
 ```
 
-### Depuracao via Chrome DevTools Protocol (CDP)
+### Depuração via Chrome DevTools Protocol (CDP)
 
-O RN 0.73+ usa CDP nativamente — voce nao precisa do Flipper para depurar JS:
+O RN 0.73+ usa CDP nativamente — você não precisa do Flipper para depurar JS:
 
 ```bash
 # Iniciar o Metro
@@ -45,15 +45,15 @@ npx react-native start
 open "chrome://inspect"
 # Clicar em "inspect" ao lado do seu dispositivo/simulador
 
-# Ou usar o VS Code com a extensao "React Native Tools":
-# Executar a configuracao de debug "Attach to Hermes application"
+# Ou usar o VS Code com a extensão "React Native Tools":
+# Executar a configuração de debug "Attach to Hermes application"
 ```
 
 Definir breakpoints em HostFunctions de TurboModules funciona em builds de desenvolvimento. Em release, use guards com `__DEV__` e `console.log`, que direciona para `adb logcat` / console do Xcode.
 
 ### Systrace / Perfetto
 
-O Systrace e a ferramenta definitiva para diagnosticar o comportamento das threads no RN:
+O Systrace é a ferramenta definitiva para diagnosticar o comportamento das threads no RN:
 
 ```bash
 # Android — captura 10 segundos de systrace
@@ -61,7 +61,7 @@ python $ANDROID_HOME/platform-tools/systrace/systrace.py \
   -t 10 \
   -o trace.html \
   react_native_new_arch \  # categoria de trace customizada do RN
-  gfx \                    # GPU/renderizacao
+  gfx \                    # GPU/renderização
   view \                   # desenho de views
   dalvik                   # eventos de GC
 ```
@@ -71,15 +71,15 @@ Abra `trace.html` na UI do Perfetto. Pontos principais a observar:
 | Slice de Trace | Significado |
 |---|---|
 | `Fabric::commit` | Pipeline de commit do Fabric — deve concluir em < 8ms |
-| `JSI::HostFunction::*` | Duracao de cada chamada de HostFunction |
-| `yoga::calculateLayout` | Passo de layout — se > 2ms, verifique arvores muito profundas |
+| `JSI::HostFunction::*` | Duração de cada chamada de HostFunction |
+| `yoga::calculateLayout` | Passo de layout — se > 2ms, verifique árvores muito profundas |
 | `MountingTransaction::execute` | Tempo para aplicar mutations nas views nativas |
 | `Choreographer#doFrame` | Budget de frame VSync do Android (16,6ms a 60fps) |
 
-Se `Fabric::commit` ultrapassar o deadline do VSync, um frame sera descartado. Causas comuns:
-- Muitos nos na shadow tree (achate com `collapsable={true}` — e o padrao)
+Se `Fabric::commit` ultrapassar o deadline do VSync, um frame será descartado. Causas comuns:
+- Muitos nós na shadow tree (achate com `collapsable={true}` — é o padrão)
 - Chamadas grandes de `measureInWindow` durante o layout
-- Chamadas sincronas a TurboModules que executam I/O pesado na thread JS
+- Chamadas síncronas a TurboModules que executam I/O pesado na thread JS
 
 ### Hermes sampling profiler
 
@@ -92,20 +92,20 @@ HermesProfiling.startSamplingProfiler();
 
 // ... execute algo custoso ...
 
-// Para e obtem o perfil
+// Para e obtém o perfil
 const profile = await HermesProfiling.stopSamplingProfiler();
-// profile e uma string JSON no formato de perfil de CPU do Chrome
+// profile é uma string JSON no formato de perfil de CPU do Chrome
 // Salve-a e abra com chrome://inspect → Profiler → Load profile
 ```
 
 O flame chart resultante mostra:
-- Tempo gasto em cada funcao JS
+- Tempo gasto em cada função JS
 - Tempo gasto em chamadas de HostFunction JSI (aparecem como frames `[native]`)
-- Duracoes das pausas de GC
+- Durações das pausas de GC
 
 ### React DevTools Profiler
 
-O React DevTools Profiler registra os tempos de renderizacao dos componentes:
+O React DevTools Profiler registra os tempos de renderização dos componentes:
 
 ```bash
 # Instala o React DevTools standalone
@@ -113,23 +113,23 @@ npm install -g react-devtools@latest
 react-devtools
 ```
 
-Com o app rodando em modo de desenvolvimento, clique na aba Profiler e grave. Apos uma interacao com a UI, o flame chart mostra:
+Com o app rodando em modo de desenvolvimento, clique na aba Profiler e grave. Após uma interação com a UI, o flame chart mostra:
 - Quais componentes re-renderizaram
-- Por que re-renderizaram (a anotacao `why did you render?`)
-- Duracao da renderizacao
+- Por que re-renderizaram (a anotação `why did you render?`)
+- Duração da renderização
 
-Este e o primeiro passo quando uma interacao com a UI parece lenta — antes de recorrer ao Perfetto.
+Este é o primeiro passo quando uma interação com a UI parece lenta — antes de recorrer ao Perfetto.
 
 ### Feature Flags e rollout gradual
 
-A Nova Arquitetura inclui diversas feature flags que permitem controlar quais funcionalidades estao ativas. Sao uteis para isolar regressoes:
+A Nova Arquitetura inclui diversas feature flags que permitem controlar quais funcionalidades estão ativas. São úteis para isolar regressões:
 
 ```kotlin
 // Android — ReactFeatureFlags.kt
 ReactFeatureFlags.apply {
-  enableBridgelessArchitecture = true       // padrao: true no 0.76
+  enableBridgelessArchitecture = true       // padrão: true no 0.76
   enableFabricLogs = BuildConfig.DEBUG
-  useModernEventCoalescing = true           // agrupa eventos de scroll rapidos
+  useModernEventCoalescing = true           // agrupa eventos de scroll rápidos
   enableEagerRootViewAttachment = true      // anexa a root view antes de o JS carregar
   enableBackgroundExecutor = false          // experimental: layout em thread de fundo
 }
@@ -141,13 +141,13 @@ RCTFeatureFlags::enableBridgelessArchitecture() = true;
 RCTFeatureFlags::enableFabricLogs() = RCT_DEBUG;
 ```
 
-Se voce suspeitar de uma regressao no Fabric, defina `enableBridgelessArchitecture = false` para voltar a bridge legada. Este e o passo canonico de bisect — se a regressao desaparecer, e um bug da Nova Arquitetura; se persistir, o bug esta no seu JavaScript.
+Se você suspeitar de uma regressão no Fabric, defina `enableBridgelessArchitecture = false` para voltar à bridge legada. Este é o passo canônico de bisect — se a regressão desaparecer, é um bug da Nova Arquitetura; se persistir, o bug está no seu JavaScript.
 
 ---
 
 ## 5. De Ponta a Ponta: Um TurboModule Real
 
-A seguir ha um TurboModule completo e pronto para producao. Ele le de um keychain nativo de forma sincrona via JSI e escreve de forma assincrona.
+A seguir há um TurboModule completo e pronto para produção. Ele lê de um keychain nativo de forma síncrona via JSI e escreve de forma assíncrona.
 
 ### Spec TypeScript
 
@@ -163,21 +163,21 @@ export interface SecureItem {
 }
 
 export interface Spec extends TurboModule {
-  // Sincrono — le de um cache em memoria respaldado pelo keychain
+  // Síncrono — lê de um cache em memória respaldado pelo keychain
   getSync(key: string): string | null;
   
-  // Assincrono — escreve no keychain (I/O, deve ser async)
+  // Assíncrono — escreve no keychain (I/O, deve ser async)
   set(key: string, value: string, ttlSeconds?: number | null): Promise<void>;
   delete(key: string): Promise<boolean>;
   
-  // Lista todas as chaves (sincrono — usa indice em cache)
+  // Lista todas as chaves (síncrono — usa índice em cache)
   listKeys(): string[];
 }
 
 export default TurboModuleRegistry.getEnforcing<Spec>('SecureStorage');
 ```
 
-### Implementacao Android
+### Implementação Android
 
 ```kotlin
 // SecureStorageModule.kt
@@ -186,12 +186,12 @@ class SecureStorageModule(
     private val keychain: SecureKeychainService,
 ) : NativeSecureStorageSpec(reactContext) {
 
-    // Cache em memoria para leituras sincronas
+    // Cache em memória para leituras síncronas
     private val cache = ConcurrentHashMap<String, String>()
 
     override fun getName() = NAME
 
-    // Chamado na thread JS — deve ser rapido
+    // Chamado na thread JS — deve ser rápido
     override fun getSync(key: String): String? = cache[key]
 
     // Chamado na thread JS — retorna Promise, trabalho feito na thread de IO
@@ -235,7 +235,7 @@ class SecureStorageModule(
 }
 ```
 
-### Implementacao iOS
+### Implementação iOS
 
 ```swift
 // SecureStorageModule.mm
@@ -258,14 +258,14 @@ RCT_EXPORT_MODULE(SecureStorage)
     return self;
 }
 
-// Sincrono — thread JS, sem necessidade de await no JS
+// Síncrono — thread JS, sem necessidade de await no JS
 - (NSString* _Nullable)getSync:(NSString*)key {
     @synchronized(_cache) {
         return _cache[key];
     }
 }
 
-// Assincrono — I/O na fila serial
+// Assíncrono — I/O na fila serial
 - (void)set:(NSString*)key value:(NSString*)value ttlSeconds:(NSNumber* _Nullable)ttl
     resolve:(RCTPromiseResolveBlock)resolve
     reject:(RCTPromiseRejectBlock)reject {
@@ -318,14 +318,14 @@ import NativeSecureStorage from './NativeSecureStorage';
 import { useCallback, useEffect, useState } from 'react';
 
 export function useSecureStorage(key: string) {
-  // Le sincronamente — sem estado de carregamento para o valor em cache
+  // Lê sincronamente — sem estado de carregamento para o valor em cache
   const [value, setValue] = useState<string | null>(() =>
     NativeSecureStorage.getSync(key)
   );
 
   const store = useCallback(async (newValue: string, ttl?: number) => {
     await NativeSecureStorage.set(key, newValue, ttl ?? null);
-    setValue(newValue);  // atualiza estado local apos persistir
+    setValue(newValue);  // atualiza estado local após persistir
   }, [key]);
 
   const remove = useCallback(async () => {
@@ -337,53 +337,53 @@ export function useSecureStorage(key: string) {
 }
 ```
 
-### Expo Snack — padrao de interacao com TurboModule
+### Expo Snack — padrão de interação com TurboModule
 
-Este snack demonstra a chamada sincrona a um TurboModule (DeviceInfo) e a ausencia de estado de carregamento:
+Este snack demonstra a chamada síncrona a um TurboModule (DeviceInfo) e a ausência de estado de carregamento:
 
 https://snack.expo.dev/@react-native-community/device-info-example
 
-No Snack, observe a aba Network — nao ha nenhuma requisicao HTTP para os valores de informacoes do dispositivo. Eles chegam diretamente via JSI.
+No Snack, observe a aba Network — não há nenhuma requisição HTTP para os valores de informações do dispositivo. Eles chegam diretamente via JSI.
 
 ---
 
 ## Materiais de Estudo
 
-### Codigo-fonte Oficial
+### Código-fonte Oficial
 
-| Recurso | O que voce encontrara |
+| Recurso | O que você encontrará |
 |---|---|
-| [`ReactFeatureFlags.h`](https://github.com/facebook/react-native/blob/main/packages/react-native/ReactCommon/react/featureflags/ReactNativeFeatureFlags.h) | Todas as feature flags da Nova Arquitetura — bridgeless, Fabric, renderizacao concorrente |
+| [`ReactFeatureFlags.h`](https://github.com/facebook/react-native/blob/main/packages/react-native/ReactCommon/react/featureflags/ReactNativeFeatureFlags.h) | Todas as feature flags da Nova Arquitetura — bridgeless, Fabric, renderização concorrente |
 | [`TurboModule.h`](https://github.com/facebook/react-native/blob/main/packages/react-native/ReactCommon/react/nativemodule/core/ReactCommon/TurboModule.h) | Classe base C++ de TurboModule |
-| [`TurboModuleBinding.cpp`](https://github.com/facebook/react-native/blob/main/packages/react-native/ReactCommon/react/nativemodule/core/TurboModuleBinding.cpp) | Como `__turboModuleProxy` e instalado no global JS |
-| [`BridgelessJSCallInvoker.cpp`](https://github.com/facebook/react-native/blob/main/packages/react-native/ReactCommon/react/bridgeless/BridgelessJSCallInvoker.cpp) | CallInvoker para o modo bridgeless — como callbacks C++ assincronos chegam ao JS |
-| [`Codegen scripts`](https://github.com/facebook/react-native/tree/main/packages/react-native-codegen/src) | Codigo-fonte do gerador TypeScript → C++ |
+| [`TurboModuleBinding.cpp`](https://github.com/facebook/react-native/blob/main/packages/react-native/ReactCommon/react/nativemodule/core/TurboModuleBinding.cpp) | Como `__turboModuleProxy` é instalado no global JS |
+| [`BridgelessJSCallInvoker.cpp`](https://github.com/facebook/react-native/blob/main/packages/react-native/ReactCommon/react/bridgeless/BridgelessJSCallInvoker.cpp) | CallInvoker para o modo bridgeless — como callbacks C++ assíncronos chegam ao JS |
+| [`Codegen scripts`](https://github.com/facebook/react-native/tree/main/packages/react-native-codegen/src) | Código-fonte do gerador TypeScript → C++ |
 
-### Documentacao Oficial
+### Documentação Oficial
 
-| Recurso | Descricao |
+| Recurso | Descrição |
 |---|---|
-| [New Architecture Introduction](https://reactnative.dev/docs/the-new-architecture/landing-page) | Visao geral oficial e justificativa de cada componente |
-| [TurboModules Guide](https://reactnative.dev/docs/turbo-native-modules-introduction) | Passo a passo: spec → Codegen → implementacao nativa |
+| [New Architecture Introduction](https://reactnative.dev/docs/the-new-architecture/landing-page) | Visão geral oficial e justificativa de cada componente |
+| [TurboModules Guide](https://reactnative.dev/docs/turbo-native-modules-introduction) | Passo a passo: spec → Codegen → implementação nativa |
 | [Hermes Guide](https://reactnative.dev/docs/hermes) | Habilitando, perfilando e configurando o Hermes |
-| [Debugging New Architecture](https://reactnative.dev/docs/debugging-native-code) | CDP, Flipper, Systrace — referencia oficial de depuracao |
+| [Debugging New Architecture](https://reactnative.dev/docs/debugging-native-code) | CDP, Flipper, Systrace — referência oficial de depuração |
 | [React Native DevTools](https://reactnative.dev/docs/react-native-devtools) | O novo depurador unificado (experimental no 0.76) |
 
 ### Aprofundamentos
 
-| Recurso | Autor | O que voce vai aprender |
+| Recurso | Autor | O que você vai aprender |
 |---|---|---|
 | [How React Native New Architecture works](https://www.callstack.com/blog/new-react-native-architecture-explained) | Callstack | Codegen → JSI → TurboModules → Fabric: o modelo mental completo |
 | [TurboModules deep dive](https://blog.swmansion.com/turbomodules-the-new-native-modules-in-react-native-b4b1d90d80db) | Software Mansion | Type safety, lazy loading, detalhes da camada de interoperabilidade |
-| [React Native Reanimated 3 internals](https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/glossary) | Software Mansion | Uso real do JSI em producao para threading de worklets |
-| [op-sqlite — synchronous SQLite via JSI](https://ospfranco.com/post/2023/06/26/op-sqlite-fastest-sqlite-for-react-native/) | Oscar Franco | Implementacao JSI completa de um banco de dados sincrono |
-| [Hermes Memory model and GC](https://hermesengine.dev/docs/gc/) | Hermes team | Algoritmo de GC, layout do heap, como reduzir pressao no GC |
+| [React Native Reanimated 3 internals](https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/glossary) | Software Mansion | Uso real do JSI em produção para threading de worklets |
+| [op-sqlite — synchronous SQLite via JSI](https://ospfranco.com/post/2023/06/26/op-sqlite-fastest-sqlite-for-react-native/) | Oscar Franco | Implementação JSI completa de um banco de dados síncrono |
+| [Hermes Memory model and GC](https://hermesengine.dev/docs/gc/) | Hermes team | Algoritmo de GC, layout do heap, como reduzir pressão no GC |
 
-### Video Tutoriais
+### Vídeo Tutoriais
 
-| Recurso | Duracao | O que voce vai aprender |
+| Recurso | Duração | O que você vai aprender |
 |---|---|---|
-| [React Native New Architecture — Complete Guide](https://www.youtube.com/watch?v=BPQKE3Yb7vI) | 45 min | Walkthrough dos tres pilares: JSI, Fabric, TurboModules |
+| [React Native New Architecture — Complete Guide](https://www.youtube.com/watch?v=BPQKE3Yb7vI) | 45 min | Walkthrough dos três pilares: JSI, Fabric, TurboModules |
 | [TurboModules in practice](https://www.youtube.com/watch?v=GNCrFv_h0tE) | 28 min | Construa um TurboModule do zero com Codegen |
 | [Hermes profiling in production](https://www.youtube.com/watch?v=Ma5MLdCAfRQ) | 20 min | Amostragem de CPU, snapshots de heap, ajuste de GC |
 | [React Native Europe 2023 — Debugging New Arch](https://www.youtube.com/watch?v=tJGMJiSTkEU) | 35 min | CDP, Perfetto, Hermes profiler — demo ao vivo |
@@ -393,11 +393,11 @@ No Snack, observe a aba Network — nao ha nenhuma requisicao HTTP para os valor
 
 | Recurso | O que fazer |
 |---|---|
-| [React Native New Architecture playground](https://snack.expo.dev/) | Crie um Snack, abra o React DevTools Profiler, grave uma renderizacao |
-| [Hermes playground](https://playground.hermesengine.dev/) | Cole JS, inspecione a saida de bytecode, veja as atribuicoes de registradores |
-| [Yoga playground](https://yogalayout.dev/playground) | Teste regras de Flexbox, veja os numeros de layout calculados |
-| [reactwg/react-native-new-architecture](https://github.com/reactwg/react-native-new-architecture/discussions) | Discussoes do grupo de trabalho — fonte da verdade para decisoes de migracao |
+| [React Native New Architecture playground](https://snack.expo.dev/) | Crie um Snack, abra o React DevTools Profiler, grave uma renderização |
+| [Hermes playground](https://playground.hermesengine.dev/) | Cole JS, inspecione a saída de bytecode, veja as atribuições de registradores |
+| [Yoga playground](https://yogalayout.dev/playground) | Teste regras de Flexbox, veja os números de layout calculados |
+| [reactwg/react-native-new-architecture](https://github.com/reactwg/react-native-new-architecture/discussions) | Discussões do grupo de trabalho — fonte da verdade para decisões de migração |
 
 ---
 
-← [Fabric — New Renderer](./02-fabric-renderer.md) | Modulo 03 concluido
+← [Fabric — New Renderer](./02-fabric-renderer.md) | Módulo 03 concluído

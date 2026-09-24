@@ -10,25 +10,25 @@ title: "Fabric — Native Components"
   Your browser does not support the video tag.
 </video>
 
-Um Fabric Component e uma view nativa exposta ao React. No RN 0.76, todas as views nativas sao Fabric components — a abordagem antiga baseada em UIManager foi removida.
+Um Fabric Component é uma view nativa exposta ao React. No RN 0.76, todas as views nativas são Fabric components — a abordagem antiga baseada em UIManager foi removida.
 
-### Os quatro arquivos necessarios
+### Os quatro arquivos necessários
 
-Escrever um Fabric Component envolve quatro artefatos, dois dos quais sao gerados automaticamente:
+Escrever um Fabric Component envolve quatro artefatos, dois dos quais são gerados automaticamente:
 
 ```
 MySlider/
-  ├── NativeMySlider.ts          ← spec TypeScript (voce escreve)
-  ├── MySliderNativeComponent.js ← re-exportacao JS (voce escreve)
-  ├── generated/                 ← saida do Codegen (gerado automaticamente)
+  ├── NativeMySlider.ts          ← spec TypeScript (você escreve)
+  ├── MySliderNativeComponent.js ← re-exportação JS (você escreve)
+  ├── generated/                 ← saída do Codegen (gerado automaticamente)
   │   ├── RCTMySliderComponentDescriptor.h
   │   ├── Props.h
   │   ├── EventEmitters.h
   │   └── ShadowNode.h
   ├── ios/
-  │   └── RCTMySliderComponentView.mm  ← view nativa iOS (voce escreve)
+  │   └── RCTMySliderComponentView.mm  ← view nativa iOS (você escreve)
   └── android/
-      └── MySliderView.kt              ← view nativa Android (voce escreve)
+      └── MySliderView.kt              ← view nativa Android (você escreve)
 ```
 
 ### Passo 1: spec TypeScript
@@ -90,7 +90,7 @@ using namespace facebook::react;
       forControlEvents:UIControlEventTouchUpInside | UIControlEventTouchUpOutside];
     [self addSubview:_slider];
     _slider.translatesAutoresizingMaskIntoConstraints = NO;
-    // restricoes...
+    // restrições...
   }
   return self;
 }
@@ -157,7 +157,7 @@ class MySliderView(context: Context) : SeekBar(context) {
     }
 }
 
-// Configuracao do ViewManager
+// Configuração do ViewManager
 class MySliderManager : SimpleViewManager<MySliderView>() {
     override fun getName() = "MySlider"
     
@@ -213,7 +213,7 @@ export function MySlider({
 
 ### Expo Snack — observar eventos Fabric
 
-Este snack demonstra o fluxo de eventos de um Fabric Component ate o JS. No Expo Go, componentes nativos passam pela bridge do Fabric:
+Este snack demonstra o fluxo de eventos de um Fabric Component até o JS. No Expo Go, componentes nativos passam pela bridge do Fabric:
 
 https://snack.expo.dev/@react-native-community/slider-example
 
@@ -223,7 +223,7 @@ Abra o React DevTools (shake no dispositivo → "Open Debugger") e observe as pr
 
 ## 6. Camada de Interoperabilidade: Fabric + Componentes Antigos
 
-O RN 0.76 inclui uma **camada de interoperabilidade** que permite que componentes paper antigos rodem dentro do Fabric sem precisar reescreve-los. Essa camada envolve a criacao de views legadas baseadas em `UIManager` em uma casca compativel com Fabric.
+O RN 0.76 inclui uma **camada de interoperabilidade** que permite que componentes paper antigos rodem dentro do Fabric sem precisar reescrevê-los. Essa camada envolve a criação de views legadas baseadas em `UIManager` em uma casca compatível com Fabric.
 
 ```
 JS chama <LegacyComponent />
@@ -238,49 +238,49 @@ Camada de Interoperabilidade Fabric
 UIManager antigo cria a view nativa real (UIView / View)
 ```
 
-A camada de interoperabilidade e transparente para o JavaScript — nenhum import precisa ser alterado. No RN 0.76, ela esta habilitada por padrao e cobre ~95% das bibliotecas da comunidade.
+A camada de interoperabilidade é transparente para o JavaScript — nenhum import precisa ser alterado. No RN 0.76, ela está habilitada por padrão e cobre ~95% das bibliotecas da comunidade.
 
-Para os 5% restantes (bibliotecas que fazem uso intenso de `setNativeProps` ou dependem de internos do UIManager), e necessaria a migracao para um Fabric Component completo.
+Para os 5% restantes (bibliotecas que fazem uso intenso de `setNativeProps` ou dependem de internos do UIManager), é necessária a migração para um Fabric Component completo.
 
 ---
 
 ## Materiais de Estudo
 
-### Codigo-fonte Oficial
+### Código-fonte Oficial
 
-| Recurso | O que voce encontrara |
+| Recurso | O que você encontrará |
 |---|---|
 | [`ShadowTree.cpp`](https://github.com/facebook/react-native/blob/main/packages/react-native/ReactCommon/react/renderer/core/ShadowTree.cpp) | O pipeline de commit — clone, layout, commit |
-| [`MountingCoordinator.cpp`](https://github.com/facebook/react-native/blob/main/packages/react-native/ReactCommon/react/renderer/mounting/MountingCoordinator.cpp) | Como MountingTransactions chegam a thread de UI |
-| [`ShadowNode.h`](https://github.com/facebook/react-native/blob/main/packages/react-native/ReactCommon/react/renderer/core/ShadowNode.h) | ShadowNode base — semantica de clone, props, filhos |
-| [`RCTViewComponentView.mm`](https://github.com/facebook/react-native/blob/main/packages/react-native/Libraries/AppDelegate/RCTAppDelegate.mm) | View iOS Fabric de referencia |
+| [`MountingCoordinator.cpp`](https://github.com/facebook/react-native/blob/main/packages/react-native/ReactCommon/react/renderer/mounting/MountingCoordinator.cpp) | Como MountingTransactions chegam à thread de UI |
+| [`ShadowNode.h`](https://github.com/facebook/react-native/blob/main/packages/react-native/ReactCommon/react/renderer/core/ShadowNode.h) | ShadowNode base — semântica de clone, props, filhos |
+| [`RCTViewComponentView.mm`](https://github.com/facebook/react-native/blob/main/packages/react-native/Libraries/AppDelegate/RCTAppDelegate.mm) | View iOS Fabric de referência |
 
-### Documentacao Oficial
+### Documentação Oficial
 
-| Recurso | Descricao |
+| Recurso | Descrição |
 |---|---|
-| [Fabric Architecture Overview](https://reactnative.dev/architecture/fabric-renderer) | Descricao oficial do Shadow Tree, commit e threading |
-| [Yoga playground](https://yogalayout.dev/playground) | Flexbox interativo — teste regras de layout contra a saida C++ do Yoga |
+| [Fabric Architecture Overview](https://reactnative.dev/architecture/fabric-renderer) | Descrição oficial do Shadow Tree, commit e threading |
+| [Yoga playground](https://yogalayout.dev/playground) | Flexbox interativo — teste regras de layout contra a saída C++ do Yoga |
 | [New Architecture Migration](https://reactnative.dev/docs/new-architecture-intro) | Passo a passo: habilitando o Fabric, migrando componentes legados |
 | [Codegen](https://reactnative.dev/docs/the-new-architecture/what-is-codegen) | Como specs TypeScript geram bindings C++ para o Fabric |
 
 ### Aprofundamentos
 
-| Recurso | Autor | O que voce vai aprender |
+| Recurso | Autor | O que você vai aprender |
 |---|---|---|
 | [Fabric — React Native's New Rendering System](https://blog.swmansion.com/fabric-react-natives-new-rendering-system-7ee03823d73a) | Software Mansion | Walkthrough detalhado do pipeline de commit e threading |
-| [A deep dive into React Native's new architecture](https://engineering.fb.com/2023/06/13/android/react-native-new-architecture/) | Meta Eng | Descricao da propria Meta sobre o motivo do redesign de cada parte |
+| [A deep dive into React Native's new architecture](https://engineering.fb.com/2023/06/13/android/react-native-new-architecture/) | Meta Eng | Descrição da própria Meta sobre o motivo do redesign de cada parte |
 | [Writing Fabric Components](https://reactnative.dev/docs/fabric-native-components-introduction) | RN Docs | Tutorial oficial: spec → Codegen → views iOS + Android |
 | [Concurrent features in RN](https://www.youtube.com/watch?v=hujiYMBpWHY) | React Conf 2022 | Como `useTransition` e Suspense se integram ao Fabric |
 
-### Video Tutoriais
+### Vídeo Tutoriais
 
-| Recurso | Duracao | O que voce vai aprender |
+| Recurso | Duração | O que você vai aprender |
 |---|---|---|
-| [Inside React Native's Fabric Renderer](https://www.youtube.com/watch?v=UcqRXTriUVI) | 25 min | Pipeline de commit visual com codigo-fonte C++ |
-| [React Native New Arch: Fabric Deep Dive](https://www.youtube.com/watch?v=2bvV3zJhMxs) | 40 min | Palestra de conferencia — shadow tree, layout, mutations |
-| [React Conf 2024 — Concurrent RN](https://www.youtube.com/watch?v=Ck0N9FsKAhI) | 30 min | Estado atual da renderizacao concorrente no RN |
+| [Inside React Native's Fabric Renderer](https://www.youtube.com/watch?v=UcqRXTriUVI) | 25 min | Pipeline de commit visual com código-fonte C++ |
+| [React Native New Arch: Fabric Deep Dive](https://www.youtube.com/watch?v=2bvV3zJhMxs) | 40 min | Palestra de conferência — shadow tree, layout, mutations |
+| [React Conf 2024 — Concurrent RN](https://www.youtube.com/watch?v=Ck0N9FsKAhI) | 30 min | Estado atual da renderização concorrente no RN |
 
 ---
 
-Proximo → [Runtime — New Architecture](./03-runtime-new-architecture.md)
+Próximo → [Runtime — New Architecture](./03-runtime-new-architecture.md)
