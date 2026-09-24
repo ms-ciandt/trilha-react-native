@@ -1,8 +1,8 @@
 ---
-title: "Mudancas em Configuracoes Nativas (Edge-to-Edge)"
+title: "Mudanças em Configurações Nativas (Edge-to-Edge)"
 ---
 
-# Mudancas em Configuracoes Nativas (Edge-to-Edge)
+# Mudanças em Configurações Nativas (Edge-to-Edge)
 
 <video width="100%" controls controlsList="nodownload">
   <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/mc05_09_native-settings.mp4" type="video/mp4">
@@ -10,15 +10,15 @@ title: "Mudancas em Configuracoes Nativas (Edge-to-Edge)"
   Your browser does not support the video tag.
 </video>
 
-> Edge-to-edge e a mudanca mais visualmente impactante na historia recente do RN. Definir `targetSdk = 35` a ativa no Android 15 — e de repente o conteudo transborda para baixo da status bar e da barra de navegacao por gestos em todas as telas.
+> Edge-to-edge é a mudança mais visualmente impactante na história recente do RN. Definir `targetSdk = 35` a ativa no Android 15 — e de repente o conteúdo transborda para baixo da status bar e da barra de navegação por gestos em todas as telas.
 
 ---
 
 ## O Que Mudou e Por Que
 
-No **Android 15 (API 35)**, o Google tornou a renderizacao edge-to-edge obrigatoria para apps que definem o SDK 35 como alvo. A area de conteudo nao termina mais na status bar e na barra de navegacao — ela se expande para preencher a tela inteira, *atras* do chrome do sistema.
+No **Android 15 (API 35)**, o Google tornou a renderização edge-to-edge obrigatória para apps que definem o SDK 35 como alvo. A área de conteúdo não termina mais na status bar e na barra de navegação — ela se expande para preencher a tela inteira, *atrás* do chrome do sistema.
 
-Isso e intencional. O Google quer que apps modernos desenhem sob as barras do sistema e gerenciem seus proprios insets. Apps que definem `paddingTop: 24` fixo ou dependem de `StatusBar.setBackgroundColor` agora estao quebrados no Android 15 ao definir SDK 35 como alvo.
+Isso é intencional. O Google quer que apps modernos desenhem sob as barras do sistema e gerenciem seus próprios insets. Apps que definem `paddingTop: 24` fixo ou dependem de `StatusBar.setBackgroundColor` agora estão quebrados no Android 15 ao definir SDK 35 como alvo.
 
 O React Native 0.76 definiu `targetSdk = 35` no template diff do Upgrade Helper — tornando isso uma quebra comum para apps que fazem upgrade da 0.75.
 
@@ -26,13 +26,13 @@ O React Native 0.76 definiu `targetSdk = 35` no template diff do Upgrade Helper 
 
 ## O Que Quebra
 
-| API antiga | Status no Android 15 + targetSdk 35 | Correcao |
+| API antiga | Status no Android 15 + targetSdk 35 | Correção |
 |---|---|---|
-| `StatusBar.setBackgroundColor('#fff')` | No-op silencioso — a status bar e sempre transparente | Remover; usar fundo de View por tras do conteudo |
-| Prop `StatusBar.translucent` | Ignorada — todas as status bars sao agora translucidas por padrao | Remover |
+| `StatusBar.setBackgroundColor('#fff')` | No-op silencioso — a status bar é sempre transparente | Remover; usar fundo de View por trás do conteúdo |
+| Prop `StatusBar.translucent` | Ignorada — todas as status bars são agora translúcidas por padrão | Remover |
 | `StatusBar hidden` | Funciona, mas usa modo imersivo — comportamento alterado | Testar manualmente |
 | `paddingTop: 24` fixo | Layout parece deslocado ou sobreposto | Substituir por `useSafeAreaInsets().top` |
-| `paddingBottom` fixo (barra de navegacao) | Conteudo oculto sob a barra de gestos | Substituir por `useSafeAreaInsets().bottom` |
+| `paddingBottom` fixo (barra de navegação) | Conteúdo oculto sob a barra de gestos | Substituir por `useSafeAreaInsets().bottom` |
 | `expo-status-bar` (antigo) | Mesmos problemas — encapsula a API quebrada | Atualizar para `react-native-edge-to-edge` |
 
 ---
@@ -45,28 +45,28 @@ Antes (targetSdk 34):
 │  STATUS BAR (bg)     │  ← opaca, com sua cor de fundo
 │──────────────────────│
 │  SEU HEADER          │
-│  seu conteudo        │
+│  seu conteúdo        │
 │                      │
 │──────────────────────│
 │  NAV BAR (bg)        │  ← opaca, com sua cor de fundo
 └──────────────────────┘
 
-Depois (targetSdk 35, sem correcao):
+Depois (targetSdk 35, sem correção):
 ┌──────────────────────┐
 │  STATUS BAR          │
 │  SEU HEADER ← erro   │  ← header renderiza sob a status bar
-│  seu conteudo        │
-│  seu conteudo        │
-│  seu conteudo ← erro │  ← conteudo inferior sob a nav bar
+│  seu conteúdo        │
+│  seu conteúdo        │
+│  seu conteúdo ← erro │  ← conteúdo inferior sob a nav bar
 │  NAV BAR             │
 └──────────────────────┘
 ```
 
 ---
 
-## A Correcao: `react-native-edge-to-edge`
+## A Correção: `react-native-edge-to-edge`
 
-A solucao recomendada pelo time central do React Native e pelo Expo e a biblioteca `react-native-edge-to-edge` de [Mathieu Actherberg (zoontek)](https://github.com/zoontek/react-native-edge-to-edge).
+A solução recomendada pelo time central do React Native e pelo Expo é a biblioteca `react-native-edge-to-edge` de [Mathieu Actherberg (zoontek)](https://github.com/zoontek/react-native-edge-to-edge).
 
 ```bash
 yarn add react-native-edge-to-edge
@@ -83,7 +83,7 @@ android {
     }
     buildFeatures {
         // Ativa edge-to-edge — isso chama WindowCompat.setDecorFitsSystemWindows(window, false)
-        // automaticamente no codigo gerado do MainActivity
+        // automaticamente no código gerado do MainActivity
     }
 }
 ```
@@ -122,7 +122,7 @@ import { SystemBars } from 'react-native-edge-to-edge';
 function App() {
   return (
     <>
-      <SystemBars style="dark" />      // ← controla apenas o tint dos icones, sem fundo
+      <SystemBars style="dark" />      // ← controla apenas o tint dos ícones, sem fundo
       <MainNavigator />
     </>
   );
@@ -143,7 +143,7 @@ function Header() {
 ```
 
 ```tsx
-// Depois — insets dinamicos
+// Depois — insets dinâmicos
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 function Header() {
@@ -179,7 +179,7 @@ function FABButton() {
 
 ---
 
-## Configuracao no Expo (app.json)
+## Configuração no Expo (app.json)
 
 ```json
 {
@@ -205,28 +205,28 @@ function FABButton() {
 
 ---
 
-## Se Voce Ainda Nao Esta Pronto para Edge-to-Edge
+## Se Você Ainda Não Está Pronto para Edge-to-Edge
 
-Se migrar todas as telas de uma vez nao for viavel, voce pode temporariamente manter `targetSdk = 34` enquanto esta na RN 0.76:
+Se migrar todas as telas de uma vez não for viável, você pode temporariamente manter `targetSdk = 34` enquanto está na RN 0.76:
 
 ```kotlin
 // android/app/build.gradle
 android {
     compileSdk = 35              // compileSdk pode ser 35
     defaultConfig {
-        targetSdk = 34           // targetSdk permanece em 34 — sem edge-to-edge forcado
+        targetSdk = 34           // targetSdk permanece em 34 — sem edge-to-edge forçado
     }
 }
 ```
 
-Isso ganha tempo. Voce precisara fazer a migracao eventualmente — o Google Play exige que novos releases de apps sejam compilados com o SDK mais recente dentro de um ano de seu lancamento.
+Isso ganha tempo. Você precisará fazer a migração eventualmente — o Google Play exige que novos releases de apps sejam compilados com o SDK mais recente dentro de um ano de seu lançamento.
 
 ---
 
 ## Ferramenta de Auditoria: Encontrando Insets Fixos no Seu Codebase
 
 ```bash
-# Encontrar valores fixos de paddingTop que podem precisar ser dinamicos
+# Encontrar valores fixos de paddingTop que podem precisar ser dinâmicos
 grep -r "paddingTop: [0-9]" src/ --include="*.tsx" --include="*.ts"
 
 # Encontrar uso de StatusBar
@@ -236,66 +236,66 @@ grep -r "StatusBar" src/ --include="*.tsx" --include="*.ts"
 grep -r "expo-status-bar" src/ --include="*.tsx" --include="*.ts"
 ```
 
-Cada resultado e um candidato potencial para migracao de edge-to-edge. Em um app grande, essa lista pode ter 50 a 100 locais. Construa um checklist, migre tela por tela e teste em um dispositivo fisico com Android 15 apos cada lote.
+Cada resultado é um candidato potencial para migração de edge-to-edge. Em um app grande, essa lista pode ter 50 a 100 locais. Construa um checklist, migre tela por tela e teste em um dispositivo físico com Android 15 após cada lote.
 
 ---
 
 ## Problemas Comuns de Bibliotecas com Edge-to-Edge
 
-| Biblioteca | Problema | Correcao |
+| Biblioteca | Problema | Correção |
 |---|---|---|
-| `react-native-modal` | Nao considera insets em versoes antigas | Atualizar para 13.x; encapsular conteudo do `Modal` em `SafeAreaView` |
+| `react-native-modal` | Não considera insets em versões antigas | Atualizar para 13.x; encapsular conteúdo do `Modal` em `SafeAreaView` |
 | `@gorhom/bottom-sheet` | Inset inferior ausente | Passar a prop `bottomInset={insets.bottom}` |
-| `react-native-webview` | Conteudo web ignora safe area | Injetar CSS: `env(safe-area-inset-bottom)` via `injectedJavaScript` |
-| Headers do `react-navigation` | Header sobrepoe a status bar | Usar a opcao `headerStatusBarHeight` ou atualizar para v7 |
-| `react-native-camera-roll` | UI do seletor quebrada | Atualizar para a versao mais recente; a maioria das bibliotecas de UI de camera lida com isso em 2025 |
+| `react-native-webview` | Conteúdo web ignora safe area | Injetar CSS: `env(safe-area-inset-bottom)` via `injectedJavaScript` |
+| Headers do `react-navigation` | Header sobrepõe a status bar | Usar a opção `headerStatusBarHeight` ou atualizar para v7 |
+| `react-native-camera-roll` | UI do seletor quebrada | Atualizar para a versão mais recente; a maioria das bibliotecas de UI de câmera lida com isso em 2025 |
 
 ---
 
-## Outras Mudancas Impactantes em Configuracoes Nativas (Alem do Edge-to-Edge)
+## Outras Mudanças Impactantes em Configurações Nativas (Além do Edge-to-Edge)
 
 ### Nova Arquitetura no `gradle.properties`
 
 ```properties
 # android/gradle.properties
-newArchEnabled=true       # padrao nos templates do RN 0.76+
-hermesEnabled=true        # o Hermes e obrigatorio com a Nova Arquitetura
+newArchEnabled=true       # padrão nos templates do RN 0.76+
+hermesEnabled=true        # o Hermes é obrigatório com a Nova Arquitetura
 ```
 
 ### CMakeLists.txt (build da Nova Arquitetura)
 
-O RN 0.76 adicionou o CMakeLists.txt ao template para a compilacao C++ da Nova Arquitetura. Se voce e um app brownfield e nao tem esse arquivo, os modulos da Nova Arquitetura nao compilarao.
+O RN 0.76 adicionou o CMakeLists.txt ao template para a compilação C++ da Nova Arquitetura. Se você é um app brownfield e não tem esse arquivo, os módulos da Nova Arquitetura não compilarão.
 
 ```bash
-# Verificar sua presenca
+# Verificar sua presença
 ls android/app/src/main/jni/CMakeLists.txt
 ```
 
-### Namespace no `build.gradle` (obrigatorio desde o Gradle 8.x)
+### Namespace no `build.gradle` (obrigatório desde o Gradle 8.x)
 
 ```kotlin
-// android/app/build.gradle — obrigatorio para Gradle 8+
+// android/app/build.gradle — obrigatório para Gradle 8+
 android {
     namespace = "com.myapp"   // ← deve corresponder ao applicationId
     // ...
 }
 ```
 
-A ausencia de `namespace` causa: `Namespace not specified. Specify a namespace in the module's build file.`
+A ausência de `namespace` causa: `Namespace not specified. Specify a namespace in the module's build file.`
 
 ---
 
 ## Materiais de Estudo
 
-| Recurso | Descricao |
+| Recurso | Descrição |
 |---|---|
-| [react-native-edge-to-edge — GitHub](https://github.com/zoontek/react-native-edge-to-edge) | A biblioteca recomendada — codigo-fonte, docs, referencia de API |
-| [Edge-to-Edge — Discussao Android 15](https://github.com/react-native-community/discussions-and-proposals/discussions/827) | Thread da comunidade explicando a mudanca e o caminho de migracao |
-| [Android 15 Edge-to-Edge Fix — 72Technologies](https://www.72technologies.com/blog/android-15-edge-to-edge-react-native-expo) | Codigo antes/depois pratico para Expo e bare workflow |
+| [react-native-edge-to-edge — GitHub](https://github.com/zoontek/react-native-edge-to-edge) | A biblioteca recomendada — código-fonte, docs, referência de API |
+| [Edge-to-Edge — Discussão Android 15](https://github.com/react-native-community/discussions-and-proposals/discussions/827) | Thread da comunidade explicando a mudança e o caminho de migração |
+| [Android 15 Edge-to-Edge Fix — 72Technologies](https://www.72technologies.com/blog/android-15-edge-to-edge-react-native-expo) | Código antes/depois prático para Expo e bare workflow |
 | [Issue edge-to-edge — #50423](https://github.com/react/react-native/issues/50423) | Issue original no GitHub rastreando a quebra |
 | [react-native-safe-area-context](https://github.com/th3rdwave/react-native-safe-area-context) | Biblioteca para gerenciar insets de safe area (`useSafeAreaInsets`) |
-| [useSafeAreaInsets — docs](https://reactnavigation.org/docs/use-safe-area-insets/) | Referencia do hook e exemplos de uso |
+| [useSafeAreaInsets — docs](https://reactnavigation.org/docs/use-safe-area-insets/) | Referência do hook e exemplos de uso |
 
 ---
 
-Proximo → [Diagnostico de Falhas (RN Doctor)](./rn-doctor)
+Próximo → [Diagnóstico de Falhas (RN Doctor)](./rn-doctor)

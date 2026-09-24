@@ -1,8 +1,8 @@
 ---
-title: Analise de Breaking Changes
+title: Análise de Breaking Changes
 ---
 
-# Analise de Breaking Changes
+# Análise de Breaking Changes
 
 <video width="100%" controls controlsList="nodownload">
   <source src="https://github.com/ms-ciandt/trilha-react-native/releases/download/v0-videos/mc05_03_breaking-changes.mp4" type="video/mp4">
@@ -10,7 +10,7 @@ title: Analise de Breaking Changes
   Your browser does not support the video tag.
 </video>
 
-> Breaking changes no React Native ocorrem em tres camadas de forma independente: a superficie da API JavaScript, o sistema de build nativo do Android e o sistema de build nativo do iOS. Uma mudanca pode quebrar o iOS sem tocar no Android. Ler apenas o changelog de JS nao e suficiente.
+> Breaking changes no React Native ocorrem em três camadas de forma independente: a superfície da API JavaScript, o sistema de build nativo do Android e o sistema de build nativo do iOS. Uma mudança pode quebrar o iOS sem tocar no Android. Ler apenas o changelog de JS não é suficiente.
 
 ---
 
@@ -22,7 +22,7 @@ title: Analise de Breaking Changes
 https://github.com/facebook/react-native/blob/main/CHANGELOG.md
 ```
 
-A fonte autoritativa. Cada versao tem uma subsecao `Breaking Changes`. Leia-a primeiro — antes do diff do Upgrade Helper, antes dos posts de blog.
+A fonte autoritativa. Cada versão tem uma subseção `Breaking Changes`. Leia-a primeiro — antes do diff do Upgrade Helper, antes dos posts de blog.
 
 Formato:
 
@@ -30,19 +30,19 @@ Formato:
 ## v0.76.0
 
 ### Breaking Changes
-- **Android**: SDK minimo elevado de 23 para 24 (#46252) — dispositivos abaixo do Android 7.0 nao sao mais suportados
+- **Android**: SDK mínimo elevado de 23 para 24 (#46252) — dispositivos abaixo do Android 7.0 não são mais suportados
 - **Android**: `StatusBar.setBackgroundColor` descontinuado — obrigatoriedade de edge-to-edge com targetSdk=35
-- **iOS**: `AppDelegate` deve estender `RCTAppDelegate` — configuracao manual do `RCTRootViewFactory` removida
-- **JS**: `Animated.event` com `useNativeDriver` agora lanca erro se o handler estiver ausente (#45123)
+- **iOS**: `AppDelegate` deve estender `RCTAppDelegate` — configuração manual do `RCTRootViewFactory` removida
+- **JS**: `Animated.event` com `useNativeDriver` agora lança erro se o handler estiver ausente (#45123)
 ```
 
-### Fonte 2: Discussoes do reactwg/react-native-releases
+### Fonte 2: Discussões do reactwg/react-native-releases
 
 ```
 https://github.com/reactwg/react-native-releases/discussions
 ```
 
-O Releases Working Group publica uma thread "Road to 0.7x" para cada release futuro. Membros da comunidade relatam problemas com o RC — aqui e onde voce encontra breaking changes que ainda nao entraram no changelog oficial, ou onde o caminho de migracao e explicado em detalhe.
+O Releases Working Group publica uma thread "Road to 0.7x" para cada release futuro. Membros da comunidade relatam problemas com o RC — aqui é onde você encontra breaking changes que ainda não entraram no changelog oficial, ou onde o caminho de migração é explicado em detalhe.
 
 ### Fonte 3: GitHub Release Notes (por tag)
 
@@ -50,7 +50,7 @@ O Releases Working Group publica uma thread "Road to 0.7x" para cada release fut
 https://github.com/facebook/react-native/releases/tag/v0.76.0
 ```
 
-Mais curto que o CHANGELOG completo, mas focado por release. Bom para uma verificacao rapida.
+Mais curto que o CHANGELOG completo, mas focado por release. Bom para uma verificação rápida.
 
 ### Fonte 4: Meta Engineering / Blog do time de RN
 
@@ -58,23 +58,23 @@ Mais curto que o CHANGELOG completo, mas focado por release. Bom para uma verifi
 https://reactnative.dev/blog
 ```
 
-Versoes maiores (0.73, 0.74, 0.76) ganham um post de blog dedicado explicando as maiores mudancas, etapas de migracao e a intencao por tras das decisoes. Sao os resumos mais legiveis.
+Versões maiores (0.73, 0.74, 0.76) ganham um post de blog dedicado explicando as maiores mudanças, etapas de migração e a intenção por trás das decisões. São os resumos mais legíveis.
 
 ---
 
-## Breaking Changes de Alto Impacto por Versao (0.72 → 0.76)
+## Breaking Changes de Alto Impacto por Versão (0.72 → 0.76)
 
-### 0.73 — Hermes como unico motor bundled
+### 0.73 — Hermes como único motor bundled
 
-**O que mudou:** O JSC (JavaScriptCore) nao e mais bundled com o RN. O Hermes e o unico motor.
+**O que mudou:** O JSC (JavaScriptCore) não é mais bundled com o RN. O Hermes é o único motor.
 
-**Impacto:** Se voce definiu explicitamente `hermes_enabled: false` no Podfile ou `enableHermes = false` no `android/app/build.gradle`, o app falhara ao compilar — nao ha JSC para usar.
+**Impacto:** Se você definiu explicitamente `hermes_enabled: false` no Podfile ou `enableHermes = false` no `android/app/build.gradle`, o app falhará ao compilar — não há JSC para usar.
 
-**Correcao:**
+**Correção:**
 ```ruby
 # ios/Podfile — remova ou mude para true
 use_react_native!(
-  :hermes_enabled => true,  # este agora e o unico valor valido
+  :hermes_enabled => true,  # este agora é o único valor válido
 )
 ```
 
@@ -84,21 +84,21 @@ use_react_native!(
 // project.ext.react = [enableHermes: false]
 ```
 
-### 0.74 — Suporte ao campo `exports` do `package.json` no Metro ativado por padrao
+### 0.74 — Suporte ao campo `exports` do `package.json` no Metro ativado por padrão
 
-**O que mudou:** O Metro agora respeita o campo `exports` no `package.json`, o que muda a resolucao de modulos para alguns pacotes.
+**O que mudou:** O Metro agora respeita o campo `exports` no `package.json`, o que muda a resolução de módulos para alguns pacotes.
 
-**Impacto:** Bibliotecas que usam diferentes `exports` para Node vs browser vs RN podem agora resolver para um entry point diferente do anterior. Visivelmente, algumas bibliotecas que funcionavam antes passam a lancar `Module not found` ou importam uma versao errada de um arquivo.
+**Impacto:** Bibliotecas que usam diferentes `exports` para Node vs browser vs RN podem agora resolver para um entry point diferente do anterior. Visivelmente, algumas bibliotecas que funcionavam antes passam a lançar `Module not found` ou importam uma versão errada de um arquivo.
 
-**Correcao:**
+**Correção:**
 
 ```javascript
 // metro.config.js — se uma biblioteca quebrar, adicione-a a unstable_enablePackageExports
 const { getDefaultConfig } = require('@react-native/metro-config');
 
 const config = getDefaultConfig(__dirname);
-config.resolver.unstable_enablePackageExports = true;  // agora padrao
-// Se uma biblioteca quebrar, adicione-a a blocklist:
+config.resolver.unstable_enablePackageExports = true;  // agora padrão
+// Se uma biblioteca quebrar, adicione-a à blocklist:
 config.resolver.unstable_packageExportsResolveMode = 'browser';
 
 module.exports = config;
@@ -106,19 +106,19 @@ module.exports = config;
 
 ### 0.74 — `minSdkVersion` elevado para 23
 
-Dispositivos abaixo do Android 6.0 (API 23) nao sao mais suportados. Isso equivale a aproximadamente 0,5% dos dispositivos em 2025 — verifique seus dados de analytics.
+Dispositivos abaixo do Android 6.0 (API 23) não são mais suportados. Isso equivale a aproximadamente 0,5% dos dispositivos em 2025 — verifique seus dados de analytics.
 
-### 0.75 — Swift AppDelegate obrigatorio (iOS)
+### 0.75 — Swift AppDelegate obrigatório (iOS)
 
-**O que mudou:** O template passou a usar Swift (`AppDelegate.swift`) como linguagem principal do AppDelegate. O AppDelegate em Objective-C (`AppDelegate.mm`) ainda funciona, mas nao e mais o padrao.
+**O que mudou:** O template passou a usar Swift (`AppDelegate.swift`) como linguagem principal do AppDelegate. O AppDelegate em Objective-C (`AppDelegate.mm`) ainda funciona, mas não é mais o padrão.
 
-**Impacto:** Nenhuma mudanca de codigo necessaria se voce permanecer no `.mm`. Mas se voce tem uma mistura de Swift e ObjC++ no seu projeto iOS, o bridging header pode precisar de atualizacao ao adicionar novos codigos nativos.
+**Impacto:** Nenhuma mudança de código necessária se você permanecer no `.mm`. Mas se você tem uma mistura de Swift e ObjC++ no seu projeto iOS, o bridging header pode precisar de atualização ao adicionar novos códigos nativos.
 
-### 0.76 — Nova Arquitetura ativada por padrao
+### 0.76 — Nova Arquitetura ativada por padrão
 
-**O que mudou:** `newArchEnabled=true` esta definido no `gradle.properties` e no Podfile por padrao. A bridge (`RCTBridge`) e substituida pelo `ReactHost` (Android) e `RCTHost` (iOS).
+**O que mudou:** `newArchEnabled=true` está definido no `gradle.properties` e no Podfile por padrão. A bridge (`RCTBridge`) é substituída pelo `ReactHost` (Android) e `RCTHost` (iOS).
 
-**Impacto:** Qualquer biblioteca que nao migrou para TurboModules/Fabric usara a camada de interop (na maioria dos casos — transparente) ou quebrara se tiver integracoes nativas profundas.
+**Impacto:** Qualquer biblioteca que não migrou para TurboModules/Fabric usará a camada de interop (na maioria dos casos — transparente) ou quebrará se tiver integrações nativas profundas.
 
 **Verifique suas bibliotecas antes de fazer o upgrade:**
 
@@ -126,7 +126,7 @@ Dispositivos abaixo do Android 6.0 (API 23) nao sao mais suportados. Isso equiva
 npx react-native-check-new-archi
 ```
 
-Exemplo de saida:
+Exemplo de saída:
 
 ```
 Checking 47 packages...
@@ -148,9 +148,9 @@ newArchEnabled=false
 ENV['RCT_NEW_ARCH_ENABLED'] = '0'
 ```
 
-### 0.76 — ReactActivity expoe ReactHost (Android)
+### 0.76 — ReactActivity expõe ReactHost (Android)
 
-`getReactHost()` agora e um metodo publico em `ReactActivity`. Se voce estava acessando o host via reflection ou subclassificando `ReactHostDelegate`, migre para a API publica.
+`getReactHost()` agora é um método público em `ReactActivity`. Se você estava acessando o host via reflection ou subclassificando `ReactHostDelegate`, migre para a API pública.
 
 ```kotlin
 // Antes (workaround)
@@ -162,42 +162,42 @@ val host = reactActivity.getReactHost()
 
 ### 0.76 — Edge-to-Edge no Android (targetSdk 35)
 
-Abordado em detalhe no topico de [Configuracoes Nativas](./native-settings), mas a breaking change principal aqui e:
+Abordado em detalhe no tópico de [Configurações Nativas](./native-settings), mas a breaking change principal aqui é:
 
 ```
 StatusBar.setBackgroundColor() → no-op no Android 15
 StatusBar.translucent prop → no-op no Android 15
 ```
 
-Apps que definem `targetSdkVersion = 35` e usam qualquer um desses irao parar de funcionar silenciosamente.
+Apps que definem `targetSdkVersion = 35` e usam qualquer um desses irão parar de funcionar silenciosamente.
 
 ---
 
 ## Matriz de Impacto de Breaking Changes
 
-Para cada mudanca, avalie o impacto no seu codebase antes de aplicar:
+Para cada mudança, avalie o impacto no seu codebase antes de aplicar:
 
-| Mudanca | Padrao de Codigo Afetado | Esforco de Migracao |
+| Mudança | Padrão de Código Afetado | Esforço de Migração |
 |---|---|---|
 | Somente Hermes (0.73) | `enableHermes: false` nos arquivos de build | Baixo — deletar uma linha |
-| Metro `exports` (0.74) | Bibliotecas com `exports` no `package.json` | Baixo a Medio — geralmente uma flag de config |
-| `minSdkVersion 24` (0.76) | Qualquer codigo usando APIs exclusivas do Android API 23 | Baixo se nao usado; Medio se voce tem fallbacks expliciticos para API 23 |
-| Nova Arquitetura por padrao (0.76) | Modulos nativos customizados sem spec de TurboModule | Alto — requer migracao para TurboModule |
-| RCTAppDelegate (0.76 iOS) | Configuracao customizada do `AppDelegate` | Medio — reescrever metodo de inicializacao, testar lifecycle |
-| Edge-to-edge (0.76 + targetSdk 35) | `StatusBar.setBackgroundColor`, padding fixo | Medio — auditoria tela a tela necessaria |
-| Modo strict do Metro (continuo) | Tipos re-exportados, dependencias circulares | Baixo por arquivo, medio no agregado |
+| Metro `exports` (0.74) | Bibliotecas com `exports` no `package.json` | Baixo a Médio — geralmente uma flag de config |
+| `minSdkVersion 24` (0.76) | Qualquer código usando APIs exclusivas do Android API 23 | Baixo se não usado; Médio se você tem fallbacks explícitos para API 23 |
+| Nova Arquitetura por padrão (0.76) | Módulos nativos customizados sem spec de TurboModule | Alto — requer migração para TurboModule |
+| RCTAppDelegate (0.76 iOS) | Configuração customizada do `AppDelegate` | Médio — reescrever método de inicialização, testar lifecycle |
+| Edge-to-edge (0.76 + targetSdk 35) | `StatusBar.setBackgroundColor`, padding fixo | Médio — auditoria tela a tela necessária |
+| Modo strict do Metro (contínuo) | Tipos re-exportados, dependências circulares | Baixo por arquivo, médio no agregado |
 
 ---
 
-## Automatizando a Analise: `@rnx-kit/align-deps`
+## Automatizando a Análise: `@rnx-kit/align-deps`
 
-Apos atualizar a versao do RN, execute o alinhador de dependencias da Microsoft para identificar versoes de pacotes incompativeis em toda a sua arvore de dependencias:
+Após atualizar a versão do RN, execute o alinhador de dependências da Microsoft para identificar versões de pacotes incompatíveis em toda a sua árvore de dependências:
 
 ```bash
 npx @rnx-kit/align-deps --requirements react-native@0.76 --write
 ```
 
-Saida:
+Saída:
 
 ```
 ✗ react-native-reanimated@2.17.0
@@ -211,20 +211,20 @@ Saida:
 ✓ react-native-screens@3.34.0 — OK
 ```
 
-`--write` atualiza seu `package.json` automaticamente. Revise as mudancas antes de commitar.
+`--write` atualiza seu `package.json` automaticamente. Revise as mudanças antes de commitar.
 
 ---
 
-## Verificando o Suporte a Nova Arquitetura de uma Biblioteca Especifica
+## Verificando o Suporte à Nova Arquitetura de uma Biblioteca Específica
 
 ```bash
-# Verificacao interativa
+# Verificação interativa
 open https://reactnative.directory
 
-# Verificacao via CLI (todas as dependencias do seu package.json)
+# Verificação via CLI (todas as dependências do seu package.json)
 npx react-native-check-new-archi
 
-# Verificacao em lote via web
+# Verificação em lote via web
 open https://react-native-package-checker.vercel.app
 ```
 
@@ -234,17 +234,17 @@ O Directory tem um filtro: `Libraries > New Architecture > Supported`. Use-o ant
 
 ## Materiais de Estudo
 
-| Recurso | Descricao |
+| Recurso | Descrição |
 |---|---|
-| [CHANGELOG.md — facebook/react-native](https://github.com/facebook/react-native/blob/main/CHANGELOG.md) | Changelog autoritativo com Breaking Changes por versao |
-| [reactwg/react-native-releases](https://github.com/reactwg/react-native-releases) | Grupo de trabalho — discussoes de RC, problemas conhecidos pre-release |
-| [GitHub Releases](https://github.com/facebook/react-native/releases) | Notas de release por versao |
+| [CHANGELOG.md — facebook/react-native](https://github.com/facebook/react-native/blob/main/CHANGELOG.md) | Changelog autoritativo com Breaking Changes por versão |
+| [reactwg/react-native-releases](https://github.com/reactwg/react-native-releases) | Grupo de trabalho — discussões de RC, problemas conhecidos pré-release |
+| [GitHub Releases](https://github.com/facebook/react-native/releases) | Notas de release por versão |
 | [New Architecture is Here (0.76)](https://reactnative.dev/blog/2024/10/23/the-new-architecture-is-here) | Post do blog da Meta: cada breaking change na 0.76 explicada |
 | [react-native-check-new-archi](https://github.com/arochedy/react-native-check-new-archi) | CLI para verificar compatibilidade com Nova Arquitetura no package.json |
-| [@rnx-kit/align-deps](https://github.com/microsoft/rnx-kit/tree/main/packages/align-deps) | Alinha todas as peer dependencies apos um bump de versao |
+| [@rnx-kit/align-deps](https://github.com/microsoft/rnx-kit/tree/main/packages/align-deps) | Alinha todas as peer dependencies após um bump de versão |
 | [React Native Directory](https://reactnative.directory/) | Registro de bibliotecas com filtro de Nova Arquitetura |
-| [Suporte de bibliotecas — reactwg #167](https://github.com/reactwg/react-native-new-architecture/discussions/167) | Tracker de status de 2024 da adocao de bibliotecas para a Nova Arquitetura |
+| [Suporte de bibliotecas — reactwg #167](https://github.com/reactwg/react-native-new-architecture/discussions/167) | Tracker de status de 2024 da adoção de bibliotecas para a Nova Arquitetura |
 
 ---
 
-Proximo → [Roadmap e Caminho de Upgrade Recomendado](./upgrade-roadmap)
+Próximo → [Roadmap e Caminho de Upgrade Recomendado](./upgrade-roadmap)

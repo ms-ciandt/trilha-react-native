@@ -8,37 +8,37 @@ title: "Performance — Profiling & Renders"
   Your browser does not support the video tag.
 </video>
 
-## 3. Profiling e Deteccao de Gargalos
+## 3. Profiling e Detecção de Gargalos
 
-### O ciclo de medicao
+### O ciclo de medição
 
-Nao otimize o que voce nao mediu. O ciclo e:
+Não otimize o que você não mediu. O ciclo é:
 
 ```
-1. Estabeleca um cenario reproduzivel
-2. Meca (escolha UMA metrica)
+1. Estabeleça um cenário reproduzível
+2. Meça (escolha UMA métrica)
 3. Identifique o componente mais lento
 4. Mude UMA coisa
-5. Meca novamente
+5. Meça novamente
 6. Aceite ou reverta
 ```
 
-### Matriz de selecao de ferramentas
+### Matriz de seleção de ferramentas
 
-| O que voce suspeita | Ferramenta | Saida |
+| O que você suspeita | Ferramenta | Saida |
 |---|---|---|
-| Inicializacao lenta | Perfetto (Android), Instruments App Launch (iOS) | Timeline de todas as threads |
-| Renderizacao JS muito lenta | React DevTools Profiler | Tempo de renderizacao por componente |
+| Inicialização lenta | Perfetto (Android), Instruments App Launch (iOS) | Timeline de todas as threads |
+| Renderização JS muito lenta | React DevTools Profiler | Tempo de renderização por componente |
 | Hotspot de CPU JS | Hermes CPU sampling profiler | Flame chart |
-| Memoria excessiva | Hermes heap snapshot | Tamanho retido por construtor |
+| Memória excessiva | Hermes heap snapshot | Tamanho retido por construtor |
 | Frames descartados durante scroll | Pista `Choreographer` no Perfetto | Timing de frames |
-| Criacao lenta de views nativas | `Fabric::commit` no Perfetto | Tempo de commit da Shadow Tree |
-| Gargalo de rede | Plugin Network do Flipper | Waterfall de requisicoes/respostas |
-| Gargalo em chamadas JS <-> nativo | Categoria `JSI` no Perfetto | Duracoes de chamadas de HostFunction |
+| Criação lenta de views nativas | `Fabric::commit` no Perfetto | Tempo de commit da Shadow Tree |
+| Gargalo de rede | Plugin Network do Flipper | Waterfall de requisições/respostas |
+| Gargalo em chamadas JS <-> nativo | Categoria `JSI` no Perfetto | Durações de chamadas de HostFunction |
 
-### React DevTools Profiler — encontrando causas de re-renderizacao
+### React DevTools Profiler — encontrando causas de re-renderização
 
-O flame chart do Profiler mostra quais componentes renderizaram em cada commit. Mas a informacao de **"por que este componente renderizou?"** e igualmente importante:
+O flame chart do Profiler mostra quais componentes renderizaram em cada commit. Mas a informação de **"por que este componente renderizou?"** é igualmente importante:
 
 ```bash
 # Instala o React DevTools standalone
@@ -46,12 +46,12 @@ npm install -g react-devtools@latest
 react-devtools
 ```
 
-Na aba Profiler, habilite "Record why each component rendered" (o icone de engrenagem). Apos gravar, clique em qualquer barra de componente — o painel mostra exatamente qual prop ou state mudou.
+Na aba Profiler, habilite "Record why each component rendered" (o icone de engrenagem). Após gravar, clique em qualquer barra de componente — o painel mostra exatamente qual prop ou state mudou.
 
-Problemas comuns e suas solucoes:
+Problemas comuns e suas soluções:
 
 ```typescript
-// PROBLEMA: object literal cria nova referencia a cada renderizacao
+// PROBLEMA: object literal cria nova referência a cada renderização
 <MyList config={{ pageSize: 20, sorted: true }} />
 
 // SOLUCAO: useMemo ou mover a constante para fora do componente
@@ -60,7 +60,7 @@ const LIST_CONFIG = { pageSize: 20, sorted: true };
 ```
 
 ```typescript
-// PROBLEMA: arrow function inline cria nova referencia
+// PROBLEMA: arrow function inline cria nova referência
 <Button onPress={() => handlePress(item.id)} />
 
 // SOLUCAO: useCallback
@@ -72,7 +72,7 @@ const handlePressItem = useCallback(
 ```
 
 ```typescript
-// PROBLEMA: valor de contexto e um novo objeto a cada renderizacao
+// PROBLEMA: valor de contexto e um novo objeto a cada renderização
 const ThemeContext = createContext({ color: 'blue', fontSize: 16 });
 
 function ThemeProvider({ children }) {
@@ -102,21 +102,21 @@ function ThemeProvider({ children }) {
 ```typescript
 import { FlashList } from '@shopify/flash-list';
 
-// Meca antes de trocar — obtenha o FPS de referencia no Perfetto
+// Meça antes de trocar — obtenha o FPS de referência no Perfetto
 // Depois troque:
 <FlashList
   data={items}
   keyExtractor={(item) => item.id}
-  estimatedItemSize={84}           // critico: deve corresponder a altura media renderizada
+  estimatedItemSize={84}           // crítico: deve corresponder à altura média renderizada
   renderItem={({ item }) => <OrderRow order={item} />}
-  // Evite callback onLayout — ele re-mede e causa renderizacoes extras
+  // Evite callback onLayout — ele re-mede e causa renderizações extras
   overrideItemLayout={(layout, item) => {
     layout.size = item.isExpanded ? 168 : 84;
   }}
 />
 ```
 
-`estimatedItemSize` e a prop mais importante — se estiver incorreta, o FlashList calcula mal a posicao de scroll e causa saltos. Meca a altura real do seu item:
+`estimatedItemSize` e a prop mais importante — se estiver incorreta, o FlashList calcula mal a posição de scroll e causa saltos. Meça a altura real do seu item:
 
 ```typescript
 // Mede a altura real do item em desenvolvimento
@@ -133,10 +133,10 @@ function OrderRow({ order }: { order: Order }) {
 
 ### Evitando a armadilha de performance do `useSelector`
 
-No Redux Toolkit, toda chamada a `useSelector` e re-executada a cada dispatch do store. Se um selector e custoso ou retorna uma nova referencia, o componente re-renderiza desnecessariamente:
+No Redux Toolkit, toda chamada a `useSelector` é re-executada a cada dispatch do store. Se um selector é custoso ou retorna uma nova referência, o componente re-renderiza desnecessariamente:
 
 ```typescript
-// RUIM — nova referencia de array a cada dispatch
+// RUIM — nova referência de array a cada dispatch
 const expensiveItems = useSelector((state) =>
   state.orders.items.filter(o => o.status === 'pending')
 );
@@ -167,18 +167,18 @@ Plugins do Flipper uteis para performance:
 
 | Plugin | O que mostra |
 |---|---|
-| React DevTools | Arvore de componentes, props, state, profiler |
-| Network | Todas as requisicoes fetch/axios com timing |
-| Databases | Conteudo de SQLite / MMKV / AsyncStorage |
+| React DevTools | Árvore de componentes, props, state, profiler |
+| Network | Todas as requisições fetch/axios com timing |
+| Databases | Conteúdo de SQLite / MMKV / AsyncStorage |
 | Layout | Hierarquia de views, limites medidos |
-| Crash Reporter | Simbolizacao de crashes nativos |
+| Crash Reporter | Simbolização de crashes nativos |
 
-### Systrace — analise no nivel de frame
+### Systrace — analise no nível de frame
 
 Para investigar frames descartados, o Systrace fornece a verdade absoluta:
 
 ```bash
-# Captura durante uma interacao de scroll
+# Captura durante uma interação de scroll
 python3 systrace.py -t 10 -o scroll.html \
   gfx view dalvik react_native_new_arch input
 
@@ -190,22 +190,22 @@ python3 systrace.py -t 10 -o scroll.html \
 
 ---
 
-## 4. Re-renderizacoes e Caching
+## 4. Re-renderizações e Caching
 
-### O contrato de renderizacao
+### O contrato de renderização
 
 O React re-renderiza um componente quando:
-1. Seu proprio state muda (`useState`, `useReducer`)
-2. Seu componente pai re-renderiza e ele nao esta envolto em `React.memo`
+1. Seu próprio state muda (`useState`, `useReducer`)
+2. Seu componente pai re-renderiza e ele não está envolto em `React.memo`
 3. Um contexto que ele consome muda
-4. Um hook que ele usa retorna uma nova referencia
+4. Um hook que ele usa retorna uma nova referência
 
-Entender isso com precisao permite projetar componentes que optam por sair de renderizacoes desnecessarias.
+Entender isso com precisão permite projetar componentes que optam por sair de renderizações desnecessárias.
 
 ### `React.memo` — uso correto e incorreto
 
 ```typescript
-// CORRETO — componente puro com props estaveis
+// CORRETO — componente puro com props estáveis
 const ProductCard = React.memo(function ProductCard({ product, onPress }: Props) {
   return (
     <Pressable onPress={() => onPress(product.id)}>
@@ -213,16 +213,16 @@ const ProductCard = React.memo(function ProductCard({ product, onPress }: Props)
     </Pressable>
   );
 }, (prev, next) => {
-  // Comparador customizado — re-renderiza apenas quando o preco muda
+  // Comparador customizado — re-renderiza apenas quando o preço muda
   return prev.product.price === next.product.price
       && prev.product.name === next.product.name;
 });
 
-// INCORRETO — memo e inutil aqui porque onPress e uma funcao inline
-// Pai re-renderiza → nova referencia de onPress → comparacao do memo falha → re-renderiza mesmo assim
+// INCORRETO — memo e inutil aqui porque onPress e uma função inline
+// Pai re-renderiza → nova referência de onPress → comparação do memo falha → re-renderiza mesmo assim
 <ProductCard product={p} onPress={(id) => handlePress(id)} />
 
-// CORRETO — referencia estavel
+// CORRETO — referência estavel
 const handlePress = useCallback((id: string) => {
   navigate('Product', { id });
 }, [navigate]);
@@ -231,28 +231,28 @@ const handlePress = useCallback((id: string) => {
 
 ### `useMemo` — quando compensa
 
-`useMemo` tem um custo: a comparacao de dependencias a cada renderizacao. So compensa quando a computacao memoizada e significativamente mais cara que a comparacao.
+`useMemo` tem um custo: a comparação de dependências a cada renderização. Só compensa quando a computação memoizada é significativamente mais cara que a comparação.
 
 ```typescript
-// NAO vale memoizar — adicao e mais barata que comparacao + consulta ao cache
+// NAO vale memoizar — adição e mais barata que comparação + consulta ao cache
 const total = useMemo(() => a + b, [a, b]);  // pior que: const total = a + b;
 
 // VALE memoizar — ordenar 10000 itens e custoso
 const sortedItems = useMemo(
   () => [...rawItems].sort(priceComparator),
-  [rawItems]  // re-ordena apenas quando a referencia de rawItems muda
+  [rawItems]  // re-ordena apenas quando a referência de rawItems muda
 );
 
-// VALE memoizar — formatacao custosa
+// VALE memoizar — formatação custosa
 const formattedData = useMemo(
-  () => rawData.map(transformToChartPoint),  // transformacao complexa
+  () => rawData.map(transformToChartPoint),  // transformação complexa
   [rawData]
 );
 ```
 
-### Zustand — subscricoes granulares
+### Zustand — subscrições granulares
 
-O Zustand e mais performatico que o Redux para a maioria dos apps React Native porque as subscricoes sao por seletor, nao por dispatch:
+O Zustand é mais performático que o Redux para a maioria dos apps React Native porque as subscrições são por seletor, não por dispatch:
 
 ```typescript
 import { create } from 'zustand';
@@ -277,7 +277,7 @@ const useCartStore = create<CartStore>()(
 );
 
 // Este componente APENAS re-renderiza quando totalPrice muda
-// Ele NAO re-renderiza quando um novo item e adicionado sem mudar o preco
+// Ele NAO re-renderiza quando um novo item e adicionado sem mudar o preço
 function CartBadge() {
   const totalPrice = useCartStore((state) => state.totalPrice);
   return <Text>{totalPrice.toFixed(2)}</Text>;
@@ -292,27 +292,27 @@ function CartIcon() {
 
 ### Caching de imagens — FastImage vs Expo Image
 
-Imagens sem cache sao baixadas e decodificadas novamente a cada renderizacao. Tanto `react-native-fast-image` quanto `expo-image` oferecem cache em disco e em memoria:
+Imagens sem cache são baixadas e decodificadas novamente a cada renderização. Tanto `react-native-fast-image` quanto `expo-image` oferecem cache em disco e em memória:
 
 ```typescript
 import { Image } from 'expo-image';
 
-// Expo Image — cache em disco por padrao, placeholder com blurhash
+// Expo Image — cache em disco por padrão, placeholder com blurhash
 <Image
   source={{ uri: 'https://cdn.example.com/product/123.jpg' }}
   placeholder={{ blurhash: 'L6PZfSi_.AyE_3t7t7R**0o#DgR4' }}  // exibido enquanto carrega
   contentFit="cover"
   cachePolicy="disk"   // 'none' | 'memory' | 'disk' | 'memory-disk'
-  transition={200}     // duracao do fade-in em ms
+  transition={200}     // duração do fade-in em ms
   style={{ width: 200, height: 200 }}
 />
 ```
 
-Para conteudo que muda raramente (imagens de produto, avatares), defina `cachePolicy="disk"` e use uma URL endereçada por conteudo (a propria URL serve como chave de cache). Quando o servidor atualizar a imagem, mude a URL.
+Para conteúdo que muda raramente (imagens de produto, avatares), defina `cachePolicy="disk"` e use uma URL endereçada por conteúdo (a própria URL serve como chave de cache). Quando o servidor atualizar a imagem, mude a URL.
 
 ### Caching de queries — TanStack Query
 
-Respostas de rede devem ser armazenadas em cache e nunca buscadas novamente enquanto estiverem frescas. O TanStack Query (React Query) gerencia isso com um modelo stale-while-revalidate:
+Respostas de rede devem ser armazenadas em cache e nunca buscadas novamente enquanto estiverem frescas. O TanStack Query (React Query) gerência isso com um modelo stale-while-revalidate:
 
 ```typescript
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -321,13 +321,13 @@ function useProduct(id: string) {
   return useQuery({
     queryKey: ['product', id],
     queryFn: () => api.getProduct(id),
-    staleTime: 5 * 60 * 1000,     // 5 minutos: nao busca novamente se os dados estao frescos
+    staleTime: 5 * 60 * 1000,     // 5 minutos: não busca novamente se os dados estão frescos
     gcTime: 30 * 60 * 1000,       // 30 minutos: mante no cache mesmo sem subscriber
-    refetchOnWindowFocus: false,   // nao busca novamente quando o app vai para primeiro plano
+    refetchOnWindowFocus: false,   // não busca novamente quando o app vai para primeiro plano
   });
 }
 
-// Pre-busca ao passar/se aproximar — dados prontos antes da navegacao
+// Pre-busca ao passar/se aproximar — dados prontos antes da navegação
 const queryClient = useQueryClient();
 function prefetchProduct(id: string) {
   queryClient.prefetchQuery({
@@ -338,48 +338,48 @@ function prefetchProduct(id: string) {
 }
 ```
 
-Com a configuracao correta de `staleTime`, navegar de volta para uma tela ja visitada retorna dados instantaneamente do cache — sem spinner de carregamento.
+Com a configuração correta de `staleTime`, navegar de volta para uma tela já visitada retorna dados instantaneamente do cache — sem spinner de carregamento.
 
 ---
 
 ## Materiais de Estudo
 
-### Documentacao Oficial
+### Documentação Oficial
 
-| Recurso | Descricao |
+| Recurso | Descrição |
 |---|---|
 | [Performance Overview](https://reactnative.dev/docs/performance) | Guia oficial de performance do RN — frame rate JS, frame rate nativo |
 | [Hermes guide](https://reactnative.dev/docs/hermes) | Habilitando o Hermes, profiling, config de release |
-| [React DevTools Profiler](https://reactjs.org/blog/2018/09/10/introducing-the-react-profiler.html) | Introducao original do Profiler — os conceitos se aplicam diretamente ao RN |
-| [FlashList documentation](https://shopify.github.io/flash-list/) | Lista virtualizada da Shopify — guia de migracao e benchmarks de performance |
-| [Reanimated worklets](https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/glossary/#worklet) | Referencia oficial de worklets |
+| [React DevTools Profiler](https://reactjs.org/blog/2018/09/10/introducing-the-react-profiler.html) | Introdução original do Profiler — os conceitos se aplicam diretamente ao RN |
+| [FlashList documentation](https://shopify.github.io/flash-list/) | Lista virtualizada da Shopify — guia de migração e benchmarks de performance |
+| [Reanimated worklets](https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/glossary/#worklet) | Referência oficial de worklets |
 
 ### Aprofundamentos
 
-| Recurso | Autor | O que voce vai aprender |
+| Recurso | Autor | O que você vai aprender |
 |---|---|---|
-| [React Native Performance — the ultimate guide](https://www.callstack.com/blog/the-ultimate-guide-to-react-native-optimization) | Callstack | Mergulho profundo em 12 secoes: startup, memoria, listas, imagens, animacoes |
-| [React Native startup time](https://blog.swmansion.com/react-native-startup-time-how-to-measure-and-how-to-improve-it-e3fd7c00d695) | Software Mansion | Instrumentacao, metodologia de benchmark, analise fase a fase |
+| [React Native Performance — the ultimate guide](https://www.callstack.com/blog/the-ultimate-guide-to-react-native-optimization) | Callstack | Mergulho profundo em 12 seções: startup, memória, listas, imagens, animações |
+| [React Native startup time](https://blog.swmansion.com/react-native-startup-time-how-to-measure-and-how-to-improve-it-e3fd7c00d695) | Software Mansion | Instrumentação, metodologia de benchmark, analise fase a fase |
 | [Hermes GC explained](https://hermesengine.dev/docs/gc/) | Hermes team | GC geracional, layout do heap, parametros de ajuste |
-| [Profiling RN apps — Systrace](https://reactnative.dev/docs/profiling) | RN Docs | Configuracao do Systrace, leitura da saida, padroes comuns |
+| [Profiling RN apps — Systrace](https://reactnative.dev/docs/profiling) | RN Docs | Configuração do Systrace, leitura da saida, padrões comuns |
 | [Re-renders — a visual guide](https://www.developerway.com/posts/react-re-renders-guide) | Developer Way | Context, memo, useCallback — ilustrado com React |
 
 ### Video Tutoriais
 
-| Recurso | Duracao | O que voce vai aprender |
+| Recurso | Duração | O que você vai aprender |
 |---|---|---|
-| [React Native Performance Workshop](https://www.youtube.com/watch?v=83ffAY-CmL4) | 55 min | Sessao de profiling ao vivo — startup, listas, animacoes |
+| [React Native Performance Workshop](https://www.youtube.com/watch?v=83ffAY-CmL4) | 55 min | Sessão de profiling ao vivo — startup, listas, animações |
 | [Hermes internals](https://www.youtube.com/watch?v=oSHBQheFm48) | 22 min | Bytecode, GC, ferramentas de profiling |
 | [FlashList: 10x better lists](https://www.youtube.com/watch?v=ZkRWHxZuVJw) | 20 min | Time da Shopify explica o pool de reciclagem e benchmarks |
-| [Reanimated 3 worklets](https://www.youtube.com/watch?v=I-WZMBsgWJw) | 30 min | Compilacao de worklets, thread de UI, SharedValue |
-| [React Conf 2024 — RN performance](https://www.youtube.com/watch?v=Ck0N9FsKAhI) | 30 min | Renderizacao concorrente, Suspense e performance no 0.76 |
+| [Reanimated 3 worklets](https://www.youtube.com/watch?v=I-WZMBsgWJw) | 30 min | Compilação de worklets, thread de UI, SharedValue |
+| [React Conf 2024 — RN performance](https://www.youtube.com/watch?v=Ck0N9FsKAhI) | 30 min | Renderização concorrente, Suspense e performance no 0.76 |
 
 ### Interativo
 
 | Recurso | O que fazer |
 |---|---|
 | [Perfetto UI](https://ui.perfetto.dev/) | Carregue um arquivo HTML do Systrace — explore flame charts online |
-| [Expo Snack — Reanimated worklet](https://snack.expo.dev/@reanimated/worklet-demo) | Execute uma animacao com worklet e observe 60 fps mesmo com JS bloqueado |
+| [Expo Snack — Reanimated worklet](https://snack.expo.dev/@reanimated/worklet-demo) | Execute uma animação com worklet e observe 60 fps mesmo com JS bloqueado |
 | [Yoga playground](https://yogalayout.dev/playground) | Depure performance de layout — veja quais propriedades flexbox disparam re-layout |
 | [TanStack Query DevTools](https://tanstack.com/query/latest/docs/framework/react/devtools) | Inspecione o cache de queries, stale times, re-busca em segundo plano |
 

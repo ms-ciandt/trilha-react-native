@@ -14,7 +14,7 @@ title: "Bundle — Packaging & Distribution"
 
 ### Metadados do bundle
 
-Incorporar metadados ao bundle permite rastrear exatamente qual codigo esta rodando em producao — critico para deployments OTA onde as versoes JS e nativa podem divergir.
+Incorporar metadados ao bundle permite rastrear exatamente qual código está rodando em produção — crítico para deployments OTA onde as versões JS e nativa podem divergir.
 
 #### Injetando metadados no momento do bundle
 
@@ -23,7 +23,7 @@ Incorporar metadados ao bundle permite rastrear exatamente qual codigo esta roda
 const { buildBundleFromModules } = require('@react-native/metro-config');
 
 function buildCustomSerializer() {
-  // Retorna undefined para usar o serializador padrao
+  // Retorna undefined para usar o serializador padrão
   if (!process.env.CI) return undefined;
 
   return async (entryPoint, preModules, graph, options) => {
@@ -35,12 +35,12 @@ function buildCustomSerializer() {
       platform: options.platform,
     };
 
-    // Saida do serializador padrao
+    // Saida do serializador padrão
     const defaultBundle = await buildBundleFromModules(
       entryPoint, preModules, graph, options
     );
 
-    // Prepende metadados como uma expressao JS auto-executavel
+    // Prepende metadados como uma expressão JS auto-executavel
     const metadataHeader = `
 var __BUNDLE_METADATA__ = ${JSON.stringify(metadata)};
 // --- bundle start ---
@@ -54,7 +54,7 @@ var __BUNDLE_METADATA__ = ${JSON.stringify(metadata)};
 }
 ```
 
-Lendo metadados em tempo de execucao:
+Lendo metadados em tempo de execução:
 
 ```typescript
 // src/utils/bundleMetadata.ts
@@ -73,7 +73,7 @@ export const bundleMetadata = typeof __BUNDLE_METADATA__ !== 'undefined'
 
 #### Anexando metadados como um arquivo JSON sidecar separado
 
-Para sistemas de atualizacao OTA que verificam a identidade do bundle:
+Para sistemas de atualização OTA que verificam a identidade do bundle:
 
 ```bash
 # Script de CI: gera bundle + sidecar
@@ -98,13 +98,13 @@ cat > dist/bundle.meta.json << EOF
 EOF
 ```
 
-O campo `minNativeVersion` permite que o cliente de atualizacao OTA rejeite bundles que exigem uma atualizacao de binario nativo que o usuario ainda nao instalou.
+O campo `minNativeVersion` permite que o cliente de atualização OTA rejeite bundles que exigem uma atualização de binário nativo que o usuário ainda não instalou.
 
-### Bundles de hot-patch (atualizacoes OTA)
+### Bundles de hot-patch (atualizações OTA)
 
-As atualizacoes OTA funcionam substituindo o bundle JS no dispositivo sem passar pela App Store. O React Native suporta isso nativamente — o bundle JS e apenas um arquivo e pode ser atualizado em tempo de execucao.
+As atualizações OTA funcionam substituindo o bundle JS no dispositivo sem passar pela App Store. O React Native suporta isso nativamente — o bundle JS é apenas um arquivo e pode ser atualizado em tempo de execução.
 
-**A restricao legal:** As diretrizes de revisao da App Store exigem que as atualizacoes OTA nao alterem o proposito fundamental do app nem adicionem funcionalidades que nao foram revisadas. Correccoes de bugs que preservam o comportamento sao universalmente aceitas.
+**A restrição legal:** As diretrizes de revisão da App Store exigem que as atualizações OTA não alterem o propósito fundamental do app nem adicionem funcionalidades que não foram revisadas. Correções de bugs que preservam o comportamento são universalmente aceitas.
 
 #### Carregador OTA customizado
 
@@ -171,7 +171,7 @@ function isNativeVersionCompatible(minVersion: string): boolean {
 }
 ```
 
-Carregando o bundle OTA na inicializacao:
+Carregando o bundle OTA na inicialização:
 
 ```kotlin
 // Android — override de ReactNativeHost
@@ -199,9 +199,9 @@ func sourceURL(for bridge: RCTBridge!) -> URL! {
 
 ---
 
-## 4. Publicacao e Consumo via Artifactory
+## 4. Publicação e Consumo via Artifactory
 
-Publicar uma biblioteca React Native ou SDK interno em um registro npm privado (JFrog Artifactory, GitHub Packages, Nexus) segue um padrao consistente independentemente do fornecedor do registro.
+Publicar uma biblioteca React Native ou SDK interno em um registro npm privado (JFrog Artifactory, GitHub Packages, Nexus) segue um padrão consistente independentemente do fornecedor do registro.
 
 ### Publicando no Artifactory
 
@@ -240,7 +240,7 @@ react-native-my-sdk/
 ├── android/
 │   ├── build.gradle
 │   └── src/main/java/com/mycompany/mySdk/MySDKModule.kt
-├── codegen/                ← saida do Codegen (gerado, nao commitado)
+├── codegen/                ← saida do Codegen (gerado, não commitado)
 └── .npmignore              ← exclui fonte, inclui apenas dist
 ```
 
@@ -275,7 +275,7 @@ react-native-my-sdk/
 }
 ```
 
-#### 3. Build e publicacao
+#### 3. Build e publicação
 
 ```bash
 # Gera o distributavel JS (usa bob — React Native Builder Bob)
@@ -284,11 +284,11 @@ yarn build
 # Verifica o que sera publicado
 npm pack --dry-run
 
-# Publica no Artifactory
+# Pública no Artifactory
 npm publish --registry=https://artifactory.mycompany.com/artifactory/api/npm/npm-local/
 ```
 
-#### 4. Automatizando a publicacao em CI
+#### 4. Automatizando a publicação em CI
 
 ```yaml
 # .github/workflows/publish-sdk.yml
@@ -297,7 +297,7 @@ name: Publish SDK
 on:
   push:
     tags:
-      - 'v*'           # dispara apenas em tags de versao: v1.2.3
+      - 'v*'           # dispara apenas em tags de versão: v1.2.3
 
 jobs:
   publish:
@@ -331,7 +331,7 @@ jobs:
 # .npmrc do app
 @mycompany:registry=https://artifactory.mycompany.com/artifactory/api/npm/npm-local/
 
-# Instalacao
+# Instalação
 npm install @mycompany/react-native-my-sdk
 
 # Pod install para iOS
@@ -364,28 +364,28 @@ Pod::Spec.new do |s|
 end
 ```
 
-### Estrategia de versionamento
+### Estratégia de versionamento
 
 Use Semantic Versioning (`semver`) de forma rigorosa para bibliotecas consumidas por varios apps:
 
-| Tipo de mudanca | Bump de versao | Exemplo |
+| Tipo de mudança | Bump de versão | Exemplo |
 |---|---|---|
-| API nativa adicionada (novo metodo de TurboModule) | Minor: `1.2.0 → 1.3.0` | Adicionado `fetchAsync` |
+| API nativa adicionada (novo método de TurboModule) | Minor: `1.2.0 → 1.3.0` | Adicionado `fetchAsync` |
 | API nativa removida / assinatura alterada | Major: `1.x.x → 2.0.0` | `getData` renomeado |
-| Correcao de bug apenas em JS | Patch: `1.2.0 → 1.2.1` | Verificacao de null corrigida |
-| Novo binario nativo necessario | Major | Novo TurboModule, nova dependencia de pod |
+| Correção de bug apenas em JS | Patch: `1.2.0 → 1.2.1` | Verificação de null corrigida |
+| Novo binário nativo necessário | Major | Novo TurboModule, nova dependência de pod |
 
-Publique versoes pre-release para testes antes de promover:
+Publique versões pre-release para testes antes de promover:
 
 ```bash
 # Tag de pre-release: 2.0.0-beta.1
 npm version 2.0.0-beta.1 --no-git-tag-version
 npm publish --tag beta
 
-# Consumidores optam pela versao beta:
+# Consumidores optam pela versão beta:
 npm install @mycompany/react-native-my-sdk@beta
 
-# Promova para estavel apos verificacao:
+# Promova para estavel após verificação:
 npm dist-tag add @mycompany/react-native-my-sdk@2.0.0-beta.1 latest
 ```
 
@@ -393,40 +393,40 @@ npm dist-tag add @mycompany/react-native-my-sdk@2.0.0-beta.1 latest
 
 ## Materiais de Estudo
 
-### Documentacao Oficial
+### Documentação Oficial
 
-| Recurso | Descricao |
+| Recurso | Descrição |
 |---|---|
-| [Metro documentation](https://metrobundler.dev/) | Referencia completa de configuracao do Metro — resolver, transformer, serializador |
-| [React Native Gradle Plugin](https://reactnative.dev/docs/new-architecture-library-intro) | Bloco `react {}`, tarefas de bundle, integracao com Hermes |
+| [Metro documentation](https://metrobundler.dev/) | Referência completa de configuração do Metro — resolver, transformer, serializador |
+| [React Native Gradle Plugin](https://reactnative.dev/docs/new-architecture-library-intro) | Bloco `react {}`, tarefas de bundle, integração com Hermes |
 | [Publishing libraries](https://reactnative.dev/docs/new-architecture-library-intro) | Codegen, podspec, versionamento para a Nova Arquitetura |
-| [React Native Builder Bob](https://github.com/callstack/react-native-builder-bob) | Ferramenta de build padrao para bibliotecas RN |
+| [React Native Builder Bob](https://github.com/callstack/react-native-builder-bob) | Ferramenta de build padrão para bibliotecas RN |
 
 ### Aprofundamentos
 
-| Recurso | Autor | O que voce vai aprender |
+| Recurso | Autor | O que você vai aprender |
 |---|---|---|
-| [Metro deep dive — resolution, transforms, cache](https://www.callstack.com/blog/metro-bundler-deep-dive) | Callstack | Algoritmo de resolucao, pipeline de transform, invalidacao de cache |
-| [React Native OTA updates — the complete guide](https://blog.swmansion.com/react-native-ota-updates-a-practical-guide-ad4536ffe4c2) | Software Mansion | Mecanica de hot-patch, rollback, controle de versao |
-| [Publishing RN libraries to Artifactory](https://jfrog.com/blog/publishing-react-native-packages-to-jfrog-artifactory/) | JFrog | Configuracao de escopo npm, gerenciamento de tokens em CI, pinagem de versao |
+| [Metro deep dive — resolution, transforms, cache](https://www.callstack.com/blog/metro-bundler-deep-dive) | Callstack | Algoritmo de resolução, pipeline de transform, invalidação de cache |
+| [React Native OTA updates — the complete guide](https://blog.swmansion.com/react-native-ota-updates-a-practical-guide-ad4536ffe4c2) | Software Mansion | Mecanica de hot-patch, rollback, controle de versão |
+| [Publishing RN libraries to Artifactory](https://jfrog.com/blog/publishing-react-native-packages-to-jfrog-artifactory/) | JFrog | Configuração de escopo npm, gerenciamento de tokens em CI, pinagem de versão |
 | [Bundle size analysis](https://www.callstack.com/blog/bundle-size-analysis-for-react-native) | Callstack | source-map-explorer, visualizador de bundle, tree shaking |
 | [Code signing automation](https://fastlane.tools/codesigning/) | Fastlane | Match, certificados, perfis de provisionamento em CI |
 
 ### Video Tutoriais
 
-| Recurso | Duracao | O que voce vai aprender |
+| Recurso | Duração | O que você vai aprender |
 |---|---|---|
-| [Metro bundler internals](https://www.youtube.com/watch?v=jGT0JZp1e_E) | 25 min | Resolucao, transforms, por que IDs de modulo importam |
-| [React Native library development](https://www.youtube.com/watch?v=qPaFMeGRqTE) | 45 min | Configuracao completa de biblioteca com Builder Bob, Codegen, publicacao |
-| [OTA updates in RN](https://www.youtube.com/watch?v=U3SjJMz8YVQ) | 30 min | Carregamento de bundle, controle de versao, estrategia de rollback |
+| [Metro bundler internals](https://www.youtube.com/watch?v=jGT0JZp1e_E) | 25 min | Resolução, transforms, por que IDs de módulo importam |
+| [React Native library development](https://www.youtube.com/watch?v=qPaFMeGRqTE) | 45 min | Configuração completa de biblioteca com Builder Bob, Codegen, publicação |
+| [OTA updates in RN](https://www.youtube.com/watch?v=U3SjJMz8YVQ) | 30 min | Carregamento de bundle, controle de versão, estratégia de rollback |
 | [ProGuard R8 for RN](https://www.youtube.com/watch?v=R3o8nIfmgqU) | 20 min | Regras de keep, depurando stack traces ofuscados |
 
 ### Interativo
 
 | Recurso | O que fazer |
 |---|---|
-| [source-map-explorer](https://github.com/danvk/source-map-explorer) | Execute localmente contra seu bundle — encontre os modulos maiores |
-| [Bundlephobia](https://bundlephobia.com/) | Verifique o tamanho de qualquer pacote npm antes de adicioná-lo como dependencia |
+| [source-map-explorer](https://github.com/danvk/source-map-explorer) | Execute localmente contra seu bundle — encontre os módulos maiores |
+| [Bundlephobia](https://bundlephobia.com/) | Verifique o tamanho de qualquer pacote npm antes de adicioná-lo como dependência |
 | [Semver calculator](https://semver.npmjs.com/) | Teste ranges de semver — entenda o que `^1.2.3` realmente resolve |
 
 ---
