@@ -22,7 +22,8 @@ also feed a company-wide ranking across all modalities.
 | `id` | |
 | `name` | free text, e.g. "Championship Q3 2026" |
 | `modality` | free text/tag — no fixed enum, organizer types whatever they're running |
-| `format` | one of: `single-elimination` (mata-mata), `round-robin` (ida-volta), `swiss` (suíço) |
+| `format` | one of: `single-elimination` (mata-mata), `round-robin` (todos-contra-todos), `swiss` (suíço) |
+| `legs` | `1` \| `2` — only meaningful when `format` is `round-robin`; `1` = each pair plays once (ida), `2` = home/away (ida-volta), doubling the fixtures |
 | `matchStyle` | best-of, e.g. `single`, `md3`, `md5` — relevant for versus-style modalities, optional for others |
 | `participantCount` | target size, drives bracket/pairing generation |
 | `pointsConfig` | `{ win: number, draw: number, loss: number }` — only meaningful for round-robin/swiss tables |
@@ -74,8 +75,9 @@ Placement points (proposed baseline, tune later):
 
 - **Single elimination (mata-mata)**: standard bracket, losers are out; needs a seeding/
   bye strategy when `participantCount` isn't a power of 2.
-- **Round robin (ida-volta)**: every participant plays every other participant once
-  (`ida`) or twice home/away (`ida-volta`); standings table via `pointsConfig`.
+- **Round robin (todos-contra-todos)**: every participant plays every other participant.
+  `legs` controls whether each pair meets once (`1`, ida) or twice home/away (`2`,
+  ida-volta); standings table via `pointsConfig` either way.
 - **Swiss (suíço)**: participants are paired each round against others with a similar
   record so far (no repeat pairings when avoidable); runs a fixed number of rounds
   instead of a full round robin — used for larger pools where round robin would take
@@ -87,7 +89,7 @@ Placement points (proposed baseline, tune later):
 ## Screens implied (for lab framing only)
 
 1. Tournament list (home) — **native**, pre-built, present from Lab 01
-2. Create tournament (name, modality, format, match style, points config, team labels toggle) — **RN**, built in Lab 03
+2. Create tournament (name, modality, format, legs when round-robin, match style, points config, team labels toggle) — **RN**, built in Lab 03
 3. Tournament detail — bracket view (elimination) or table + fixtures (round robin/swiss) — **RN**, built in Lab 02, reused in Lab 04
 4. Match score entry — **RN**, built in Lab 04 (on top of the Lab 02 detail screen)
 5. History — past tournaments, drill into any of them for full match detail — **native**, pre-built (Android template ships `ui/history/HistoryScreen.kt`), not a lab deliverable
