@@ -2,13 +2,13 @@
   "byDoc": {
     "introducao/00-welcome.md": {
       "readMin": 2,
-      "videoMin": 5.1,
+      "videoMin": 5.3,
       "hasVideo": true,
       "videoFile": "00_welcome.mp4"
     },
     "introducao/01-history-and-architecture.md": {
       "readMin": 4,
-      "videoMin": 5.6,
+      "videoMin": 6.3,
       "hasVideo": true,
       "videoFile": "01_history_architecture.mp4"
     },
@@ -898,12 +898,12 @@
   "byModule": {
     "introducao/00-welcome.md": {
       "readMin": 2,
-      "videoMin": 5.1,
+      "videoMin": 5.3,
       "docCount": 1
     },
     "introducao/01-history-and-architecture.md": {
       "readMin": 4,
-      "videoMin": 5.6,
+      "videoMin": 6.3,
       "docCount": 1
     },
     "introducao/02-new-architecture.md": {
@@ -1090,7 +1090,7 @@
   "byTrail": {
     "introducao": {
       "readMin": 10,
-      "videoMin": 21.2,
+      "videoMin": 22.099999999999998,
       "docCount": 4
     },
     "rn-advanced-lab": {
@@ -1121,7 +1121,7 @@
   },
   "total": {
     "readMin": 638,
-    "videoMin": 867.6000000000001,
+    "videoMin": 868.5000000000001,
     "docCount": 149
   }
 }
