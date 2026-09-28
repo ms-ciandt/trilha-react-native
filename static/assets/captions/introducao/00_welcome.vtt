@@ -1,301 +1,374 @@
 WEBVTT
 
 1
-00:00:00.000 --> 00:00:05.871
-Como desenvolvedor experiente, você não precisa começar do zero.
+00:00:00.000 --> 00:00:04.160
+O React Native agora é uma escolha sério e de alto desempenho para produção
 
 2
-00:00:05.871 --> 00:00:10.458
-Você já sabe como construir software — não precisa
+00:00:04.160 --> 00:00:09.600
+para construir aplicativos móveis complexos e multiplataforma no ano de 2026.
 
 3
-00:00:10.458 --> 00:00:14.770
-de tutoriais explicando o que é uma variável ou
+00:00:09.600 --> 00:00:14.960
+Esta academia foi projetada para engenheiros que já sabem como construir e lançar software.
 
 4
-00:00:14.770 --> 00:00:16.789
-como funciona um loop.
+00:00:14.960 --> 00:00:19.760
+Iniciantes absolutos em programação perceberão que o ritmo é otimizado para desenvolvedores experientes.
 
 5
-00:00:16.789 --> 00:00:23.302
-Ao mesmo tempo, pular direto para documentação avançada multiplataforma
+00:00:19.760 --> 00:00:23.840
+Você vai focar em migrar sua experiência atual para a nova arquitetura,
 
 6
-00:00:23.302 --> 00:00:28.256
-pode deixar você sem o contexto estrutural necessário.
+00:00:23.840 --> 00:00:27.360
+pulando os conceitos introdutórios de programação que você já domina.
 
 7
-00:00:28.256 --> 00:00:33.027
-O caminho eficiente é usar o conhecimento de domínio
+00:00:27.440 --> 00:00:32.880
+Para alcançar isso, este curso oferece quatro trilhas distintas que convergem para um único destino.
 
 8
-00:00:33.027 --> 00:00:35.962
-que você já tem — em web, iOS ou
+00:00:33.520 --> 00:00:36.720
+Avaliar suas próprias habilidades para escolher o caminho inicial correto
 
 9
-00:00:35.962 --> 00:00:39.632
-Android — para pular o básico e focar em
+00:00:36.720 --> 00:00:39.760
+garante que você aproveite imediatamente seus pontos fortes existentes,
 
 10
-00:00:39.632 --> 00:00:43.393
-traduzir o que você já sabe para uma nova
+00:00:39.760 --> 00:00:42.320
+em vez de repetir tutoriais básicos.
 
 11
-00:00:43.393 --> 00:00:44.403
-plataforma.
+00:00:42.320 --> 00:00:46.480
+Se você pular para um caminho que pressupõe um conhecimento nativo profundo que você não possui,
 
 12
-00:00:44.403 --> 00:00:49.173
-Entrando em 2026, o React Native foi reconstruído em
+00:00:46.480 --> 00:00:48.000
+você vai bater de frente com um obstáculo imediatamente.
 
 13
-00:00:49.173 --> 00:00:53.577
-torno de uma nova arquitetura: o JSI substitui a
+00:00:48.560 --> 00:00:52.080
+Por outro lado, desenvolvedores que já vêm lançando funcionalidades de front-end há anos
 
 14
-00:00:53.577 --> 00:00:59.356
-antiga ponte assíncrona por comunicação direta e síncrona entre
+00:00:52.080 --> 00:00:55.440
+vão achar que tutoriais básicos de gerenciamento de estado são um mau uso do tempo.
 
 15
-00:00:59.356 --> 00:01:01.833
-JavaScript e código nativo.
+00:00:55.920 --> 00:00:58.640
+Você acaba pagando um pesado imposto de tradução,
 
 16
-00:01:01.833 --> 00:01:08.255
-Comparado ao desenvolvimento nativo puro e a wrappers web-para-mobile,
+00:00:58.640 --> 00:01:02.080
+gastando energia mental tentando mapear seu fluxo de trabalho de codificação do dia a dia
 
 17
-00:01:08.255 --> 00:01:13.393
-o React Native hoje oferece desempenho próximo ao nativo
+00:01:02.080 --> 00:01:03.840
+para uma terminologia completamente estranha.
 
 18
-00:01:13.393 --> 00:01:16.879
-a partir de uma única base de código —
+00:01:04.400 --> 00:01:08.240
+Vamos fazer uma auditoria rápida e objetiva da sua stack atual agora mesmo
 
 19
-00:01:16.879 --> 00:01:22.750
-o principal investimento é a curva de aprendizado, especialmente
+00:01:08.240 --> 00:01:09.840
+para te direcionar para a trilha ideal.
 
 20
-00:01:22.750 --> 00:01:26.787
-se você vem de outro contexto de plataforma.
+00:01:10.480 --> 00:01:14.320
+Dominar o React Native rapidamente depende de pular lições redundantes
 
 21
-00:01:26.787 --> 00:01:31.649
-É exatamente para isso que este curso foi construído:
+00:01:14.320 --> 00:01:17.280
+e focando nas lacunas de plataforma que você realmente tem.
 
 22
-00:01:31.649 --> 00:01:37.429
-um currículo estruturado com quatro trilhas distintas, cada uma
+00:01:17.280 --> 00:01:20.640
+Se você vive no navegador, escrevendo componentes React com hooks,
 
 23
-00:01:37.429 --> 00:01:41.924
-pensada para se apoiar na experiência que você já
+00:01:20.640 --> 00:01:24.560
+estruturando JSX e gerenciando props, você pertence à trilha web.
 
 24
-00:01:41.924 --> 00:01:44.217
-tem, em vez de ignorá-la.
+00:01:25.120 --> 00:01:27.760
+Toda a lógica de componentes que você escreve todos os dias para a web
 
 25
-00:01:44.217 --> 00:01:48.529
-Vamos ver o que isso significa em cada caminho.
+00:01:27.760 --> 00:01:30.240
+se mapeia perfeitamente para a arquitetura de UI mobile.
 
 26
-00:01:48.529 --> 00:01:52.933
-Como engenheiro web, sua vantagem é o domínio da
+00:01:30.800 --> 00:01:33.520
+Este diagrama mostra como você vai se adaptar à lógica de layout mobile.
 
 27
-00:01:52.933 --> 00:01:57.061
-camada de UI — componentes, hooks e lógica de
+00:01:34.080 --> 00:01:38.080
+Você vai trocar o CSS padrão pelo mecanismo estrito de flexbox do React Native
 
 28
-00:01:57.061 --> 00:02:00.089
-estado se transferem diretamente.
+00:01:38.080 --> 00:01:39.360
+para posicionar cada elemento.
 
 29
-00:02:00.089 --> 00:02:03.391
-O que muda é a ausência do DOM HTML:
+00:01:40.000 --> 00:01:44.640
+Você também vai trocar as APIs padrão do navegador por módulos nativos específicos da plataforma,
 
 30
-00:02:03.391 --> 00:02:06.235
-não há divs ou spans no mobile.
+00:01:44.640 --> 00:01:47.760
+conectando seu JavaScript diretamente à câmera do dispositivo,
 
 31
-00:02:06.235 --> 00:02:10.822
-Em vez disso, você vai trabalhar com restrições de
+00:01:47.760 --> 00:01:49.680
+location services, e local storage.
 
 32
-00:02:10.822 --> 00:02:16.327
-layout mobile, aprender React Navigation e fazer bridge para
+00:01:50.240 --> 00:01:53.920
+A boa notícia é que seu conhecimento existente de state management transfere perfeitamente.
 
 33
-00:02:16.327 --> 00:02:22.382
-módulos nativos para acessar hardware, como câmera e armazenamento
+00:01:54.560 --> 00:01:56.560
+Isso não requer nenhuma modificação.
 
 34
-00:02:22.382 --> 00:02:22.932
-local.
+00:01:57.120 --> 00:01:59.840
+Essa rota atua como uma ponte altamente eficiente,
 
 35
-00:02:22.932 --> 00:02:27.794
-Desenvolvedores web se destacam aqui ao migrar o foco
+00:01:59.840 --> 00:02:02.960
+permitindo que desenvolvedores front-end alcancem capacidade mobile nativa
 
 36
-00:02:27.794 --> 00:02:32.840
-da sintaxe do navegador para como o JavaScript conversa
+00:02:02.960 --> 00:02:05.440
+sem nunca sair do ecossistema JavaScript.
 
 37
-00:02:32.840 --> 00:02:36.234
-com o hardware físico do dispositivo.
+00:02:06.160 --> 00:02:08.960
+Se você desenvolve para Android, especificamente escrevendo Kotlin
 
 38
-00:02:36.234 --> 00:02:41.188
-Para desenvolvedores nativos vindos de uma boa base em
+00:02:08.960 --> 00:02:12.400
+e usando ativamente Jetpack Compose, você segue a trilha Android.
 
 39
-00:02:41.188 --> 00:02:46.142
-iOS ou Android, sua vantagem é o conhecimento profundo
+00:02:12.960 --> 00:02:17.040
+Olhando essa comparação de timeline, você verá exatamente como os ciclos de vida
 
 40
-00:02:46.142 --> 00:02:49.996
-dos ciclos de vida da plataforma — você já
+00:02:17.040 --> 00:02:22.240
+de activities e fragments mapeiam conceitualmente diretamente para o state management do React Native.
 
 41
-00:02:49.996 --> 00:02:55.500
-entende app delegates, view controllers ou activities, o que
+00:02:22.880 --> 00:02:26.880
+Mas se você não tem conhecimento de Kotlin ou Compose, essas análises comparativas
 
 42
-00:02:55.500 --> 00:02:59.537
-te dá uma vantagem real para entender como o
+00:02:26.880 --> 00:02:29.680
+só vão confundir você em vez de esclarecer os conceitos.
 
 43
-00:02:59.537 --> 00:03:03.481
-React Native se comunica com o dispositivo.
+00:02:30.400 --> 00:02:35.040
+Do lado da Apple, a trilha de iOS exige uma base sólida em Swift
 
 44
-00:03:03.481 --> 00:03:06.968
-O que é novo é trocar seu framework de
+00:02:35.040 --> 00:02:36.320
+e Swift UI moderno.
 
 45
-00:03:06.968 --> 00:03:10.821
-UI nativo — Swift ou Jetpack Compose — por
+00:02:36.880 --> 00:02:40.480
+Vamos usar seu conhecimento prático do app delegate e view controllers
 
 46
-00:03:10.821 --> 00:03:14.582
-TypeScript e layouts baseados em Flexbox.
+00:02:40.480 --> 00:02:43.840
+para explicar como o React navigation lida com o roteamento nos bastidores.
 
 47
-00:03:14.582 --> 00:03:19.169
-É uma sintaxe diferente, mas o retorno vem rápido:
+00:02:44.480 --> 00:02:48.240
+Tenha em mente que conhecimentos legados em Objective-C estão excluídos aqui.
 
 48
-00:03:19.169 --> 00:03:23.114
-uma única base de código, duas plataformas.
+00:02:48.240 --> 00:02:52.320
+Conhecimento de Swift UI moderno é obrigatório para aproveitar este currículo específico.
 
 49
-00:03:23.114 --> 00:03:27.609
-Há um quarto caminho para quem já tem experiência
+00:02:53.040 --> 00:02:57.440
+A vantagem compartilhada entre esses dois caminhos nativos é aprender implantação multiplataforma
 
 50
-00:03:27.609 --> 00:03:30.545
-com React Native: a Masterclass.
+00:02:57.440 --> 00:03:00.160
+enquanto se respeita os ciclos de vida nativos que você já entende.
 
 51
-00:03:30.545 --> 00:03:35.591
-Ela é feita para quem está atualizando versões legadas,
+00:03:00.800 --> 00:03:04.560
+Análises nativas aceleram seu aprendizado se combinarem com seu trabalho diário,
 
 52
-00:03:35.591 --> 00:03:41.921
-substituindo workarounds antigos pelos padrões da nova arquitetura de
+00:03:04.560 --> 00:03:07.920
+mas são ativamente prejudiciais se você não tiver essa experiência específica.
 
 53
-00:03:41.921 --> 00:03:45.682
-2026 e pelo modelo de threading síncrono.
+00:03:08.640 --> 00:03:11.120
+Nossa quarta opção é a master class.
 
 54
-00:03:45.682 --> 00:03:50.636
-Qualquer que seja o caminho escolhido, você vai querer
+00:03:11.120 --> 00:03:14.240
+Ela foi criada exclusivamente para desenvolvedores que já possuem
 
 55
-00:03:50.636 --> 00:03:54.764
-uma forma rápida de testar ideias ao longo do
+00:03:14.240 --> 00:03:15.920
+experiência fundamental em React Native.
 
 56
-00:03:54.764 --> 00:03:55.315
-curso.
+00:03:16.480 --> 00:03:19.440
+Essa trilha ignora completamente a criação básica de UI,
 
 57
-00:03:55.315 --> 00:03:59.994
-Por isso, todo exemplo de código nas quatro trilhas
+00:03:19.440 --> 00:03:22.480
+focando puramente na implementação da new architecture
 
 58
-00:03:59.994 --> 00:04:04.764
-roda imediatamente no navegador via Expo Snack — sem
+00:03:22.480 --> 00:03:24.640
+e na leitura e escrita fluente de TypeScript.
 
 59
-00:04:04.764 --> 00:04:07.516
-configuração local necessária.
+00:03:25.440 --> 00:03:26.400
+Atenção.
 
 60
-00:04:07.516 --> 00:04:13.847
-Deixamos a configuração do ambiente deliberadamente para depois, para
+00:03:26.400 --> 00:03:29.600
+Tentar seguir esse caminho sem fundamentos sólidos é um erro.
 
 61
-00:04:13.847 --> 00:04:19.259
-que você foque primeiro em dominar os conceitos principais.
+00:03:29.600 --> 00:03:32.720
+Isso vai deixar lacunas críticas no seu entendimento sobre as APIs principais.
 
 62
-00:04:19.259 --> 00:04:24.122
-Apesar de pontos de partida bem diferentes, as quatro
+00:03:33.440 --> 00:03:37.440
+Independentemente do caminho que você escolher, você usará um método de execução universal
 
 63
-00:04:24.122 --> 00:04:29.901
-trilhas convergem para o mesmo destino: fluência em TypeScript,
+00:03:37.440 --> 00:03:38.720
+para os exercícios iniciais.
 
 64
-00:04:29.901 --> 00:04:34.672
-domínio de layout Flexbox e a capacidade de publicar
+00:03:39.280 --> 00:03:41.680
+Esta interface representa o Expo Snack.
 
 65
-00:04:34.672 --> 00:04:38.341
-para iOS e Android a partir de uma única
+00:03:41.680 --> 00:03:45.120
+Ele fornece um ambiente de teste sem atrito direto no seu navegador.
 
 66
-00:04:38.341 --> 00:04:39.717
-base de código.
+00:03:45.120 --> 00:03:48.880
+Você pode executar todos os exemplos de código instantaneamente para verificar sua lógica,
 
 67
-00:04:39.717 --> 00:04:46.231
-No caminho, desenvolvedores nativos vão aprender propriedades de estilo
+00:03:48.880 --> 00:03:52.080
+sem precisar configurar simuladores ou rodar comandos no terminal.
 
 68
-00:04:46.231 --> 00:04:51.093
-CSS, e desenvolvedores web vão se familiarizar com as
+00:03:52.720 --> 00:03:55.200
+Embora o Expo Snack remova o atrito inicial,
 
 69
-00:04:51.093 --> 00:04:55.405
-restrições de memória e ciclo de vida do mobile
+00:03:55.200 --> 00:04:00.480
+você eventualmente vai migrar para uma configuração local para compilar os deployments finais das duas plataformas.
 
 70
-00:04:55.405 --> 00:05:00.818
-— curvas de aprendizado diferentes, mesma linha de chegada.
+00:04:00.480 --> 00:04:03.120
+As ferramentas do navegador te colocam escrevendo código já no primeiro dia,
 
 71
-00:05:00.818 --> 00:05:05.405
-Seu primeiro passo é simples: escolha sua trilha e
+00:04:03.120 --> 00:04:07.200
+mas a prontidão rigorosa para produção local continua sendo o objetivo final de cada trilha.
 
 72
-00:05:05.405 --> 00:05:10.909
-comece pelo módulo de História e Arquitetura correspondente.
+00:04:08.160 --> 00:04:12.560
+Independentemente do seu ponto de partida, todas as quatro trilhas levam à mesma fluência
 
 73
-00:05:10.909 --> 00:05:14.579
-Entender por que o React Native é como é
+00:04:12.560 --> 00:04:14.960
+em TypeScript, Core Components e Flexbox.
 
 74
-00:05:14.579 --> 00:05:18.157
-em 2026 vai fazer tudo o que vem depois
+00:04:15.760 --> 00:04:18.480
+Esta árvore de decisão de diagnóstico finaliza sua escolha
 
 75
-00:05:18.157 --> 00:05:19.900
-fazer mais sentido.
+00:04:18.480 --> 00:04:21.040
+baseada estritamente na sua linguagem de trabalho do dia a dia.
+
+76
+00:04:21.040 --> 00:04:23.120
+Se você desenvolve com React e JavaScript,
+
+77
+00:04:23.120 --> 00:04:25.760
+siga o fluxo lógico diretamente para a trilha web.
+
+78
+00:04:25.760 --> 00:04:28.640
+Se sua experiência é em Kotlin e Jetpack Compose,
+
+79
+00:04:28.640 --> 00:04:30.720
+trace seu caminho até a trilha Android.
+
+80
+00:04:30.720 --> 00:04:35.200
+Desenvolvedores de Swift e SwiftUI seguem o fluxo até a trilha iOS.
+
+81
+00:04:35.200 --> 00:04:38.000
+E se você já possui experiência prévia com React Native,
+
+82
+00:04:38.000 --> 00:04:40.320
+você pula os fundamentos e vai direto para a master class.
+
+83
+00:04:41.040 --> 00:04:45.120
+Se você é um iniciante absoluto ou não possui nenhum dos pré-requisitos necessários,
+
+84
+00:04:45.120 --> 00:04:46.160
+você vai parar aqui.
+
+85
+00:04:46.960 --> 00:04:50.320
+Este roteiro alinha o currículo com sua experiência específica,
+
+86
+00:04:50.320 --> 00:04:54.560
+garantindo que você gaste seu tempo em conceitos novos em vez de revisar território já conhecido.
+
+87
+00:04:55.440 --> 00:04:57.360
+Aqui está a verificação final da realidade.
+
+88
+00:04:57.360 --> 00:05:00.080
+Se nenhum pré-requisito for atendido, dê um passo atrás.
+
+89
+00:05:00.080 --> 00:05:03.680
+Construa primeiro suas habilidades fundamentais de software e volte quando estiver pronto.
+
+90
+00:05:04.240 --> 00:05:07.200
+Para todos os outros, seu próximo passo imediato no currículo
+
+91
+00:05:07.200 --> 00:05:09.040
+é o módulo de História e Arquitetura.
+
+92
+00:05:09.600 --> 00:05:12.880
+Entender exatamente por que o React Native é tão relevante hoje
+
+93
+00:05:12.880 --> 00:05:16.880
+fornece o contexto final necessário antes de você iniciar sua trilha especializada.
+

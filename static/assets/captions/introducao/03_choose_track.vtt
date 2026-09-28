@@ -1,386 +1,354 @@
 WEBVTT
 
 1
-00:00:00.000 --> 00:00:03.520
-Quando você faz a transição para um novo framework como React Native,
+00:00:00.000 --> 00:00:06.020
+O que você está vendo na tela, três disciplinas de software distintas se chocando em
 
 2
-00:00:03.520 --> 00:00:07.520
-você está essencialmente pedindo ao seu cérebro que remodele seus hábitos diários.
+00:00:06.020 --> 00:00:10.940
+um único bloco, é a realidade quando uma equipe adota o React Native.
 
 3
-00:00:07.520 --> 00:00:12.720
-Isso consome uma quantidade massiva de energia mental e tempo longe do seu trabalho de engenharia real.
+00:00:10.940 --> 00:00:15.060
+A suposição geralmente é que adotar uma ferramenta cross-platform significa jogar fora
 
 4
-00:00:12.720 --> 00:00:15.280
-Profissionais que trabalham muitas vezes tentam forçar isso
+00:00:15.060 --> 00:00:18.540
+sua experiência anterior e começar do zero absoluto.
 
 5
-00:00:15.280 --> 00:00:18.800
-recorrendo a bootcamps massivos de iniciante a avançado.
+00:00:18.540 --> 00:00:23.960
+Essa suposição leva desenvolvedores experientes a tutoriais genéricos de uma hora que explicam
 
 6
-00:00:18.800 --> 00:00:21.760
-Mas se matricular em um curso projetado para iniciantes absolutos
+00:00:23.960 --> 00:00:27.940
+o que é uma variável, desperdiçando um tempo incrivelmente valioso.
 
 7
-00:00:21.760 --> 00:00:25.360
-ignora anos de intuição de engenharia que você já desenvolveu.
+00:00:27.940 --> 00:00:30.100
+Dê uma olhada neste diagrama.
 
 8
-00:00:25.360 --> 00:00:27.760
-Você acaba preso em um loop frustrante.
+00:00:30.100 --> 00:00:34.620
+A Maestria em React Native fica na interseção de três pilares específicos.
 
 9
-00:00:27.840 --> 00:00:29.520
-Metade do tempo, você está entediado para morte,
+00:00:34.620 --> 00:00:40.000
+Tecnologias web, arquitetura mobile nativa e mecânicas avançadas do React Native.
 
 10
-00:00:29.520 --> 00:00:32.000
-assistindo a acelerações básicas de variáveis.
+00:00:40.000 --> 00:00:44.140
+Se você tem experiência profissional em software, você já ocupa pelo menos um desses
 
 11
-00:00:32.000 --> 00:00:34.560
-A outra metade, você está completamente perdido porque o curso
+00:00:44.140 --> 00:00:45.400
+círculos principais.
 
 12
-00:00:34.560 --> 00:00:38.080
-não abordou adequadamente o contexto específico da plataforma nativa que você realmente precisa
+00:00:45.400 --> 00:00:47.820
+Você tem uma vantagem inicial enorme.
 
 13
-00:00:38.080 --> 00:00:40.080
-entender para fazer o deploy de um app.
+00:00:47.820 --> 00:00:52.500
+O desafio é descobrir como identificar seus pontos cegos específicos, para que você possa
 
 14
-00:00:40.080 --> 00:00:43.520
-Uma transição eficiente requer uma abordagem altamente direcionada.
+00:00:52.500 --> 00:00:57.300
+isolar as partes que faltam, sem precisar passar por conceitos que você já dominou há anos.
 
 15
-00:00:43.520 --> 00:00:46.880
-Você deve usar sua expertise de domínio existente como trampolim
+00:00:57.300 --> 00:01:02.020
+A eficiência aqui se resume a aproveitar seu patrimônio técnico existente e usá-lo para
 
 16
-00:00:46.880 --> 00:00:50.560
-e direcionar sua energia mental estritamente para seus pontos cegos reais.
+00:01:02.020 --> 00:01:05.180
+preencher lacunas específicas no seu conhecimento.
 
 17
-00:00:50.560 --> 00:00:54.160
-Este diagrama apresenta as quatro linhas de partida comuns que vemos.
+00:01:05.180 --> 00:01:09.820
+Este fluxograma detalha os pontos de entrada, começando bem aqui com a Web Trail,
 
 18
-00:00:54.160 --> 00:00:56.800
-Você provavelmente está chegando como desenvolvedor Android
+00:01:09.820 --> 00:01:13.380
+desenhada estritamente para desenvolvedores React e JavaScript já existentes.
 
 19
-00:00:56.800 --> 00:00:59.440
-e desenvolvedor iOS, desenvolvedor web,
+00:01:13.380 --> 00:01:17.620
+Se esse é o seu background, você começa com uma vantagem estrutural enorme.
 
 20
-00:00:59.440 --> 00:01:02.160
-ou você já está construindo com React Native.
+00:01:17.620 --> 00:01:21.340
+Os componentes que você constrói para mobile espelham a estrutura e a lógica dos componentes
 
 21
-00:01:02.160 --> 00:01:04.720
-Encontrando a rota mais rápida para o domínio do React Native
+00:01:21.340 --> 00:01:23.700
+você desenvolve para a web todos os dias.
 
 22
-00:01:04.720 --> 00:01:07.600
-não depende de quantos anos gerais você tem programado.
+00:01:23.700 --> 00:01:28.460
+Seus React hooks, sua estrutura JSX e seus padrões de design estabelecidos são transferidos
 
 23
-00:01:07.600 --> 00:01:09.920
-É um problema de otimização altamente específico
+00:01:28.460 --> 00:01:30.340
+linha por linha.
 
 24
-00:01:09.920 --> 00:01:13.600
-baseado inteiramente na pilha de tecnologia que você escreve todos os dias.
+00:01:30.340 --> 00:01:33.980
+Você vai encontrar atrito no momento em que tentar implantar esse código em um pedaço físico
 
 25
-00:01:13.600 --> 00:01:15.520
-Vamos analisar os especialistas em mobile.
+00:01:33.980 --> 00:01:35.860
+de vidro no seu bolso.
 
 26
-00:01:15.520 --> 00:01:18.880
-Se você passa seus dias construindo nativamente para Android ou iOS,
+00:01:35.860 --> 00:01:40.020
+O navegador protege você de restrições rígidas de memória, ciclos de vida nativos profundos e
 
 27
-00:01:18.880 --> 00:01:22.880
-você entra no ecossistema React Native com uma enorme vantagem estrutural.
+00:01:40.020 --> 00:01:42.700
+paradigmas de experiência do usuário mobile baseados em gestos.
 
 28
-00:01:22.880 --> 00:01:25.840
-Olhando para essa matriz de comparação, seus pontos fortes são claros.
+00:01:42.700 --> 00:01:44.660
+Um celular não protege.
 
 29
-00:01:25.840 --> 00:01:28.800
-Você compreende intuitivamente a segurança de thread, APIs nativas,
+00:01:44.660 --> 00:01:48.540
+Para ter sucesso nessa trilha, pare de se preocupar com a sintaxe da linguagem.
 
 30
-00:01:28.800 --> 00:01:31.440
-e renderização via UI kit ou Compose.
+00:01:48.540 --> 00:01:52.260
+Concentre toda a sua atenção em aprender como os ambientes mobile limitam e restringem
 
 31
-00:01:31.440 --> 00:01:34.560
-Mas você deve deixar para trás suas cadeias de ferramentas de UI imperativa familiares
+00:01:52.260 --> 00:01:53.620
+o código que você escreve.
 
 32
-00:01:34.560 --> 00:01:37.600
-e IDEs pesadas, adotando JavaScript, TypeScript,
+00:01:53.620 --> 00:01:58.780
+O mapa dá um zoom out aqui para mostrar duas trilhas distintas para desenvolvedores mobile dedicados,
 
 33
-00:01:37.600 --> 00:01:40.000
-e o modelo de componente declarativo do React.
+00:01:58.780 --> 00:02:01.740
+a Trilha Android e a Trilha iOS.
 
 34
-00:01:40.000 --> 00:01:43.600
-Se você é um desenvolvedor Kotlin, você pertence à trilha Android nativa.
+00:02:01.740 --> 00:02:05.460
+Você já entende como as APIs de plataforma conversam com o hardware do dispositivo.
 
 35
-00:01:43.600 --> 00:01:46.480
-Este caminho mapeia seu conhecimento existente de Jetpack Compose diretamente
+00:02:05.460 --> 00:02:09.380
+Você entende como os mecanismos de renderização nativa funcionam sob pressão.
 
 36
-00:01:46.480 --> 00:01:47.680
-para React Native.
+00:02:09.380 --> 00:02:14.140
+Desenvolvedores Kotlin e Jetpack Compose trazem uma vantagem bem específica para a mesa,
 
 37
-00:01:47.680 --> 00:01:51.360
-Se você escreve Swift, siga a trilha iOS nativa.
+00:02:14.140 --> 00:02:17.060
+uma familiaridade profunda com thread safety.
 
 38
-00:01:51.360 --> 00:01:54.560
-Vamos usar sua compreensão do ciclo de vida do Swift UI
+00:02:17.060 --> 00:02:20.940
+Você pode usar esse conhecimento diretamente para debugar a forma como o React Native se comunica
 
 39
-00:01:54.560 --> 00:01:57.360
-para fazer sentido da execução de JavaScript.
+00:02:20.940 --> 00:02:24.380
+através da sua bridge e interage com a UI thread.
 
 40
-00:01:57.360 --> 00:02:01.600
-Desenvolvedores nativos devem trocar sua profunda e confortável fluência de plataforma
+00:02:24.380 --> 00:02:27.900
+Desenvolvedores Swift e SwiftUI trazem seu próprio conjunto de ferramentas distinto,
 
 41
-00:02:01.600 --> 00:02:04.400
-para uma mudança mental inicial acentuada e desafiadora
+00:02:27.900 --> 00:02:32.180
+incluindo proficiência em Xcode e domínio do ciclo de vida do iOS.
 
 42
-00:02:04.400 --> 00:02:06.240
-em direção aos paradigmas baseados na web.
+00:02:32.180 --> 00:02:35.660
+Você tem uma vantagem imediata quando se trata de navegar pelos rigorosos
 
 43
-00:02:06.240 --> 00:02:09.200
-Mas uma vez que você supera esse obstáculo, sua experiência nativa
+00:02:35.660 --> 00:02:40.780
+requisitos do ecossistema da Apple e lidar com integrações complexas de native UI kit.
 
 44
-00:02:09.200 --> 00:02:11.360
-o torna incrivelmente eficaz.
+00:02:40.780 --> 00:02:44.420
+Ambos os grupos esbarram de cabeça no mesmo obstáculo estrutural.
 
 45
-00:02:11.360 --> 00:02:14.560
-Agora considere os desenvolvedores React e JavaScript web.
+00:02:44.420 --> 00:02:48.340
+Você precisa abandonar seus paradigmas nativos fortemente tipados e navegar pelas
 
 46
-00:02:14.560 --> 00:02:17.280
-Você aborda isso do ângulo exatamente oposto,
+00:02:48.340 --> 00:02:53.580
+peculiaridades específicas, muitas vezes frustrantes, dos ecossistemas JavaScript e TypeScript.
 
 47
-00:02:17.280 --> 00:02:20.080
-começando forte dentro do ecossistema.
+00:02:53.580 --> 00:02:56.980
+A parte mais difícil dessa jornada é internalizar o fluxo de gerenciamento de estado
 
 48
-00:02:20.080 --> 00:02:23.280
-Conforme a matriz se expande, suas vantagens são claras.
+00:02:56.980 --> 00:02:59.460
+declarativo do qual o React depende.
 
 49
-00:02:23.280 --> 00:02:26.560
-Habilidades como hooks e JSX se transferem perfeitamente.
+00:02:59.460 --> 00:03:03.740
+Você precisa deixar de lado noções preconcebidas sobre a superioridade do hardware mobile.
 
 50
-00:02:26.560 --> 00:02:28.800
-Mas você deve abandonar as suposições do navegador.
+00:03:03.740 --> 00:03:07.300
+Seu sucesso aqui exige uma rendição completa ao modelo de componentes do React
 
 51
-00:02:28.800 --> 00:02:31.680
-Não há DOM ou CSS padrão.
+00:03:07.300 --> 00:03:08.300
+model.
 
 52
-00:02:31.680 --> 00:02:35.120
-Em vez disso, você deve dominar paradigmas específicos de UI móvel,
+00:03:08.300 --> 00:03:12.500
+Isso nos leva à ramificação final do nosso mapa, a master class.
 
 53
-00:02:35.120 --> 00:02:38.480
-ciclos de vida de navegação e restrições rigorosas de hardware.
+00:03:12.500 --> 00:03:15.780
+Esse caminho é construído estritamente para desenvolvedores que já sabem como criar
 
 54
-00:02:38.480 --> 00:02:40.320
-Você precisa do caminho do desenvolvedor web.
+00:03:15.780 --> 00:03:18.780
+e publicar uma aplicação React Native básica.
 
 55
-00:02:40.320 --> 00:02:43.360
-Esta rota pula os fundamentos do React que você já conhece,
+00:03:18.780 --> 00:03:21.980
+Quando você tenta integrar o React Native em aplicações nativas
 
 56
-00:02:43.360 --> 00:02:46.880
-dedicando cada aula diretamente à construção de sua mentalidade móvel.
+00:03:21.980 --> 00:03:25.020
+massivas já existentes, as ferramentas padrão param de funcionar.
 
 57
-00:02:46.880 --> 00:02:49.680
-Você obtém produtividade de codificação imediata.
+00:03:25.020 --> 00:03:27.220
+Você esbarra em um teto técnico rígido.
 
 58
-00:02:49.680 --> 00:02:52.320
-Mas você a troca pela inevitável fricção
+00:03:27.220 --> 00:03:30.980
+Superar esse teto exige habilidades operacionais avançadas,
 
 59
-00:02:52.320 --> 00:02:55.600
-de diagnosticar gargalos de desempenho específicos do móvel
+00:03:30.980 --> 00:03:35.820
+integração brownfield, profiling de performance rigoroso e pipelines complexos
 
 60
-00:02:55.600 --> 00:02:58.960
-e se adaptar a limitações rigorosas da plataforma.
+00:03:35.820 --> 00:03:37.140
+de CICD.
 
 61
-00:02:58.960 --> 00:03:02.080
-Finalmente, há um caminho para aqueles que já possuem
+00:03:37.140 --> 00:03:41.100
+O núcleo dessa complexidade está na mecânica da new architecture.
 
 62
-00:03:02.080 --> 00:03:03.840
-os fundamentos do React Native,
+00:03:41.100 --> 00:03:44.540
+Você precisa dominar turbo modules e fabric por baixo dos panos.
 
 63
-00:03:03.840 --> 00:03:06.320
-mas se veem precisando escalar aplicações
+00:03:44.540 --> 00:03:47.340
+Esteja ciente de que esta trilha não oferece nenhuma ajuda para iniciantes.
 
 64
-00:03:06.320 --> 00:03:08.000
-para um nível empresarial.
+00:03:47.340 --> 00:03:50.100
+Ela ignora completamente os fundamentos para iniciantes.
 
 65
-00:03:08.000 --> 00:03:10.720
-Contar apenas com conhecimento puro de JavaScript
+00:03:50.100 --> 00:03:54.340
+Se você não tem um domínio sólido e de nível de produção do React Native
 
 66
-00:03:10.720 --> 00:03:14.320
-eventualmente limitará sua capacidade de entregar recursos de alto desempenho
+00:03:54.340 --> 00:03:57.740
+no básico, este material vai te punir.
 
 67
-00:03:14.320 --> 00:03:16.640
-em ambientes móveis complexos.
+00:03:57.740 --> 00:04:02.220
+Desenvolvedores intermediários precisam parar de construir UIs superficiais e começar a
 
 68
-00:03:16.640 --> 00:03:20.000
-Finalizando nossa matriz, vemos o passo necessário.
+00:04:02.220 --> 00:04:05.740
+dominar essa mecânica interna para garantir que suas habilidades continuem valiosas
 
 69
-00:03:20.000 --> 00:03:23.360
-Você deve enfrentar a nova arquitetura do React Native,
+00:04:05.740 --> 00:04:07.300
+a longo prazo.
 
 70
-00:03:23.360 --> 00:03:27.680
-mergulhando em integrações C++, JSI e Fabric.
+00:04:07.300 --> 00:04:11.100
+Para resumir isso em uma decisão concreta, dê uma olhada nesta pontuação
 
 71
-00:03:27.680 --> 00:03:29.920
-Você também gerenciará integrações brownfield
+00:04:11.100 --> 00:04:12.460
+matriz de cards.
 
 72
-00:03:29.920 --> 00:03:34.080
-com código nativo existente e configurará pipelines robustos de CICD
+00:04:12.460 --> 00:04:16.900
+O caminho mais rápido para a competência exige que você reconheça implacavelmente o que você
 
 73
-00:03:34.080 --> 00:03:35.520
-para grandes equipes.
+00:04:16.900 --> 00:04:20.140
+não sabe sobre o lado oposto da sua tech stack.
 
 74
-00:03:35.520 --> 00:03:38.480
-Para isso, você vai direto para a trilha masterclass
+00:04:20.140 --> 00:04:22.980
+Desenvolvedores web, aqui está a sua diretriz.
 
 75
-00:03:38.480 --> 00:03:41.600
-ignorando completamente toda a configuração fundamental.
+00:04:22.980 --> 00:04:25.740
+Pule os tutoriais padrão de sintaxe do React.
 
 76
-00:03:41.600 --> 00:03:44.880
-Engenheiros sênior trocam a segurança do JavaScript puro
+00:04:25.740 --> 00:04:29.940
+Passe cada hora se aprofundando nas restrições físicas do mobile.
 
 77
-00:03:44.880 --> 00:03:48.160
-pela alta complexidade das camadas de integração nativa.
+00:04:29.940 --> 00:04:34.340
+Engenheiros Android e iOS, pulem as visões gerais de arquitetura básicas.
 
 78
-00:03:48.160 --> 00:03:51.440
-É uma subida íngreme e exigente,
+00:04:34.340 --> 00:04:38.460
+Coloquem 100% do seu foco em dominar TypeScript e o ciclo de vida dos componentes React.
 
 79
-00:03:51.440 --> 00:03:53.720
-mas, em última análise, é a única maneira
+00:04:38.460 --> 00:04:39.780
+componentes React.
 
 80
-00:03:53.720 --> 00:03:56.400
-de alcançar verdadeira capacidade de escalonamento.
+00:04:39.780 --> 00:04:44.740
+E praticantes existentes de React Native, comprometam-se estritamente com a nova arquitetura
 
 81
-00:03:56.400 --> 00:03:58.880
-A filosofia central é simples.
+00:04:44.740 --> 00:04:45.980
+agora mesmo.
 
 82
-00:03:58.880 --> 00:04:03.040
-Sua stack de tecnologia atual do dia a dia é seu ponto de alavancagem mais alto.
+00:04:45.980 --> 00:04:50.420
+Conforme a bridge do framework é substituída pelo JSI e pelo Fabric, os desenvolvedores que não conseguirem
 
 83
-00:04:03.040 --> 00:04:05.600
-Você nunca deve começar do zero.
+00:04:50.420 --> 00:04:54.780
+navegar pela camada C++ ou analisar (profile) essas novas threads vão se ver
 
 84
-00:04:05.600 --> 00:04:07.520
-Vamos revisar o placar.
+00:04:54.780 --> 00:04:57.540
+excluídos da engenharia mobile de alta performance.
 
 85
-00:04:07.520 --> 00:04:10.160
-Desenvolvedores Kotlin aproveitam seu background de UI
+00:04:57.540 --> 00:05:00.980
+Se você escolher um caminho de aprendizado que apenas repete o que você já sabe,
 
 86
-00:04:10.160 --> 00:04:12.080
-na trilha Android nativa.
+00:05:00.980 --> 00:05:03.860
+está desperdiçando tempo alimentando seu próprio ego.
 
 87
-00:04:12.080 --> 00:04:15.760
-Desenvolvedores Swift fazem o mesmo na trilha iOS nativa.
+00:05:03.860 --> 00:05:07.540
+A verdadeira eficiência no desenvolvimento cross-platform vem de lançar um
 
 88
-00:04:15.760 --> 00:04:19.120
-Desenvolvedores React seguem direto para a trilha de desenvolvimento web.
-
-89
-00:04:19.120 --> 00:04:21.840
-Desenvolvedores estabelecidos entram na masterclass
-
-90
-00:04:21.840 --> 00:04:24.000
-para à prova de futuro suas carreiras.
-
-91
-00:04:24.000 --> 00:04:26.480
-Essa precisão direcionada mantém você focado
-
-92
-00:04:26.480 --> 00:04:30.160
-nas habilidades exatas que você carece, em vez de desperdiçar horas
-
-93
-00:04:30.160 --> 00:04:33.280
-em um tutorial genérico projetado para outra pessoa.
-
-94
-00:04:33.280 --> 00:04:36.920
-Seu tempo é seu ativo mais valioso como engenheiro.
-
-95
-00:04:36.920 --> 00:04:39.960
-O verdadeiro domínio vem de escolher a trilha educacional
-
-96
-00:04:39.960 --> 00:04:43.640
-que respeita os investimentos de carreira que você já fez.
+00:05:07.540 --> 00:05:11.460
+ataque preciso e direcionado às suas fraquezas profissionais específicas.
 

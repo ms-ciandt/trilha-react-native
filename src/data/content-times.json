@@ -8,7 +8,7 @@
     },
     "introducao/01-history-and-architecture.md": {
       "readMin": 4,
-      "videoMin": 6.3,
+      "videoMin": 6.2,
       "hasVideo": true,
       "videoFile": "01_history_architecture.mp4"
     },
@@ -301,7 +301,7 @@
       "videoFile": "test_05_detox-e2e.mp4"
     },
     "trilha-ios/modulo-arquitetura/01-architecture-patterns.md": {
-      "readMin": 1,
+      "readMin": 5,
       "videoMin": 5.6,
       "hasVideo": true,
       "videoFile": "arq_01_architecture-patterns.mp4"
@@ -903,7 +903,7 @@
     },
     "introducao/01-history-and-architecture.md": {
       "readMin": 4,
-      "videoMin": 6.3,
+      "videoMin": 6.2,
       "docCount": 1
     },
     "introducao/02-new-architecture.md": {
@@ -987,7 +987,7 @@
       "docCount": 5
     },
     "trilha-ios/modulo-arquitetura": {
-      "readMin": 18,
+      "readMin": 22,
       "videoMin": 31.599999999999998,
       "docCount": 5
     },
@@ -1090,7 +1090,7 @@
   "byTrail": {
     "introducao": {
       "readMin": 10,
-      "videoMin": 22.099999999999998,
+      "videoMin": 22,
       "docCount": 4
     },
     "rn-advanced-lab": {
@@ -1104,7 +1104,7 @@
       "docCount": 40
     },
     "trilha-ios": {
-      "readMin": 271,
+      "readMin": 275,
       "videoMin": 288.2,
       "docCount": 43
     },
@@ -1120,8 +1120,8 @@
     }
   },
   "total": {
-    "readMin": 638,
-    "videoMin": 868.5000000000001,
+    "readMin": 642,
+    "videoMin": 868.4000000000002,
     "docCount": 149
   }
 }
