@@ -1,354 +1,337 @@
 WEBVTT
 
 1
-00:00:00.000 --> 00:00:06.020
-O que você está vendo na tela, três disciplinas de software distintas se chocando em
+00:00:00.000 --> 00:00:05.000
+Se você programa profissionalmente, seu tempo é o seu bem mais valioso.
 
 2
-00:00:06.020 --> 00:00:10.940
-um único bloco, é a realidade quando uma equipe adota o React Native.
+00:00:05.000 --> 00:00:11.000
+Quando você decide aprender React Native, precisa de uma rota eficiente e precisa até o domínio do assunto.
 
 3
-00:00:10.940 --> 00:00:15.060
-A suposição geralmente é que adotar uma ferramenta cross-platform significa jogar fora
+00:00:11.000 --> 00:00:15.000
+Profissionais experientes pulam a trilha de iniciante e vão direto para a subida
 
 4
-00:00:15.060 --> 00:00:18.540
-sua experiência anterior e começar do zero absoluto.
+00:00:15.000 --> 00:00:17.000
+que combina com o nível atual deles.
 
 5
-00:00:18.540 --> 00:00:23.960
-Essa suposição leva desenvolvedores experientes a tutoriais genéricos de uma hora que explicam
+00:00:17.000 --> 00:00:20.000
+Tutoriais genéricos de programação falham nisso.
 
 6
-00:00:23.960 --> 00:00:27.940
-o que é uma variável, desperdiçando um tempo incrivelmente valioso.
+00:00:20.000 --> 00:00:23.000
+Ou te arrastam por conceitos que você já dominou há anos,
 
 7
-00:00:27.940 --> 00:00:30.100
-Dê uma olhada neste diagrama.
+00:00:23.000 --> 00:00:26.000
+ou pulam contexto essencial e te deixam perdido.
 
 8
-00:00:30.100 --> 00:00:34.620
-A Maestria em React Native fica na interseção de três pilares específicos.
+00:00:26.000 --> 00:00:29.000
+O objetivo deste currículo é a eficiência do aprendizado.
 
 9
-00:00:34.620 --> 00:00:40.000
-Tecnologias web, arquitetura mobile nativa e mecânicas avançadas do React Native.
+00:00:29.000 --> 00:00:32.000
+Queremos que você siga o caminho de menor resistência.
 
 10
-00:00:40.000 --> 00:00:44.140
-Se você tem experiência profissional em software, você já ocupa pelo menos um desses
+00:00:32.000 --> 00:00:37.000
+Para construir uma aplicação React Native, você depende de dois pilares distintos de conhecimento.
 
 11
-00:00:44.140 --> 00:00:45.400
-círculos principais.
+00:00:37.000 --> 00:00:43.000
+O primeiro é o paradigma JavaScript e React, como arquitetura de componentes e hooks.
 
 12
-00:00:45.400 --> 00:00:47.820
-Você tem uma vantagem inicial enorme.
+00:00:43.000 --> 00:00:48.000
+O segundo pilar é o ambiente mobile nativo, entender comportamentos de plataforma,
 
 13
-00:00:47.820 --> 00:00:52.500
-O desafio é descobrir como identificar seus pontos cegos específicos, para que você possa
+00:00:48.000 --> 00:00:51.000
+limites de renderização e restrições rígidas de memória.
 
 14
-00:00:52.500 --> 00:00:57.300
-isolar as partes que faltam, sem precisar passar por conceitos que você já dominou há anos.
+00:00:51.000 --> 00:00:54.000
+Seu dilema imediato é avaliar exatamente onde você está.
 
 15
-00:00:57.300 --> 00:01:02.020
-A eficiência aqui se resume a aproveitar seu patrimônio técnico existente e usá-lo para
+00:00:54.000 --> 00:00:58.000
+Você precisa identificar com precisão qual desses dois pilares você já domina.
 
 16
-00:01:02.020 --> 00:01:05.180
-preencher lacunas específicas no seu conhecimento.
+00:00:58.000 --> 00:01:01.000
+Tempo e esforço mental são investimentos significativos.
 
 17
-00:01:05.180 --> 00:01:09.820
-Este fluxograma detalha os pontos de entrada, começando bem aqui com a Web Trail,
+00:01:01.000 --> 00:01:06.000
+Escolher o ponto de partida errado praticamente garante frustração e esforço desperdiçado.
 
 18
-00:01:09.820 --> 00:01:13.380
-desenhada estritamente para desenvolvedores React e JavaScript já existentes.
+00:01:06.000 --> 00:01:09.000
+Para resolver isso, usamos um framework de correspondência de cenário.
 
 19
-00:01:13.380 --> 00:01:17.620
-Se esse é o seu background, você começa com uma vantagem estrutural enorme.
+00:01:09.000 --> 00:01:14.000
+Ele te conecta a um ponto de partida com base estritamente na stack que você usa no dia a dia.
 
 20
-00:01:17.620 --> 00:01:21.340
-Os componentes que você constrói para mobile espelham a estrutura e a lógica dos componentes
+00:01:14.000 --> 00:01:18.000
+Veja este fluxograma de árvore de decisão mapeando sua stack de base.
 
 21
-00:01:21.340 --> 00:01:23.700
-você desenvolve para a web todos os dias.
+00:01:18.000 --> 00:01:21.000
+Ele se divide em três ramos distintos, baseados no seu trabalho diário.
 
 22
-00:01:23.700 --> 00:01:28.460
-Seus React hooks, sua estrutura JSX e seus padrões de design estabelecidos são transferidos
+00:01:21.000 --> 00:01:24.000
+Mobile nativo, web, e React Native já existente.
 
 23
-00:01:28.460 --> 00:01:30.340
-linha por linha.
+00:01:24.000 --> 00:01:29.000
+Repare como o ramo mobile nativo se divide ainda mais em duas trilhas específicas.
 
 24
-00:01:30.340 --> 00:01:33.980
-Você vai encontrar atrito no momento em que tentar implantar esse código em um pedaço físico
+00:01:29.000 --> 00:01:32.000
+O desenvolvimento multiplataforma tem uma curva de aprendizado íngreme.
 
 25
-00:01:33.980 --> 00:01:35.860
-de vidro no seu bolso.
+00:01:32.000 --> 00:01:38.000
+Aproveitar sua expertise de domínio já existente é a forma mais eficaz de compensar esse atrito inicial.
 
 26
-00:01:35.860 --> 00:01:40.020
-O navegador protege você de restrições rígidas de memória, ciclos de vida nativos profundos e
+00:01:38.000 --> 00:01:40.000
+Evite aqui a abordagem de "um pouco de tudo".
 
 27
-00:01:40.020 --> 00:01:42.700
-paradigmas de experiência do usuário mobile baseados em gestos.
+00:01:40.000 --> 00:01:43.000
+Você precisa avaliar sua stack principal mais forte,
 
 28
-00:01:42.700 --> 00:01:44.660
-Um celular não protege.
+00:01:43.000 --> 00:01:46.000
+não uma linguagem com a qual você só experimentou casualmente algumas vezes.
 
 29
-00:01:44.660 --> 00:01:48.540
-Para ter sucesso nessa trilha, pare de se preocupar com a sintaxe da linguagem.
+00:01:46.000 --> 00:01:49.000
+Não existe um "dia um" universal neste programa.
 
 30
-00:01:48.540 --> 00:01:52.260
-Concentre toda a sua atenção em aprender como os ambientes mobile limitam e restringem
+00:01:49.000 --> 00:01:53.000
+Cada desenvolvedor parte de um conjunto de pressupostos completamente diferente.
 
 31
-00:01:52.260 --> 00:01:53.620
-o código que você escreve.
+00:01:53.000 --> 00:01:56.000
+Para dominar o React Native em um ritmo acelerado,
 
 32
-00:01:53.620 --> 00:01:58.780
-O mapa dá um zoom out aqui para mostrar duas trilhas distintas para desenvolvedores mobile dedicados,
+00:01:56.000 --> 00:02:01.000
+sua experiência técnica anterior dita estritamente seu caminho de aprendizado futuro.
 
 33
-00:01:58.780 --> 00:02:01.740
-a Trilha Android e a Trilha iOS.
+00:02:01.000 --> 00:02:05.000
+Vamos começar pelo primeiro grande grupo: desenvolvedores mobile nativos.
 
 34
-00:02:01.740 --> 00:02:05.460
-Você já entende como as APIs de plataforma conversam com o hardware do dispositivo.
+00:02:05.000 --> 00:02:10.000
+Se você constrói aplicações usando Kotlin e Jetpack Compose, a Trilha Android é para você.
 
 35
-00:02:05.460 --> 00:02:09.380
-Você entende como os mecanismos de renderização nativa funcionam sob pressão.
+00:02:10.000 --> 00:02:13.000
+Este scorecard resume a Trilha Android.
 
 36
-00:02:09.380 --> 00:02:14.140
-Desenvolvedores Kotlin e Jetpack Compose trazem uma vantagem bem específica para a mesa,
+00:02:13.000 --> 00:02:18.000
+Você tem marcações verdes em segurança de threads, renderização nativa e APIs de plataforma.
 
 37
-00:02:14.140 --> 00:02:17.060
-uma familiaridade profunda com thread safety.
+00:02:18.000 --> 00:02:22.000
+Sua vantagem é que você pula completamente o aprendizado desses conceitos mobile.
 
 38
-00:02:17.060 --> 00:02:20.940
-Você pode usar esse conhecimento diretamente para debugar a forma como o React Native se comunica
+00:02:22.000 --> 00:02:25.000
+Você já domina a plataforma.
 
 39
-00:02:20.940 --> 00:02:24.380
-através da sua bridge e interage com a UI thread.
+00:02:25.000 --> 00:02:31.000
+Mas o scorecard sinaliza sua curva de aprendizado: JavaScript, TypeScript e o modelo de componentes do React.
 
 40
-00:02:24.380 --> 00:02:27.900
-Desenvolvedores Swift e SwiftUI trazem seu próprio conjunto de ferramentas distinto,
+00:02:31.000 --> 00:02:35.000
+Sua troca é deixar de lado os paradigmas nativos tipados que você conhece
 
 41
-00:02:27.900 --> 00:02:32.180
-incluindo proficiência em Xcode e domínio do ciclo de vida do iOS.
+00:02:35.000 --> 00:02:38.000
+para aprender a estrutura declarativa de componentes do React.
 
 42
-00:02:32.180 --> 00:02:35.660
-Você tem uma vantagem imediata quando se trata de navegar pelos rigorosos
+00:02:38.000 --> 00:02:40.000
+Agora vamos para a Trilha iOS,
 
 43
-00:02:35.660 --> 00:02:40.780
-requisitos do ecossistema da Apple e lidar com integrações complexas de native UI kit.
+00:02:40.000 --> 00:02:44.000
+feita para desenvolvedores cuja base é Swift e SwiftUI.
 
 44
-00:02:40.780 --> 00:02:44.420
-Ambos os grupos esbarram de cabeça no mesmo obstáculo estrutural.
+00:02:44.000 --> 00:02:46.000
+Este scorecard da Trilha iOS é parecido.
 
 45
-00:02:44.420 --> 00:02:48.340
-Você precisa abandonar seus paradigmas nativos fortemente tipados e navegar pelas
+00:02:46.000 --> 00:02:52.000
+Você tem marcações verdes no ciclo de vida do iOS, nas ferramentas do Xcode e na renderização do SwiftUI.
 
 46
-00:02:48.340 --> 00:02:53.580
-peculiaridades específicas, muitas vezes frustrantes, dos ecossistemas JavaScript e TypeScript.
+00:02:52.000 --> 00:02:57.000
+Seu conhecimento do ecossistema da Apple significa que você pula inteiramente a configuração de ambiente.
 
 47
-00:02:53.580 --> 00:02:56.980
-A parte mais difícil dessa jornada é internalizar o fluxo de gerenciamento de estado
+00:02:57.000 --> 00:03:02.000
+Porém, olhando de novo o scorecard, o aviso sobre curva de aprendizado é exatamente o mesmo.
 
 48
-00:02:56.980 --> 00:02:59.460
-declarativo do qual o React depende.
+00:03:02.000 --> 00:03:08.000
+Você troca seu ambiente nativo familiar para dominar as particularidades de sintaxe do ecossistema JavaScript.
 
 49
-00:02:59.460 --> 00:03:03.740
-Você precisa deixar de lado noções preconcebidas sobre a superioridade do hardware mobile.
+00:03:08.000 --> 00:03:12.000
+Desenvolvedores nativos pulam completamente as restrições do ambiente mobile,
 
 50
-00:03:03.740 --> 00:03:07.300
-Seu sucesso aqui exige uma rendição completa ao modelo de componentes do React
+00:03:12.000 --> 00:03:16.000
+enfrentando o atrito puramente na sintaxe do novo paradigma React.
 
 51
-00:03:07.300 --> 00:03:08.300
-model.
+00:03:16.000 --> 00:03:22.000
+Em seguida, avaliamos o segundo grande grupo: desenvolvedores React e JavaScript para web.
 
 52
-00:03:08.300 --> 00:03:12.500
-Isso nos leva à ramificação final do nosso mapa, a master class.
+00:03:22.000 --> 00:03:24.000
+Seu caminho é a Trilha Web.
 
 53
-00:03:12.500 --> 00:03:15.780
-Esse caminho é construído estritamente para desenvolvedores que já sabem como criar
+00:03:24.000 --> 00:03:28.000
+Olhando o scorecard da Trilha Web, você já tem marcações em hooks do React,
 
 54
-00:03:15.780 --> 00:03:18.780
-e publicar uma aplicação React Native básica.
+00:03:28.000 --> 00:03:30.000
+JSX e padrões de componentes.
 
 55
-00:03:18.780 --> 00:03:21.980
-Quando você tenta integrar o React Native em aplicações nativas
+00:03:30.000 --> 00:03:33.000
+Sua vantagem é zero atrito com a sintaxe do código.
 
 56
-00:03:21.980 --> 00:03:25.020
-massivas já existentes, as ferramentas padrão param de funcionar.
+00:03:33.000 --> 00:03:38.000
+A arquitetura web que você usa no dia a dia se transfere de forma direta para o React Native.
 
 57
-00:03:25.020 --> 00:03:27.220
-Você esbarra em um teto técnico rígido.
+00:03:38.000 --> 00:03:42.000
+Mas o scorecard avisa que você precisa de uma mudança de mentalidade em direção ao mobile.
 
 58
-00:03:27.220 --> 00:03:30.980
-Superar esse teto exige habilidades operacionais avançadas,
+00:03:42.000 --> 00:03:47.000
+Sua curva específica exige entender restrições de plataforma, navegação nativa,
 
 59
-00:03:30.980 --> 00:03:35.820
-integração brownfield, profiling de performance rigoroso e pipelines complexos
+00:03:47.000 --> 00:03:51.000
+e gargalos de performance mobile que simplesmente não existem em um navegador web.
 
 60
-00:03:35.820 --> 00:03:37.140
-de CICD.
+00:03:51.000 --> 00:03:57.000
+Por fim, avaliamos o último grupo: desenvolvedores que já têm uma base sólida em React Native.
 
 61
-00:03:37.140 --> 00:03:41.100
-O núcleo dessa complexidade está na mecânica da new architecture.
+00:03:57.000 --> 00:04:03.000
+Sua opção é a trilha Masterclass, que entrega habilidades de alto ROI em nível empresarial,
 
 62
-00:03:41.100 --> 00:03:44.540
-Você precisa dominar turbo modules e fabric por baixo dos panos.
+00:04:03.000 --> 00:04:09.000
+construindo pipelines de CI/CD, estratégias de upgrade e integração brownfield.
 
 63
-00:03:44.540 --> 00:03:47.340
-Esteja ciente de que esta trilha não oferece nenhuma ajuda para iniciantes.
+00:04:09.000 --> 00:04:14.000
+O foco técnico principal é dominar a nova arquitetura, incluindo TurboModules e Fabric.
 
 64
-00:03:47.340 --> 00:03:50.100
-Ela ignora completamente os fundamentos para iniciantes.
+00:04:14.000 --> 00:04:19.000
+Este scorecard da Masterclass destaca claramente uma barreira de entrada considerável.
 
 65
-00:03:50.100 --> 00:03:54.340
-Se você não tem um domínio sólido e de nível de produção do React Native
+00:04:19.000 --> 00:04:22.000
+Uma base sólida em React Native é estritamente necessária.
 
 66
-00:03:54.340 --> 00:03:57.740
-no básico, este material vai te punir.
+00:04:22.000 --> 00:04:27.000
+Tentar entrar nesta trilha sem uma fundação sólida vai resultar em bastante confusão.
 
 67
-00:03:57.740 --> 00:04:02.220
-Desenvolvedores intermediários precisam parar de construir UIs superficiais e começar a
+00:04:27.000 --> 00:04:33.000
+Desenvolvedores web precisam abraçar um ambiente mobile mais restritivo, enquanto veteranos avançam na nova arquitetura.
 
 68
-00:04:02.220 --> 00:04:05.740
-dominar essa mecânica interna para garantir que suas habilidades continuem valiosas
+00:04:33.000 --> 00:04:37.000
+Combinar exatamente sua base com o currículo certo é fundamental.
 
 69
-00:04:05.740 --> 00:04:07.300
-a longo prazo.
+00:04:37.000 --> 00:04:40.000
+A regra de ouro deste currículo é simples.
 
 70
-00:04:07.300 --> 00:04:11.100
-Para resumir isso em uma decisão concreta, dê uma olhada nesta pontuação
+00:04:40.000 --> 00:04:45.000
+Sua trilha deve ser ditada estritamente pelo conjunto de habilidades mais forte que você já tem agora,
 
 71
-00:04:11.100 --> 00:04:12.460
-matriz de cards.
+00:04:45.000 --> 00:04:47.000
+e não pelo cargo de desenvolvedor que você deseja no futuro.
 
 72
-00:04:12.460 --> 00:04:16.900
-O caminho mais rápido para a competência exige que você reconheça implacavelmente o que você
+00:04:47.000 --> 00:04:53.000
+Esta matriz de quatro quadrantes mapeia seu direcionamento final com base no seu perfil e foco principal.
 
 73
-00:04:16.900 --> 00:04:20.140
-não sabe sobre o lado oposto da sua tech stack.
+00:04:53.000 --> 00:04:55.000
+Vamos começar pelos quadrantes nativos.
 
 74
-00:04:20.140 --> 00:04:22.980
-Desenvolvedores web, aqui está a sua diretriz.
+00:04:55.000 --> 00:05:00.000
+Se você escreve Kotlin ou Swift diariamente, siga a trilha nativa correspondente para aprender React.
 
 75
-00:04:22.980 --> 00:04:25.740
-Pule os tutoriais padrão de sintaxe do React.
+00:05:00.000 --> 00:05:06.000
+Indo para o quadrante web, se você constrói apps React web diariamente, siga a Trilha Web para aprender as restrições mobile.
 
 76
-00:04:25.740 --> 00:04:29.940
-Passe cada hora se aprofundando nas restrições físicas do mobile.
+00:05:06.000 --> 00:05:08.000
+E por fim, o quadrante Masterclass.
 
 77
-00:04:29.940 --> 00:04:34.340
-Engenheiros Android e iOS, pulem as visões gerais de arquitetura básicas.
+00:05:08.000 --> 00:05:16.000
+Se você já está publicando aplicações React Native, pule os fundamentos por completo e vá direto para a Masterclass para se preparar para a nova arquitetura.
 
 78
-00:04:34.340 --> 00:04:38.460
-Coloquem 100% do seu foco em dominar TypeScript e o ciclo de vida dos componentes React.
+00:05:16.000 --> 00:05:21.000
+Ao escolher o quadrante certo, você elimina de forma explícita horas de estudo redundante.
 
 79
-00:04:38.460 --> 00:04:39.780
-componentes React.
+00:05:21.000 --> 00:05:28.000
+Você maximiza sua eficiência focando energia apenas nas lacunas do seu conhecimento, deixando de lado os conceitos que você já domina.
 
 80
-00:04:39.780 --> 00:04:44.740
-E praticantes existentes de React Native, comprometam-se estritamente com a nova arquitetura
+00:05:28.000 --> 00:05:34.000
+Este currículo se integra diretamente aos princípios e sistemas de engenharia que você já aplica no seu fluxo de trabalho diário.
 
 81
-00:04:44.740 --> 00:04:45.980
-agora mesmo.
+00:05:34.000 --> 00:05:40.000
+Reserve cinco segundos agora para identificar exatamente qual desses quatro perfis combina com você.
 
 82
-00:04:45.980 --> 00:04:50.420
-Conforme a bridge do framework é substituída pelo JSI e pelo Fabric, os desenvolvedores que não conseguirem
+00:05:40.000 --> 00:05:43.000
+Sua trilha de aprendizado otimizada e específica está pronta e esperando.
 
 83
-00:04:50.420 --> 00:04:54.780
-navegar pela camada C++ ou analisar (profile) essas novas threads vão se ver
+00:05:43.000 --> 00:05:48.000
+Clique no link correspondente na descrição do vídeo para começar sua trilha escolhida.
 
 84
-00:04:54.780 --> 00:04:57.540
-excluídos da engenharia mobile de alta performance.
-
-85
-00:04:57.540 --> 00:05:00.980
-Se você escolher um caminho de aprendizado que apenas repete o que você já sabe,
-
-86
-00:05:00.980 --> 00:05:03.860
-está desperdiçando tempo alimentando seu próprio ego.
-
-87
-00:05:03.860 --> 00:05:07.540
-A verdadeira eficiência no desenvolvimento cross-platform vem de lançar um
-
-88
-00:05:07.540 --> 00:05:11.460
-ataque preciso e direcionado às suas fraquezas profissionais específicas.
-
+00:05:48.000 --> 00:05:55.000
+A forma mais rápida de dominar o React Native é começar exatamente no ponto onde sua expertise atual termina.
