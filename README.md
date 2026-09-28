@@ -68,6 +68,22 @@ Every trail leads to the same destination: production-ready React Native apps wi
 | 04 — Performance, Bundle & CI/CD | 5 | ✅ Done |
 | 05 — RN Version Updates & Upgrade Strategy | 10 | ✅ Done |
 
+### RN Advanced Lab (Practice Track)
+
+A hands-on companion track (`/lab`) that complements the Masterclass trail: progressive
+labs built around a single running example app — the
+[`ciandt-championships-android-template`](https://github.com/gbonin-ciandt/ciandt-championships-android-template) —
+where each lab adds one brownfield RN feature to an existing native Android app.
+
+| Lab | Topic | Optional | Status |
+|-----|-------|----------|--------|
+| 01 — Brownfield Bootstrap | Embed RN inside an existing native Android app | No | ✅ Done |
+| 01-B — Brownfield Bundle Split | Same outcome as Lab 01, rebuilt with Re.Pack + Module Federation (shared-core + service bundles) | Yes | ✅ Done |
+| 02 — Brownfield Navigation | RN → native forward navigation (Tournament Detail → History/Ranking) | No | ✅ Done |
+| 03 — Native Library Bridge | Build a TurboModule from scratch to generate tournament brackets/pairings | No | ✅ Done |
+| 04 — UI Thread vs JS Thread | Diagnose and fix a real JS-thread performance problem | No | ✅ Done |
+| 05 — Godot Integration | Embed a Godot mini-game and exchange data across the bridge | Yes | ✅ Done |
+
 ---
 
 ## Translations
@@ -181,13 +197,14 @@ trilha-react-native/
 │   │   ├── modulo-testes/               ← stub
 │   │   ├── modulo-cicd/                 ← stub
 │   │   └── modulo-arquitetura/          ← stub
-│   └── trilha-masterclass/              ← advanced trail — all 6 modules done ✅
-│       ├── modulo-00-overview/
-│       ├── modulo-01-brownfield/
-│       ├── modulo-02-jsi-fabric/
-│       ├── modulo-03-turbomodules/
-│       ├── modulo-04-performance-cicd/
-│       └── modulo-05-version-updates/
+│   ├── trilha-masterclass/              ← advanced trail — all 6 modules done ✅
+│   │   ├── modulo-00-overview/
+│   │   ├── modulo-01-brownfield/
+│   │   ├── modulo-02-jsi-fabric/
+│   │   ├── modulo-03-turbomodules/
+│   │   ├── modulo-04-performance-cicd/
+│   │   └── modulo-05-version-updates/
+│   └── rn-advanced-lab/                 ← practice track: 5 labs + 1 optional bundle-split variant ✅
 ├── _course-refs/                        ← consolidated COURSE-*.md files (not published)
 ├── i18n/pt/                             ← Portuguese (PT-BR) — full coverage
 │   ├── docusaurus-plugin-content-docs/current/

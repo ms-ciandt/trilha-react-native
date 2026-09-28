@@ -43,7 +43,7 @@
       "videoFile": null
     },
     "rn-advanced-lab/03-native-library-bridge.md": {
-      "readMin": 5,
+      "readMin": 6,
       "videoMin": null,
       "hasVideo": false,
       "videoFile": null
@@ -301,7 +301,7 @@
       "videoFile": "test_05_detox-e2e.mp4"
     },
     "trilha-ios/modulo-arquitetura/01-architecture-patterns.md": {
-      "readMin": 5,
+      "readMin": 1,
       "videoMin": 5.6,
       "hasVideo": true,
       "videoFile": "arq_01_architecture-patterns.mp4"
@@ -932,7 +932,7 @@
       "docCount": 1
     },
     "rn-advanced-lab/03-native-library-bridge.md": {
-      "readMin": 5,
+      "readMin": 6,
       "videoMin": 0,
       "docCount": 1
     },
@@ -987,7 +987,7 @@
       "docCount": 5
     },
     "trilha-ios/modulo-arquitetura": {
-      "readMin": 22,
+      "readMin": 18,
       "videoMin": 31.599999999999998,
       "docCount": 5
     },
@@ -1094,7 +1094,7 @@
       "docCount": 4
     },
     "rn-advanced-lab": {
-      "readMin": 37,
+      "readMin": 38,
       "videoMin": 0,
       "docCount": 6
     },
@@ -1104,7 +1104,7 @@
       "docCount": 40
     },
     "trilha-ios": {
-      "readMin": 275,
+      "readMin": 271,
       "videoMin": 288.2,
       "docCount": 43
     },
@@ -1120,7 +1120,7 @@
     }
   },
   "total": {
-    "readMin": 642,
+    "readMin": 639,
     "videoMin": 868.6000000000001,
     "docCount": 149
   }
