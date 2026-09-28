@@ -1,486 +1,634 @@
 WEBVTT
 
 1
-00:00:00.000 --> 00:00:04.280
-Em 2012, o Facebook enfrentou um sério problema de engenharia.
+00:00:00.000 --> 00:00:02.360
+Construir aplicativos móveis modernos
 
 2
-00:00:04.280 --> 00:00:06.720
-A internet de consumidor estava migrando para mobile,
+00:00:02.360 --> 00:00:04.360
+exige coordenar sistemas operacionais
 
 3
-00:00:06.720 --> 00:00:09.880
-mas o cenário de hardware era incrivelmente fragmentado.
+00:00:04.360 --> 00:00:06.800
+complexos e multithreaded.
 
 4
-00:00:09.880 --> 00:00:12.480
-Construir bases de código nativo completamente separadas
+00:00:06.800 --> 00:00:08.500
+Comandar esse caos nativo
 
 5
-00:00:12.480 --> 00:00:16.120
-para milhares de dispositivos distintos era um pesadelo logístico,
+00:00:08.500 --> 00:00:10.960
+com uma linguagem single threaded como JavaScript
 
 6
-00:00:16.120 --> 00:00:19.280
-então o Facebook dependia de um aplicativo web mobile HTML5
+00:00:10.960 --> 00:00:13.040
+é um pesadelo de engenharia.
 
 7
-00:00:19.280 --> 00:00:21.040
-para entregar seu newsfeed.
+00:00:13.040 --> 00:00:16.520
+Em 2012, o Facebook tentou contornar essa complexidade
 
 8
-00:00:21.040 --> 00:00:23.400
-O desempenho era dolorosamente lento.
+00:00:16.520 --> 00:00:18.080
+envolvendo seu aplicativo web móvel
 
 9
-00:00:23.400 --> 00:00:25.400
-Os engenheiros tentaram um compromisso.
+00:00:18.080 --> 00:00:20.600
+dentro de uma shell nativa de web view.
 
 10
-00:00:25.400 --> 00:00:27.400
-Eles pegaram sua aplicação web existente
+00:00:20.600 --> 00:00:22.480
+A interface resultante parecia lenta
 
 11
-00:00:27.400 --> 00:00:31.080
-e a envolveram dentro de um container mobile nativo, um web view,
+00:00:22.480 --> 00:00:24.460
+e não conseguiu igualar a sensação responsiva
 
 12
-00:00:31.080 --> 00:00:33.000
-esperando extrair desempenho nativo
+00:00:24.460 --> 00:00:26.260
+de uma aplicação nativa.
 
 13
-00:00:33.000 --> 00:00:34.880
-sem reescrever a base de código.
+00:00:26.260 --> 00:00:28.440
+A solução chegou em 2015
 
 14
-00:00:34.880 --> 00:00:37.480
-O resultado permanecia lento e parecia fora de lugar
+00:00:28.440 --> 00:00:30.680
+com o lançamento do React Native.
 
 15
-00:00:37.480 --> 00:00:38.680
-em um smartphone.
+00:00:30.680 --> 00:00:32.320
+Essa nova abordagem permitiu que desenvolvedores
 
 16
-00:00:38.680 --> 00:00:40.560
-As equipes de desenvolvimento em toda a indústria
+00:00:32.320 --> 00:00:34.040
+escrevessem lógica em JavaScript
 
 17
-00:00:40.560 --> 00:00:42.720
-estavam presas em uma dicotomia rigorosa.
+00:00:34.040 --> 00:00:36.460
+que renderizava primitivas nativas reais do sistema operacional
 
 18
-00:00:42.720 --> 00:00:44.800
-Eles poderiam construir para a web, permitindo que
+00:00:36.460 --> 00:00:38.480
+em vez de HTML lento.
 
 19
-00:00:44.800 --> 00:00:47.160
-iterassem rapidamente e fizessem deploy instantaneamente,
+00:00:38.480 --> 00:00:40.880
+Isso resolveu a fragmentação de plataformas.
 
 20
-00:00:47.160 --> 00:00:50.160
-ou poderiam gastar tempo e dinheiro escrevendo código nativo personalizado
+00:00:40.880 --> 00:00:42.160
+Para construir o mesmo layout,
 
 21
-00:00:50.160 --> 00:00:53.600
-para iOS e Android para alcançar desempenho fluido.
+00:00:42.160 --> 00:00:44.680
+desenvolvedores web escrevem uma div JSX,
 
 22
-00:00:53.600 --> 00:00:55.800
-Escolher entre velocidade do desenvolvedor
+00:00:44.680 --> 00:00:47.560
+engenheiros iOS escrevem uma VStack em SwiftUI,
 
 23
-00:00:55.800 --> 00:00:59.600
-e uma experiência responsiva do usuário era um jogo de soma zero,
+00:00:47.560 --> 00:00:50.520
+e desenvolvedores Android escrevem Kotlin XML.
 
 24
-00:00:59.600 --> 00:01:02.640
-criando uma ameaça existencial para plataformas principais
+00:00:50.520 --> 00:00:53.760
+React Native unificou esses ecossistemas isolados.
 
 25
-00:01:02.640 --> 00:01:05.600
-que dependiam de alto engajamento do usuário.
+00:00:53.760 --> 00:00:56.160
+Um único componente de view em JavaScript
 
 26
-00:01:05.600 --> 00:01:08.280
-Durante uma hackathon do Facebook em 2013,
+00:00:56.160 --> 00:00:57.860
+mapeia diretamente para a UI primitiva
 
 27
-00:01:08.280 --> 00:01:10.440
-engenheiros Jordan Walk, que já havia
+00:00:57.900 --> 00:00:59.980
+exigida pelo sistema operacional host.
 
 28
-00:01:10.440 --> 00:01:13.440
-construído React para a web, e Christopher Chodot,
+00:00:59.980 --> 00:01:01.860
+Learn once, write anywhere
 
 29
-00:01:13.440 --> 00:01:16.280
-começaram a experimentar uma abordagem completamente diferente
+00:01:01.860 --> 00:01:04.540
+proporcionou uma experiência de desenvolvimento produtiva.
 
 30
-00:01:16.280 --> 00:01:18.360
-para interfaces de usuário móveis.
+00:01:04.540 --> 00:01:05.620
+Mas essa camada de tradução
 
 31
-00:01:18.360 --> 00:01:20.720
-Eles chegaram a uma percepção estrutural.
+00:01:05.620 --> 00:01:08.180
+introduziu um sério comprometimento arquitetural
 
 32
-00:01:20.720 --> 00:01:24.440
-Eles poderiam escrever a lógica da aplicação inteiramente em JavaScript,
+00:01:08.180 --> 00:01:09.840
+que limitou o desempenho do framework
 
 33
-00:01:24.480 --> 00:01:27.040
-mas instruir a camada nativa de renderização do dispositivo
+00:01:09.840 --> 00:01:11.620
+por quase uma década.
 
 34
-00:01:27.040 --> 00:01:29.400
-a desenhar os elementos visuais reais.
+00:01:11.620 --> 00:01:12.740
+Por sete anos,
 
 35
-00:01:29.400 --> 00:01:32.560
-Este experimento evoluiu para React Native.
+00:01:12.740 --> 00:01:15.520
+esse comprometimento limitou artificialmente o desempenho.
 
 36
-00:01:32.560 --> 00:01:36.080
-Na conferência F8 de 2015, Facebook abriu o código-fonte
+00:01:15.520 --> 00:01:18.140
+Aplicações complexas esbarravam em um limite rígido de velocidade,
 
 37
-00:01:36.080 --> 00:01:39.680
-do framework, operando sob uma filosofia altamente atraente,
+00:01:18.140 --> 00:01:20.680
+levando muitas equipes de engenharia a abandonar o framework
 
 38
-00:01:39.680 --> 00:01:41.960
-aprenda uma vez, escreva em qualquer lugar.
+00:01:20.680 --> 00:01:23.100
+em busca de velocidades nativas puras.
 
 39
-00:01:41.960 --> 00:01:45.080
-A comunidade de engenharia o adotou imediatamente.
+00:01:23.100 --> 00:01:25.340
+Esse limite agora foi removido.
 
 40
-00:01:45.080 --> 00:01:48.200
-Startups e gigantes de tecnologia integraram o framework
+00:01:25.380 --> 00:01:26.900
+Em outubro de 2024,
 
 41
-00:01:48.200 --> 00:01:50.000
-para seus ambientes de produção,
+00:01:26.900 --> 00:01:30.380
+O React Native 0.76 chegou com uma reescrita completa
 
 42
-00:01:50.000 --> 00:01:53.120
-com empresas como Microsoft, Shopify, Discord,
+00:01:30.380 --> 00:01:32.220
+de sua arquitetura interna.
 
 43
-00:01:53.120 --> 00:01:56.080
-e Walmart construindo aplicações altamente complexas
+00:01:32.220 --> 00:01:33.220
+A Meta e seus parceiros
 
 44
-00:01:56.080 --> 00:01:57.720
-no novo sistema.
+00:01:33.220 --> 00:01:35.540
+substituíram a base interna do framework,
 
 45
-00:01:57.720 --> 00:02:01.240
-Ao separar a lógica subjacente do processo de renderização,
+00:01:35.540 --> 00:01:38.260
+removendo as camadas originais de memória e comunicação
 
 46
-00:02:01.240 --> 00:02:04.320
-React Native ofereceu aos engenheiros velocidades rápidas de iteração
+00:01:38.260 --> 00:01:40.960
+para instalar um novo núcleo em C++.
 
 47
-00:02:04.320 --> 00:02:07.400
-do desenvolvimento web enquanto produzia elementos reais de UI nativo
+00:01:40.960 --> 00:01:43.340
+Ao substituir a antiga bridge de mensagens JSON
 
 48
-00:02:07.400 --> 00:02:11.160
-como um U-button real em um iPhone.
+00:01:43.340 --> 00:01:45.540
+por um modelo de memória compartilhada em C++,
 
 49
-00:02:11.160 --> 00:02:13.320
-O mecanismo que tornou essa separação possível
+00:01:45.540 --> 00:01:48.460
+o framework agora pode executar operações nativas puras
 
 50
-00:02:13.320 --> 00:02:16.360
-era um sistema conhecido internamente como bridge.
+00:01:48.460 --> 00:01:51.500
+a impecáveis 120 quadros por segundo.
 
 51
-00:02:16.360 --> 00:02:20.160
-Este diagrama ilustra o defeito mecânico nesse sistema.
+00:01:51.500 --> 00:01:53.540
+Para entender como essas velocidades são possíveis,
 
 52
-00:02:20.160 --> 00:02:22.800
-Cada interação única, desenhar um pixel,
+00:01:53.540 --> 00:01:55.180
+primeiro precisamos fazer a engenharia reversa
 
 53
-00:02:22.800 --> 00:02:25.960
-responder a um swipe, ou medir um bloco de texto,
+00:01:55.180 --> 00:01:57.360
+de exatamente por que a arquitetura original
 
 54
-00:02:25.960 --> 00:02:29.040
-tinha que ser serializado em uma mensagem de texto JSON,
+00:01:57.360 --> 00:01:59.100
+entrou em colapso sob carga pesada.
 
 55
-00:02:29.040 --> 00:02:32.680
-enviada através de uma divisão, e decodificada pelo lado nativo.
+00:01:59.100 --> 00:02:00.520
+Este esquema ilustra
 
 56
-00:02:32.680 --> 00:02:35.560
-Como essa comunicação era estritamente assíncrona,
+00:02:00.520 --> 00:02:02.900
+a arquitetura legada do React Native.
 
 57
-00:02:35.560 --> 00:02:39.240
-era matematicamente impossível chamar código nativo sincronamente.
+00:02:02.900 --> 00:02:05.540
+A thread de JavaScript onde a lógica do seu app vive
 
 58
-00:02:39.240 --> 00:02:42.720
-Até mesmo uma solicitação simples para ler a largura de uma caixa de layout
+00:02:05.540 --> 00:02:08.100
+está totalmente isolada da thread nativa,
 
 59
-00:02:42.720 --> 00:02:45.080
-significava enviar uma mensagem através da bridge
+00:02:08.100 --> 00:02:09.860
+que renderiza a interface.
 
 60
-00:02:45.080 --> 00:02:47.720
-e aguardar um callback, enquanto outras mensagens
+00:02:09.860 --> 00:02:11.420
+Cada interação do usuário,
 
 61
-00:02:47.720 --> 00:02:49.600
-estavam se acumulando em uma fila.
+00:02:11.420 --> 00:02:13.540
+medir um layout, desenhar um pixel,
 
 62
-00:02:49.600 --> 00:02:52.680
-Conforme as aplicações cresciam e as interfaces de usuário
+00:02:13.540 --> 00:02:14.940
+ou capturar um swipe,
 
 63
-00:02:52.680 --> 00:02:56.120
-demandavam taxas de quadros mais altas, esse contorno original
+00:02:14.940 --> 00:02:16.980
+precisava atravessar essa lacuna.
 
 64
-00:02:56.120 --> 00:02:59.360
-evoluiu para um grave gargalo estrutural.
+00:02:16.980 --> 00:02:20.680
+O mecanismo que os conectava era conhecido como a bridge.
 
 65
-00:02:59.360 --> 00:03:01.800
-Os usuários sentiam esse gargalo diretamente.
+00:02:20.680 --> 00:02:22.060
+Para atravessar essa divisão,
 
 66
-00:03:01.800 --> 00:03:05.200
-Operações de alta frequência como transições de tela complexas
+00:02:22.060 --> 00:02:25.980
+todo comando nativo era serializado em uma string de texto JSON,
 
 67
-00:03:05.200 --> 00:03:09.040
-ou animações acionadas por scroll apresentavam travamentos e perdiam quadros,
+00:02:25.980 --> 00:02:29.380
+colocado em uma fila e depois desserializado do outro lado.
 
 68
-00:03:09.040 --> 00:03:12.600
-impondo um limite máximo severo no desempenho da aplicação.
+00:02:29.380 --> 00:02:31.940
+Como essa bridge era estritamente assíncrona,
 
 69
-00:03:12.600 --> 00:03:15.800
-Essa estrutura legada também era completamente incompatível
+00:02:31.940 --> 00:02:32.820
+a thread do JavaScript
 
 70
-00:03:15.800 --> 00:03:17.680
-com avanços web mais recentes.
+00:02:32.820 --> 00:02:35.300
+nunca conseguia ler valores nativos instantaneamente.
 
 71
-00:03:17.680 --> 00:03:20.000
-Recursos como o concurrent mode do React,
+00:02:35.300 --> 00:02:37.820
+Se o código precisasse saber as dimensões exatas
 
 72
-00:03:20.000 --> 00:03:21.720
-que permitem ao framework pausar
+00:02:37.820 --> 00:02:39.260
+de uma view na tela,
 
 73
-00:03:21.720 --> 00:03:24.360
-e priorizar tarefas de renderização em segundo plano,
+00:02:39.260 --> 00:02:42.280
+ele tinha que enviar uma requisição e esperar por uma resposta.
 
 74
-00:03:24.360 --> 00:03:28.360
-simplesmente não conseguiam funcionar em uma bridge assíncrona lenta.
+00:02:42.280 --> 00:02:44.160
+Sob baixa carga, isso funcionava.
 
 75
-00:03:28.360 --> 00:03:31.040
-Em vez de tentar consertar o sistema novamente,
+00:02:44.160 --> 00:02:47.500
+Mas durante uma animação complexa a 60 quadros por segundo,
 
 76
-00:03:31.040 --> 00:03:35.160
-Meta e Microsoft tomaram uma decisão drástica em 2022.
+00:02:47.500 --> 00:02:50.460
+o volume de dados de layout sobrecarrega a fila.
 
 77
-00:03:35.160 --> 00:03:36.960
-Eles escolheram abandonar a bridge
+00:02:50.460 --> 00:02:54.140
+Mensagens serializadas se acumulam, travam e eventualmente são descartadas.
 
 78
-00:03:36.960 --> 00:03:41.000
-e iniciar uma reescrita total da fundação interna do framework.
+00:02:54.140 --> 00:02:56.900
+A bridge JSON atuava como um gargalo rígido,
 
 79
-00:03:41.000 --> 00:03:43.360
-Os riscos de engenharia eram massivos.
+00:02:56.900 --> 00:02:59.180
+criando latência inerente para qualquer operação
 
 80
-00:03:43.360 --> 00:03:46.080
-Eles tiveram que arrancar e reconstruir o motor central
+00:02:59.180 --> 00:03:02.100
+que exigisse atualizações síncronas de UI.
 
 81
-00:03:46.080 --> 00:03:48.640
-um dos frameworks mobile mais populares do mundo,
+00:03:02.100 --> 00:03:05.320
+O React Native 0.76 resolve esse gargalo
 
 82
-00:03:48.640 --> 00:03:50.520
-inteiramente nos bastidores.
+00:03:05.320 --> 00:03:06.580
+removendo a bridge
 
 83
-00:03:50.520 --> 00:03:53.120
-Sem quebrar os milhões de aplicações ativas
+00:03:06.580 --> 00:03:10.660
+e substituindo-a pela interface JavaScript, ou JSI.
 
 84
-00:03:53.120 --> 00:03:54.560
-que dependem dele.
+00:03:10.660 --> 00:03:14.660
+A JSI altera a forma como a memória é acessada em nível estrutural.
 
 85
-00:03:54.560 --> 00:03:57.200
-Após anos de trabalho interno incremental,
+00:03:14.660 --> 00:03:16.300
+O motor JavaScript Hermes
 
 86
-00:03:57.200 --> 00:04:00.080
-essa reescrita, conhecida como a nova arquitetura,
+00:03:16.300 --> 00:03:20.420
+agora mantém referências diretas a objetos nativos em C++.
 
 87
-00:04:00.080 --> 00:04:02.640
-foi lançada como padrão padrão no React Native
+00:03:20.420 --> 00:03:23.140
+Como esses ambientes agora compartilham o mesmo espaço de memória,
 
 88
-00:04:02.640 --> 00:04:06.640
-versão 0.76 em outubro de 2024.
+00:03:23.140 --> 00:03:25.460
+o sistema não precisa mais traduzir comandos
 
 89
-00:04:06.640 --> 00:04:09.240
-Este diagrama descreve a nova mecânica.
+00:03:25.460 --> 00:03:27.420
+em strings de texto JSON.
 
 90
-00:04:09.240 --> 00:04:13.040
-O primeiro pilar é JSI ou a interface JavaScript.
+00:03:27.420 --> 00:03:29.140
+O JavaScript agora pode invocar métodos
 
 91
-00:04:13.040 --> 00:04:15.960
-Ele elimina completamente a serialização JSON,
+00:03:29.140 --> 00:03:32.020
+em objetos nativos estritamente de forma síncrona.
 
 92
-00:04:15.960 --> 00:04:18.000
-criando ligações síncronas diretas
+00:03:32.020 --> 00:03:34.020
+Se sua lógica precisa de dimensões usadas,
 
 93
-00:04:18.000 --> 00:04:21.400
-entre os espaços de memória JavaScript e C++.
+00:03:34.020 --> 00:03:36.580
+ela lê o objeto C++ diretamente.
 
 94
-00:04:21.400 --> 00:04:23.200
-O segundo pilar é Fabric.
+00:03:36.580 --> 00:03:39.100
+Esse acesso instantâneo elimina o período
 
 95
-00:04:23.200 --> 00:04:25.280
-Ao contornar o antigo gargalo,
+00:03:39.100 --> 00:03:42.180
+de espera assíncrono que definia o antigo sistema de filas.
 
 96
-00:04:25.280 --> 00:04:27.720
-este novo mecanismo de renderização C++ compartilhado
+00:03:42.180 --> 00:03:44.280
+Com JSI, o React Native funciona
 
 97
-00:04:27.720 --> 00:04:29.920
-processa medidas de layout de forma síncrona
+00:03:44.280 --> 00:03:46.420
+como um mecanismo de execução síncrono,
 
 98
-00:04:29.920 --> 00:04:32.960
-e permite que React processe a renderização da UI concorrentemente
+00:03:46.460 --> 00:03:49.780
+operando com a velocidade do acesso direto à memória em C++.
 
 99
-00:04:32.960 --> 00:04:35.240
-sem congelar a thread principal do dispositivo.
+00:03:50.660 --> 00:03:53.060
+Para aproveitar esse acesso direto à memória,
 
 100
-00:04:35.240 --> 00:04:37.320
-O terceiro pilar é Turbo Modules.
+00:03:53.060 --> 00:03:55.060
+as equipes de engenharia reconstruíram o restante
 
 101
-00:04:37.320 --> 00:04:40.120
-Em vez de forçar uma aplicação a inicializar
+00:03:55.060 --> 00:03:57.720
+dos sistemas centrais do framework do zero.
 
 102
-00:04:40.120 --> 00:04:43.320
-cada recurso nativo, como Bluetooth ou a câmera,
+00:03:57.720 --> 00:04:00.800
+A arquitetura resultante é construída sobre três pilares.
 
 103
-00:04:43.320 --> 00:04:46.960
-durante a inicialização, TurboModules carregam preguiçosamente essas ferramentas
+00:04:00.800 --> 00:04:02.380
+O primeiro é o Fabric,
 
 104
-00:04:46.960 --> 00:04:49.360
-apenas no momento exato em que são solicitadas
+00:04:02.380 --> 00:04:06.260
+um novo mecanismo de renderização de UI construído nativamente em C++.
 
 105
-00:04:49.360 --> 00:04:52.640
-pela camada JavaScript, reduzindo os tempos de inicialização.
+00:04:06.260 --> 00:04:07.620
+O Fabric permite que o framework
 
 106
-00:04:52.640 --> 00:04:55.560
-Esses três pilares permitem que React Native funcione
+00:04:07.620 --> 00:04:10.140
+calcule medições de layout de forma síncrona,
 
 107
-00:04:55.560 --> 00:04:58.880
-como um mecanismo de baixo nível, eliminando a necessidade de uma bridge
+00:04:10.140 --> 00:04:11.620
+garantindo que a UI esteja pronta
 
 108
-00:04:58.880 --> 00:05:01.000
-e integrando a camada de lógica diretamente
+00:04:11.620 --> 00:04:14.060
+antes mesmo de ser desenhada na tela.
 
 109
-00:05:01.000 --> 00:05:02.600
-no runtime nativo.
+00:04:14.060 --> 00:04:16.220
+O segundo pilar são os Turbo Modules.
 
 110
-00:05:02.600 --> 00:05:05.480
-Hoje, animações complexas e orientadas por gestos
+00:04:16.260 --> 00:04:19.660
+A substituição moderna para o sistema legado de módulos nativos.
 
 111
-00:05:05.480 --> 00:05:09.520
-executam a 120 quadros por segundo diretamente na thread da UI.
+00:04:19.660 --> 00:04:21.860
+Em vez de inicializar módulos de hardware
 
 112
-00:05:09.520 --> 00:05:12.280
-A lacuna de desempenho entre React Native e desenvolvimento nativo puro
+00:04:21.860 --> 00:04:23.420
+como a câmera ou o Bluetooth
 
 113
-00:05:12.280 --> 00:05:15.640
-é funcionalmente negligenciável para a maioria das aplicações,
+00:04:23.420 --> 00:04:25.100
+durante a sequência de boot do aplicativo,
 
 114
-00:05:15.640 --> 00:05:17.560
-apoiada por ferramentas como Expo.
+00:04:25.100 --> 00:04:28.140
+os Turbo Modules são carregados na memória via JSI
 
 115
-00:05:17.560 --> 00:05:21.240
-O framework é agora usado pela Shopify, Meta e Microsoft
+00:04:28.140 --> 00:04:30.180
+somente quando são realmente solicitados,
 
 116
-00:05:21.240 --> 00:05:23.400
-para potencializar suas aplicações principais,
+00:04:30.180 --> 00:04:32.180
+reduzindo os tempos de inicialização.
 
 117
-00:05:23.400 --> 00:05:25.160
-fornecendo um ambiente padronizado
+00:04:32.180 --> 00:04:34.980
+A arquitetura combinada de JSI, Fabric
 
 118
-00:05:25.160 --> 00:05:27.240
-para código mobile em escala de produção.
+00:04:34.980 --> 00:04:37.320
+e Turbo Modules garante que a fronteira
 
 119
-00:05:27.240 --> 00:05:29.320
-10 anos após o primeiro protótipo,
+00:04:37.320 --> 00:04:39.260
+entre JavaScript e código nativo
 
 120
-00:05:29.320 --> 00:05:31.760
-o framework entrega a velocidade do desenvolvimento web
+00:04:39.260 --> 00:04:42.140
+não traga mais uma penalidade de desempenho.
 
 121
-00:05:31.760 --> 00:05:34.600
-ao lado da execução de software móvel nativo.
+00:04:42.140 --> 00:04:45.380
+Essa fundação em C++ muda a experiência do usuário
+
+122
+00:04:45.380 --> 00:04:46.460
+ao habilitar recursos
+
+123
+00:04:46.460 --> 00:04:49.100
+que antes eram impossíveis em dispositivos móveis.
+
+124
+00:04:49.100 --> 00:04:51.540
+Na web, os recursos do React concurrent mode
+
+125
+00:04:51.540 --> 00:04:53.460
+como Suspense e Transitions
+
+126
+00:04:53.460 --> 00:04:56.300
+permitem que o framework priorize atualizações urgentes.
+
+127
+00:04:56.300 --> 00:04:58.060
+A antiga arquitetura assíncrona
+
+128
+00:04:58.060 --> 00:05:00.540
+não conseguia lidar com esses recursos de forma confiável.
+
+129
+00:05:00.540 --> 00:05:03.960
+À esquerda, a antiga bridge assíncrona não consegue acompanhar.
+
+130
+00:05:03.960 --> 00:05:06.620
+As tarefas de renderização saem de sincronia com a UI nativa,
+
+131
+00:05:06.620 --> 00:05:08.220
+causando queda de frames.
+
+132
+00:05:08.220 --> 00:05:11.680
+À direita, o motor Fabric executa de forma concorrente.
+
+133
+00:05:11.680 --> 00:05:13.740
+A comunicação síncrona permite que a UI
+
+134
+00:05:13.780 --> 00:05:17.340
+pause e retome tarefas sem bloquear a thread principal.
+
+135
+00:05:17.340 --> 00:05:19.980
+Esse mesmo mecanismo alimenta bibliotecas modernas de animação
+
+136
+00:05:19.980 --> 00:05:21.540
+como Reanimated3.
+
+137
+00:05:21.540 --> 00:05:23.620
+Como as medições de layout agora são síncronas,
+
+138
+00:05:23.620 --> 00:05:26.580
+as animações são executadas inteiramente na thread de UI nativa
+
+139
+00:05:26.580 --> 00:05:28.900
+a até 120 frames por segundo,
+
+140
+00:05:28.900 --> 00:05:31.860
+sem nenhum tráfego retornando para o JavaScript.
+
+141
+00:05:31.860 --> 00:05:33.980
+Os desenvolvedores não são mais forçados a escolher
+
+142
+00:05:33.980 --> 00:05:36.140
+entre recursos avançados de renderização do React
+
+143
+00:05:36.140 --> 00:05:38.380
+e desempenho nativo puro.
+
+144
+00:05:38.380 --> 00:05:39.720
+O desenvolvimento mobile evoluiu
+
+145
+00:05:39.720 --> 00:05:41.780
+das web views lentas de 2012
+
+146
+00:05:41.780 --> 00:05:46.140
+para o núcleo em C++ de alto desempenho da versão 0.76.
+
+147
+00:05:46.140 --> 00:05:48.620
+A suposição generalizada de que o React Native é lento
+
+148
+00:05:48.620 --> 00:05:49.980
+é baseada em uma arquitetura
+
+149
+00:05:49.980 --> 00:05:52.460
+que efetivamente não existe mais.
+
+150
+00:05:52.460 --> 00:05:54.140
+A filosofia central permanece,
+
+151
+00:05:54.140 --> 00:05:56.540
+escrever TypeScript uma vez e entregar UI nativa
+
+152
+00:05:56.540 --> 00:05:58.020
+para ambas as plataformas.
+
+153
+00:05:58.020 --> 00:06:00.460
+A diferença agora é que você pode fazer isso
+
+154
+00:06:00.460 --> 00:06:04.220
+sem pagar o imposto oculto da JSON bridge.
+
+155
+00:06:04.220 --> 00:06:06.940
+Ao resolver o gargalo de comunicação multi-threading
+
+156
+00:06:06.940 --> 00:06:08.300
+no nível da memória,
+
+157
+00:06:08.300 --> 00:06:10.640
+o React Native garante sua posição
+
+158
+00:06:10.640 --> 00:06:13.640
+como o framework para o futuro do desenvolvimento mobile.
 
