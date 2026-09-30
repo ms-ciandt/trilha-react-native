@@ -23,7 +23,7 @@ const HOW_IT_WORKS = [
   {
     step: '03',
     title: 'Nível de conhecimento auto-reportado',
-    desc: 'Cada dev avalia o próprio nível (1-5) por tópico em uma planilha compartilhada, restrita a funcionários CI&T.',
+    desc: 'Cada dev avalia o próprio nível (1-5) por tópico em uma planilha compartilhada, com visualização pública.',
   },
   {
     step: '04',
@@ -98,6 +98,22 @@ function CoverageGap({ gap }) {
   );
 }
 
+function ReferencePeople({ references }) {
+  if (!references || references.length === 0) return null;
+  return (
+    <div className={styles.referenceBox}>
+      <span className={styles.referenceLabel}>Procure por</span>
+      <div className={styles.referenceChips}>
+        {references.map((name) => (
+          <span key={name} className={styles.referenceChip}>
+            {name}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function TrailChips({ trails }) {
   const { colorMode } = useColorMode();
   const isDark = colorMode === 'dark';
@@ -153,6 +169,7 @@ function TopicRow({ topic }) {
             <span className={styles.masteryPending}>Aguardando respostas</span>
           )}
         </div>
+        <ReferencePeople references={topic.references} />
         {coverage && (
           <div className={styles.coverageBox}>
             <CoverageBadge status={coverage.status} />
@@ -201,9 +218,11 @@ export default function Chapter() {
           <p className={styles.knowledgeMapDesc}>
             Tópicos levantados na primeira reunião do chapter, ordenados por prioridade. O
             domínio do grupo é preenchido conforme os devs respondem à pesquisa de nível de
-            conhecimento — aqui só aparecem números agregados e anônimos, nunca nomes ou notas
-            individuais. Cada tópico também mostra se já está coberto por alguma trilha
-            existente, com links para os módulos que o cobrem.
+            conhecimento — aqui só aparecem números agregados e anônimos, notas individuais
+            nunca são publicadas. Quando alguém se autoavalia com nota alta em um tópico, o
+            nome pode aparecer como referência para consultar — nunca a nota em si. Cada
+            tópico também mostra se já está coberto por alguma trilha existente, com links
+            para os módulos que o cobrem.
           </p>
           <div className={styles.topicsList}>
             {chapterData.topics.map((topic) => (
@@ -220,9 +239,10 @@ export default function Chapter() {
           </div>
           <p className={styles.sourceDesc}>
             O mapa de conhecimento completo, incluindo as respostas individuais, vive em uma
-            planilha restrita a funcionários CI&amp;T. Esta página mostra apenas os agregados de
-            grupo que a própria planilha já calcula — nomes e notas individuais nunca são
-            publicados aqui.
+            planilha com visualização pública. Esta página mostra apenas os agregados de
+            grupo que a própria planilha já calcula, além de uma lista curta de referências
+            por tópico para quem se autoavaliou com nota alta — notas individuais nunca são
+            publicadas aqui.
           </p>
           <a
             href={SPREADSHEET_URL}
@@ -230,7 +250,7 @@ export default function Chapter() {
             rel="noopener noreferrer"
             className={styles.sourceBtn}
           >
-            Abrir planilha (acesso restrito CI&amp;T)
+            Abrir planilha
           </a>
         </section>
       </main>

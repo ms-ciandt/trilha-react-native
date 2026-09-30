@@ -23,7 +23,7 @@ const HOW_IT_WORKS = [
   {
     step: '03',
     title: 'Self-reported skill level',
-    desc: 'Each dev rates their own knowledge (1-5) per topic in a shared spreadsheet, restricted to CI&T employees.',
+    desc: 'Each dev rates their own knowledge (1-5) per topic in a shared, publicly viewable spreadsheet.',
   },
   {
     step: '04',
@@ -98,6 +98,22 @@ function CoverageGap({ gap }) {
   );
 }
 
+function ReferencePeople({ references }) {
+  if (!references || references.length === 0) return null;
+  return (
+    <div className={styles.referenceBox}>
+      <span className={styles.referenceLabel}>Ask about this topic</span>
+      <div className={styles.referenceChips}>
+        {references.map((name) => (
+          <span key={name} className={styles.referenceChip}>
+            {name}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function TrailChips({ trails }) {
   const { colorMode } = useColorMode();
   const isDark = colorMode === 'dark';
@@ -153,6 +169,7 @@ function TopicRow({ topic }) {
             <span className={styles.masteryPending}>Awaiting responses</span>
           )}
         </div>
+        <ReferencePeople references={topic.references} />
         {coverage && (
           <div className={styles.coverageBox}>
             <CoverageBadge status={coverage.status} />
@@ -201,9 +218,10 @@ export default function Chapter() {
           <p className={styles.knowledgeMapDesc}>
             Topics raised in the first chapter session, ranked by priority. Group mastery
             fills in as devs respond to the skill-level survey — only aggregated, anonymous
-            numbers are shown here, never individual names or scores. Each topic also shows
-            whether it is already covered by an existing trail, with links to the modules
-            that cover it.
+            numbers are shown here, individual scores are never published. When someone
+            rates themselves highly on a topic, their name may appear as a reference to ask
+            — never the score itself. Each topic also shows whether it is already covered by
+            an existing trail, with links to the modules that cover it.
           </p>
           <div className={styles.topicsList}>
             {chapterData.topics.map((topic) => (
@@ -219,10 +237,10 @@ export default function Chapter() {
             <span className={styles.sourceTitle}>Source spreadsheet</span>
           </div>
           <p className={styles.sourceDesc}>
-            The full knowledge map, including per-person responses, lives in a spreadsheet
-            restricted to CI&amp;T employees. This page only ever shows the group-level
-            aggregates the spreadsheet itself computes — individual names and scores are
-            never published here.
+            The full knowledge map, including per-person responses, lives in a publicly
+            viewable spreadsheet. This page only ever shows the group-level aggregates the
+            spreadsheet itself computes, plus a short list of references per topic for
+            devs who rated themselves highly — individual scores are never published here.
           </p>
           <a
             href={SPREADSHEET_URL}
@@ -230,7 +248,7 @@ export default function Chapter() {
             rel="noopener noreferrer"
             className={styles.sourceBtn}
           >
-            Open spreadsheet (CI&amp;T access only)
+            Open spreadsheet
           </a>
         </section>
       </main>

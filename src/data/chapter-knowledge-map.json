@@ -12,7 +12,8 @@
       ],
       "avgScore": null,
       "masteryPercent": 0,
-      "criticalGap": null
+      "criticalGap": null,
+      "references": []
     },
     {
       "priority": 9,
@@ -26,7 +27,8 @@
       ],
       "avgScore": 3,
       "masteryPercent": 60,
-      "criticalGap": null
+      "criticalGap": null,
+      "references": []
     },
     {
       "priority": 9,
@@ -39,7 +41,8 @@
       ],
       "avgScore": null,
       "masteryPercent": 0,
-      "criticalGap": null
+      "criticalGap": null,
+      "references": []
     },
     {
       "priority": 9,
@@ -52,7 +55,8 @@
       ],
       "avgScore": null,
       "masteryPercent": 0,
-      "criticalGap": null
+      "criticalGap": null,
+      "references": []
     },
     {
       "priority": 8,
@@ -65,7 +69,8 @@
       ],
       "avgScore": null,
       "masteryPercent": 0,
-      "criticalGap": null
+      "criticalGap": null,
+      "references": []
     },
     {
       "priority": 7,
@@ -79,7 +84,8 @@
       ],
       "avgScore": null,
       "masteryPercent": 0,
-      "criticalGap": null
+      "criticalGap": null,
+      "references": []
     },
     {
       "priority": 7,
@@ -92,7 +98,8 @@
       ],
       "avgScore": null,
       "masteryPercent": 0,
-      "criticalGap": null
+      "criticalGap": null,
+      "references": []
     },
     {
       "priority": 6,
@@ -105,7 +112,8 @@
       ],
       "avgScore": null,
       "masteryPercent": 0,
-      "criticalGap": null
+      "criticalGap": null,
+      "references": []
     },
     {
       "priority": 6,
@@ -118,7 +126,8 @@
       ],
       "avgScore": null,
       "masteryPercent": 0,
-      "criticalGap": null
+      "criticalGap": null,
+      "references": []
     },
     {
       "priority": 6,
@@ -131,7 +140,8 @@
       ],
       "avgScore": null,
       "masteryPercent": 0,
-      "criticalGap": null
+      "criticalGap": null,
+      "references": []
     },
     {
       "priority": 6,
@@ -144,7 +154,8 @@
       ],
       "avgScore": null,
       "masteryPercent": 0,
-      "criticalGap": null
+      "criticalGap": null,
+      "references": []
     },
     {
       "priority": 4,
@@ -157,7 +168,8 @@
       ],
       "avgScore": null,
       "masteryPercent": 0,
-      "criticalGap": null
+      "criticalGap": null,
+      "references": []
     },
     {
       "priority": 4,
@@ -170,7 +182,8 @@
       ],
       "avgScore": null,
       "masteryPercent": 0,
-      "criticalGap": null
+      "criticalGap": null,
+      "references": []
     },
     {
       "priority": 4,
@@ -183,7 +196,8 @@
       ],
       "avgScore": null,
       "masteryPercent": 0,
-      "criticalGap": null
+      "criticalGap": null,
+      "references": []
     },
     {
       "priority": 4,
@@ -194,7 +208,8 @@
       ],
       "avgScore": null,
       "masteryPercent": 0,
-      "criticalGap": null
+      "criticalGap": null,
+      "references": []
     },
     {
       "priority": 4,
@@ -208,7 +223,8 @@
       ],
       "avgScore": null,
       "masteryPercent": 0,
-      "criticalGap": null
+      "criticalGap": null,
+      "references": []
     },
     {
       "priority": 3,
@@ -221,7 +237,8 @@
       ],
       "avgScore": null,
       "masteryPercent": 0,
-      "criticalGap": null
+      "criticalGap": null,
+      "references": []
     },
     {
       "priority": 3,
@@ -232,7 +249,8 @@
       ],
       "avgScore": null,
       "masteryPercent": 0,
-      "criticalGap": null
+      "criticalGap": null,
+      "references": []
     },
     {
       "priority": 3,
@@ -245,7 +263,8 @@
       ],
       "avgScore": null,
       "masteryPercent": 0,
-      "criticalGap": null
+      "criticalGap": null,
+      "references": []
     },
     {
       "priority": 2,
@@ -258,7 +277,8 @@
       ],
       "avgScore": null,
       "masteryPercent": 0,
-      "criticalGap": null
+      "criticalGap": null,
+      "references": []
     },
     {
       "priority": 2,
@@ -271,7 +291,8 @@
       ],
       "avgScore": null,
       "masteryPercent": 0,
-      "criticalGap": null
+      "criticalGap": null,
+      "references": []
     }
   ]
 }

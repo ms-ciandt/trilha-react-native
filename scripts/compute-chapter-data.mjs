@@ -2,11 +2,16 @@
  * Reads the manually-exported "Mapa de Conhecimento" chapter spreadsheet CSV
  * and produces an anonymized, aggregated JSON for the public /chapter page.
  *
- * The source spreadsheet is restricted to CI&T employees and, once mentees
- * respond, will contain individual names and per-person scores (columns H+).
- * This script only reads columns A-G, which the spreadsheet itself already
- * pre-aggregates (group average, group mastery %) — individual columns are
- * never read or written to the output.
+ * Once mentees respond, the spreadsheet contains individual names and
+ * per-person scores (columns H+, one column per mentee, named after them in
+ * the header row). Columns A-G are already pre-aggregated by the spreadsheet
+ * itself (group average, group mastery %) and are read directly.
+ *
+ * Columns H+ are read ONLY to compute `references`: up to MAX_REFERENCES
+ * mentee names per topic whose self-rated score is >= REFERENCE_MIN_SCORE.
+ * The numeric score itself is NEVER written to the output — only the name,
+ * as a "who to ask" pointer. Everyone below the threshold is discarded and
+ * never appears anywhere in the generated JSON.
  *
  * Output: src/data/chapter-knowledge-map.json
  *
@@ -22,7 +27,9 @@ const ROOT = join(__dirname, '..');
 const OUT = join(ROOT, 'src', 'data', 'chapter-knowledge-map.json');
 
 const HEADER_ROW = 'Prioridade';
-const MAX_COLUMN = 7; // columns A-G (0-indexed 0-6); column 7+ = individual mentee notes, never read
+const MAX_COLUMN = 7; // columns A-G (0-indexed 0-6) hold pre-aggregated group data
+const REFERENCE_MIN_SCORE = 4; // self-rated score at/above which a name may surface as a topic reference
+const MAX_REFERENCES = 3; // cap on how many names are shown per topic, ties broken alphabetically
 
 const csvPath = process.argv[2];
 if (!csvPath) {
@@ -92,6 +99,11 @@ if (headerIndex === -1) {
   process.exit(1);
 }
 
+const headerRow = rows[headerIndex];
+// Mentee names, one per column from MAX_COLUMN onward — used only to resolve
+// which name a high-scoring column belongs to. Never surfaced with the score itself.
+const menteeNames = headerRow.slice(MAX_COLUMN).map((name) => name?.trim() || null);
+
 const dataRows = rows.slice(headerIndex + 1);
 
 function parseNumber(value) {
@@ -99,6 +111,18 @@ function parseNumber(value) {
   if (!trimmed) return null;
   const n = Number(trimmed.replace('%', '').replace(',', '.'));
   return Number.isFinite(n) ? n : null;
+}
+
+function computeReferences(row) {
+  const scored = [];
+  for (let col = MAX_COLUMN; col < row.length; col++) {
+    const name = menteeNames[col - MAX_COLUMN];
+    const score = parseNumber(row[col]);
+    if (!name || score === null || score < REFERENCE_MIN_SCORE) continue;
+    scored.push({ name, score });
+  }
+  scored.sort((a, b) => b.score - a.score || a.name.localeCompare(b.name));
+  return scored.slice(0, MAX_REFERENCES).map((entry) => entry.name);
 }
 
 const topics = dataRows
@@ -113,6 +137,7 @@ const topics = dataRows
       avgScore: parseNumber(avgScoreRaw),
       masteryPercent: parseNumber(masteryRaw) ?? 0,
       criticalGap: criticalGapRaw?.trim() || null,
+      references: computeReferences(row),
     };
   })
   .sort((a, b) => b.priority - a.priority);

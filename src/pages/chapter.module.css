@@ -302,6 +302,46 @@
   color: var(--ifm-color-emphasis-400);
 }
 
+/* ─── Reference people ────────────────────────────────────────── */
+.referenceBox {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.15rem;
+}
+
+.referenceLabel {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--ifm-color-emphasis-500);
+  white-space: nowrap;
+}
+
+.referenceChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.referenceChip {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.1rem 0.55rem;
+  border-radius: 999px;
+  color: #b45309;
+  background: color-mix(in srgb, #b45309 10%, transparent);
+  border: 1px solid color-mix(in srgb, #b45309 25%, transparent);
+  white-space: nowrap;
+}
+
+[data-theme='dark'] .referenceChip {
+  color: #fbbf24;
+  background: color-mix(in srgb, #fbbf24 10%, transparent);
+  border-color: color-mix(in srgb, #fbbf24 25%, transparent);
+}
+
 /* ─── Coverage ────────────────────────────────────────────────── */
 .coverageBox {
   display: flex;
