@@ -88,6 +88,16 @@ function CoverageLinks({ links }) {
   );
 }
 
+function CoverageGap({ gap }) {
+  if (!gap) return null;
+  return (
+    <div className={styles.coverageGap}>
+      <span className={styles.coverageGapLabel}>O que falta</span>
+      <p className={styles.coverageGapText}>{gap}</p>
+    </div>
+  );
+}
+
 function TrailChips({ trails }) {
   const { colorMode } = useColorMode();
   const isDark = colorMode === 'dark';
@@ -147,6 +157,7 @@ function TopicRow({ topic }) {
           <div className={styles.coverageBox}>
             <CoverageBadge status={coverage.status} />
             <CoverageLinks links={coverage.links} />
+            <CoverageGap gap={coverage.gap} />
           </div>
         )}
       </div>

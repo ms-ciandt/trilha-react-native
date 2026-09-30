@@ -353,6 +353,32 @@
   border-color: var(--ifm-color-emphasis-300);
 }
 
+.coverageGap {
+  width: 100%;
+  margin-top: 0.15rem;
+  padding: 0.5rem 0.7rem;
+  border-radius: 8px;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  background: var(--ifm-color-emphasis-100);
+}
+
+.coverageGapLabel {
+  display: block;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ifm-color-emphasis-600);
+  margin-bottom: 0.2rem;
+}
+
+.coverageGapText {
+  font-size: 0.78rem;
+  line-height: 1.55;
+  color: var(--ifm-color-emphasis-700);
+  margin: 0;
+}
+
 .coverageLinks {
   display: flex;
   flex-wrap: wrap;
