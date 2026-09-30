@@ -98,6 +98,11 @@ const config = {
             position: 'left',
           },
           {
+            to: '/chapter',
+            label: 'Chapter',
+            position: 'left',
+          },
+          {
             type: 'search',
             position: 'right',
           },
