@@ -7,7 +7,7 @@ import topicCoverage from '../data/topic-coverage.json';
 import styles from './chapter.module.css';
 
 const SPREADSHEET_URL =
-  'https://docs.google.com/spreadsheets/d/1qvjwg5FH_kC_m1L8dWNJZqVH8k_hPfHnTHFHDOOEfGk/edit?usp=sharing';
+  'https://docs.google.com/spreadsheets/d/1QTCpMAF3Yf5JKaU-cDijxWx9xPpH-r4z-9hj4dViSm0/edit?usp=sharing';
 
 const HOW_IT_WORKS = [
   {
