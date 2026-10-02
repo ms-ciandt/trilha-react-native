@@ -10,7 +10,8 @@
       ]
     },
     "Navigation": {
-      "status": "covered",
+      "status": "partial",
+      "gap": "Falta conteúdo dedicado sobre deep linking: configuração, Universal Links (iOS) / App Links (Android) e deep linking via Expo Router — ainda não coberto em nenhuma trilha.",
       "links": [
         { "trail": "Web", "label": "Navigation", "path": "trilha-web/modulo-fundamentos/navegacao-web" },
         { "trail": "Android", "label": "NavHost vs React Navigation", "path": "trilha-android/modulo-compose-para-rn/navigation-navhost-vs-react-navigation" },
@@ -27,11 +28,6 @@
         { "trail": "iOS", "label": "State & APIs", "path": "trilha-ios/modulo-fundamentos/state-and-apis" },
         { "trail": "iOS", "label": "State Management at Scale", "path": "trilha-ios/modulo-arquitetura/state-management-scale" }
       ]
-    },
-    "Deep Link": {
-      "status": "not-covered",
-      "gap": "Nenhum módulo cobre o tema ainda. Falta conteúdo dedicado sobre configuração de deep linking, Universal Links (iOS) / App Links (Android) e deep linking via Expo Router, em todas as trilhas.",
-      "links": []
     },
     "Testing": {
       "status": "covered",
@@ -93,18 +89,13 @@
       ]
     },
     "Animações": {
-      "status": "covered",
+      "status": "partial",
+      "gap": "Animações em si têm boa cobertura, mas Gesture Handler só aparece na Masterclass. Falta um módulo introdutório de gestos nas trilhas Android/iOS/Web (hoje sem nenhum conteúdo próprio sobre o tema, mesmo que se apoie no que a Masterclass já tem de Reanimated).",
       "links": [
         { "trail": "Android", "label": "Reanimated", "path": "trilha-android/modulo-performance/reanimated" },
         { "trail": "iOS", "label": "Animations & Reanimated", "path": "trilha-ios/modulo-performance/animations-reanimated" },
         { "trail": "Masterclass", "label": "Animated API", "path": "trilha-masterclass/modulo-06-animations/animated-api" },
-        { "trail": "Masterclass", "label": "Reanimated Worklets", "path": "trilha-masterclass/modulo-06-animations/reanimated-worklets" }
-      ]
-    },
-    "Gestures": {
-      "status": "partial",
-      "gap": "Só coberto na Masterclass. Falta um módulo introdutório de Gesture Handler nas trilhas Android/iOS/Web (hoje sem nenhum conteúdo próprio sobre gestos, mesmo que se apoie no que a Masterclass já tem de Reanimated).",
-      "links": [
+        { "trail": "Masterclass", "label": "Reanimated Worklets", "path": "trilha-masterclass/modulo-06-animations/reanimated-worklets" },
         { "trail": "Masterclass", "label": "Gesture & Layout", "path": "trilha-masterclass/modulo-06-animations/gesture-and-layout" }
       ]
     },
@@ -121,7 +112,6 @@
       "status": "covered",
       "links": [
         { "trail": "Masterclass", "label": "Setup & Embedding", "path": "trilha-masterclass/modulo-01-brownfield/setup-and-embedding" },
-        { "trail": "Masterclass", "label": "Bundle Strategy", "path": "trilha-masterclass/modulo-01-brownfield/bundle-strategy" },
         { "trail": "Masterclass", "label": "RN Advanced Lab: Brownfield Bootstrap", "path": "rn-advanced-lab/brownfield-bootstrap" }
       ]
     },
@@ -135,13 +125,16 @@
       ]
     },
     "Device Features": {
-      "status": "covered",
+      "status": "partial",
+      "gap": "Câmera, sensores e storage local têm boa cobertura. Permissions ainda falta na trilha Web e uma seção dedicada a react-native-permissions como abstração cross-platform.",
       "links": [
         { "trail": "Web", "label": "Using Native Resources", "path": "trilha-web/modulo-recursos-nativos/utilizando-recursos-nativos" },
         { "trail": "Android", "label": "Camera", "path": "trilha-android/modulo-recursos-nativos/camera" },
         { "trail": "Android", "label": "Sensors & Device APIs", "path": "trilha-android/modulo-recursos-nativos/sensors-device-apis" },
         { "trail": "iOS", "label": "Camera & Media", "path": "trilha-ios/modulo-recursos-nativos/camera-and-media" },
-        { "trail": "iOS", "label": "Sensors & Device APIs", "path": "trilha-ios/modulo-recursos-nativos/sensors-and-device-apis" }
+        { "trail": "iOS", "label": "Sensors & Device APIs", "path": "trilha-ios/modulo-recursos-nativos/sensors-and-device-apis" },
+        { "trail": "Android", "label": "Permissions", "path": "trilha-android/modulo-recursos-nativos/permissions" },
+        { "trail": "iOS", "label": "Permissions & Info.plist", "path": "trilha-ios/modulo-recursos-nativos/permissions-info-plist" }
       ]
     },
     "Upgrade do React Native": {
@@ -150,14 +143,6 @@
         { "trail": "Masterclass", "label": "Upgrade Strategy", "path": "trilha-masterclass/modulo-05-version-updates/upgrade-strategy" },
         { "trail": "Masterclass", "label": "RN Upgrade Helper", "path": "trilha-masterclass/modulo-05-version-updates/rn-upgrade-helper" },
         { "trail": "Masterclass", "label": "RN Doctor", "path": "trilha-masterclass/modulo-05-version-updates/rn-doctor" }
-      ]
-    },
-    "Permissions": {
-      "status": "partial",
-      "gap": "Coberto em Android/iOS, mas falta conteúdo equivalente na trilha Web e uma seção dedicada a react-native-permissions como abstração cross-platform.",
-      "links": [
-        { "trail": "Android", "label": "Permissions", "path": "trilha-android/modulo-recursos-nativos/permissions" },
-        { "trail": "iOS", "label": "Permissions & Info.plist", "path": "trilha-ios/modulo-recursos-nativos/permissions-info-plist" }
       ]
     },
     "Acessibilidade": {

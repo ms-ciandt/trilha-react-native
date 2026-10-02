@@ -18,7 +18,7 @@
     {
       "priority": 9,
       "topic": "Navigation",
-      "description": "React Navigation (Stack/Tabs/Drawer), Expo Router, navegação tipada (typed routes), navegação híbrida native <-> RN em cenários brownfield.",
+      "description": "React Navigation (Stack/Tabs/Drawer), Expo Router, navegação tipada (typed routes), navegação híbrida native <-> RN em cenários brownfield, deep linking (Universal Links no iOS / App Links no Android, incluindo via Expo Router).",
       "trails": [
         "Web",
         "Android",
@@ -34,20 +34,6 @@
       "priority": 9,
       "topic": "State Management",
       "description": "useState/useReducer, Context, Zustand, TanStack Query (server state), Redux Toolkit/Jotai, padrões em escala (slices, query key factories, optimistic updates, normalização).",
-      "trails": [
-        "Web",
-        "Android",
-        "iOS"
-      ],
-      "avgScore": null,
-      "masteryPercent": 0,
-      "criticalGap": null,
-      "references": []
-    },
-    {
-      "priority": 9,
-      "topic": "Deep Link",
-      "description": "Configuração de deep linking, Universal Links (iOS) / App Links (Android), deep linking via Expo Router.",
       "trails": [
         "Web",
         "Android",
@@ -160,21 +146,7 @@
     {
       "priority": 4,
       "topic": "Animações",
-      "description": "Animated API (New Architecture), Reanimated 3 (worklets, shared values), Skia, profiling de animações e causas de frame drop.",
-      "trails": [
-        "Android",
-        "iOS",
-        "Masterclass"
-      ],
-      "avgScore": null,
-      "masteryPercent": 0,
-      "criticalGap": null,
-      "references": []
-    },
-    {
-      "priority": 4,
-      "topic": "Gestures",
-      "description": "Gesture Handler, composição de gestos, integração com layout animations e Reanimated.",
+      "description": "Animated API (New Architecture), Reanimated 3 (worklets, shared values), Skia, profiling de animações e causas de frame drop, Gesture Handler e composição de gestos integrada a layout animations.",
       "trails": [
         "Android",
         "iOS",
@@ -202,7 +174,7 @@
     {
       "priority": 4,
       "topic": "Brownfield",
-      "description": "Embutir RN em app nativo existente (ReactHost/RCTHost, CocoaPods/RCTFabricSurface), múltiplas surfaces, comunicação native <-> RN, estratégia de bundle. Aplicado nos labs práticos do rn-advanced-lab (bootstrap, bundle split, navegação híbrida).",
+      "description": "Integração com apps nativos existentes.",
       "trails": [
         "Masterclass"
       ],
@@ -229,7 +201,7 @@
     {
       "priority": 3,
       "topic": "Device Features",
-      "description": "Câmera, geolocalização, sensores (acelerômetro, giroscópio, bluetooth), biometria (Face ID/Touch ID), storage local (MMKV, AsyncStorage, SecureStore, SQLite).",
+      "description": "Câmera, geolocalização, sensores (acelerômetro, giroscópio, bluetooth), biometria (Face ID/Touch ID), storage local (MMKV, AsyncStorage, SecureStore, SQLite), modelo de permissões mobile (Android Manifest/PermissionsAndroid, iOS Info.plist/PrivacyInfo.xcprivacy, react-native-permissions).",
       "trails": [
         "Web",
         "Android",
@@ -246,20 +218,6 @@
       "description": "RN Upgrade Helper e diffs nativos, análise de breaking changes por versão, compatibility matrix, recriação de patches (patch-package), RN Doctor.",
       "trails": [
         "Masterclass"
-      ],
-      "avgScore": null,
-      "masteryPercent": 0,
-      "criticalGap": null,
-      "references": []
-    },
-    {
-      "priority": 3,
-      "topic": "Permissions",
-      "description": "Modelo de permissões mobile, Android Manifest/PermissionsAndroid, iOS Info.plist/PrivacyInfo.xcprivacy, react-native-permissions.",
-      "trails": [
-        "Web",
-        "Android",
-        "iOS"
       ],
       "avgScore": null,
       "masteryPercent": 0,

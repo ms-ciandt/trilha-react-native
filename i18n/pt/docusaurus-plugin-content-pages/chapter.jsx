@@ -23,7 +23,7 @@ const HOW_IT_WORKS = [
   {
     step: '03',
     title: 'Nível de conhecimento auto-reportado',
-    desc: 'Cada dev avalia o próprio nível (1-5) por tópico em uma planilha compartilhada, com visualização pública.',
+    desc: 'Cada dev avalia o próprio nível por tópico em uma escala Jedi (de Youngling a Mestre Jedi) em uma planilha compartilhada, com visualização pública.',
   },
   {
     step: '04',
@@ -38,6 +38,13 @@ const TRAIL_COLORS = {
   iOS: { light: '#690037', dark: '#FAB9FF' },
   Masterclass: { light: '#8CB3D9', dark: '#B4DCFA' },
 };
+
+const JEDI_RANKS = ['Youngling', 'Padawan', 'Jedi', 'Cavaleiro Jedi', 'Mestre Jedi'];
+
+function jediRank(avgScore) {
+  const index = Math.min(JEDI_RANKS.length, Math.max(1, Math.round(avgScore))) - 1;
+  return JEDI_RANKS[index];
+}
 
 function GridBackground() {
   return <div className={styles.grid} aria-hidden="true" />;
@@ -162,7 +169,7 @@ function TopicRow({ topic }) {
                 />
               </div>
               <span className={styles.masteryLabel}>
-                {topic.masteryPercent}% domínio do grupo · média {topic.avgScore.toFixed(1)}/5
+                {topic.masteryPercent}% domínio do grupo · {jediRank(topic.avgScore)}
               </span>
             </>
           ) : (
