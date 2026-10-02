@@ -23,6 +23,10 @@
     "message": "React Native MasterClass",
     "description": "Navbar item with label React Native MasterClass"
   },
+  "item.label.Chapter": {
+    "message": "Chapter",
+    "description": "Navbar item with label Chapter"
+  },
   "item.label.About": {
     "message": "Sobre",
     "description": "Navbar item with label About"
