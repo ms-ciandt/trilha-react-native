@@ -12,3 +12,8 @@ mcp/notebook-downloader/*-automation-profile/
 static/assets/videos/**/*.mp4
 static/assets/videos/**/*.webm
 static/assets/videos/**/*.mov
+
+# Raw chapter knowledge-map export — contains individual mentee names/scores.
+# Only the anonymized src/data/chapter-knowledge-map.json (via
+# scripts/compute-chapter-data.mjs) is committed.
+mapa-conhecimento*.csv

@@ -1,0 +1,74 @@
+name: Update Chapter Knowledge Map
+
+on:
+  workflow_dispatch:
+    inputs:
+      sheet_gid:
+        description: 'Sheet tab gid (find it in the spreadsheet URL after #gid=)'
+        default: '1881812038'
+        required: true
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Download spreadsheet as CSV
+        run: |
+          curl -fsSL "https://docs.google.com/spreadsheets/d/1qvjwg5FH_kC_m1L8dWNJZqVH8k_hPfHnTHFHDOOEfGk/export?format=csv&gid=${{ github.event.inputs.sheet_gid }}" \
+            -o /tmp/mapa-conhecimento-mentoria.csv
+
+      - name: Regenerate knowledge map JSON
+        run: node scripts/compute-chapter-data.mjs /tmp/mapa-conhecimento-mentoria.csv
+
+      - name: Recompute reading/watch times
+        run: node scripts/compute-times.mjs
+
+      - name: Check for changes
+        id: diff
+        run: |
+          if git diff --quiet -- src/data/chapter-knowledge-map.json src/data/content-times.json; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run tests
+        if: steps.diff.outputs.changed == 'true'
+        run: npm test
+
+      - name: Open pull request
+        if: steps.diff.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          branch="content/update-chapter-data-$(date +%Y%m%d-%H%M%S)"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$branch"
+          git add src/data/chapter-knowledge-map.json src/data/content-times.json
+          git commit -m "content(chapter): update knowledge map from spreadsheet"
+          git push origin "$branch"
+          gh pr create \
+            --title "content(chapter): update knowledge map from spreadsheet" \
+            --body "Automated update from the chapter knowledge-map spreadsheet (gid ${{ github.event.inputs.sheet_gid }}), triggered manually via workflow_dispatch. Only pre-aggregated group data and columns/scores never leave the spreadsheet — this PR touches only \`chapter-knowledge-map.json\` and \`content-times.json\`. Review the diff before merging." \
+            --base main \
+            --head "$branch"
+
+      - name: No changes
+        if: steps.diff.outputs.changed == 'false'
+        run: echo "Spreadsheet data unchanged — no PR needed."
