@@ -5,7 +5,7 @@ on:
     inputs:
       sheet_gid:
         description: 'Sheet tab gid (find it in the spreadsheet URL after #gid=)'
-        default: '378759994'
+        default: '1881812038'
         required: true
 
 jobs:
@@ -29,7 +29,7 @@ jobs:
 
       - name: Download spreadsheet as CSV
         run: |
-          curl -fsSL "https://docs.google.com/spreadsheets/d/1QTCpMAF3Yf5JKaU-cDijxWx9xPpH-r4z-9hj4dViSm0/export?format=csv&gid=${{ github.event.inputs.sheet_gid }}" \
+          curl -fsSL "https://docs.google.com/spreadsheets/d/1qvjwg5FH_kC_m1L8dWNJZqVH8k_hPfHnTHFHDOOEfGk/export?format=csv&gid=${{ github.event.inputs.sheet_gid }}" \
             -o /tmp/mapa-conhecimento-mentoria.csv
 
       - name: Regenerate knowledge map JSON
