@@ -4,13 +4,13 @@
 Advanced React Native developers familiar with the fundamentals from trilha-nativo or trilha-web.
 
 ## Status
-Skeleton — visual overview only. No detailed content yet.
+Complete — all 6 masterclass modules have detailed content; this page is the visual module map only.
 
 ## Files
 
 | File | Content |
 |---|---|
-| `00-course-overview.md` | Visual map of the 5 masterclass modules |
+| `00-course-overview.mdx` | Visual map of the 6 masterclass modules |
 
 ## What not to repeat
 - JSI/Fabric/TurboModules basics are covered in `introducao/02-new-architecture.md`
