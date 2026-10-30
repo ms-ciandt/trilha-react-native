@@ -14,13 +14,13 @@ sidebar_position: 5
 
 ## Video Overview
 
-> Video para este topico em breve.
+> Vídeo para este tópico em breve.
 
 ## Mapeando a Arquitetura Android para React Native
 
-Voce ja conhece como a arquitetura Android funciona: `ViewModel` guarda o estado da UI, `Repository` abstrai as fontes de dados, `Flow`/`LiveData` transmite atualizacoes para a camada de UI. React Native tem equivalentes diretos para tudo isso.
+Você já conhece como a arquitetura Android funciona: `ViewModel` guarda o estado da UI, `Repository` abstrai as fontes de dados, `Flow`/`LiveData` transmite atualizações para a camada de UI. React Native tem equivalentes diretos para tudo isso.
 
-| Padrao Android                   | Equivalente em React Native                    |
+| Padrão Android                   | Equivalente em React Native                    |
 |----------------------------------|------------------------------------------------|
 | `ViewModel` + `StateFlow`        | Zustand store                                  |
 | `LiveData`                       | `useState` / Zustand selector                  |
@@ -35,7 +35,7 @@ Voce ja conhece como a arquitetura Android funciona: `ViewModel` guarda o estado
 
 ## Estado Local: useState + useReducer
 
-Para estado no nivel do componente (sem compartilhamento entre telas), `useState` e equivalente a um estado mutavel local em um Composable:
+Para estado no nível do componente (sem compartilhamento entre telas), `useState` é equivalente a um estado mutável local em um Composable:
 
 ```tsx
 import { useState } from 'react';
@@ -58,7 +58,7 @@ function LikeButton({ initialCount }: { initialCount: number }) {
 }
 ```
 
-Para estado com multiplos campos e transicoes (padrao sealed class UiState), use `useReducer`:
+Para estado com múltiplos campos e transições (padrão sealed class UiState), use `useReducer`:
 
 ```tsx
 import { useReducer } from 'react';
@@ -107,7 +107,7 @@ function UserScreen() {
 
 ## Estado Global: Zustand
 
-Zustand e a biblioteca de gerenciamento de estado que mapeia mais diretamente para o padrao `ViewModel` + `StateFlow` do Android. Sem boilerplate, sem reducers obrigatorios, sem necessidade de envolver com Provider.
+Zustand é a biblioteca de gerenciamento de estado que mapeia mais diretamente para o padrão `ViewModel` + `StateFlow` do Android. Sem boilerplate, sem reducers obrigatórios, sem necessidade de envolver com Provider.
 
 ```bash
 npm install zustand
@@ -155,7 +155,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 ### Usando a store em qualquer componente
 
 ```tsx
-// Nenhum Provider necessario — a store e global
+// Nenhum Provider necessário — a store é global
 function ProfileScreen() {
   const user = useAuthStore(state => state.user);         // selector
   const logout = useAuthStore(state => state.logout);
@@ -171,7 +171,7 @@ function ProfileScreen() {
 }
 ```
 
-> **Padrao selector**: `useAuthStore(state => state.user)` — re-renderiza apenas quando `user` muda, nao quando `isLoading` muda. E o equivalente de `stateFlow.map { it.user }.collectAsState()` no Compose.
+> **Padrão selector**: `useAuthStore(state => state.user)` — re-renderiza apenas quando `user` muda, não quando `isLoading` muda. É o equivalente de `stateFlow.map { it.user }.collectAsState()` no Compose.
 
 ### Persistir store em storage (como DataStore)
 
@@ -199,13 +199,13 @@ const useSettingsStore = create(
 
 ## Estado de Servidor: TanStack Query
 
-Estado local (`useState`, Zustand) e para dados do cliente. Dados de API — usuarios, posts, feed — tem um ciclo de vida diferente: busca, cache, refetch em background, paginacao, mutacoes. TanStack Query (anteriormente React Query) lida com isso, equivalente a um `Repository` + `RemoteDataSource` com cache automatico.
+Estado local (`useState`, Zustand) é para dados do cliente. Dados de API — usuários, posts, feed — têm um ciclo de vida diferente: busca, cache, refetch em background, paginação, mutações. TanStack Query (anteriormente React Query) lida com isso, equivalente a um `Repository` + `RemoteDataSource` com cache automático.
 
 ```bash
 npm install @tanstack/react-query
 ```
 
-### Configuracao
+### Configuração
 
 ```tsx
 // App.tsx
@@ -214,7 +214,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 5,  // dados sao frescos por 5 minutos
+      staleTime: 1000 * 60 * 5,  // dados são frescos por 5 minutos
       retry: 2,
     },
   },
@@ -262,7 +262,7 @@ function UserListScreen() {
 }
 ```
 
-### useMutation — operacoes de escrita (POST/PUT/DELETE)
+### useMutation — operações de escrita (POST/PUT/DELETE)
 
 ```tsx
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -275,7 +275,7 @@ function DeleteUserButton({ userId }: { userId: string }) {
       fetch(`/api/users/${id}`, { method: 'DELETE' }).then(r => r.json()),
 
     onSuccess: () => {
-      // Invalida e refetch — equivalente ao @Delete do Room + re-emissao de Flow
+      // Invalida e refetch — equivalente ao @Delete do Room + re-emissão de Flow
       queryClient.invalidateQueries({ queryKey: ['users'] });
     },
   });
@@ -298,7 +298,7 @@ function UserDetailScreen({ userId }: { userId: string }) {
   const { data: user } = useQuery({
     queryKey: ['users', userId],   // chave de cache inclui o ID
     queryFn: () => fetchUser(userId),
-    enabled: !!userId,             // nao busca se userId estiver vazio
+    enabled: !!userId,             // não busca se userId estiver vazio
   });
 
   return <Text>{user?.name}</Text>;
@@ -307,9 +307,9 @@ function UserDetailScreen({ userId }: { userId: string }) {
 
 ---
 
-## Persistencia Local: MMKV
+## Persistência Local: MMKV
 
-MMKV e o equivalente React Native do `SharedPreferences` — armazenamento de chave-valor rapido e sincrono baseado na biblioteca MMKV da Tencent (a mesma usada pelo WeChat).
+MMKV é o equivalente React Native do `SharedPreferences` — armazenamento de chave-valor rápido e síncrono baseado na biblioteca MMKV da Tencent (a mesma usada pelo WeChat).
 
 ```bash
 npm install react-native-mmkv
@@ -330,14 +330,14 @@ const token = storage.getString('user.token');  // string | undefined
 const userId = storage.getNumber('user.id');     // number | undefined
 const onboarded = storage.getBoolean('onboarded'); // boolean | undefined
 
-// Remocao
+// Remoção
 storage.delete('user.token');
 
-// Verificar existencia
+// Verificar existência
 if (storage.contains('user.token')) { ... }
 ```
 
-### MMKV com persistencia do Zustand
+### MMKV com persistência do Zustand
 
 ```tsx
 import { MMKV } from 'react-native-mmkv';
@@ -355,13 +355,13 @@ const zustandMmkvStorage: StateStorage = {
 storage: createJSONStorage(() => zustandMmkvStorage),
 ```
 
-> **MMKV vs AsyncStorage**: MMKV e sincrono e 10–100x mais rapido que AsyncStorage. Use MMKV para tokens de autenticacao, preferencias de usuario, configuracoes de app. Use `expo-sqlite` para dados relacionais.
+> **MMKV vs AsyncStorage**: MMKV é síncrono e 10–100x mais rápido que AsyncStorage. Use MMKV para tokens de autenticação, preferências de usuário, configurações de app. Use `expo-sqlite` para dados relacionais.
 
 ---
 
-## Requisicoes HTTP: fetch e axios
+## Requisições HTTP: fetch e axios
 
-### fetch nativo (built-in, sem instalacao)
+### fetch nativo (built-in, sem instalação)
 
 ```tsx
 async function getUser(id: string): Promise<User> {
@@ -381,7 +381,7 @@ async function getUser(id: string): Promise<User> {
 }
 ```
 
-### axios (recomendado para producao)
+### axios (recomendado para produção)
 
 ```bash
 npm install axios
@@ -395,7 +395,7 @@ const api = axios.create({
   timeout: 10000,
 });
 
-// Interceptor de requisicao — equivalente ao OkHttp Interceptor
+// Interceptor de requisição — equivalente ao OkHttp Interceptor
 api.interceptors.request.use(config => {
   const token = storage.getString('token');
   if (token) config.headers.Authorization = `Bearer ${token}`;
@@ -420,13 +420,13 @@ await api.post<void>('/users', { name, email });
 
 ---
 
-## Padrao Arquitetural: Juntando Tudo
+## Padrão Arquitetural: Juntando Tudo
 
-Uma tela completa seguindo o padrao inspirado em MVVM do Android em React Native:
+Uma tela completa seguindo o padrão inspirado em MVVM do Android em React Native:
 
 ```tsx
 // O "equivalente ao ViewModel" vive no Zustand ou TanStack Query
-// A "View" e o componente de tela
+// A "View" é o componente de tela
 
 function ProductScreen({ route }: NativeStackScreenProps<RootStack, 'Product'>) {
   const { productId } = route.params;
@@ -470,15 +470,15 @@ function ProductScreen({ route }: NativeStackScreenProps<RootStack, 'Product'>) 
 
 ## Materiais de Estudo
 
-### Documentacao Oficial
+### Documentação Oficial
 
-- [Zustand — Documentacao](https://zustand.docs.pmnd.rs/getting-started/introduction)
+- [Zustand — Documentação](https://zustand.docs.pmnd.rs/getting-started/introduction)
 - [TanStack Query — React Native](https://tanstack.com/query/latest/docs/framework/react/react-native)
 - [MMKV — react-native-mmkv](https://github.com/mrousavy/react-native-mmkv)
 - [React Native — Network](https://reactnative.dev/docs/network)
-- [Axios — Documentacao](https://axios-http.com/docs/intro)
+- [Axios — Documentação](https://axios-http.com/docs/intro)
 
-### Videos
+### Vídeos
 
 - [Jack Herrington — Zustand — State Management for React](https://www.youtube.com/watch?v=_ngCLZ5Iz-0)
 - [Theo (t3.gg) — You Might Not Need React Query](https://www.youtube.com/watch?v=vxkbf5QMA2g) — contexto sobre quando usar
@@ -486,21 +486,21 @@ function ProductScreen({ route }: NativeStackScreenProps<RootStack, 'Product'>) 
 
 ---
 
-## Resumo do Modulo
+## Resumo do Módulo
 
-Voce concluiu o modulo de Fundamentos da Trilha Android Nativo. Aqui esta o mapa completo:
+Você concluiu o módulo de Fundamentos da Trilha Android Nativo. Aqui está o mapa completo:
 
 | Conceito | Onde encontrar |
 |---------|-----------------|
-| Variaveis, funcoes e closures em JavaScript | Topico 01 |
-| Tipos, generics e sealed classes em TypeScript | Topico 02 |
-| View/Text/Image/FlatList/Pressable | Topico 03 |
-| StyleSheet, Platform, sombras, transforms | Topico 04 |
-| useState, Zustand, TanStack Query, MMKV | Topico 05 |
-| @Composable → Component | Modulo Compose → RN, Topico 01 |
-| remember/useState/useEffect | Modulo Compose → RN, Topico 02 |
-| Column/Row/Flexbox | Modulo Compose → RN, Topico 03 |
-| Navegacao | Modulo Compose → RN, Topico 04 |
-| MaterialTheme → Paper/Context | Modulo Compose → RN, Topico 05 |
+| Variáveis, funções e closures em JavaScript | Tópico 01 |
+| Tipos, generics e sealed classes em TypeScript | Tópico 02 |
+| View/Text/Image/FlatList/Pressable | Tópico 03 |
+| StyleSheet, Platform, sombras, transforms | Tópico 04 |
+| useState, Zustand, TanStack Query, MMKV | Tópico 05 |
+| @Composable → Component | Módulo Compose → RN, Tópico 01 |
+| remember/useState/useEffect | Módulo Compose → RN, Tópico 02 |
+| Column/Row/Flexbox | Módulo Compose → RN, Tópico 03 |
+| Navegação | Módulo Compose → RN, Tópico 04 |
+| MaterialTheme → Paper/Context | Módulo Compose → RN, Tópico 05 |
 
-O proximo modulo mergulha na New Architecture: Hermes, JSI, TurboModules em Kotlin e Fabric Native Components baseados em views do Jetpack Compose.
+O próximo módulo mergulha na New Architecture: Hermes, JSI, TurboModules em Kotlin e Fabric Native Components baseados em views do Jetpack Compose.

@@ -12,3 +12,6 @@ mcp/notebook-downloader/*-automation-profile/
 static/assets/videos/**/*.mp4
 static/assets/videos/**/*.webm
 static/assets/videos/**/*.mov
+
+# Mentoria: tooling do RN Chapter, fora de escopo deste repo/PR (não versionado)
+_mentoria/

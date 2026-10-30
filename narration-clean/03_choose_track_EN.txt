@@ -1,0 +1,11 @@
+Choosing the right trail is simple: start from the tech stack you already use every day, and let that decide where you begin.
+
+If you write Kotlin and work with Jetpack Compose, the Android Trail is for you. You already understand thread safety, native rendering, and how platform APIs talk to hardware. Your learning curve here is JavaScript, TypeScript, and React's component model — everything else, you already have a head start on.
+
+If you write Swift and work with SwiftUI, the iOS Trail is your path. You already understand UIKit and SwiftUI rendering, the iOS lifecycle, and Xcode tooling. Just like the Android Trail, your main learning curve is JavaScript, TypeScript, and React's component model.
+
+If you build with React and JavaScript for the web, the Web Trail is the natural fit. React Native components work exactly like the React components you already write — hooks, JSX, and your component patterns transfer directly. Your learning curve is the mobile mindset: layout with Flexbox instead of CSS, platform constraints, and native APIs.
+
+And if you already know React Native fundamentals and want to go deeper, the Masterclass covers brownfield integration, TurboModules, Fabric, JSI, performance profiling, CI/CD pipelines, and upgrade strategies — all built on the New Architecture.
+
+There's no wrong door here. Each trail is designed to take the knowledge you already have and turn it into React Native fluency as efficiently as possible. Pick the trail that matches your daily stack, and start building.

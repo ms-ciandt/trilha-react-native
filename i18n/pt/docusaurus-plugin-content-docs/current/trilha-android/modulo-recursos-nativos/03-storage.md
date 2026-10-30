@@ -339,22 +339,22 @@ const available = await SecureStore.isAvailableAsync();
 
 ## Material de Estudo
 
-### Documentacao Oficial
+### Documentação Oficial
 
-- [expo-file-system — Documentacao](https://docs.expo.dev/versions/latest/sdk/filesystem/)
-- [expo-sqlite — Documentacao](https://docs.expo.dev/versions/latest/sdk/sqlite/)
-- [expo-document-picker — Documentacao](https://docs.expo.dev/versions/latest/sdk/document-picker/)
-- [expo-secure-store — Documentacao](https://docs.expo.dev/versions/latest/sdk/securestore/)
-- [Android — Visao geral de armazenamento de dados e arquivos](https://developer.android.com/training/data-storage)
+- [expo-file-system — Documentação](https://docs.expo.dev/versions/latest/sdk/filesystem/)
+- [expo-sqlite — Documentação](https://docs.expo.dev/versions/latest/sdk/sqlite/)
+- [expo-document-picker — Documentação](https://docs.expo.dev/versions/latest/sdk/document-picker/)
+- [expo-secure-store — Documentação](https://docs.expo.dev/versions/latest/sdk/securestore/)
+- [Android — Visão geral de armazenamento de dados e arquivos](https://developer.android.com/training/data-storage)
 
-### Videos
+### Vídeos
 
 - [Simon Grimm — Tutorial expo-sqlite](https://www.youtube.com/watch?v=AoMmDW_SeGc)
 
 ---
 
-## Proximo Passo
+## Próximo Passo
 
-Storage concluido. A seguir: sensores e APIs do dispositivo — acelerometro, giroscopio, GPS, vibracao e brilho de tela, todos mapeados a partir do SensorManager e LocationManager do Android.
+Storage concluído. A seguir: sensores e APIs do dispositivo — acelerômetro, giroscópio, GPS, vibração e brilho de tela, todos mapeados a partir do SensorManager e LocationManager do Android.
 
 ➡ [Sensores e APIs do Dispositivo](./04-sensors-device-apis)

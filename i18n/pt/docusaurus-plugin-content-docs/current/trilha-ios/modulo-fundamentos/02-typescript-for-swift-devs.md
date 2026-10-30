@@ -1,4 +1,4 @@
-﻿---
+---
 title: TypeScript for Swift Developers
 ---
 
@@ -12,25 +12,25 @@ title: TypeScript for Swift Developers
   Seu navegador não suporta o elemento de vídeo.
 </video>
 
-> Voce ja pensa em tipos. Swift te treinou para nunca confiar em um valor sem tipo, para tratar optionals de forma explicita e deixar o compilador capturar erros antes que cheguem ao usuario. JavaScript nao faz nada disso — TypeScript devolve essa seguranca.
+> Você já pensa em tipos. Swift te treinou para nunca confiar em um valor sem tipo, para tratar optionals de forma explícita e deixar o compilador capturar erros antes que cheguem ao usuário. JavaScript não faz nada disso — TypeScript devolve essa segurança.
 
 ## Por que o TypeScript Existe
 
-JavaScript nao tem sistema de tipos. Qualquer variavel pode conter qualquer valor a qualquer momento, e nada impede que voce passe uma `string` onde um `number` era esperado. O erro aparece em tempo de execucao, muitas vezes em producao.
+JavaScript não tem sistema de tipos. Qualquer variável pode conter qualquer valor a qualquer momento, e nada impede que você passe uma `string` onde um `number` era esperado. O erro aparece em tempo de execução, muitas vezes em produção.
 
-TypeScript e um superconjunto estrito de JavaScript: todo arquivo JavaScript valido e tambem TypeScript valido. O compilador TypeScript (`tsc`) verifica os tipos do seu codigo e depois apaga todas as anotacoes de tipo, produzindo JavaScript puro que roda em qualquer engine.
+TypeScript é um superconjunto estrito de JavaScript: todo arquivo JavaScript válido é também TypeScript válido. O compilador TypeScript (`tsc`) verifica os tipos do seu código e depois apaga todas as anotações de tipo, produzindo JavaScript puro que roda em qualquer engine.
 
-Para um desenvolvedor Swift, o modelo mental e: TypeScript e a camada de compilador que traz as garantias de seguranca nas quais voce ja confia.
+Para um desenvolvedor Swift, o modelo mental é: TypeScript é a camada de compilador que traz as garantias de segurança nas quais você já confia.
 
 :::info Paralelos com Swift
-O papel do TypeScript em relacao ao JavaScript e aproximadamente o que o sistema de tipos do Swift faz em relacao aos padroes do Objective-C repletos de `id` e propensos a crashes em tempo de execucao. Os tipos existem apenas em tempo de compilacao e nao custam nada em tempo de execucao.
+O papel do TypeScript em relação ao JavaScript é aproximadamente o que o sistema de tipos do Swift faz em relação aos padrões do Objective-C repletos de `id` e propensos a crashes em tempo de execução. Os tipos existem apenas em tempo de compilação e não custam nada em tempo de execução.
 :::
 
 ---
 
-## Modo Estrito — O tsconfig que Voce Deve Sempre Usar
+## Modo Estrito — O tsconfig que Você Deve Sempre Usar
 
-Por padrao, o TypeScript e permissivo para facilitar a migracao do JavaScript. Voce quer o modo estrito, que o faz se comportar da maneira que o sistema de tipos do Swift ja faz.
+Por padrão, o TypeScript é permissivo para facilitar a migração do JavaScript. Você quer o modo estrito, que o faz se comportar da maneira que o sistema de tipos do Swift já faz.
 
 ```json
 // tsconfig.json
@@ -45,14 +45,14 @@ Por padrao, o TypeScript e permissivo para facilitar a migracao do JavaScript. V
 }
 ```
 
-Projetos Expo e React Native geram um `tsconfig.json` estrito por padrao. Nunca rebaixe esse nivel.
+Projetos Expo e React Native geram um `tsconfig.json` estrito por padrão. Nunca rebaixe esse nível.
 
 | Flag strict do TypeScript | Equivalente no Swift |
 |---|---|
-| `noImplicitAny` | Swift proibe variaveis sem tipo completamente |
-| `strictNullChecks` | Optionals do Swift — `nil` deve ser explicito |
-| `strictFunctionTypes` | Variancia de parametros de funcao no Swift |
-| `noUncheckedIndexedAccess` | Acessar um indice de array retorna `T?` no Swift |
+| `noImplicitAny` | Swift proíbe variáveis sem tipo completamente |
+| `strictNullChecks` | Optionals do Swift — `nil` deve ser explícito |
+| `strictFunctionTypes` | Variância de parâmetros de função no Swift |
+| `noUncheckedIndexedAccess` | Acessar um índice de array retorna `T?` no Swift |
 
 ---
 
@@ -69,7 +69,7 @@ const notSet: undefined = undefined;
 | Swift | TypeScript |
 |---|---|
 | `String` | `string` |
-| `Int`, `Double`, `Float` | `number` (todos os tipos numericos) |
+| `Int`, `Double`, `Float` | `number` (todos os tipos numéricos) |
 | `Bool` | `boolean` |
 | `nil` | `null` ou `undefined` |
 | `Void` | `void` |
@@ -77,14 +77,14 @@ const notSet: undefined = undefined;
 | `Any` | `any` (evitar) / `unknown` (seguro) |
 
 :::warning Evite `any`
-`any` desativa a verificacao de tipos completamente. Use `unknown` quando voce genuinamente nao conhece o tipo — isso te forca a fazer o narrowing antes de usar, assim como `as? SomeType` no Swift.
+`any` desativa a verificação de tipos completamente. Use `unknown` quando você genuinamente não conhece o tipo — isso te força a fazer o narrowing antes de usar, assim como `as? SomeType` no Swift.
 :::
 
 ---
 
 ## Optional `T?` do Swift → `T | null | undefined` no TypeScript
 
-O tipo optional `T?` do Swift e acucar sintatico para `Optional<T>`. O TypeScript divide isso em dois valores nulos distintos.
+O tipo optional `T?` do Swift é açúcar sintático para `Optional<T>`. O TypeScript divide isso em dois valores nulos distintos.
 
 **Swift**
 ```swift
@@ -102,17 +102,17 @@ const display = name ?? "Anonymous";   // nullish coalescing — mesma sintaxe ?
 const forced = name!;                  // asserção de nao-nulo — mesmo ! (evitar)
 ```
 
-Com `strictNullChecks` habilitado, o TypeScript se comporta de forma quase identica aos optionals do Swift. Sem ele, `null` e `undefined` passam silenciosamente por todos os tipos — e por isso o modo estrito e obrigatorio.
+Com `strictNullChecks` habilitado, o TypeScript se comporta de forma quase idêntica aos optionals do Swift. Sem ele, `null` e `undefined` passam silenciosamente por todos os tipos — e por isso o modo estrito é obrigatório.
 
 :::info `null` vs `undefined`
-No TypeScript, `null` significa "intencionalmente ausente" e `undefined` significa "ainda nao definido". Na pratica, as APIs do React Native usam ambos. Declare props como `string | undefined` para props opcionais e `string | null` quando um campo do backend pode estar explicitamente ausente.
+No TypeScript, `null` significa "intencionalmente ausente" e `undefined` significa "ainda não definido". Na prática, as APIs do React Native usam ambos. Declare props como `string | undefined` para props opcionais e `string | null` quando um campo do backend pode estar explicitamente ausente.
 :::
 
 ---
 
 ## `struct` e `class` do Swift → `interface` e `type` no TypeScript
 
-TypeScript nao tem structs de tipo valor. Tudo e baseado em referencia em tempo de execucao. As anotacoes de tipo, no entanto, mapeiam naturalmente.
+TypeScript não tem structs de tipo valor. Tudo é baseado em referência em tempo de execução. As anotações de tipo, no entanto, mapeiam naturalmente.
 
 **struct Swift**
 ```swift
@@ -140,13 +140,13 @@ type UserId = string;
 type AdminUser = User & { permissions: string[] };  // intersecao — como composicao de protocolos
 ```
 
-Use `interface` para formatos que podem ser estendidos ou implementados. Use `type` para unions, intersecoes e aliases. Para formatos de dados simples (o caso mais comum no React Native), eles sao intercambiaveis.
+Use `interface` para formatos que podem ser estendidos ou implementados. Use `type` para unions, interseções e aliases. Para formatos de dados simples (o caso mais comum no React Native), eles são intercambiáveis.
 
 ---
 
 ## `enum` do Swift → Union Types e Objetos `const` no TypeScript
 
-Enums do Swift sao tipos de primeira classe com valores associados. O `enum` nativo do TypeScript e um cidadao de segunda classe que gera codigo em tempo de execucao inesperado. O consenso da comunidade e evita-lo.
+Enums do Swift são tipos de primeira classe com valores associados. O `enum` nativo do TypeScript é um cidadão de segunda classe que gera código em tempo de execução inesperado. O consenso da comunidade é evitá-lo.
 
 **enum simples no Swift**
 ```swift
@@ -160,7 +160,7 @@ enum Direction {
 type Direction = 'up' | 'down' | 'left' | 'right';
 ```
 
-Para casos onde voce precisa de uma referencia estavel (como `rawValue` no Swift), use um objeto `const` com `as const`:
+Para casos onde você precisa de uma referência estável (como `rawValue` no Swift), use um objeto `const` com `as const`:
 
 **enum com rawValue no Swift**
 ```swift
@@ -183,13 +183,13 @@ type Status = typeof Status[keyof typeof Status];
 // type Status = 'active' | 'inactive' | 'pending'
 ```
 
-`as const` instrui o TypeScript a inferir os tipos literais mais estreitos (`'active'` em vez de `string`) e torna o objeto somente-leitura em todo o codigo.
+`as const` instrui o TypeScript a inferir os tipos literais mais estreitos (`'active'` em vez de `string`) e torna o objeto somente-leitura em todo o código.
 
 ---
 
 ## `enum` com Valores Associados no Swift → Discriminated Unions
 
-Enums com valores associados no Swift tem um equivalente direto em TypeScript: discriminated unions. Esse padrao e o mais importante em codebases React Native.
+Enums com valores associados no Swift têm um equivalente direto em TypeScript: discriminated unions. Esse padrão é o mais importante em codebases React Native.
 
 **enum com valores associados no Swift**
 ```swift
@@ -232,7 +232,7 @@ O campo discriminante (`status` acima) faz o papel que o nome do case faz no Swi
 
 ## Generics `<T>` no Swift → Generics no TypeScript
 
-A sintaxe e quase identica.
+A sintaxe é quase idêntica.
 
 **Swift**
 ```swift
@@ -263,7 +263,7 @@ type UserResponse = ApiResponse<User>;
 type UserListResponse = ApiResponse<User[]>;
 ```
 
-Generics no TypeScript suportam restricoes com `extends`:
+Generics no TypeScript suportam restrições com `extends`:
 
 ```typescript
 function getProperty<T, K extends keyof T>(obj: T, key: K): T[K] {
@@ -274,9 +274,9 @@ function getProperty<T, K extends keyof T>(obj: T, key: K): T[K] {
 
 ---
 
-## `Codable` do Swift → Validacao em Tempo de Execucao com Zod
+## `Codable` do Swift → Validação em Tempo de Execução com Zod
 
-O `Codable` do Swift te da decodificacao JSON garantida em tempo de compilacao. O sistema de tipos do TypeScript e apagado em tempo de execucao — uma resposta de rede tipada como `User` e apenas um objeto `unknown` em tempo de execucao. O TypeScript nao pode te proteger la.
+O `Codable` do Swift te dá decodificação JSON garantida em tempo de compilação. O sistema de tipos do TypeScript é apagado em tempo de execução — uma resposta de rede tipada como `User` é apenas um objeto `unknown` em tempo de execução. O TypeScript não pode te proteger lá.
 
 **Swift**
 ```swift
@@ -312,15 +312,15 @@ if (result.success) {
 }
 ```
 
-:::info Zod e o `Codable` do TypeScript
-Zod valida em tempo de execucao e deriva tipos estaticos a partir do schema. Esse e o equivalente mais proximo ao `Codable` do Swift — defina uma vez, obtenha tanto tipos em tempo de compilacao quanto seguranca em tempo de execucao.
+:::info Zod é o `Codable` do TypeScript
+Zod valida em tempo de execução e deriva tipos estáticos a partir do schema. Esse é o equivalente mais próximo ao `Codable` do Swift — defina uma vez, obtenha tanto tipos em tempo de compilação quanto segurança em tempo de execução.
 :::
 
 ---
 
 ## Utility Types — Equivalentes no Swift
 
-TypeScript inclui tipos genericos embutidos que transformam tipos existentes. O Swift alcanca resultados similares por meio de extensions e conformances de protocolo, mas o TypeScript os torna parte do proprio sistema de tipos.
+TypeScript inclui tipos genéricos embutidos que transformam tipos existentes. O Swift alcança resultados similares por meio de extensions e conformances de protocolo, mas o TypeScript os torna parte do próprio sistema de tipos.
 
 ```typescript
 interface User {
@@ -356,9 +356,9 @@ type UserMap = Record<string, User>;
 
 ## O Operador `satisfies`
 
-`satisfies` valida que um valor corresponde a um tipo sem alargar o tipo inferido. E util quando voce quer que o compilador verifique seu trabalho, mas ainda mantenha tipos literais estreitos.
+`satisfies` valida que um valor corresponde a um tipo sem alargar o tipo inferido. É útil quando você quer que o compilador verifique seu trabalho, mas ainda mantenha tipos literais estreitos.
 
-**Sem `satisfies` — tipo e alargado**
+**Sem `satisfies` — tipo é alargado**
 ```typescript
 const palette: Record<string, string> = {
     primary: '#6366f1',
@@ -367,7 +367,7 @@ const palette: Record<string, string> = {
 palette.primary; // tipo: string (literal perdido)
 ```
 
-**Com `satisfies` — tipo e preservado**
+**Com `satisfies` — tipo é preservado**
 ```typescript
 const palette = {
     primary: '#6366f1',
@@ -377,7 +377,7 @@ const palette = {
 palette.primary; // tipo: '#6366f1' (literal preservado)
 ```
 
-No React Native, `satisfies` e util para entradas de `StyleSheet` onde voce quer verificacao de tipos mas tambem quer autocomplete no objeto de estilo especifico:
+No React Native, `satisfies` é útil para entradas de `StyleSheet` onde você quer verificação de tipos mas também quer autocomplete no objeto de estilo específico:
 
 ```typescript
 import { StyleSheet, ViewStyle } from 'react-native';
@@ -392,9 +392,9 @@ const styles = StyleSheet.create({
 
 ---
 
-## `strictNullChecks` na Pratica
+## `strictNullChecks` na Prática
 
-Sem `strictNullChecks`, todo tipo aceita silenciosamente `null` e `undefined`. Com ele habilitado (o que `strict: true` faz), voce deve trata-los explicitamente — exatamente como o Swift te forca a tratar optionals.
+Sem `strictNullChecks`, todo tipo aceita silenciosamente `null` e `undefined`. Com ele habilitado (o que `strict: true` faz), você deve tratá-los explicitamente — exatamente como o Swift te força a tratar optionals.
 
 ```typescript
 // strictNullChecks: false (perigoso — nunca use isso)
@@ -414,11 +414,11 @@ function getLength(s: string | null): number {
 }
 ```
 
-Isso e isomorfico ao tratamento de optionals no Swift — o compilador te forca a fazer o unwrap antes de usar.
+Isso é isomórfico ao tratamento de optionals no Swift — o compilador te força a fazer o unwrap antes de usar.
 
 ---
 
-## Tipos do React Native na Pratica
+## Tipos do React Native na Prática
 
 ```typescript
 import { StyleSheet, ViewStyle, TextStyle, ImageStyle } from 'react-native';
@@ -448,7 +448,7 @@ type RootStackParams = {
 
 ---
 
-## Exercicios
+## Exercícios
 
 1. Converta este enum Swift em uma discriminated union TypeScript:
 
@@ -481,7 +481,7 @@ type RootStackParams = {
 
 | Recurso | Tipo | Link |
 |---|---|---|
-| TypeScript Handbook | Documentacao oficial | [typescriptlang.org/docs/handbook/intro.html](https://www.typescriptlang.org/docs/handbook/intro.html) |
+| TypeScript Handbook | Documentação oficial | [typescriptlang.org/docs/handbook/intro.html](https://www.typescriptlang.org/docs/handbook/intro.html) |
 | TypeScript Playground | Interativo | [typescriptlang.org/play](https://www.typescriptlang.org/play/) |
-| Zod Documentation | Documentacao da biblioteca | [zod.dev](https://zod.dev/) |
+| Zod Documentation | Documentação da biblioteca | [zod.dev](https://zod.dev/) |
 | Total TypeScript | Tutoriais gratuitos | [totaltypescript.com/tutorials](https://www.totaltypescript.com/tutorials) |

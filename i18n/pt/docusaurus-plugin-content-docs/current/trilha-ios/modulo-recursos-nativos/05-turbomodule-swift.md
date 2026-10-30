@@ -1,4 +1,4 @@
-﻿---
+---
 title: TurboModules com Swift
 ---
 
@@ -12,38 +12,38 @@ title: TurboModules com Swift
   Seu navegador não suporta a tag de vídeo.
 </video>
 
-O sistema de TurboModules da New Architecture expoe uma interface C++ sincrona via JSI (JavaScript Interface). Isso cria uma restricao imediata para desenvolvedores Swift: Swift nao pode ser chamado diretamente a partir de C++. Entender esse limite — e como o ObjC++ o transpoe — e essencial antes de escrever qualquer linha de codigo de implementacao.
+O sistema de TurboModules da New Architecture expõe uma interface C++ síncrona via JSI (JavaScript Interface). Isso cria uma restrição imediata para desenvolvedores Swift: Swift não pode ser chamado diretamente a partir de C++. Entender esse limite — e como o ObjC++ o transpõe — é essencial antes de escrever qualquer linha de código de implementação.
 
-## Por Que Swift Nao Pode Implementar TurboModules Diretamente
+## Por Que Swift Não Pode Implementar TurboModules Diretamente
 
-JSI e uma biblioteca C++. Quando o React Native chama um modulo nativo por meio de um TurboModule, o caminho da chamada e:
+JSI é uma biblioteca C++. Quando o React Native chama um módulo nativo por meio de um TurboModule, o caminho da chamada é:
 
 ```
 JavaScript (Hermes) → JSI (C++) → interface C++ do TurboModule → implementacao nativa
 ```
 
-Swift tem zero interoperabilidade com C++ puro. O interop Swift/C++ da Apple (disponivel desde o Swift 5.9) exige anotacoes explicitas `@_expose(Cxx)` e cobre apenas um subconjunto de padroes — nao e compativel com a forma como o JSI espera resolver `getTurboModule:`. O runtime Objective-C, por outro lado, foi projetado para interoperar com C++ e Swift simultaneamente.
+Swift tem zero interoperabilidade com C++ puro. O interop Swift/C++ da Apple (disponível desde o Swift 5.9) exige anotações explícitas `@_expose(Cxx)` e cobre apenas um subconjunto de padrões — não é compatível com a forma como o JSI espera resolver `getTurboModule:`. O runtime Objective-C, por outro lado, foi projetado para interoperar com C++ e Swift simultaneamente.
 
-A consequencia e inegociavel: todo arquivo de implementacao de TurboModule deve ser Objective-C++ (`.mm`). Sua logica Swift pode residir em uma classe auxiliar, mas o arquivo que se registra no JSI e conforma ao protocolo gerado pelo Codegen deve ser `.mm`.
+A consequência é inegociável: todo arquivo de implementação de TurboModule deve ser Objective-C++ (`.mm`). Sua lógica Swift pode residir em uma classe auxiliar, mas o arquivo que se registra no JSI e conforma ao protocolo gerado pelo Codegen deve ser `.mm`.
 
 ## O Requisito do Arquivo .mm
 
-Objective-C++ e uma linguagem que permite que codigo C++ e Objective-C coexistam na mesma unidade de compilacao. O Xcode reconhece `.mm` como a extensao de arquivo para Objective-C++. Quando voce escreve:
+Objective-C++ é uma linguagem que permite que código C++ e Objective-C coexistam na mesma unidade de compilação. O Xcode reconhece `.mm` como a extensão de arquivo para Objective-C++. Quando você escreve:
 
 ```objc
 // NativeStorageModule.mm
 #import <ReactCommon/RCTTurboModule.h>
 ```
 
-O compilador processa esses headers — que contem templates C++ internamente — e permite que voce chame o metodo C++ `getTurboModule:` no mesmo arquivo. Um arquivo `.m` (Objective-C puro) nao pode incluir headers C++. Um arquivo `.swift` nao pode chamar C++ por meios padrao. O arquivo `.mm` e o unico ponto de integracao sancionado entre o mundo C++ do JSI e sua logica de negocio em Swift.
+O compilador processa esses headers — que contêm templates C++ internamente — e permite que você chame o método C++ `getTurboModule:` no mesmo arquivo. Um arquivo `.m` (Objective-C puro) não pode incluir headers C++. Um arquivo `.swift` não pode chamar C++ por meios padrão. O arquivo `.mm` é o único ponto de integração sancionado entre o mundo C++ do JSI e sua lógica de negócio em Swift.
 
 ## O Bridging Header ObjC
 
-Classes Swift nao sao visiveis para Objective-C (e, portanto, nao sao visiveis para seu arquivo `.mm`) por padrao. Voce as expoe por meio de um bridging header.
+Classes Swift não são visíveis para Objective-C (e, portanto, não são visíveis para seu arquivo `.mm`) por padrão. Você as expõe por meio de um bridging header.
 
 ### Criando o Bridging Header
 
-1. No Xcode, va em **File -> New -> File -> Header File**.
+1. No Xcode, vá em **File -> New -> File -> Header File**.
 2. Nomeie-o `{NomeDoProjeto}-Bridging-Header.h`, correspondendo exatamente ao nome do seu projeto (ex.: `MyApp-Bridging-Header.h`).
 3. Em **Build Settings**, pesquise por `Objective-C Bridging Header` e defina o valor como `$(PROJECT_DIR)/MyApp/MyApp-Bridging-Header.h`.
 
@@ -61,15 +61,15 @@ Para usar uma classe Swift a partir de um arquivo `.mm`, adicione um import no t
 #import "MyApp-Swift.h"   // Xcode auto-gera isso a partir do seu codigo Swift anotado com @objc
 ```
 
-Esse header gerado expoe cada classe Swift marcada com `@objc` ou `@objcMembers` para o runtime Objective-C, tornando-as chamáveis a partir da sua implementacao `.mm`.
+Esse header gerado expõe cada classe Swift marcada com `@objc` ou `@objcMembers` para o runtime Objective-C, tornando-as chamáveis a partir da sua implementação `.mm`.
 
 ## Exemplo de Ponta a Ponta: NativeStorageModule
 
-Este exemplo constroi um modulo que armazena e recupera valores de string usando um dicionario Swift thread-safe.
+Este exemplo constrói um módulo que armazena e recupera valores de string usando um dicionário Swift thread-safe.
 
 ### 1. Spec TypeScript
 
-O Codegen le essa spec e gera a interface C++ que seu `.mm` deve implementar.
+O Codegen lê essa spec e gera a interface C++ que seu `.mm` deve implementar.
 
 ```ts
 // src/specs/NativeStorageModuleSpec.ts
@@ -86,7 +86,7 @@ export interface Spec extends TurboModule {
 export default TurboModuleRegistry.strictGet<Spec>('NativeStorageModule');
 ```
 
-### 2. Configuracao do Codegen no package.json
+### 2. Configuração do Codegen no package.json
 
 ```json
 {
@@ -102,7 +102,7 @@ export default TurboModuleRegistry.strictGet<Spec>('NativeStorageModule');
 }
 ```
 
-O Codegen e executado automaticamente durante o `pod install`. Os arquivos gerados aparecem em `ios/build/generated/ios/`. Sempre execute `pod install` apos modificar uma spec TypeScript antes de compilar no Xcode.
+O Codegen é executado automaticamente durante o `pod install`. Os arquivos gerados aparecem em `ios/build/generated/ios/`. Sempre execute `pod install` após modificar uma spec TypeScript antes de compilar no Xcode.
 
 ### 3. Classe Auxiliar Swift
 
@@ -144,9 +144,9 @@ class NativeStorageHelper: NSObject {
 }
 ```
 
-`@objcMembers` expoe cada metodo e propriedade para Objective-C sem exigir anotacoes `@objc` individuais. A fila de despacho concorrente fornece leituras thread-safe e escritas serializadas usando a flag `.barrier` nas mutacoes.
+`@objcMembers` expõe cada método e propriedade para Objective-C sem exigir anotações `@objc` individuais. A fila de despacho concorrente fornece leituras thread-safe e escritas serializadas usando a flag `.barrier` nas mutações.
 
-### 4. Implementacao ObjC++
+### 4. Implementação ObjC++
 
 ```objc
 // NativeStorageModule.h
@@ -212,21 +212,21 @@ RCT_EXPORT_MODULE(NativeStorageModule)
 @end
 ```
 
-O metodo critico e `getTurboModule:`. Ele retorna um `std::shared_ptr` para a classe C++ gerada pelo Codegen (`NativeStorageModuleSpecJSI`). Essa classe encapsula sua implementacao ObjC e a expoe por meio do JSI. Sem esse metodo, o sistema TurboModule nao consegue localizar seu modulo em tempo de execucao — a chamada JavaScript vai cair no bridge legado ou falhar completamente.
+O método crítico é `getTurboModule:`. Ele retorna um `std::shared_ptr` para a classe C++ gerada pelo Codegen (`NativeStorageModuleSpecJSI`). Essa classe encapsula sua implementação ObjC e a expõe por meio do JSI. Sem esse método, o sistema TurboModule não consegue localizar seu módulo em tempo de execução — a chamada JavaScript vai cair no bridge legado ou falhar completamente.
 
-`RCT_EXPORT_MODULE(NativeStorageModule)` registra o modulo com o runtime do React Native. O argumento string deve corresponder exatamente ao nome usado em `TurboModuleRegistry.strictGet<Spec>('NativeStorageModule')` na sua spec TypeScript.
+`RCT_EXPORT_MODULE(NativeStorageModule)` registra o módulo com o runtime do React Native. O argumento string deve corresponder exatamente ao nome usado em `TurboModuleRegistry.strictGet<Spec>('NativeStorageModule')` na sua spec TypeScript.
 
-## Alteracoes no AppDelegate
+## Alterações no AppDelegate
 
-Com a New Architecture, os TurboModules sao resolvidos por meio do protocolo `RCTTurboModuleManagerDelegate`.
+Com a New Architecture, os TurboModules são resolvidos por meio do protocolo `RCTTurboModuleManagerDelegate`.
 
 ### Usando RCTAppSetupUtils (Recomendado)
 
-Se o seu projeto foi criado com React Native 0.73+ ou o workflow gerenciado do Expo, o scaffolding ja chama `RCTAppSetupPrepareApp`. Modulos registrados com `RCT_EXPORT_MODULE` no mesmo app target sao auto-descobertos — nenhuma alteracao manual no `AppDelegate` e necessaria.
+Se o seu projeto foi criado com React Native 0.73+ ou o workflow gerenciado do Expo, o scaffolding já chama `RCTAppSetupPrepareApp`. Módulos registrados com `RCT_EXPORT_MODULE` no mesmo app target são auto-descobertos — nenhuma alteração manual no `AppDelegate` é necessária.
 
-### Configuracao Manual do AppDelegate
+### Configuração Manual do AppDelegate
 
-Para um modulo que requer inicializacao personalizada ou reside em um pod separado, implemente os metodos do delegate explicitamente:
+Para um módulo que requer inicialização personalizada ou reside em um pod separado, implemente os métodos do delegate explicitamente:
 
 ```objc
 // AppDelegate.mm (trecho)
@@ -259,9 +259,9 @@ Para um modulo que requer inicializacao personalizada ou reside em um pod separa
 @end
 ```
 
-## Podspec CocoaPods para um Modulo Personalizado
+## Podspec CocoaPods para um Módulo Personalizado
 
-Ao empacotar o modulo como uma biblioteca reutilizavel — para distribuicao ou isolamento em monorepo — crie um arquivo `.podspec`:
+Ao empacotar o módulo como uma biblioteca reutilizável — para distribuição ou isolamento em monorepo — crie um arquivo `.podspec`:
 
 ```ruby
 # NativeStorageModule.podspec
@@ -299,51 +299,51 @@ end
 ```
 
 Notas sobre `source_files`:
-- O glob `ios/**/*.{h,m,mm,swift}` captura tanto a implementacao `.mm` quanto o auxiliar `.swift` em uma unica declaracao.
-- Dentro de um pod target, o Xcode lida com o bridging Swift-para-ObjC automaticamente. Voce nao precisa de um bridging header manual dentro do pod; o header gerado `-Swift.h` e referenciado pelo arquivo `.mm` conforme mostrado na implementacao acima.
-- `React-RCTFabric` e necessario porque os headers JSI residem no pacote Fabric no grafo de dependencias da New Architecture.
+- O glob `ios/**/*.{h,m,mm,swift}` captura tanto a implementação `.mm` quanto o auxiliar `.swift` em uma única declaração.
+- Dentro de um pod target, o Xcode lida com o bridging Swift-para-ObjC automaticamente. Você não precisa de um bridging header manual dentro do pod; o header gerado `-Swift.h` é referenciado pelo arquivo `.mm` conforme mostrado na implementação acima.
+- `React-RCTFabric` é necessário porque os headers JSI residem no pacote Fabric no grafo de dependências da New Architecture.
 
 ## Registrando com RCTAppSetupUtils vs AppDelegate Manual
 
-| Cenario | Abordagem |
+| Cenário | Abordagem |
 |---|---|
-| Modulo esta no app target | `RCT_EXPORT_MODULE` e suficiente; auto-descoberto |
-| Modulo esta em um pod separado, mesmo repositorio | Adicione o pod ao `Podfile`; `RCT_EXPORT_MODULE` ainda e auto-descoberto |
-| Modulo e uma biblioteca pod de terceiros | O consumidor adiciona ao `Podfile`; auto-descoberto via registro de classe |
-| Modulo precisa de init personalizado (ex.: injetar um servico compartilhado) | Sobrescreva `getModuleInstanceFromClass:` no `AppDelegate` |
+| Módulo está no app target | `RCT_EXPORT_MODULE` é suficiente; auto-descoberto |
+| Módulo está em um pod separado, mesmo repositório | Adicione o pod ao `Podfile`; `RCT_EXPORT_MODULE` ainda é auto-descoberto |
+| Módulo é uma biblioteca pod de terceiros | O consumidor adiciona ao `Podfile`; auto-descoberto via registro de classe |
+| Módulo precisa de init personalizado (ex.: injetar um serviço compartilhado) | Sobrescreva `getModuleInstanceFromClass:` no `AppDelegate` |
 
-`RCTAppSetupUtils` fornece `RCTAppSetupPrepareApp` (chamado uma vez em `application:didFinishLaunchingWithOptions:`) e `RCTAppSetupDefaultModuleFromClass` (chamado por modulo pelo manager). A menos que voce precise de inicializacao personalizada, confie nos padroes e mantenha as alteracoes no `AppDelegate` minimas.
+`RCTAppSetupUtils` fornece `RCTAppSetupPrepareApp` (chamado uma vez em `application:didFinishLaunchingWithOptions:`) e `RCTAppSetupDefaultModuleFromClass` (chamado por módulo pelo manager). A menos que você precise de inicialização personalizada, confie nos padrões e mantenha as alterações no `AppDelegate` mínimas.
 
 ## Erros Comuns e Suas Causas
 
 ### "Cannot find module 'NativeStorageModule'"
 
-Esse erro aparece em JavaScript em tempo de execucao.
+Esse erro aparece em JavaScript em tempo de execução.
 
-- O Codegen nao foi executado. Execute `cd ios && bundle exec pod install` para acioná-lo.
-- O nome do modulo em `TurboModuleRegistry.strictGet` nao corresponde ao string passado para `RCT_EXPORT_MODULE`. Eles devem ser identicos.
-- O diretorio de saida do Codegen (`build/generated/ios/`) nao esta incluido nas fases de build do Xcode. Verifique se a fase de script **Generate Specs** foi executada com sucesso na ultima compilacao.
+- O Codegen não foi executado. Execute `cd ios && bundle exec pod install` para acioná-lo.
+- O nome do módulo em `TurboModuleRegistry.strictGet` não corresponde ao string passado para `RCT_EXPORT_MODULE`. Eles devem ser idênticos.
+- O diretório de saída do Codegen (`build/generated/ios/`) não está incluído nas fases de build do Xcode. Verifique se a fase de script **Generate Specs** foi executada com sucesso na última compilação.
 
 ### "Does not conform to protocol 'NativeStorageModuleSpec'"
 
-A classe ObjC++ esta faltando um ou mais metodos declarados no protocolo gerado pelo Codegen.
+A classe ObjC++ está faltando um ou mais métodos declarados no protocolo gerado pelo Codegen.
 
 1. Abra o header gerado em `ios/build/generated/ios/AppSpecs/AppSpecsJSI.h`.
 2. Localize o bloco `@protocol NativeStorageModuleSpec`.
-3. Compare cada assinatura de metodo com sua implementacao `.mm` — tipos de parametros, rotulos e tipos de retorno devem corresponder exatamente.
-4. Execute novamente o Codegen (`pod install`) apos qualquer alteracao na spec TypeScript.
+3. Compare cada assinatura de método com sua implementação `.mm` — tipos de parâmetros, rótulos e tipos de retorno devem corresponder exatamente.
+4. Execute novamente o Codegen (`pod install`) após qualquer alteração na spec TypeScript.
 
 ### "Symbol not found: _OBJC_CLASS_$_NativeStorageModule"
 
-O linker nao consegue resolver a classe no momento da linkagem.
+O linker não consegue resolver a classe no momento da linkagem.
 
-- O arquivo `.mm` nao foi adicionado a fase de build **Compile Sources** no Xcode.
-- O glob `source_files` do podspec nao corresponde ao caminho do arquivo `.mm`.
-- O `Podfile` do consumidor esta sem `pod 'NativeStorageModule'`, ou o `pod install` nao foi re-executado apos adicioná-lo.
+- O arquivo `.mm` não foi adicionado à fase de build **Compile Sources** no Xcode.
+- O glob `source_files` do podspec não corresponde ao caminho do arquivo `.mm`.
+- O `Podfile` do consumidor está sem `pod 'NativeStorageModule'`, ou o `pod install` não foi re-executado após adicioná-lo.
 
 ### "Include of non-modular header inside framework module"
 
-Isso ocorre quando um header C++ (`jsi/jsi.h` ou internos do React) e importado em um contexto que espera headers modulares.
+Isso ocorre quando um header C++ (`jsi/jsi.h` ou internos do React) é importado em um contexto que espera headers modulares.
 
 - Defina `CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES` em Build Settings.
 - Confirme que o xcconfig do pod target define `CLANG_CXX_LANGUAGE_STANDARD` como `c++17`.
@@ -356,8 +356,8 @@ Isso ocorre quando um header C++ (`jsi/jsi.h` ou internos do React) e importado 
 #endif
 ```
 
-### Modulo compila mas retorna undefined em tempo de execucao
+### Módulo compila mas retorna undefined em tempo de execução
 
-- Verifique se `getTurboModule:` retorna um `shared_ptr` nao nulo. Adicione um log dentro do metodo para confirmar que ele esta sendo chamado.
-- Confirme que `RCT_EXPORT_MODULE` usa exatamente o nome do modulo da spec TypeScript, nao uma string vazia.
-- Verifique se `RCTEnableTurboModule(YES)` e chamado dentro de `RCTAppSetupPrepareApp` antes do bridge ser criado. Sem essa flag, o runtime volta ao sistema de modulos legado e a resolucao de TurboModule e ignorada completamente.
+- Verifique se `getTurboModule:` retorna um `shared_ptr` não nulo. Adicione um log dentro do método para confirmar que ele está sendo chamado.
+- Confirme que `RCT_EXPORT_MODULE` usa exatamente o nome do módulo da spec TypeScript, não uma string vazia.
+- Verifique se `RCTEnableTurboModule(YES)` é chamado dentro de `RCTAppSetupPrepareApp` antes do bridge ser criado. Sem essa flag, o runtime volta ao sistema de módulos legado e a resolução de TurboModule é ignorada completamente.

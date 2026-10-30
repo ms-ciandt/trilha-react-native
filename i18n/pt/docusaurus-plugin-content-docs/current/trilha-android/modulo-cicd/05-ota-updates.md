@@ -16,6 +16,8 @@ sidebar_position: 5
 
 Atualizações Over-the-Air (OTA) enviam um novo bundle JavaScript para os dispositivos dos usuários sem passar pelo processo de revisão do Play Store. A camada nativa (Kotlin, Gradle, permissões) permanece a mesma — apenas o JS muda.
 
+Essa é uma das vantagens de produção mais poderosas do React Native: uma correção crítica pode chegar a todos os usuários em minutos, em vez de dias.
+
 | Tipo de mudança | Requer Play Store | OTA possível |
 |----------------|-------------------|--------------|
 | Lógica JS/TypeScript | Não | Sim |
@@ -23,6 +25,7 @@ Atualizações Over-the-Air (OTA) enviam um novo bundle JavaScript para os dispo
 | Nova tela (só JS) | Não | Sim |
 | Novo TurboModule (Kotlin) | Sim | Não |
 | Nova permissão no Manifest | Sim | Não |
+| Nova dependência nativa | Sim | Não |
 | Upgrade de versão do RN | Sim | Não |
 
 ---
@@ -32,6 +35,21 @@ Atualizações Over-the-Air (OTA) enviam um novo bundle JavaScript para os dispo
 ```bash
 npm install expo-updates
 eas update:configure
+```
+
+No `app.json`:
+
+```json
+{
+  "expo": {
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/your-project-id"
+    }
+  }
+}
 ```
 
 ---
@@ -46,17 +64,21 @@ eas update --branch production --message "Corrige crash no checkout"
 eas update --branch preview --message "Nova UI do carrinho"
 ```
 
+Usuários com o app instalado recebem a atualização na próxima abertura (ou verificação em background). A atualização é aplicada no reinício seguinte.
+
 ---
 
 ## Estratégia de Atualização no Código
 
 ```tsx
 import * as Updates from 'expo-updates';
+import { useEffect } from 'react';
+import { Alert } from 'react-native';
 
 function useOTAUpdates() {
   useEffect(() => {
     async function checkForUpdate() {
-      if (__DEV__) return;
+      if (__DEV__) return; // ignora em desenvolvimento
 
       try {
         const update = await Updates.checkForUpdateAsync();
@@ -72,6 +94,7 @@ function useOTAUpdates() {
           );
         }
       } catch (e) {
+        // Verificação de atualização falhou — o app continua normalmente
         console.warn('Verificação OTA falhou:', e);
       }
     }
@@ -85,18 +108,27 @@ function useOTAUpdates() {
 
 ## Canais e Branches
 
+O EAS Update usa **branches** (para onde você publica) e **channels** (o que os perfis de build assinam):
+
 ```json
 // eas.json
 {
   "build": {
-    "production": { "channel": "production" },
-    "preview": { "channel": "preview" }
+    "production": {
+      "channel": "production"
+    },
+    "preview": {
+      "channel": "preview"
+    }
   }
 }
 ```
 
 ```bash
+# Usuários de produção recebem atualizações da branch "production"
 eas update --branch production --message "Hotfix: total do carrinho"
+
+# Builds de preview recebem atualizações de "preview"
 eas update --branch preview --message "Novo fluxo de onboarding"
 ```
 
@@ -105,7 +137,10 @@ eas update --branch preview --message "Novo fluxo de onboarding"
 ## Rollback
 
 ```bash
+# Listar atualizações recentes de uma branch
 eas update:list --branch production
+
+# Reverter para uma atualização anterior
 eas update:republish --branch production --update-id <id-da-atualização-anterior>
 ```
 
@@ -114,6 +149,7 @@ eas update:republish --branch production --update-id <id-da-atualização-anteri
 ## Materiais de Estudo
 
 - [EAS Update — Documentação](https://docs.expo.dev/eas-update/introduction/)
+- [EAS Update — Padrões de deployment](https://docs.expo.dev/eas-update/deployment-patterns/)
 - [expo-updates — API](https://docs.expo.dev/versions/latest/sdk/updates/)
 
 ---

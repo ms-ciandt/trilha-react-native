@@ -1,0 +1,25 @@
+Welcome to React Native Academy.
+
+This course is built for developers who already know how to build and ship software — you won't find lessons explaining what a variable is or how a loop works. Instead, we start from where you already stand, and get you to production-ready React Native as directly as possible.
+
+React Native today is a serious, high-performance choice for building mobile applications. With the New Architecture — JSI, Fabric, and TurboModules — running on Hermes, apps built with React Native can match native performance while sharing a single TypeScript codebase across iOS and Android.
+
+This academy offers four trails, and they all converge on the same destination: strong, practical React Native skills.
+
+If you build for Android with Kotlin and Jetpack Compose, the Android Trail maps your existing knowledge of Activities, Fragments, and the Android lifecycle directly onto React Native concepts.
+
+If you build for iOS with Swift and SwiftUI, the iOS Trail does the same with ViewControllers, AppDelegate, and the iOS lifecycle you already know.
+
+If you build for the web with React, the Web Trail takes your hooks, JSX, and component patterns and shows you how they transfer to mobile — plus what changes: layout, native APIs, and platform constraints.
+
+And if you already have React Native fundamentals under your belt, the Masterclass goes straight into the New Architecture, brownfield integration, performance, and CI/CD — no basics, no repetition.
+
+By the end of this course, you'll understand why React Native is a serious production choice in 2026, read and write TypeScript fluently in a mobile context, build screens with React Native's core components and Flexbox layout, navigate between screens with React Navigation, call native platform APIs like camera, location, and storage, and ship to both iOS and Android from one codebase.
+
+Every code example runs instantly in Expo Snack, right in your browser — no simulator or terminal setup needed to get started. You'll move to a full local setup later, when it's time to build for production.
+
+Whichever trail matches your background, the goal is the same: use what you already know as your starting point, and spend your time on what's actually new to you.
+
+Your next step is the History & Architecture module — it explains why React Native looks the way it does today, before you pick your trail and dive in.
+
+Welcome aboard.

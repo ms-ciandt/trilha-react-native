@@ -12,10 +12,6 @@ sidebar_position: 1
   Your browser does not support the video tag.
 </video>
 
-## Visão Geral em Vídeo
-
-> Vídeo deste tópico em breve.
-
 ## O Paradigma que Você Já Conhece
 
 Se você já escreveu Jetpack Compose, já entende o modelo de UI declarativa sobre o qual o React Native é construído. O salto mental é menor do que a maioria dos desenvolvedores Android espera — mas a terminologia e o runtime diferem significativamente.
@@ -94,6 +90,8 @@ import { View, Text, Pressable } from 'react-native';
 
 function Counter() {
   const [count, setCount] = useState(0);
+  // Counter re-renderiza a cada mudança de estado.
+  // Componentes filhos envolvidos em memo() são pulados se as props não mudaram.
   return (
     <View>
       <ExpensiveChild label="estático" />
@@ -104,12 +102,13 @@ function Counter() {
   );
 }
 
+// memo = o skip automático do Compose — mas aqui você precisa optar manualmente
 const ExpensiveChild = memo(function ExpensiveChild({ label }: { label: string }) {
   return <Text>{label}</Text>;
 });
 ```
 
-> **Diferença principal**: O compilador do Compose analisa quais composables leem qual estado em tempo de compilação. O React re-renderiza subárvores inteiras e depende de `memo()`, `useMemo()` e `useCallback()` para bailout manual.
+> **Diferença principal**: O compilador do Compose analisa quais composables leem qual estado em tempo de compilação. O React re-renderiza subárvores inteiras e depende de `memo()`, `useMemo()` e `useCallback()` para bailout manual. Planeje sua árvore de componentes de acordo — componentes pequenos são mais baratos de re-renderizar do que componentes grandes.
 
 ---
 
@@ -147,6 +146,13 @@ function BotaoPrimario({ label, onPress, habilitado = true }: BotaoPrimarioProps
   );
 }
 ```
+
+Diferenças a observar:
+
+- As props chegam como um único objeto, não como parâmetros individuais.
+- A convenção de callback é `onPress` (não `onClick`) para eventos de toque.
+- Os valores padrão vivem na desestruturação, não em uma sintaxe de parâmetro padrão ao estilo Kotlin.
+- O `?` do TypeScript marca props opcionais — o `= default` do Kotlin resolve os dois casos.
 
 ---
 
@@ -197,6 +203,26 @@ function Card({ titulo, children }: CardProps) {
 </Card>
 ```
 
+Para slots nomeados (múltiplas lambdas no Compose), o React usa múltiplas props nomeadas:
+
+```tsx
+interface LayoutProps {
+  header: React.ReactNode;
+  footer: React.ReactNode;
+  children: React.ReactNode;
+}
+
+function Layout({ header, footer, children }: LayoutProps) {
+  return (
+    <View style={{ flex: 1 }}>
+      {header}
+      <View style={{ flex: 1 }}>{children}</View>
+      {footer}
+    </View>
+  );
+}
+```
+
 ---
 
 ## Renderização Condicional
@@ -229,6 +255,14 @@ function StatusUsuario({ estaLogado }: { estaLogado: boolean }) {
   );
 }
 ```
+
+Renderização por curto-circuito (renderiza ou nada):
+
+```tsx
+{estaLogado && <ProfileBanner />}
+```
+
+> O Compose usa `if` diretamente dentro de um `@Composable`. O React usa ternário ou `&&` dentro do JSX — as duas abordagens são seguras, mas `&&` com um número (ex.: `{count && <X />}`) renderiza `0` quando count é zero. Use `{count > 0 && <X />}` ou a forma ternária para evitar isso.
 
 ---
 

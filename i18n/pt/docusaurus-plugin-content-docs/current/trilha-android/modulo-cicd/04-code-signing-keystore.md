@@ -58,6 +58,27 @@ android {
 }
 ```
 
+### Opção 2: gradle.properties (apenas desenvolvimento local — nunca commitar)
+
+```properties
+# android/gradle.properties (adicione ao .gitignore)
+MYAPP_RELEASE_STORE_FILE=release.keystore
+MYAPP_RELEASE_KEY_ALIAS=meuapp
+MYAPP_RELEASE_STORE_PASSWORD=suasenha
+MYAPP_RELEASE_KEY_PASSWORD=suasenha
+```
+
+```groovy
+signingConfigs {
+  release {
+    storeFile file(MYAPP_RELEASE_STORE_FILE)
+    storePassword MYAPP_RELEASE_STORE_PASSWORD
+    keyAlias MYAPP_RELEASE_KEY_ALIAS
+    keyPassword MYAPP_RELEASE_KEY_PASSWORD
+  }
+}
+```
+
 ---
 
 ## Play App Signing
@@ -66,6 +87,11 @@ O serviço Play App Signing do Google mantém sua chave de upload (com a qual vo
 
 Ative no Play Console:
 **Release → Configuração → Integridade do app → Assinatura do app**
+
+Com o Play App Signing ativado:
+- Sua `release.keystore` é a **chave de upload** — usada apenas para autenticar os envios
+- O Google reassina o APK/AAB final com a chave de assinatura do app
+- Se você perder sua chave de upload, o Google pode substituí-la
 
 ---
 
@@ -97,6 +123,7 @@ O R8 realiza análise completa do programa — rastreia cada grafo de chamadas a
 # android/app/proguard-rules.pro
 
 # ── React Native Core ──────────────────────────────────────────────────────
+# O runtime core do RN — nunca reduza estas classes
 -keep class com.facebook.react.** { *; }
 -keep class com.facebook.hermes.** { *; }
 -keep class com.facebook.jni.**   { *; }
@@ -126,11 +153,13 @@ O R8 realiza análise completa do programa — rastreia cada grafo de chamadas a
 -keep class com.seuapp.*ComposeView               { *; }
 
 # ── JNI: métodos nativos ───────────────────────────────────────────────────
+# Qualquer classe com métodos nativos — o registro JNI usa o nome completo de classe+método
 -keepclasseswithmembers class * {
     native <methods>;
 }
 
 # ── Kotlin ─────────────────────────────────────────────────────────────────
+# Metadados do Kotlin — necessários para reflexão, serialização e coroutines
 -keepattributes *Annotation*, Signature, InnerClasses, EnclosingMethod
 -keep class kotlin.** { *; }
 -keep class kotlinx.** { *; }
@@ -143,20 +172,30 @@ O R8 realiza análise completa do programa — rastreia cada grafo de chamadas a
 }
 
 # Kotlin Serialization — classes @Serializable são lidas por reflexão
+-keepattributes *Annotation*
 -keep @kotlinx.serialization.Serializable class * { *; }
 -keep class kotlinx.serialization.** { *; }
 
 # ── Bibliotecas comuns de terceiros ────────────────────────────────────────
+
+# OkHttp (usado pelo Metro em debug, às vezes empacotado)
 -dontwarn okhttp3.**
 -dontwarn okio.**
 -keep class okhttp3.** { *; }
--keep class retrofit2.** { *; }
 
-# Gson
+# Retrofit (se usado no seu código Kotlin empacotado nativamente)
+-keep class retrofit2.** { *; }
+-keepattributes Exceptions
+
+# Gson (serialização JSON — lê nomes de campos via reflexão)
 -keep class com.google.gson.** { *; }
 -keepclassmembers class * {
     @com.google.gson.annotations.SerializedName <fields>;
 }
+
+# Moshi (alternativa ao Gson)
+-keep class com.squareup.moshi.** { *; }
+-keep @com.squareup.moshi.JsonClass class * { *; }
 
 # ── Relatório de crashes ───────────────────────────────────────────────────
 # Sentry — precisa dos nomes originais das classes para simbolizar crashes
@@ -168,6 +207,8 @@ O R8 realiza análise completa do programa — rastreia cada grafo de chamadas a
 -keepattributes SourceFile, LineNumberTable
 
 # ── Nomes de arquivos fonte ────────────────────────────────────────────────
+# Preserva nomes de arquivos e números de linha em stack traces
+# (enviados ao Sentry/Crashlytics para simbolicação)
 -keepattributes SourceFile, LineNumberTable
 -renamesourcefileattribute SourceFile
 ```
@@ -179,23 +220,34 @@ Quando um build de release crasha mas o debug funciona, o R8 removeu ou renomeou
 **1. `-printusage` — veja o que o R8 removeu**
 
 ```proguard
+# Adicione temporariamente e depois confira build/outputs/mapping/release/usage.txt
 -printusage build/outputs/mapping/release/usage.txt
 ```
 
-**2. Arquivo de mapeamento — desobfuscar um stack trace de crash**
+**2. `-printconfiguration` — veja a configuração final mesclada**
+
+```proguard
+-printconfiguration build/outputs/mapping/release/configuration.txt
+```
+
+**3. Arquivo de mapeamento — desobfuscar um stack trace de crash**
 
 O R8 gera `build/outputs/mapping/release/mapping.txt`. Faça upload para o Sentry/Crashlytics para que crashes sejam desobfuscados automaticamente. Para desobfuscação manual:
 
 ```bash
+# Ferramenta do Android SDK
 java -jar $ANDROID_HOME/tools/proguard/lib/retrace.jar \
   build/outputs/mapping/release/mapping.txt \
   stacktrace.txt
 ```
 
-**3. Verifique se uma classe sobreviveu ao shrinking**
+**4. Verifique se uma classe sobreviveu ao shrinking**
 
 ```bash
-# Após um build de release
+# Após um build de release, inspecione o AAB/APK com bundletool
+bundletool dump manifest --bundle=app-release.aab
+
+# Ou descompacte e use o dexdump
 unzip app-release.apk classes.dex -d /tmp/dex
 $ANDROID_HOME/build-tools/34.0.0/dexdump /tmp/dex/classes.dex | grep NativeDeviceInfoModule
 ```
@@ -219,7 +271,16 @@ Um APK React Native padrão empacota todos os quatro — o usuário baixa todos 
 
 ### AAB — A Solução para Produção
 
-O Android App Bundle (AAB) é a solução correta para produção. O Google Play extrai apenas a ABI que o dispositivo do usuário precisa:
+O Android App Bundle (AAB) é a solução correta para produção. O Google Play extrai apenas a ABI que o dispositivo do usuário precisa, então o app instalado fica menor:
+
+```groovy
+// android/app/build.gradle
+
+android {
+    // Para produção — sempre gere um AAB, nunca um APK
+    // Task do Gradle: bundleRelease → app-release.aab
+}
+```
 
 ```bash
 # Build do AAB
@@ -237,6 +298,11 @@ Durante o desenvolvimento, você está rodando em um dispositivo ou emulador. Co
 ```groovy
 // android/app/build.gradle
 android {
+    defaultConfig {
+        // Padrão global — compila todas as ABIs
+        // NÃO defina abiFilters aqui para produção
+    }
+
     flavorDimensions "env"
     productFlavors {
         dev {
@@ -272,9 +338,9 @@ android {
     splits {
         abi {
             enable true
-            reset()
-            include "arm64-v8a", "armeabi-v7a"
-            universalApk false
+            reset()                                // limpa as ABIs padrão
+            include "arm64-v8a", "armeabi-v7a"    // apenas estas duas
+            universalApk false                     // não gera um APK gordo
         }
     }
 }
@@ -293,13 +359,26 @@ android.applicationVariants.all { variant ->
 }
 ```
 
+Saída:
+
+```
+app-arm64-v8a-release.apk      → para todos os celulares modernos (~25MB)
+app-armeabi-v7a-release.apk    → para dispositivos mais antigos (~18MB)
+```
+
+vs um APK universal: `app-release.apk` (~55MB — inclui todas as ABIs).
+
 ### Inspecionando o Conteúdo do Seu AAB
 
 ```bash
-# Inspecionar o AAB
-bundletool dump manifest --bundle=app-release.aab
+# Instalar o bundletool
+brew install bundletool  # macOS
 
-# Simular o que o Play faz — instalar no dispositivo conectado
+# Inspecionar o conteúdo do AAB
+bundletool dump manifest --bundle=app-release.aab
+bundletool dump resources --bundle=app-release.aab
+
+# Gerar APKs a partir do AAB (simula o que o Play faz)
 bundletool build-apks \
   --bundle=app-release.aab \
   --output=app.apks \
@@ -308,6 +387,7 @@ bundletool build-apks \
   --ks-key-alias=meuapp \
   --key-pass=pass:suasenha
 
+# Instalar em um dispositivo conectado (estilo Play: apenas a ABI + idioma do dispositivo)
 bundletool install-apks --apks=app.apks
 ```
 
@@ -317,9 +397,12 @@ bundletool install-apks --apks=app.apks
 
 - [React Native — Publicando na Play Store](https://reactnative.dev/docs/signed-apk-android)
 - [Android — Assinar seu app](https://developer.android.com/studio/publish/app-signing)
+- [Google Play — Assinatura de app](https://support.google.com/googleplay/android-developer/answer/9842756)
 
 ---
 
 ## Próximo Passo
+
+Assinatura configurada. Último tópico de CI/CD: atualizações OTA com EAS Update — enviando mudanças de JS sem um release completo na Play Store.
 
 ➡ [Atualizações OTA com EAS Update](./05-ota-updates)

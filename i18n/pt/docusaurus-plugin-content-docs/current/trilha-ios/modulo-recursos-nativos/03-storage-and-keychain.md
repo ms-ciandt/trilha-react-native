@@ -1,4 +1,4 @@
-﻿---
+---
 title: Storage and Keychain in React Native
 ---
 
@@ -102,28 +102,28 @@ const useSettingsStore = create<SettingsStore>()(
 );
 ```
 
-### Comparacao de desempenho
+### Comparação de desempenho
 
-| Operacao | AsyncStorage | react-native-mmkv |
+| Operação | AsyncStorage | react-native-mmkv |
 |---|---|---|
 | Leitura | async, ~2 ms | sync, ~0.1 ms |
 | Escrita | async, ~5 ms | sync, ~0.3 ms |
-| Serializacao na inicializacao | plist sob demanda | mapeado em memoria |
-| Seguranca de thread | apenas thread JS | seguro para multiplas threads |
+| Serialização na inicialização | plist sob demanda | mapeado em memória |
+| Segurança de thread | apenas thread JS | seguro para múltiplas threads |
 
-Use o MMKV para qualquer dado que voce armazenaria anteriormente em `UserDefaults`. Use `AsyncStorage` somente quando uma biblioteca da qual voce depende exigir isso como peer dependency.
+Use o MMKV para qualquer dado que você armazenaria anteriormente em `UserDefaults`. Use `AsyncStorage` somente quando uma biblioteca da qual você depende exigir isso como peer dependency.
 
 ---
 
 ## NSFileManager → expo-file-system
 
-`NSFileManager` expoe os diretorios do sandbox do iOS. O `expo-file-system` envolve o `NSFileManager` no iOS (e o equivalente no Android), expondo a mesma semantica de diretorios por meio de uma API JavaScript.
+`NSFileManager` expõe os diretórios do sandbox do iOS. O `expo-file-system` envolve o `NSFileManager` no iOS (e o equivalente no Android), expondo a mesma semântica de diretórios por meio de uma API JavaScript.
 
 ```bash
 npx expo install expo-file-system
 ```
 
-### Mapeamento de diretorios
+### Mapeamento de diretórios
 
 | iOS (Swift) | expo-file-system |
 |---|---|
@@ -131,11 +131,11 @@ npx expo install expo-file-system
 | `NSCachesDirectory` | `FileSystem.cacheDirectory` |
 | `NSTemporaryDirectory()` | `FileSystem.temporaryDirectory` |
 
-A semantica e identica ao que voce ja conhece:
+A semântica é idêntica ao que você já conhece:
 
-- `documentDirectory` — elegivel para iCloud, com backup pelo iTunes, persiste entre atualizacoes do app. Use para conteudo gerado pelo usuario.
-- `cacheDirectory` — sem backup, pode ser removido pelo SO sob pressao de armazenamento. Use para assets baixados e dados derivados.
-- `temporaryDirectory` — limpo na reinicializacao. Use para uploads ou conversoes em andamento.
+- `documentDirectory` — elegível para iCloud, com backup pelo iTunes, persiste entre atualizações do app. Use para conteúdo gerado pelo usuário.
+- `cacheDirectory` — sem backup, pode ser removido pelo SO sob pressão de armazenamento. Use para assets baixados e dados derivados.
+- `temporaryDirectory` — limpo na reinicialização. Use para uploads ou conversões em andamento.
 
 ### Leitura e escrita de arquivos
 
@@ -199,7 +199,7 @@ const downloadAsset = async (url: string, filename: string) => {
 
 ### Seletor de documentos
 
-O `expo-document-picker` mapeia para `UIDocumentPickerViewController`. Ele retorna uma URI no `cacheDirectory` do app ou uma URI de conteudo que voce pode copiar para o `documentDirectory`:
+O `expo-document-picker` mapeia para `UIDocumentPickerViewController`. Ele retorna uma URI no `cacheDirectory` do app ou uma URI de conteúdo que você pode copiar para o `documentDirectory`:
 
 ```typescript
 import * as DocumentPicker from 'expo-document-picker';
@@ -229,14 +229,14 @@ const pickAndSave = async () => {
 
 ## CoreData / SwiftData → expo-sqlite + TanStack Query
 
-`CoreData` e `SwiftData` sao frameworks de persistencia de grafo de objetos baseados em SQLite. O React Native nao tem um equivalente direto no nivel de framework, mas o `expo-sqlite` v2 expoe o SQLite por meio de uma API async moderna, e o `TanStack Query` lida com a camada de cache, invalidacao e sincronizacao com a UI que o `@Query` do SwiftData fornece.
+`CoreData` e `SwiftData` são frameworks de persistência de grafo de objetos baseados em SQLite. O React Native não tem um equivalente direto no nível de framework, mas o `expo-sqlite` v2 expõe o SQLite por meio de uma API async moderna, e o `TanStack Query` lida com a camada de cache, invalidação e sincronização com a UI que o `@Query` do SwiftData fornece.
 
 ```bash
 npx expo install expo-sqlite
 npm install @tanstack/react-query
 ```
 
-### Inicializacao do banco de dados
+### Inicialização do banco de dados
 
 ```typescript
 import * as SQLite from 'expo-sqlite';
@@ -255,7 +255,7 @@ await db.execAsync(`
 `);
 ```
 
-### Operacoes CRUD
+### Operações CRUD
 
 ```typescript
 // INSERT — analogous to context.insert(_:)
@@ -342,13 +342,13 @@ function NotesList() {
 
 ## Keychain → expo-secure-store
 
-O Keychain do iOS armazena pequenos segredos criptografados pelo Secure Enclave e protegidos pelo codigo de acesso do dispositivo. O `expo-secure-store` envolve `SecItemAdd` / `SecItemCopyMatching` / `SecItemDelete` e expoe uma API async equivalente as classes de protecao do Keychain.
+O Keychain do iOS armazena pequenos segredos criptografados pelo Secure Enclave e protegidos pelo código de acesso do dispositivo. O `expo-secure-store` envolve `SecItemAdd` / `SecItemCopyMatching` / `SecItemDelete` e expõe uma API async equivalente às classes de proteção do Keychain.
 
 ```bash
 npx expo install expo-secure-store
 ```
 
-### Uso basico
+### Uso básico
 
 ```typescript
 import * as SecureStore from 'expo-secure-store';
@@ -363,9 +363,9 @@ const token = await SecureStore.getItemAsync('authToken');
 await SecureStore.deleteItemAsync('authToken');
 ```
 
-### Protecao biometrica (kSecAttrAccessibleWhenUnlocked)
+### Proteção biométrica (kSecAttrAccessibleWhenUnlocked)
 
-Na API do Keychain, `kSecAttrAccessibleWhenUnlocked` restringe o acesso a sessoes autenticadas. O `expo-secure-store` mapeia para essa classe por padrao e adiciona requisitos de Face ID / Touch ID por meio de `requireAuthentication`:
+Na API do Keychain, `kSecAttrAccessibleWhenUnlocked` restringe o acesso a sessões autenticadas. O `expo-secure-store` mapeia para essa classe por padrão e adiciona requisitos de Face ID / Touch ID por meio de `requireAuthentication`:
 
 ```typescript
 import * as SecureStore from 'expo-secure-store';
@@ -388,35 +388,35 @@ const key = await SecureStore.getItemAsync('privateKey', {
 
 | Acessibilidade do Keychain iOS | Comportamento no expo-secure-store |
 |---|---|
-| `kSecAttrAccessibleWhenUnlocked` | Padrao — acessivel quando o dispositivo esta desbloqueado |
-| `kSecAttrAccessibleAfterFirstUnlock` | Nao exposto diretamente — use o padrao na maioria dos casos |
+| `kSecAttrAccessibleWhenUnlocked` | Padrão — acessível quando o dispositivo está desbloqueado |
+| `kSecAttrAccessibleAfterFirstUnlock` | Não exposto diretamente — use o padrão na maioria dos casos |
 | `kSecAccessControlBiometryCurrentSet` | `requireAuthentication: true` |
-| `kSecAttrSynchronizable` | Nao suportado — sincronizacao via iCloud Keychain nao esta disponivel |
+| `kSecAttrSynchronizable` | Não suportado — sincronização via iCloud Keychain não está disponível |
 
 :::warning Limite de tamanho do Keychain
-O Keychain foi projetado para pequenos segredos — tokens, senhas, chaves criptograficas. Nao armazene payloads grandes. Se precisar proteger um arquivo grande, armazene a chave de criptografia no Keychain e o arquivo criptografado no `documentDirectory`.
+O Keychain foi projetado para pequenos segredos — tokens, senhas, chaves criptográficas. Não armazene payloads grandes. Se precisar proteger um arquivo grande, armazene a chave de criptografia no Keychain e o arquivo criptografado no `documentDirectory`.
 :::
 
 ---
 
-## Consideracoes sobre sincronizacao com iCloud
+## Considerações sobre sincronização com iCloud
 
-O React Native nao tem um equivalente direto ao `NSUbiquitousKeyValueStore` ou ao `CloudKit`. Ao migrar um app iOS que usa sincronizacao com iCloud, avalie cada camada de armazenamento separadamente:
+O React Native não tem um equivalente direto ao `NSUbiquitousKeyValueStore` ou ao `CloudKit`. Ao migrar um app iOS que usa sincronização com iCloud, avalie cada camada de armazenamento separadamente:
 
 | Mecanismo iOS | Abordagem no React Native |
 |---|---|
-| `NSUbiquitousKeyValueStore` | Sem equivalente direto — use um backend (Supabase, Firebase) para sincronizacao entre dispositivos |
+| `NSUbiquitousKeyValueStore` | Sem equivalente direto — use um backend (Supabase, Firebase) para sincronização entre dispositivos |
 | Banco de dados privado do `CloudKit` | Substituir por um backend REST ou GraphQL; nenhuma biblioteca RN envolve o CloudKit nativamente |
-| iCloud Drive (entitlement Documents) | `expo-file-system` grava no `documentDirectory`, mas a sincronizacao com o iCloud Drive requer o entitlement e um config plugin customizado |
-| Banco de dados publico do CloudKit | Substituir por um backend padrao |
+| iCloud Drive (entitlement Documents) | `expo-file-system` grava no `documentDirectory`, mas a sincronização com o iCloud Drive requer o entitlement e um config plugin customizado |
+| Banco de dados público do CloudKit | Substituir por um backend padrão |
 
-Se o iCloud Drive for um requisito obrigatorio, use um bare workflow com o entitlement `com.apple.developer.icloud-container-identifiers` e chame o `NSFileManager` por meio de um TurboModule customizado. Isso e incomum — avalie se uma sincronizacao orientada por backend atende a mesma necessidade do usuario antes de investir na implementacao nativa.
+Se o iCloud Drive for um requisito obrigatório, use um bare workflow com o entitlement `com.apple.developer.icloud-container-identifiers` e chame o `NSFileManager` por meio de um TurboModule customizado. Isso é incomum — avalie se uma sincronização orientada por backend atende à mesma necessidade do usuário antes de investir na implementação nativa.
 
 ---
 
-## Padroes de Migracao de Armazenamento Nativo Existente
+## Padrões de Migração de Armazenamento Nativo Existente
 
-Ao integrar uma base de codigo iOS existente no React Native (integracao brownfield), o armazenamento nativo ja contem dados do usuario que devem permanecer acessiveis.
+Ao integrar uma base de código iOS existente no React Native (integração brownfield), o armazenamento nativo já contém dados do usuário que devem permanecer acessíveis.
 
 ### Lendo UserDefaults existentes por meio de um TurboModule
 
@@ -439,13 +439,13 @@ class MyModule: NSObject {
 }
 ```
 
-Chame isso uma vez na inicializacao do app, grave os valores no MMKV e entao exclua os originais do `UserDefaults` para evitar fontes duplas de verdade.
+Chame isso uma vez na inicialização do app, grave os valores no MMKV e então exclua os originais do `UserDefaults` para evitar fontes duplas de verdade.
 
 ### Lendo entradas existentes do Keychain
 
-Se o app existente armazenou tokens com um service name e account conhecidos, leia-os por meio de um TurboModule usando `SecItemCopyMatching` e reescreva-os via `expo-secure-store`. As duas APIs gravam no mesmo Keychain sob o mesmo bundle identifier do app, entao as chaves sao acessiveis de ambos os lados durante o periodo de migracao.
+Se o app existente armazenou tokens com um service name e account conhecidos, leia-os por meio de um TurboModule usando `SecItemCopyMatching` e reescreva-os via `expo-secure-store`. As duas APIs gravam no mesmo Keychain sob o mesmo bundle identifier do app, então as chaves são acessíveis de ambos os lados durante o período de migração.
 
-### Guarda de migracao unica
+### Guarda de migração única
 
 ```typescript
 import { MMKV } from 'react-native-mmkv';
@@ -465,7 +465,7 @@ async function runMigrationIfNeeded() {
 }
 ```
 
-Execute `runMigrationIfNeeded()` no seu componente raiz ou na sequencia de inicializacao do app antes de renderizar qualquer tela que dependa de estado persistido.
+Execute `runMigrationIfNeeded()` no seu componente raiz ou na sequência de inicialização do app antes de renderizar qualquer tela que dependa de estado persistido.
 
 ---
 
@@ -473,12 +473,12 @@ Execute `runMigrationIfNeeded()` no seu componente raiz ou na sequencia de inici
 
 | Caso de uso | Swift (iOS) | React Native |
 |---|---|---|
-| Feature flags, preferencias | `UserDefaults` | `react-native-mmkv` |
-| Token de sessao, chave de API | Keychain | `expo-secure-store` |
+| Feature flags, preferências | `UserDefaults` | `react-native-mmkv` |
+| Token de sessão, chave de API | Keychain | `expo-secure-store` |
 | Assets baixados, cache derivado | `NSCachesDirectory` | `FileSystem.cacheDirectory` |
-| Documentos do usuario, exportacoes | `NSDocumentDirectory` | `FileSystem.documentDirectory` |
+| Documentos do usuário, exportações | `NSDocumentDirectory` | `FileSystem.documentDirectory` |
 | Dados relacionais estruturados | CoreData / SwiftData | `expo-sqlite` + TanStack Query |
-| Dados binarios grandes | `NSFileManager` + `documentDirectory` | `expo-file-system` |
-| Sincronizacao entre dispositivos | CloudKit / `NSUbiquitousKeyValueStore` | Backend (Supabase, Firebase) |
+| Dados binários grandes | `NSFileManager` + `documentDirectory` | `expo-file-system` |
+| Sincronização entre dispositivos | CloudKit / `NSUbiquitousKeyValueStore` | Backend (Supabase, Firebase) |
 
-O modelo mental se traduz diretamente: os limites de camada que o iOS impoe sao os mesmos que o React Native respeita, porque no iOS as mesmas APIs subjacentes estao em uso.
+O modelo mental se traduz diretamente: os limites de camada que o iOS impõe são os mesmos que o React Native respeita, porque no iOS as mesmas APIs subjacentes estão em uso.

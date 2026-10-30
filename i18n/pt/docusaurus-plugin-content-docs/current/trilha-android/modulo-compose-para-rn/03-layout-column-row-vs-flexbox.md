@@ -12,13 +12,11 @@ sidebar_position: 3
   Your browser does not support the video tag.
 </video>
 
-## Visão Geral em Vídeo
-
-> Vídeo deste tópico em breve.
-
 ## Sistemas de Layout Lado a Lado
 
-Os layouts do Jetpack Compose são nomeados e explícitos: `Column` para vertical, `Row` para horizontal, `Box` para sobreposição. O React Native usa um único sistema Flexbox unificado para tudo — mas os padrões são ajustados para que os padrões comuns se traduzam de forma limpa.
+Os layouts do Jetpack Compose são nomeados e explícitos: `Column` para vertical, `Row` para horizontal, `Box` para empilhamento/sobreposição. O React Native usa um único sistema Flexbox unificado para tudo — mas os padrões são ajustados para que os padrões comuns se traduzam de forma limpa.
+
+Este arquivo mapeia todo conceito importante de layout do Compose para o equivalente em React Native, com código lado a lado e uma referência completa das propriedades do Flexbox.
 
 ---
 
@@ -81,6 +79,8 @@ const estilos = StyleSheet.create({
   },
 });
 ```
+
+> `gap` foi adicionado ao React Native na versão 0.71. Para projetos mais antigos, use `marginBottom` em cada filho ou um componente `Spacer`.
 
 ---
 
@@ -193,13 +193,16 @@ const estilos = StyleSheet.create({
 | Compose Modifier                         | Propriedade style React Native           |
 |------------------------------------------|------------------------------------------|
 | `Modifier.fillMaxWidth()`                | `width: '100%'`                          |
-| `Modifier.fillMaxSize()`                 | `flex: 1`                                |
+| `Modifier.fillMaxHeight()`               | `height: '100%'`                         |
+| `Modifier.fillMaxSize()`                 | `flex: 1` ou `width: '100%', height: '100%'` |
 | `Modifier.size(48.dp)`                   | `width: 48, height: 48`                  |
 | `Modifier.padding(16.dp)`               | `padding: 16`                            |
 | `Modifier.padding(horizontal = 16.dp)`  | `paddingHorizontal: 16`                  |
 | `Modifier.background(Color.Red)`        | `backgroundColor: 'red'`                 |
-| `Modifier.clip(CircleShape)`            | `borderRadius: N`                        |
+| `Modifier.clip(CircleShape)`            | `borderRadius: N` (metade da largura/altura) |
+| `Modifier.border(1.dp, Color.Gray)`     | `borderWidth: 1, borderColor: '#999'`    |
 | `Modifier.weight(1f)`                   | `flex: 1`                                |
+| `Modifier.wrapContentWidth()`           | sem propriedade `width` (dimensionamento natural) |
 | `Modifier.alpha(0.5f)`                  | `opacity: 0.5`                           |
 | `Modifier.rotate(45f)`                  | `transform: [{ rotate: '45deg' }]`       |
 
@@ -252,6 +255,44 @@ Row(Modifier.fillMaxSize()) {
 | `Alignment.CenterHorizontally` / etc.   | `'center'`                     |
 | (padrão — Compose estica)               | `'stretch'` (padrão RN)        |
 
+### Alinhamento individual do filho: alignSelf
+
+Para um único filho sobrescrever o `alignItems` do pai:
+
+```tsx
+// Pai: alignItems: 'center'
+// Este filho específico se alinha ao flex-start em vez disso
+<View style={{ alignSelf: 'flex-start' }}>
+  <Text>Alinhado à esquerda em uma coluna centralizada</Text>
+</View>
+```
+
+---
+
+## FlexWrap: Row com Quebra de Linha
+
+O `FlowRow`/`FlowColumn` do Compose quebram os filhos em múltiplas linhas. O React Native usa `flexWrap: 'wrap'`.
+
+```tsx
+function ListaDeTags({ tags }: { tags: string[] }) {
+  return (
+    <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+      {tags.map(tag => (
+        <View key={tag} style={estilos.tag}>
+          <Text style={estilos.tagTexto}>{tag}</Text>
+        </View>
+      ))}
+    </View>
+  );
+}
+```
+
+---
+
+## Dimensionamento Intrínseco
+
+O React Native não suporta `IntrinsicSize` (o `IntrinsicSize.Max/Min` do Compose). Os filhos se dimensionam de acordo com o conteúdo por padrão quando nenhuma largura/altura/flex explícita é definida. Se você precisar que os irmãos correspondam à altura do irmão mais alto, use `alignItems: 'stretch'` (padrão) ou meça com `onLayout`.
+
 ---
 
 ## Playground Interativo
@@ -268,18 +309,21 @@ Aprenda Flexbox visualmente com o jogo Flexbox Froggy — os eixos, `justify-con
 
 ### Documentação Oficial
 
-- [React Native — Layout com Flexbox](https://reactnative.dev/docs/flexbox)
+- [React Native — Layout com Flexbox](https://reactnative.dev/docs/flexbox) — referência exaustiva de propriedades
 - [React Native — Altura e Largura](https://reactnative.dev/docs/height-and-width)
+- [React Native — StyleSheet](https://reactnative.dev/docs/stylesheet)
 - [Compose — Layouts no Compose](https://developer.android.com/develop/ui/compose/layouts/basics)
+- [Compose — Layouts Customizados](https://developer.android.com/develop/ui/compose/layouts/custom)
 
 ### Interativo
 
-- [Flexbox Froggy](https://flexboxfroggy.com/)
+- [Flexbox Froggy](https://flexboxfroggy.com/) — aprenda os eixos do Flexbox através de um jogo
 - [Yoga Playground](https://yogalayout.dev/playground) — engine de layout interno do React Native
 
 ### Vídeos
 
 - [William Candillon — Crash Course de Layout React Native](https://www.youtube.com/watch?v=NlT3bF2aHB4)
+- [Google — Layouts no Jetpack Compose](https://www.youtube.com/watch?v=0kfq3vHOBnI) — reveja como base de comparação
 
 ---
 

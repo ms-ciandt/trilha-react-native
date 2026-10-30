@@ -54,7 +54,7 @@ describe('Home page (EN)', () => {
     expect(screen.getAllByText('Matheus Sales').length).toBeGreaterThanOrEqual(1);
     expect(screen.getAllByText('Diego Karol Gouvea Lana').length).toBeGreaterThanOrEqual(1);
     expect(screen.getAllByText('Guilherme Rovaron').length).toBeGreaterThanOrEqual(1);
-    expect(screen.getAllByText('Paulo Vitor Sato').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText('Victor Justino').length).toBeGreaterThanOrEqual(1);
     expect(screen.getAllByText('Gabriel Dos Santos Xavier').length).toBeGreaterThanOrEqual(1);
   });
 

@@ -1,0 +1,25 @@
+Bem-vindo à React Native Academy.
+
+Este curso foi feito para desenvolvedores que já sabem construir e entregar software — você não vai encontrar aulas explicando o que é uma variável ou como funciona um loop. Em vez disso, começamos de onde você já está, e te levamos para o React Native pronto para produção da forma mais direta possível.
+
+Hoje, o React Native é uma escolha séria e de alta performance para construir aplicações mobile. Com a New Architecture — JSI, Fabric e TurboModules — rodando sobre o Hermes, aplicações React Native conseguem alcançar performance nativa compartilhando uma única base de código TypeScript entre iOS e Android.
+
+Esta academia oferece quatro trilhas, e todas convergem para o mesmo destino: habilidades sólidas e práticas em React Native.
+
+Se você desenvolve para Android com Kotlin e Jetpack Compose, a Trilha Android mapeia diretamente o que você já sabe sobre Activities, Fragments e o ciclo de vida do Android para os conceitos do React Native.
+
+Se você desenvolve para iOS com Swift e SwiftUI, a Trilha iOS faz o mesmo com ViewControllers, AppDelegate e o ciclo de vida do iOS que você já domina.
+
+Se você desenvolve para a web com React, a Trilha Web aproveita seus hooks, JSX e padrões de componentes, mostrando como eles se transferem para mobile — e o que muda: layout, APIs nativas e restrições de plataforma.
+
+E se você já tem os fundamentos de React Native, a Masterclass vai direto para a New Architecture, integração brownfield, performance e CI/CD — sem básico, sem repetição.
+
+Ao final deste curso, você vai entender por que o React Native é uma escolha séria de produção em 2026, ler e escrever TypeScript fluentemente em contexto mobile, construir telas com os componentes nativos do React Native e layout Flexbox, navegar entre telas com React Navigation, chamar APIs nativas da plataforma como câmera, localização e armazenamento, e publicar para iOS e Android a partir de uma única base de código.
+
+Todo exemplo de código roda instantaneamente no Expo Snack, direto no seu navegador — sem precisar configurar simulador ou terminal para começar. Você vai migrar para um ambiente local completo mais adiante, quando for a hora de construir para produção.
+
+Qualquer que seja a trilha que combine com o seu perfil, o objetivo é o mesmo: usar o que você já sabe como ponto de partida, e investir seu tempo no que realmente é novo para você.
+
+Seu próximo passo é o módulo de História & Arquitetura — ele explica por que o React Native é do jeito que é hoje, antes de você escolher sua trilha e mergulhar de cabeça.
+
+Seja bem-vindo.

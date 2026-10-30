@@ -51,7 +51,7 @@ if (NativeAnalytics !== null) {
 - O módulo é opcional (analytics, relatório de crashes, feature flags)
 - O módulo existe apenas em uma plataforma
 - Você está escrevendo uma biblioteca que roda em ambientes não nativos (Storybook, web, Expo Go)
-- Você quer degradação gracioса em vez de crash
+- Você quer degradação graciosa em vez de crash
 
 ---
 

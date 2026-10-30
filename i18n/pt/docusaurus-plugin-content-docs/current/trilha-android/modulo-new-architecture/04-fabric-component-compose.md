@@ -363,26 +363,26 @@ Este tópico mostrou como construir um componente Fabric com Jetpack Compose com
 
 ## Materiais de Estudo
 
-### Documentacao Oficial
+### Documentação Oficial
 
 - [React Native — Fabric Native Components](https://reactnative.dev/docs/the-new-architecture/pillars-fabric-components)
 - [React Native — Fabric Components Android](https://reactnative.dev/docs/fabric-native-components-android)
 - [Jetpack Compose — AbstractComposeView](https://developer.android.com/reference/kotlin/androidx/compose/ui/platform/AbstractComposeView)
 - [Compose — Interoperabilidade com Views](https://developer.android.com/develop/ui/compose/migrate/interoperability-apis/views-in-compose)
 
-### Implementacoes de Referencia
+### Implementações de Referência
 
 - [react-native-maps](https://github.com/react-native-maps/react-native-maps) — componente Fabric complexo
 - [react-native-vision-camera](https://github.com/mrousavy/react-native-vision-camera) — componente Fabric de alta performance com JSI
 
-### Videos
+### Vídeos
 
 - [Nicola Corti — Fabric Components deep dive](https://www.youtube.com/watch?v=B3BUnhMtXQQ)
 
 ---
 
-## Proximos Passos
+## Próximos Passos
 
-Voce ja sabe criar TurboModules e Fabric Components. Topico final: ferramentas de depuracao para a New Architecture — Flipper, React DevTools, Systrace e Android Studio Profiler.
+Você já sabe criar TurboModules e Fabric Components. Tópico final: ferramentas de depuração para a New Architecture — Flipper, React DevTools, Systrace e Android Studio Profiler.
 
 ➡ [Depurando a New Architecture](./05-debugging-new-architecture)

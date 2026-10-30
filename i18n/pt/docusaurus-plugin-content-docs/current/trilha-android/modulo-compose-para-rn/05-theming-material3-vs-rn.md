@@ -12,10 +12,6 @@ sidebar_position: 5
   Your browser does not support the video tag.
 </video>
 
-## Visão Geral em Vídeo
-
-> Vídeo deste tópico em breve.
-
 ## O Problema que Ambos Resolvem
 
 O Material3 do Jetpack Compose fornece um sistema de design estruturado baseado em tokens: papéis de cor (primary, surface, onSurface...), escala tipográfica, tokens de forma e suporte a dark mode integrado ao `MaterialTheme`. Todos os componentes leem esses tokens automaticamente.
@@ -24,6 +20,8 @@ O React Native não tem um sistema de design embutido. O ecossistema tem duas ab
 
 1. **Tema customizado via React Context** — criar seu próprio sistema de tokens com `useColorScheme` + `createContext`
 2. **React Native Paper** — implementação do Material Design 3 para React Native, o equivalente mais próximo do `MaterialTheme` do Compose
+
+Ambas são abordagens legítimas. Apps grandes em produção comumente usam um sistema customizado baseado em Context. Times migrando do Android e que querem paridade com o Material3 usam o Paper. Este arquivo cobre as duas.
 
 ---
 
@@ -56,6 +54,8 @@ function App() {
   );
 }
 ```
+
+`useColorScheme` lê a configuração do sistema operacional — o mesmo que `isSystemInDarkTheme()` no Compose.
 
 ---
 
@@ -92,15 +92,16 @@ export const espacamento = {
 } as const;
 
 export const tipografia = {
-  displayLarge: { fontSize: 57, lineHeight: 64, fontWeight: '400' as const },
+  displayLarge: { fontSize: 57, lineHeight: 64, letterSpacing: -0.25, fontWeight: '400' as const },
   headlineMedium: { fontSize: 28, lineHeight: 36, fontWeight: '400' as const },
   titleLarge: { fontSize: 22, lineHeight: 28, fontWeight: '400' as const },
   bodyLarge: { fontSize: 16, lineHeight: 24, letterSpacing: 0.5, fontWeight: '400' as const },
   labelSmall: { fontSize: 11, lineHeight: 16, letterSpacing: 0.5, fontWeight: '500' as const },
 } as const;
 
+export type Cores = typeof cores;
 export type Tema = {
-  cores: typeof cores;
+  cores: Cores;
   espacamento: typeof espacamento;
   tipografia: typeof tipografia;
   isDark: boolean;
@@ -162,9 +163,23 @@ function BotaoPrimario({ label, onPress }: { label: string; onPress: () => void 
 }
 ```
 
+Este é o equivalente direto de:
+
+```kotlin
+@Composable
+fun BotaoPrimario(label: String, onClick: () -> Unit) {
+    Button(onClick = onClick) {
+        Text(label)
+    }
+}
+// — onde cores/tipografia vêm de MaterialTheme.colorScheme e MaterialTheme.typography
+```
+
 ---
 
 ## React Native Paper — Material3 para React Native
+
+[React Native Paper](https://reactnativepaper.com/) é o equivalente da comunidade mais próximo do Material3 do Compose. Instale-o:
 
 ```bash
 npm install react-native-paper react-native-vector-icons
@@ -173,7 +188,7 @@ npm install react-native-paper react-native-vector-icons
 ### Configuração
 
 ```tsx
-import { PaperProvider, MD3LightTheme, MD3DarkTheme } from 'react-native-paper';
+import { PaperProvider, MD3LightTheme, MD3DarkTheme, adaptNavigationTheme } from 'react-native-paper';
 import { useColorScheme } from 'react-native';
 
 function App() {
@@ -191,9 +206,12 @@ function App() {
 ### Usando Componentes Paper
 
 ```tsx
-import { Button, Text, Card } from 'react-native-paper';
+import { Button, Text, Card, TextInput, FAB, Chip } from 'react-native-paper';
+import { useTheme } from 'react-native-paper';
 
 function CartaoPerfil() {
+  const theme = useTheme(); // MD3Theme — espelha o MaterialTheme
+
   return (
     <Card mode="elevated">
       <Card.Title title="Guilherme" subtitle="Engenheiro Android" />
@@ -208,6 +226,27 @@ function CartaoPerfil() {
   );
 }
 ```
+
+### Esquema de Cores Customizado com o Material Theme Builder
+
+O Material Theme Builder gera um esquema de cores MD3 completo. Exporte como JSON e depois aplique:
+
+```tsx
+import { MD3LightTheme } from 'react-native-paper';
+
+const temaCustomizado = {
+  ...MD3LightTheme,
+  colors: {
+    ...MD3LightTheme.colors,
+    primary: '#6750A4',
+    secondary: '#625B71',
+    tertiary: '#7D5260',
+    // ... todos os tokens gerados
+  },
+};
+```
+
+[Use o Material Theme Builder](https://m3.material.io/theme-builder)
 
 ---
 
@@ -227,24 +266,49 @@ Text("Body Large", style = MaterialTheme.typography.bodyLarge)
 <Text variant="bodyLarge">Body Large</Text>
 ```
 
+### Sistema customizado (sem Paper)
+
+```tsx
+const { tipografia } = useTema();
+<Text style={tipografia.bodyLarge}>Body Large</Text>
+```
+
 ---
 
 ## Tokens de Forma
 
+O `MaterialTheme.shapes` do Compose (small, medium, large, extraLarge, full) mapeia para `borderRadius` no React Native.
+
 | Token de forma Compose | borderRadius típico no RN |
-|------------------------|---------------------------|
-| `shapes.extraSmall`    | `4`                       |
-| `shapes.small`         | `8`                       |
-| `shapes.medium`        | `12`                      |
-| `shapes.large`         | `16`                      |
-| `shapes.extraLarge`    | `28`                      |
-| `shapes.full`          | `1000` (pílula)           |
+|------------------------|----------------------------|
+| `shapes.extraSmall`    | `4`                        |
+| `shapes.small`         | `8`                        |
+| `shapes.medium`        | `12`                       |
+| `shapes.large`         | `16`                       |
+| `shapes.extraLarge`    | `28`                       |
+| `shapes.full`          | `borderRadius: 1000` (pílula) |
+
+Adicione isso ao seu arquivo de tokens para consistência:
+
+```tsx
+export const forma = {
+  extraSmall: 4,
+  small: 8,
+  medium: 12,
+  large: 16,
+  extraLarge: 28,
+  full: 1000,
+} as const;
+```
 
 ---
 
 ## Cor Dinâmica / Material You
 
+O Compose no Android 12+ pode extrair cores dinâmicas baseadas no papel de parede com `dynamicDarkColorScheme` / `dynamicLightColorScheme`. O React Native Paper também suporta isso via `@pchmn/expo-material3-theme` (Expo) ou lendo os tokens Material You através de um TurboModule (avançado).
+
 ```tsx
+// Expo — cor dinâmica (Material You)
 import { useMaterial3Theme } from '@pchmn/expo-material3-theme';
 import { MD3DarkTheme, MD3LightTheme, PaperProvider } from 'react-native-paper';
 import { useColorScheme } from 'react-native';
@@ -258,11 +322,15 @@ function App() {
       ? { ...MD3DarkTheme, colors: theme.dark }
       : { ...MD3LightTheme, colors: theme.light };
 
-  return <PaperProvider theme={temaPaper}><NavegadorPrincipal /></PaperProvider>;
+  return (
+    <PaperProvider theme={temaPaper}>
+      <NavegadorPrincipal />
+    </PaperProvider>
+  );
 }
 ```
 
-Equivalente ao Compose:
+Este é o equivalente em React Native de:
 
 ```kotlin
 val corDinamica = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
@@ -271,6 +339,38 @@ val esquemaCores = when {
     corDinamica && !temaEscuro -> dynamicLightColorScheme(context)
     temaEscuro -> EsquemaEscuro
     else -> EsquemaClaro
+}
+```
+
+---
+
+## Navegação + Paper: Combinando os Dois
+
+Ao usar o React Navigation junto com o React Native Paper, sincronize os temas dos dois para evitar um background/surface incompatível nas telas:
+
+```tsx
+import { NavigationContainer, DarkTheme, DefaultTheme } from '@react-navigation/native';
+import { adaptNavigationTheme, PaperProvider, MD3LightTheme, MD3DarkTheme } from 'react-native-paper';
+import { useColorScheme } from 'react-native';
+
+const { LightTheme: NavClaro, DarkTheme: NavEscuro } = adaptNavigationTheme({
+  reactNavigationLight: DefaultTheme,
+  reactNavigationDark: DarkTheme,
+});
+
+function App() {
+  const esquema = useColorScheme();
+  const isDark = esquema === 'dark';
+  const temaPaper = isDark ? MD3DarkTheme : MD3LightTheme;
+  const temaNav = isDark ? NavEscuro : NavClaro;
+
+  return (
+    <PaperProvider theme={temaPaper}>
+      <NavigationContainer theme={temaNav}>
+        <NavegadorPrincipal />
+      </NavigationContainer>
+    </PaperProvider>
+  );
 }
 ```
 
@@ -289,18 +389,21 @@ val esquemaCores = when {
 - [React Native Paper — Primeiros Passos](https://callstack.github.io/react-native-paper/docs/guides/getting-started)
 - [React Native Paper — Theming](https://callstack.github.io/react-native-paper/docs/guides/theming)
 - [React Native — useColorScheme](https://reactnative.dev/docs/usecolorscheme)
+- [React Native — Appearance](https://reactnative.dev/docs/appearance)
 - [Material Theme Builder](https://m3.material.io/theme-builder)
 - [Compose — Material Theming](https://developer.android.com/develop/ui/compose/designsystems/material3)
+- [Compose — Dark Theme](https://developer.android.com/develop/ui/compose/designsystems/material3#dark-theme)
 
 ### Pacotes
 
-- [react-native-paper](https://github.com/callstack/react-native-paper)
-- [@pchmn/expo-material3-theme](https://github.com/pchmn/expo-material3-theme)
+- [react-native-paper](https://github.com/callstack/react-native-paper) — componentes Material Design 3
+- [@pchmn/expo-material3-theme](https://github.com/pchmn/expo-material3-theme) — Dynamic Color / Material You para Expo
 
 ### Vídeos
 
 - [Callstack — React Native Paper v5](https://www.youtube.com/watch?v=K0LKBx4_EKk)
 - [Google — Material You no Android](https://www.youtube.com/watch?v=lyH5MFxPKjQ)
+- [Theo (t3.gg) — Estilização no React Native](https://www.youtube.com/watch?v=1Ur4UMfBObs)
 
 ---
 
@@ -320,6 +423,7 @@ Você completou o módulo Compose → React Native. Aqui está o que você mapeo
 | `Modifier`                       | prop `style`                                   |
 | `NavController` + `NavHost`      | `useNavigation()` + `NavigationContainer`      |
 | `MaterialTheme.colorScheme`      | Theme Context ou React Native Paper            |
+| `MaterialTheme.typography`       | Tipografia baseada em tokens do tema           |
 | `isSystemInDarkTheme()`          | `useColorScheme()`                             |
 
 O próximo módulo cobre a Nova Arquitetura: como Hermes, JSI, TurboModules e Fabric funcionam no Android — e como escrever um TurboModule real em Kotlin com Codegen.
