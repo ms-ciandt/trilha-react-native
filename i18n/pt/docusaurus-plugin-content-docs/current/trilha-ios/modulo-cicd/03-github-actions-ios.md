@@ -1,6 +1,4 @@
-﻿The source file is already written in Brazilian Portuguese. Returning it as-is, since no translation is needed.
-
----
+﻿---
 title: GitHub Actions para Builds iOS
 ---
 

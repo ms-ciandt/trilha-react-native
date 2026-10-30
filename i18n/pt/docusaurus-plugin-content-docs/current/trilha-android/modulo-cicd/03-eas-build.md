@@ -16,6 +16,8 @@ sidebar_position: 3
 
 EAS (Expo Application Services) Build é um serviço de build em nuvem para React Native — a Expo gerencia as máquinas, o Android SDK, o Gradle e a assinatura. Você envia o código e recebe um APK ou AAB.
 
+Para times usando o workflow gerenciado ou bare da Expo, o EAS Build elimina a necessidade de manter máquinas de build localmente ou no CI para a etapa de compilação nativa.
+
 ---
 
 ## Instalação e Configuração
@@ -26,17 +28,23 @@ eas login
 eas build:configure
 ```
 
+Isso cria o `eas.json` na raiz do seu projeto.
+
 ---
 
 ## eas.json — Perfis de Build
 
 ```json
 {
+  "cli": { "version": ">= 7.0.0" },
   "build": {
     "development": {
       "developmentClient": true,
       "distribution": "internal",
-      "android": { "buildType": "apk" }
+      "android": {
+        "buildType": "apk",
+        "gradleCommand": ":app:assembleDebug"
+      }
     },
     "preview": {
       "distribution": "internal",
@@ -86,15 +94,41 @@ eas build --platform android --profile production --auto-submit
     EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
 ```
 
+Obtenha seu `EXPO_TOKEN`:
+
+```bash
+eas login
+eas whoami
+# Depois gere um token em expo.dev/accounts/[username]/settings/access-tokens
+```
+
+---
+
+## Gerenciamento de Credenciais
+
+O EAS gerencia as keystores Android para você — sem comandos manuais de `keytool`:
+
+```bash
+# O EAS gera e armazena a keystore com segurança no cofre de credenciais da Expo
+eas credentials
+
+# Ou use sua própria keystore
+eas credentials --platform android
+# Escolha: "Use a local keystore"
+```
+
 ---
 
 ## Materiais de Estudo
 
 - [EAS Build — Android](https://docs.expo.dev/build/introduction/)
 - [EAS Submit — Play Store](https://docs.expo.dev/submit/android/)
+- [EAS — CI/CD](https://docs.expo.dev/build/building-on-ci/)
 
 ---
 
 ## Próximo Passo
+
+EAS Build configurado. A seguir: assinatura de código e gerenciamento de keystore no Android.
 
 ➡ [Assinatura de Código e Keystore](./04-code-signing-keystore)

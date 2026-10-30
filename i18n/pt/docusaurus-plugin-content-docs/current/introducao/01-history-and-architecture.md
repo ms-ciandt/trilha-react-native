@@ -39,20 +39,22 @@ Após anos de trabalho incremental, a **Nova Arquitetura** foi lançada como pad
 ### Arquitetura Antiga (a Bridge)
 
 ```
-
-  Thread JavaScript                               
-  (seu código de app, React, lógica de negócio)   
-
-                    
-         ▼
-           A Bridge              ← Serialização JSON
-           (async, em lotes)       em cada mensagem
-         
-                    
-▼
-  Thread Native                                   
-  (UIKit no iOS, Views Android)                   
-
+┌─────────────────────────────────────────────────┐
+│               Thread JavaScript                  │
+│    (seu código de app, React, lógica de negócio) │
+└─────────────────────────────────────────────────┘
+                        │
+                        ▼
+           ┌────────────────────────┐
+           │       A Bridge         │  ← serialização JSON
+           │    (async, em lotes)   │     a cada mensagem
+           └────────────────────────┘
+                        │
+                        ▼
+┌─────────────────────────────────────────────────┐
+│                Thread Native                     │
+│        (UIKit no iOS, Android Views)             │
+└─────────────────────────────────────────────────┘
 ```
 
 Toda interação — desenhar um pixel, responder a um gesto, medir texto — tinha que cruzar essa bridge como uma mensagem JSON serializada. Era como enviar uma carta toda vez que você queria falar com seu vizinho.
@@ -60,21 +62,27 @@ Toda interação — desenhar um pixel, responder a um gesto, medir texto — ti
 ### Nova Arquitetura (JSI + Fabric + TurboModules)
 
 ```
-
-  Engine JavaScript (Hermes)                      
-  ↕ JSI: referências diretas a objetos C++        
-  (sem serialização, pode ser síncrono)           
-
-         ↕ camada C++ compartilhada
-  
-  Fabric Renderer     TurboModules            
-  (novo motor UI)     (módulos nativos lazy) 
-  
-         ↕                       ↕
-
-  Camada de Plataforma                            
-  UIKit / SwiftUI (iOS) | Android Views / Compose 
-
+┌─────────────────────────────────────────────────┐
+│           Engine JavaScript (Hermes)             │
+│     JSI: referências diretas a objetos C++       │
+│     (zero serialização, pode ser síncrono)       │
+└─────────────────────────────────────────────────┘
+                        │
+              ↕ camada C++ compartilhada ↕
+                        │
+          ┌─────────────┴──────────────┐
+          ▼                            ▼
+┌──────────────────┐        ┌──────────────────────┐
+│ Fabric Renderer  │        │    TurboModules       │
+│ (novo motor UI)  │        │ (módulos nativos lazy)│
+└──────────────────┘        └──────────────────────┘
+          │                            │
+          └─────────────┬──────────────┘
+                        ▼
+┌─────────────────────────────────────────────────┐
+│                 Camada de Plataforma              │
+│  UIKit / SwiftUI (iOS) | Android Views / Compose │
+└─────────────────────────────────────────────────┘
 ```
 
 #### Os Três Pilares

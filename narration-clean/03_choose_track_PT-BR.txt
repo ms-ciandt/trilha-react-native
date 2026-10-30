@@ -1,0 +1,11 @@
+Escolher a trilha certa é simples: parta da stack que você já usa no dia a dia, e deixe que ela defina seu ponto de partida.
+
+Se você escreve Kotlin e trabalha com Jetpack Compose, a Trilha Android é para você. Você já entende thread safety, renderização nativa e como as APIs de plataforma conversam com o hardware. Sua curva de aprendizado aqui é JavaScript, TypeScript e o modelo de componentes do React — o resto, você já sai na frente.
+
+Se você escreve Swift e trabalha com SwiftUI, a Trilha iOS é o seu caminho. Você já entende a renderização do UIKit e do SwiftUI, o ciclo de vida do iOS e as ferramentas do Xcode. Assim como na Trilha Android, sua principal curva de aprendizado é JavaScript, TypeScript e o modelo de componentes do React.
+
+Se você constrói com React e JavaScript para a web, a Trilha Web é o encaixe natural. Os componentes do React Native funcionam exatamente como os componentes React que você já escreve — hooks, JSX e seus padrões de componentes se transferem diretamente. Sua curva de aprendizado é a mentalidade mobile: layout com Flexbox em vez de CSS, restrições de plataforma e APIs nativas.
+
+E se você já conhece os fundamentos do React Native e quer ir mais fundo, a Masterclass cobre integração brownfield, TurboModules, Fabric, JSI, profiling de performance, pipelines de CI/CD e estratégias de upgrade — tudo construído sobre a New Architecture.
+
+Não existe porta errada aqui. Cada trilha foi desenhada para pegar o conhecimento que você já tem e transformá-lo em fluência em React Native da forma mais eficiente possível. Escolha a trilha que combina com sua stack do dia a dia, e comece a construir.

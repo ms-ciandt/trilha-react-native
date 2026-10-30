@@ -390,7 +390,7 @@ function Screen() {
 
 ## Materiais de Estudo
 
-### Documentacao Oficial
+### Documentação Oficial
 
 - [React Native — Core Components and APIs](https://reactnative.dev/docs/components-and-apis)
 - [React Native — View](https://reactnative.dev/docs/view)
@@ -401,14 +401,14 @@ function Screen() {
 - [React Native — Pressable](https://reactnative.dev/docs/pressable)
 - [React Native — Modal](https://reactnative.dev/docs/modal)
 
-### Videos
+### Vídeos
 
 - [Expo — Core Components Overview](https://www.youtube.com/watch?v=0-S5a0eXPoc)
 
 ---
 
-## Proximo Passo
+## Próximo Passo
 
-Voce conhece os blocos de construcao. A seguir: como estiliza-los — `StyleSheet`, estilos especificos por plataforma e a API completa de estilizacao.
+Você conhece os blocos de construção. A seguir: como estilizá-los — `StyleSheet`, estilos específicos por plataforma e a API completa de estilização.
 
 ➡ [Styling in React Native](./04-styling-stylesheet)

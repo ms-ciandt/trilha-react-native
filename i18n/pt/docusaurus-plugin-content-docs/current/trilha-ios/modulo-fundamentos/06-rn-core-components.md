@@ -1,6 +1,4 @@
-﻿The source file (`06-rn-core-components.md`) doesn't exist yet in either location. The task description provides the content summary. Since the source file described has iOS-specific content (UIKit/SwiftUI mapping) distinct from the general trilha-nativo version I just read, I need to produce the PT-BR translation of the iOS-specific content as described. Based on the task description's detailed breakdown of the file structure, I'll produce the translation.
-
----
+﻿---
 title: RN Core Components — Mapeamento UIKit e SwiftUI
 ---
 

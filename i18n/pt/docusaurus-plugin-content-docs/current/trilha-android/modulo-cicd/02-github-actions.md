@@ -56,6 +56,12 @@ jobs:
 
       - name: Testes unitários
         run: npx jest --ci --coverage --coverageReporters=text-summary
+
+      - name: Upload da cobertura
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage/
 ```
 
 ---
@@ -129,12 +135,37 @@ jobs:
 
 ---
 
+## Estratégia de Cache
+
+```yaml
+# Cache do node_modules — economiza ~2 min por execução
+- uses: actions/cache@v4
+  with:
+    path: node_modules
+    key: node-${{ hashFiles('package-lock.json') }}
+    restore-keys: node-
+
+# Cache do Gradle — economiza ~5 min por execução
+- uses: actions/cache@v4
+  with:
+    path: |
+      ~/.gradle/caches
+      ~/.gradle/wrapper
+      android/.gradle
+    key: gradle-${{ hashFiles('**/*.gradle*') }}
+```
+
+---
+
 ## Materiais de Estudo
 
 - [GitHub Actions — Android](https://docs.github.com/en/actions/use-cases-and-examples/building-and-testing/building-and-testing-android)
+- [r0adkll/upload-google-play](https://github.com/r0adkll/upload-google-play)
 
 ---
 
 ## Próximo Passo
+
+GitHub Actions configurado. A seguir: EAS Build — o serviço de build em nuvem da Expo para React Native.
 
 ➡ [EAS Build](./03-eas-build)

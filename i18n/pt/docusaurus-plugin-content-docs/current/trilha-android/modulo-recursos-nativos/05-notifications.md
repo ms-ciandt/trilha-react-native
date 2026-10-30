@@ -377,16 +377,16 @@ No fluxo gerenciado do Expo, o manifesto é tratado automaticamente. Para o bare
 
 ## Materiais de Estudo
 
-### Documentacao Oficial
+### Documentação Oficial
 
-- [expo-notifications — Documentacao](https://docs.expo.dev/versions/latest/sdk/notifications/)
-- [Expo — Visao Geral de Push Notifications](https://docs.expo.dev/push-notifications/overview/)
-- [Expo — Configuracao FCM (Android)](https://docs.expo.dev/push-notifications/fcm-credentials/)
-- [Android — Visao Geral de Notificacoes](https://developer.android.com/develop/ui/views/notifications)
-- [Android — Canais de Notificacao](https://developer.android.com/develop/ui/views/notifications/channels)
-- [Firebase — Configuracao FCM no Android](https://firebase.google.com/docs/cloud-messaging/android/client)
+- [expo-notifications — Documentação](https://docs.expo.dev/versions/latest/sdk/notifications/)
+- [Expo — Visão Geral de Push Notifications](https://docs.expo.dev/push-notifications/overview/)
+- [Expo — Configuração FCM (Android)](https://docs.expo.dev/push-notifications/fcm-credentials/)
+- [Android — Visão Geral de Notificações](https://developer.android.com/develop/ui/views/notifications)
+- [Android — Canais de Notificação](https://developer.android.com/develop/ui/views/notifications/channels)
+- [Firebase — Configuração FCM no Android](https://firebase.google.com/docs/cloud-messaging/android/client)
 
-### Videos
+### Vídeos
 
 - [Simon Grimm — Expo Push Notifications Full Guide](https://www.youtube.com/watch?v=25M_mBFOh3M)
 - [notifee — Advanced Android Notifications](https://www.youtube.com/watch?v=TRMiKLBSTOA)
@@ -394,20 +394,20 @@ No fluxo gerenciado do Expo, o manifesto é tratado automaticamente. Para o bare
 ### Pacotes
 
 - [expo-notifications](https://github.com/expo/expo/tree/main/packages/expo-notifications)
-- [notifee](https://notifee.app/) — notificacoes avancadas (layouts customizados, acoes, grupos)
+- [notifee](https://notifee.app/) — notificações avançadas (layouts customizados, ações, grupos)
 
 ---
 
-## Resumo do Modulo
+## Resumo do Módulo
 
-Voce concluiu o modulo de Recursos Nativos. Veja o mapa completo:
+Você concluiu o módulo de Recursos Nativos. Veja o mapa completo:
 
-| Topico | O que foi abordado |
+| Tópico | O que foi abordado |
 |-------|-----------------|
-| Permissoes | `PermissionsAndroid`, fluxo de rationale, `react-native-permissions` |
-| Camera | `expo-camera`, Vision Camera, frame processors, gravacao de video |
+| Permissões | `PermissionsAndroid`, fluxo de rationale, `react-native-permissions` |
+| Câmera | `expo-camera`, Vision Camera, frame processors, gravação de vídeo |
 | Armazenamento | `expo-file-system`, `expo-sqlite`, `expo-document-picker`, `expo-secure-store` |
-| Sensores | Acelerometro, giroscopio, `expo-location`, haptics, keep-awake |
-| Notificacoes | Token FCM, canais de notificacao, notificacoes locais, tarefas em background |
+| Sensores | Acelerômetro, giroscópio, `expo-location`, haptics, keep-awake |
+| Notificações | Token FCM, canais de notificação, notificações locais, tarefas em background |
 
-O proximo modulo aborda performance — profiling de renders, otimizacao de FlatList, Reanimated e ajustes especificos do Hermes.
+O próximo módulo aborda performance — profiling de renders, otimização de FlatList, Reanimated e ajustes específicos do Hermes.

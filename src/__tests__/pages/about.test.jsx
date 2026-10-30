@@ -59,7 +59,7 @@ describe('About page (EN)', () => {
     render(<About />);
     expect(screen.getByText('Diego Karol Gouvea Lana')).toBeInTheDocument();
     expect(screen.getByText('Guilherme Rovaron')).toBeInTheDocument();
-    expect(screen.getByText('Paulo Vitor Sato')).toBeInTheDocument();
+    expect(screen.getByText('Victor Justino')).toBeInTheDocument();
     expect(screen.getByText('Gabriel Dos Santos Xavier')).toBeInTheDocument();
     expect(screen.getByText('Architect')).toBeInTheDocument();
   });
