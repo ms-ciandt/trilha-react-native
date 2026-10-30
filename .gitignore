@@ -13,6 +13,5 @@ static/assets/videos/**/*.mp4
 static/assets/videos/**/*.webm
 static/assets/videos/**/*.mov
 
-# Mentoria: venv local e cache Python, não versionados
-_mentoria/.venv
-_mentoria/__pycache__
+# Mentoria: tooling do RN Chapter, fora de escopo deste repo/PR (não versionado)
+_mentoria/
